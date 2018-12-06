@@ -37,6 +37,10 @@ for (
      [qw{05/a.pl 05/input.txt 11264}],
      [qw{05/b.pl 05/test.txt 4}],
      [qw{05/b.pl 05/input.txt 4552}],
+     [qw{06/a.pl 06/test.txt 17}],
+     [qw{06/a.pl 06/input.txt 6047}],
+     [qw{06/b.pl 06/test.txt 16}],
+     [qw{06/b.pl 06/input.txt 46320}],
     ) {
   my ($script, $input, $res) = @$_;
   is(run($script, $input), $res, $script.' '.$input);
