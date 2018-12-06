@@ -1,3 +1,5 @@
 *~
 advent2018
 advent2018.test
+/target/
+Cargo.lock
