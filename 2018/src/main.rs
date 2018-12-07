@@ -124,6 +124,7 @@ fn map_claims(claims: &Vec<Claim>) -> (Grid, i32) {
     }
     return (grid, c)
 }
+
 fn f03a(contents: String) -> String {
     let claims = read_claims(contents);
     let (_grid, c) = map_claims(&claims);
@@ -150,6 +151,126 @@ fn f03b(contents: String) -> String {
     return "none".to_owned();
 }
 
+type Counts = HashMap<i32, i32>;
+type GuardMinutes = HashMap<(i32,i32), i32>;
+type MaxMinutes = HashMap<i32, i32>;
+
+fn f04a(contents: String) -> String {
+    let line_re: Regex = Regex::new(r"(\d{2})\] (.*)").unwrap();
+    let guard_re: Regex = Regex::new(r"Guard #(\d+)").unwrap();
+    let mut lines = contents.lines().collect::<Vec<&str>>();
+    lines.sort();
+    let mut start = 0;
+    let mut guard_id = -1;
+    let mut max_id = -1;
+    let mut counts = Counts::new();
+    let mut guard_mins = GuardMinutes::new();
+    let mut max_mins = MaxMinutes::new();
+    for line in &lines {
+        let caps = line_re.captures(line).unwrap();
+        let minute = caps.get(1).unwrap().as_str().parse::<i32>().unwrap();
+        let event = caps.get(2).unwrap().as_str();
+        //println!("{} {}", minute, event);
+        match event {
+            "falls asleep" => start = minute,
+            "wakes up" => {
+                *counts.entry(guard_id).or_default() += minute-start;
+                if max_id == -1 ||
+                    *counts.get(&guard_id).unwrap() > *counts.get(&max_id).unwrap() {
+                    max_id = guard_id;
+                }
+                for min in start..minute {
+                    *guard_mins.entry((guard_id,min)).or_default() += 1;
+                    let max_min = *max_mins.get(&guard_id).unwrap_or(&-1i32);
+                    if max_min == -1 || *guard_mins.get(&(guard_id,min)).unwrap() > *guard_mins.get(&(guard_id,max_min)).unwrap() {
+                        *max_mins.entry(guard_id).or_default() = min
+                    }
+                }
+            },
+            _ => {
+                let guard_caps = guard_re.captures(event).unwrap();
+                guard_id = guard_caps.get(1).unwrap().as_str()
+                    .parse::<i32>().unwrap();
+            }
+        }
+    }
+    return format!("{}", max_id * *max_mins.get(&max_id).unwrap() as i32);
+}
+
+fn f04b(contents: String) -> String {
+    let line_re: Regex = Regex::new(r"(\d{2})\] (.*)").unwrap();
+    let guard_re: Regex = Regex::new(r"Guard #(\d+)").unwrap();
+    let mut lines = contents.lines().collect::<Vec<&str>>();
+    lines.sort();
+    let mut start = 0;
+    let mut guard_id = -1;
+    let mut max_id = -1;
+    let mut max_min = -1;
+    let mut guard_mins = GuardMinutes::new();
+    for line in &lines {
+        let caps = line_re.captures(line).unwrap();
+        let minute = caps.get(1).unwrap().as_str().parse::<i32>().unwrap();
+        let event = caps.get(2).unwrap().as_str();
+        //println!("{} {}", minute, event);
+        match event {
+            "falls asleep" => start = minute,
+            "wakes up" => {
+                for min in start..minute {
+                    *guard_mins.entry((guard_id,min)).or_default() += 1;
+                    if max_min == -1 || *guard_mins.get(&(guard_id,min)).unwrap() > *guard_mins.get(&(max_id,max_min)).unwrap() {
+                        max_id = guard_id;
+                        max_min = min;
+                    }
+                }
+            },
+            _ => {
+                let guard_caps = guard_re.captures(event).unwrap();
+                guard_id = guard_caps.get(1).unwrap().as_str()
+                    .parse::<i32>().unwrap();
+            }
+        }
+    }
+    return format!("{}", max_id * max_min);
+}
+
+fn react(poly: &str) -> String {
+    let pat = regex::Regex::new(r"aA|bB|cC|dD|eE|fF|gG|hH|iI|jJ|kK|lL|mM|nN|oO|pP|qQ|rR|sS|tT|uU|vV|wW|xX|yY|zZ|Aa|Bb|Cc|Dd|Ee|Ff|Gg|Hh|Ii|Jj|Kk|Ll|Mm|Nn|Oo|Pp|Qq|Rr|Ss|Tt|Uu|Vv|Ww|Xx|Yy|Zz").unwrap();
+    let mut p = poly.to_owned();
+    loop {
+        let n = pat.replace_all(&p, "").to_string();
+        if n == p {
+            return n;
+        }
+        p = n;
+    }
+}
+
+fn f05a(contents: String) -> String {
+    let lines = contents.lines().collect::<Vec<&str>>();
+    let poly = react(lines[0]);
+    return format!("{}", poly.len());
+}
+
+fn f05b(contents: String) -> String {
+    let lines = contents.lines().collect::<Vec<&str>>();
+    let line = lines[0];
+    let mut min = line.len();
+    for (lower, upper) in [('a', 'A'), ('b', 'B'), ('c', 'C'), ('d', 'D'),
+                           ('e', 'E'), ('f', 'F'), ('g', 'G'), ('h', 'H'),
+                           ('i', 'I'), ('j', 'J'), ('k', 'K'), ('l', 'L'),
+                           ('m', 'M'), ('n', 'N'), ('o', 'O'), ('p', 'P'),
+                           ('q', 'Q'), ('r', 'R'), ('s', 'S'), ('t', 'T'),
+                           ('u', 'U'), ('v', 'V'), ('w', 'W'), ('x', 'X'),
+                           ('y', 'Y'), ('z', 'Z')].iter() {
+        let stripped = line.replace(*lower, "").replace(*upper, "");
+        let l = react(&stripped).len();
+        if l < min {
+            min = l
+        }
+    }
+    return format!("{}", min);
+}
+
 fn f_unknown(_contents: String) -> String {
     return "unknown command".to_owned();
 }
@@ -171,6 +292,10 @@ fn main() {
         "02b" => f02b,
         "03a" => f03a,
         "03b" => f03b,
+        "04a" => f04a,
+        "04b" => f04b,
+        "05a" => f05a,
+        "05b" => f05b,
         _ => f_unknown,
     };
     println!("{}", fun(contents));
@@ -208,5 +333,20 @@ mod tests {
         assert_eq!(run(f03a, "03/input.txt"), "106501");
         assert_eq!(run(f03b, "03/test.txt"), "3");
         assert_eq!(run(f03b, "03/input.txt"), "632");
+    }
+    #[test]
+    fn test_04() {
+        assert_eq!(run(f04a, "04/test.txt"), "240");
+        assert_eq!(run(f04a, "04/input.txt"), "71748");
+        assert_eq!(run(f04b, "04/test.txt"), "4455");
+        assert_eq!(run(f04b, "04/input.txt"), "106850");
+    }
+
+    #[test]
+    fn test_05() {
+        assert_eq!(run(f05a, "05/test.txt"), "10");
+        assert_eq!(run(f05a, "05/input.txt"), "11264");
+        assert_eq!(run(f05b, "05/test.txt"), "4");
+        assert_eq!(run(f05b, "05/input.txt"), "4552");
     }
 }
