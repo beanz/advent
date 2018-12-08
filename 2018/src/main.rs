@@ -272,6 +272,123 @@ fn f05b(contents: String) -> String {
     return format!("{}", min);
 }
 
+struct Point { x: i32, y: i32 }
+struct BoundingBox { min: Point, max: Point }
+
+fn manhattan_distance(p1: &Point, p2: &Point) -> i32 {
+    return (p1.x - p2.x).abs() + (p1.y - p2.y).abs();
+}
+
+fn closest_point(p: Point, points: &Vec<Point>) -> i32 {
+    let mut min = 1000000;
+    let mut min_index = -1;
+    for i in 0..points.len() {
+        let tp = &points[i];
+        let md = manhattan_distance(&p, tp);
+        if md < min {
+            min = md;
+            min_index = i as i32;
+        } else if md == min {
+            min_index = -1;
+        }
+    }
+    return min_index;
+}
+
+type Areas = HashMap<i32, i32>;
+fn get_areas(bb: BoundingBox, points: &Vec<Point>) -> Areas {
+    let mut areas = Areas::new();
+    for y in bb.min.y ..= bb.max.y {
+        for x in bb.min.x ..= bb.max.x {
+            let closest = closest_point(Point{x, y}, points);
+            if closest != -1 {
+                *areas.entry(closest).or_default() += 1;
+            }
+        }
+    }
+    return areas;
+}
+
+fn read_points(lines: Vec<&str>) -> (Vec<Point>, BoundingBox) {
+    let mut min = Point{x: 1000000, y: 1000000};
+    let mut max = Point{x: -1000000, y: -1000000};
+    let mut points: Vec<Point> = vec![];
+    for line in lines {
+        let xy = line.split(", ")
+            .map(|s: &str| s.parse::<i32>().unwrap())
+            .collect::<Vec<i32>>();
+        points.push(Point{x: xy[0], y: xy[1]});
+        if xy[0] < min.x {
+            min.x = xy[0]
+        }
+        if xy[0] > max.x {
+            max.x = xy[0];
+        }
+        if xy[1] < min.y {
+            min.y = xy[1];
+        }
+        if xy[1] > max.y {
+            max.y = xy[1];
+        }
+    }
+    return (points, BoundingBox{min, max});
+}
+
+fn f06a(contents: String) -> String {
+    let lines = contents.lines().collect::<Vec<&str>>();
+    let (points, bb) = read_points(lines[1..].to_vec());
+    let mut inf = HashSet::<i32>::new();
+    for bb_edge in vec!(
+        BoundingBox{min: Point{x: bb.min.x - 1, y: bb.min.y},
+                    max: Point{x: bb.max.x + 1, y: bb.min.y}},
+        BoundingBox{min: Point{x: bb.min.x - 1, y: bb.max.y},
+                    max: Point{x: bb.max.x + 1, y: bb.max.y}},
+        BoundingBox{min: Point{x: bb.min.x, y: bb.min.y - 1},
+                    max: Point{x: bb.min.x, y: bb.max.y + 1}},
+        BoundingBox{min: Point{x: bb.min.x, y: bb.min.y - 1},
+                    max: Point{x: bb.max.x, y: bb.max.y + 1}},
+    ) {
+        let areas_edge = get_areas(bb_edge, &points);
+        for k in areas_edge.keys() {
+            inf.insert(*k);
+        }
+    }
+
+    let areas = get_areas(bb, &points);
+    let mut max_area = 0;
+    for (i, a) in areas {
+        if inf.contains(&i) && max_area < a {
+            max_area = a
+        }
+    }
+    return format!("{}", max_area);
+}
+
+fn dist_sum(p: Point, points: &Vec<Point>) -> i32 {
+    let mut s = 0;
+    for i in 0..points.len() {
+        let tp = &points[i];
+        let md = manhattan_distance(&p, tp);
+        s += md;
+    }
+    return s;
+}
+
+fn f06b(contents: String) -> String {
+    let lines = contents.lines().collect::<Vec<&str>>();
+    let dist = lines[0].parse::<i32>().unwrap();
+    let (points, bb) = read_points(lines[1..].to_vec());
+    let mut area = 0;
+    for y in bb.min.y ..= bb.max.y {
+        for x in bb.min.x ..= bb.max.x {
+            if dist_sum(Point{x, y}, &points) < dist {
+                area += 1;
+            }
+        }
+    }
+    return format!("{}", area);
+}
+
 fn f08a_parse(e: &mut VecDeque<i32>) -> i32 {
     let mut s = 0;
     let c = match e.pop_front() { Some(x) => x, None => 0 };
@@ -349,6 +466,8 @@ fn main() {
         "04b" => f04b,
         "05a" => f05a,
         "05b" => f05b,
+        "06a" => f06a,
+        "06b" => f06b,
         "08a" => f08a,
         "08b" => f08b,
         _ => f_unknown,
@@ -403,6 +522,14 @@ mod tests {
         assert_eq!(run(f05a, "05/input.txt"), "11264");
         assert_eq!(run(f05b, "05/test.txt"), "4");
         assert_eq!(run(f05b, "05/input.txt"), "4552");
+    }
+
+    #[test]
+    fn test_06() {
+        assert_eq!(run(f06a, "06/test.txt"), "17");
+        assert_eq!(run(f06a, "06/input.txt"), "6047");
+        assert_eq!(run(f06b, "06/test.txt"), "16");
+        assert_eq!(run(f06b, "06/input.txt"), "46320");
     }
 
     #[test]
