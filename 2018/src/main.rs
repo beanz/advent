@@ -2,6 +2,7 @@ use std::env;
 use std::fs;
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::collections::VecDeque;
 use regex::Regex;
 
 fn f01a(contents: String) -> String {
@@ -271,6 +272,58 @@ fn f05b(contents: String) -> String {
     return format!("{}", min);
 }
 
+fn f08a_parse(e: &mut VecDeque<i32>) -> i32 {
+    let mut s = 0;
+    let c = match e.pop_front() { Some(x) => x, None => 0 };
+    let m = match e.pop_front() { Some(x) => x, None => 0 };
+    for _i in 0..c {
+        s += f08a_parse(e);
+    }
+    for _i in 0..m {
+        s += match e.pop_front() { Some(x) => x, None => 0 };
+    }
+    return s;
+}
+
+fn f08a(contents: String) -> String {
+    let lines = contents.lines().collect::<Vec<&str>>();
+    let mut e = lines[0].split(' ').map(|s: &str| s.parse::<i32>().unwrap())
+        .collect::<VecDeque<i32>>();
+
+    return format!("{}", f08a_parse(&mut e));
+}
+
+fn f08b_parse(e: &mut VecDeque<i32>) -> i32 {
+    let mut s = 0;
+    let c = match e.pop_front() { Some(x) => x, None => 0 };
+    let m = match e.pop_front() { Some(x) => x, None => 0 };
+    if c > 0 {
+        let mut cc: Vec<i32> = vec![];
+        for _i in 0..c {
+            cc.push(f08b_parse(e));
+        }
+        for _i in 0..m {
+            let me = match e.pop_front() { Some(x) => x, None => 0 };
+            if me <= cc.len() as i32 {
+                s += cc[(me-1) as usize];
+            }
+        }
+    } else {
+        for _i in 0..m {
+            s += match e.pop_front() { Some(x) => x, None => 0 };
+        }
+    }
+    return s;
+}
+
+fn f08b(contents: String) -> String {
+    let lines = contents.lines().collect::<Vec<&str>>();
+    let mut e = lines[0].split(' ').map(|s: &str| s.parse::<i32>().unwrap())
+        .collect::<VecDeque<i32>>();
+
+    return format!("{}", f08b_parse(&mut e));
+}
+
 fn f_unknown(_contents: String) -> String {
     return "unknown command".to_owned();
 }
@@ -296,6 +349,8 @@ fn main() {
         "04b" => f04b,
         "05a" => f05a,
         "05b" => f05b,
+        "08a" => f08a,
+        "08b" => f08b,
         _ => f_unknown,
     };
     println!("{}", fun(contents));
@@ -348,5 +403,13 @@ mod tests {
         assert_eq!(run(f05a, "05/input.txt"), "11264");
         assert_eq!(run(f05b, "05/test.txt"), "4");
         assert_eq!(run(f05b, "05/input.txt"), "4552");
+    }
+
+    #[test]
+    fn test_08() {
+        assert_eq!(run(f08a, "08/test.txt"), "138");
+        assert_eq!(run(f08a, "08/input.txt"), "42798");
+        assert_eq!(run(f08b, "08/test.txt"), "66");
+        assert_eq!(run(f08b, "08/input.txt"), "23798");
     }
 }
