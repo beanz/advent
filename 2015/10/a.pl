@@ -1,0 +1,51 @@
+#!/usr/bin/perl
+use warnings;
+use strict;
+use v5.10;
+use List::Util qw/min max minstr maxstr sum product pairs/;
+use Carp::Always qw/carp verbose/;
+use warnings FATAL => 'all';
+use constant {
+  DEBUG => $ENV{AoC_DEBUG},
+  TEST => $ENV{AoC_TEST},
+};
+
+my @i = <>;
+chomp @i;
+
+sub calc {
+  my ($i) = @_;
+  $i =~ s/(\d)(\1*)/(1+length $2).$1/ge;
+  return $i;
+}
+
+my @test_input = split/\n/, <<'EOF';
+1 becomes 11 (1 copy of digit 1).
+11 becomes 21 (2 copies of digit 1).
+21 becomes 1211 (one 2 followed by one 1).
+1211 becomes 111221 (one 1, one 2, and two 1s).
+111221 becomes 312211 (three 1s, two 2s, and one 1).
+EOF
+chomp @test_input;
+
+if (TEST) {
+  for my $l (@test_input) {
+    my ($in, $out) = ($l =~ /(\d+) becomes (\d+)/);
+    my $res = calc($in);
+    print "Test 1 calc($in) = $res == $out\n";
+    die "$res != $out\n" unless ($res eq $out);
+  }
+}
+my $c = $i[0];
+for (1..40) {
+  $c = calc($c);
+}
+print "Part 1: ", (length $c), "\n";
+
+$c = $i[0];
+for (1..50) {
+  $c = calc($c);
+  print STDERR "Len $_; ", (length $c), "\r" if DEBUG;
+}
+print STDERR "\n" if DEBUG;
+print "Part 2: ", (length $c), "\n";
