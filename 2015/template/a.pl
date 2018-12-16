@@ -4,18 +4,22 @@ use strict;
 use v5.10;
 use List::Util qw/min max minstr maxstr sum product pairs/;
 use Carp::Always qw/carp verbose/;
+use Data::Dumper; sub dd { print Data::Dumper->Dump(@_); }
 use warnings FATAL => 'all';
-use constant {
-  DEBUG => $ENV{AoC_DEBUG},
-  TEST => $ENV{AoC_TEST},
-};
+use constant
+  {
+   DEBUG => $ENV{AoC_DEBUG},
+   TEST => $ENV{AoC_TEST},
+   X => 0,
+   Y => 1,
+  };
 
 my @i = <>;
 chomp @i;
 
 sub calc {
   my ($i) = @_;
-  return @$i;
+  return ~~@$i;
 }
 
 my @test_input = split/\n/, <<'EOF';
@@ -29,7 +33,7 @@ print "Part 1: ", calc(\@i), "\n";
 
 sub calc2 {
   my ($i) = @_;
-  return @$i;
+  return ~~@$i;
 }
 
 if (TEST) {
