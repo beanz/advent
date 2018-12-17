@@ -74,7 +74,7 @@ sub bold_off {
 }
 
 sub pretty_grid {
-  my ($min, $max, $sq_fn, $row_start_fn, $row_end_fn) = @_;
+  my ($min, $max, $sq_fn, $row_start_fn, $row_end_fn, $number) = @_;
   $sq_fn //= sub { '!' };
   $row_start_fn //= sub { '' };
   $row_end_fn //= sub { '' };
@@ -86,15 +86,17 @@ sub pretty_grid {
     for my $x ($min->[X] .. $max->[X]) {
       $r .= $sq_fn->($x, $y);
     }
-    $r .= sprintf " %-${NY}d", $y;
+    $r .= sprintf " %-${NY}d", $y if ($number);
     $r .= $row_end_fn->($y);
     $r .= "\n";
   }
-  for my $place (map { 10**$_ } reverse 0 .. $NX-1) {
-    for my $x ($min->[X] .. $max->[X]) {
-      $r .= abs($x) >= $place ? int(abs($x)/$place)%10 : ' ';
+  if ($number) {
+    for my $place (map { 10**$_ } reverse 0 .. $NX-1) {
+      for my $x ($min->[X] .. $max->[X]) {
+        $r .= abs($x) >= $place ? int(abs($x)/$place)%10 : ' ';
+      }
+      $r .= "\n";
     }
-    $r .= "\n";
   }
   return $r;
 }
