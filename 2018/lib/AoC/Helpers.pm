@@ -22,7 +22,7 @@ use constant
   };
 
 use Data::Dumper;
-
+use Storable qw/dclone/;
 use List::Util qw/min max minstr maxstr sum product pairs/;
 
 our %EXPORT_TAGS = ( 'all' => [ qw(
@@ -34,6 +34,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
 
                                     log10
 
+                                    dclone
                                     min max minstr maxstr sum product pairs
                                     minmax_xy
 
