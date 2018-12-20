@@ -32,8 +32,7 @@ EOF
 if (TEST) {
   my $res;
   $res = calc($test_input);
-  print "Test 1: $res == 0\n";
-  die "failed\n" unless ($res eq 0);
+  assertEq("Test 1", $res, "foo");
 }
 
 my $part1 = calc($i);
@@ -46,9 +45,8 @@ sub calc2 {
 
 if (TEST) {
   my $res;
-  $res = calc($test_input);
-  print "Test 2: $res == 0\n";
-  die "failed\n" unless ($res eq 0);
+  $res = calc2($test_input);
+  assertEq("Test 2", $res, "bar");
 }
 
 $i = parse_input(\@i); # reset input
