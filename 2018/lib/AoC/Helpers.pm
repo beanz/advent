@@ -38,13 +38,24 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
                                     min max minstr maxstr sum product pairs
                                     minmax_xy
 
-                                    bold bold_on bold_off
+                                    bold bold_on bold_off red
                                     pretty_grid
                                     safe_exists
                                     dd
+                                    visit_checker
 ) ] );
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our $VERSION = '0.01';
+
+sub visit_checker {
+  my %v = ();
+  return sub {
+    my $k = join '!', @_;
+    my $res = exists $v{$k};
+    $v{$k}++;
+    return $res;
+  };
+}
 
 sub minmax_xy {
   my ($bb, $x, $y) = @_;
@@ -60,6 +71,10 @@ sub dd {
 
 sub log10 {
   log($_[0])/log(10);
+}
+
+sub red {
+  "\033[31m".$_[0]."\033[37m";
 }
 
 sub bold {
