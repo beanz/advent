@@ -38,6 +38,9 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
                                     min max minstr maxstr sum product pairs
                                     minmax_xy
 
+                                    assert assertEq
+                                    assertGT assertGreaterThan
+
                                     bold bold_on bold_off red
                                     pretty_grid
                                     safe_exists
@@ -46,6 +49,22 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
 ) ] );
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our $VERSION = '0.01';
+
+sub assert {
+  my ($msg, $exp) = @_;
+  die "assert failed: $msg\n" unless ($exp);
+}
+
+sub assertEq {
+  my ($msg, $exp, $act) = @_;
+  die "failed $msg: expected $exp but was $act\n" unless ($exp eq $act);
+}
+
+sub assertGreaterThan {
+  my ($msg, $act, $min) = @_;
+  die "failed $msg: expected $act > $min\n" unless ($act > $min);
+}
+sub assertGT { assertGreaterThan(@_); }
 
 sub visit_checker {
   my %v = ();
