@@ -24,6 +24,7 @@ use constant
 use Data::Dumper;
 use Storable qw/dclone/;
 use List::Util qw/min max minstr maxstr sum product pairs/;
+use POSIX qw/ceil floor round/;
 
 our %EXPORT_TAGS = ( 'all' => [ qw(
                                     X Y
@@ -33,6 +34,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
                                     NUM_PI NUM_E SQRT_2
 
                                     log10
+                                    ceil floor round
 
                                     dclone
                                     min max minstr maxstr sum product pairs
@@ -41,28 +43,153 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
                                     assert assertEq
                                     assertGT assertGreaterThan
 
-                                    bold bold_on bold_off red
+                                    bold bold_on bold_off
+                                    red cyan yellow green blue magenta
                                     pretty_grid
                                     safe_exists
                                     dd
                                     visit_checker
+
+                                    hk kh
+                                    eightNeighbourOffsets
+                                    fourNeighbourOffsets
+                                    offsetCompass offsetKey
+                                    manhattanDistance
+                                    offsetCW
+                                    offsetCCW
+                                    offsetOpposite
+                                    compassOffset
+                                    compassOpposite
 ) ] );
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our $VERSION = '0.01';
 
+sub hk {
+  join '!', @_;
+}
+
+sub kh {
+  [split /!/, @_];
+}
+
+sub eightNeighbourOffsets {
+  [
+   [ -1, -1], [ 0, -1], [ 1, -1],
+   [ -1,  0],           [ 1,  0],
+   [ -1,  1], [ 0,  1], [ 1,  1],
+  ];
+}
+
+sub fourNeighbourOffsets {
+  [
+               [ 0, -1],
+    [ -1,  0],           [ 1,  0],
+               [ 0,  1],
+  ];
+}
+
+sub manhattanDistance {
+  my ($p1, $p2) = @_;
+  return abs($p1->[X]-$p2->[X]) + abs($p1->[Y]-$p2->[Y]);
+}
+
+sub offsetCompass {
+  offsetKey(@_);
+}
+
+sub offsetKey {
+  if ($_[0] == -1) {
+    if ($_[1] == -1) {
+      return 'NW';
+    } elsif ($_[1] == 0) {
+      return 'W';
+    } elsif ($_[1] == 1) {
+      return 'SW';
+    } else {
+      die "Invalid Y offset $_[1]\n";
+    }
+  } elsif ($_[0] == 0) {
+    if ($_[1] == -1) {
+      return 'N';
+    } elsif ($_[1] == 1) {
+      return 'S';
+    } else {
+      die "Invalid Y offset $_[1]\n";
+    }
+  } elsif ($_[0] == 1) {
+    if ($_[1] == -1) {
+      return "NE";
+    } elsif ($_[1] == 0) {
+      return "E";
+    } elsif ($_[1] == 1) {
+      return "SE";
+    } else {
+      die "Invalid Y offset $_[1]\n";
+    }
+  } else {
+    die "Invalid X offset $_[0]\n";
+  }
+}
+
+sub offsetCW {
+  {
+    '0!-1' => [  1,  0 ],
+    '1!0'  => [  0,  1 ],
+    '0!1'  => [ -1,  0 ],
+   '-1!0'  => [  0, -1 ],
+  }->{hk(@_)} // die "Invalid offset: @_\n";
+}
+
+sub offsetCCW {
+    offsetCW(@{offsetCW(@{offsetCW(@_)})})
+}
+
+sub offsetOpposite {
+    [ $_[0]*-1, $_[1]*-1 ]
+}
+
+sub compassOffset {
+  {
+    'N'  => [  0, -1],
+    'NE' => [  1, -1],
+    'E'  => [  1,  0],
+    'SE' => [  1,  1],
+    'S'  => [  0,  1],
+    'SW' => [ -1,  1],
+    'W'  => [ -1,  0],
+    'NW' => [ -1, -1],
+  }->{$_[0]}
+}
+
+sub compassOpposite {
+  {
+    'N'  => 'S',
+    'NE' => 'SW',
+    'E'  => 'W',
+    'SE' => 'NW',
+    'S'  => 'N',
+    'SW' => 'NE',
+    'W'  => 'E',
+    'NW' => 'SE',
+  }->{$_[0]}
+}
+
 sub assert {
   my ($msg, $exp) = @_;
   die "assert failed: $msg\n" unless ($exp);
+  print STDERR "$msg was true\n" if DEBUG;
 }
 
 sub assertEq {
-  my ($msg, $exp, $act) = @_;
+  my ($msg, $act, $exp) = @_;
   die "failed $msg: expected $exp but was $act\n" unless ($exp eq $act);
+  print STDERR "$msg: $act was equal to $exp\n" if DEBUG;
 }
 
 sub assertGreaterThan {
   my ($msg, $act, $min) = @_;
   die "failed $msg: expected $act > $min\n" unless ($act > $min);
+  print STDERR "$msg: $act was greater than $min\n" if DEBUG;
 }
 sub assertGT { assertGreaterThan(@_); }
 
@@ -94,6 +221,26 @@ sub log10 {
 
 sub red {
   "\033[31m".$_[0]."\033[37m";
+}
+
+sub cyan {
+  "\033[36m".$_[0]."\033[37m";
+}
+
+sub yellow {
+  "\033[33m".$_[0]."\033[37m";
+}
+
+sub blue {
+  "\033[34m".$_[0]."\033[37m";
+}
+
+sub green {
+  "\033[32m".$_[0]."\033[37m";
+}
+
+sub magenta {
+  "\033[35m".$_[0]."\033[37m";
 }
 
 sub bold {
