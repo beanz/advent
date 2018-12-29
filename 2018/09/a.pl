@@ -3,9 +3,11 @@
 use warnings;
 use strict;
 
-while (<>) {
-  if (/(\d+) players; last marble is worth (\d+) points/) {
-    print play($1,$2);
+unless (defined caller) {
+  while (<>) {
+    if (/(\d+) players; last marble is worth (\d+) points/) {
+      print play($1,$2);
+    }
   }
 }
 
@@ -44,3 +46,5 @@ sub play {
   }
   return $ms;
 }
+
+1;

@@ -3,24 +3,26 @@
 use warnings;
 use strict;
 
-while (<>) {
-  if (/(\d+) players; last marble is worth (\d+) points/) {
-    print play($1,$2);
+unless (defined caller) {
+  while (<>) {
+    if (/(\d+) players; last marble is worth (\d+) points/) {
+      print play_fast($1,$2);
+    }
   }
 }
 
-sub pp {
+sub ppf {
   my ($c) = @_;
   print join " ", @$c;
 }
 
-sub play {
+sub play_fast {
   my ($players, $num) = @_;
   #print "$players $num";
   my $ms = 0;
   my @s;
   my @c = (0);
-  #pp(\@c);
+  #ppf(\@c);
   for my $m (1..$num) {
     if (($m%23)==0) {
       $s[($m-1)%$players]+=$m;
@@ -34,7 +36,9 @@ sub play {
       push @c, shift @c for (1..2);
       unshift @c, $m;
     }
-    #pp(\@c);
+    #ppf(\@c);
   }
   return $ms;
 }
+
+1;
