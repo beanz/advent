@@ -69,7 +69,7 @@ sub hk {
 }
 
 sub kh {
-  [split /!/, @_];
+  [split /!/, $_[0]];
 }
 
 sub eightNeighbourOffsets {
