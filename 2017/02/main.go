@@ -2,40 +2,22 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math"
 	"os"
-	"strconv"
 	"strings"
+
+	. "github.com/beanz/advent-of-code-go"
 )
 
 type Game struct {
 	l [][]int
 }
 
-func readInts(lines []string) ([]int, error) {
-	nums := make([]int, 0, len(lines))
-
-	for _, line := range lines {
-		n, err := strconv.Atoi(line)
-		if err != nil {
-			return nil, err
-		}
-		nums = append(nums, n)
-	}
-	return nums, nil
-}
-
-func readInput(file string) *Game {
-	b, err := ioutil.ReadFile(file)
-	if err != nil {
-		log.Fatalf("Failed to read input %s", err)
-	}
-	lines := strings.Split(string(b), "\n")
+func readGame(lines []string) *Game {
 	g := &Game{[][]int{}}
-	for i, l := range lines[:len(lines)-1] {
-		nums, err := readInts(strings.Split(l, "\t"))
+	for i, l := range lines {
+		nums, err := ReadInts(strings.Split(l, "\t"))
 		if err != nil {
 			log.Fatalf("Invalid int in line %d: %s\n", i, err)
 		}
@@ -94,7 +76,7 @@ func main() {
 		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
 	}
 	input := os.Args[1]
-	game := readInput(input)
+	game := readGame(ReadLines(input))
 
 	res := game.Part1()
 	fmt.Printf("Part 1: %d\n", res)
