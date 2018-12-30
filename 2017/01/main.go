@@ -2,23 +2,18 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
-	"strings"
+
+	. "github.com/beanz/advent-of-code-go"
 )
 
 type Game struct {
-	l []string
+	l string
 }
 
-func readInput(file string) *Game {
-	b, err := ioutil.ReadFile(file)
-	if err != nil {
-		log.Fatalf("Failed to read input %s", err)
-	}
-	lines := strings.Split(string(b), "\n")
-	return &Game{lines[:len(lines)-1]}
+func readGame(line string) *Game {
+	return &Game{line}
 }
 
 func Sum1(s string) int {
@@ -31,12 +26,8 @@ func Sum1(s string) int {
 	return c
 }
 
-func (g *Game) Part1() string {
-	s := ""
-	for _, l := range g.l {
-		s += fmt.Sprintf("%d ", Sum1(l))
-	}
-	return s
+func (g *Game) Part1() int {
+	return Sum1(g.l)
 }
 
 func Sum2(s string) int {
@@ -49,12 +40,8 @@ func Sum2(s string) int {
 	return c
 }
 
-func (g *Game) Part2() string {
-	s := ""
-	for _, l := range g.l {
-		s += fmt.Sprintf("%d ", Sum2(l))
-	}
-	return s
+func (g *Game) Part2() int {
+	return Sum2(g.l)
 }
 
 func main() {
@@ -62,11 +49,8 @@ func main() {
 		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
 	}
 	input := os.Args[1]
-	game := readInput(input)
+	game := readGame(ReadLines(input)[0])
 
-	res := game.Part1()
-	fmt.Printf("Part 1: %s\n", res)
-
-	res = game.Part2()
-	fmt.Printf("Part 2: %s\n", res)
+	fmt.Printf("Part 1: %d\n", game.Part1())
+	fmt.Printf("Part 2: %d\n", game.Part2())
 }
