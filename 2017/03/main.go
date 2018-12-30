@@ -3,45 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
-	"math"
 	"os"
 	"strconv"
+
+	. "github.com/beanz/advent-of-code-go"
 )
-
-type Point struct {
-	x, y int
-}
-
-func (p Point) String() string {
-	return fmt.Sprintf("%d,%d", p.x, p.y)
-}
-
-func (p Point) Neighbours() []Point {
-	n := []Point{}
-	n = append(n, Point{p.x, p.y - 1})
-	n = append(n, Point{p.x - 1, p.y})
-	n = append(n, Point{p.x + 1, p.y})
-	n = append(n, Point{p.x, p.y + 1})
-	return n
-}
-
-func (p Point) Neighbours8() []Point {
-	n := []Point{}
-	n = append(n, Point{p.x - 1, p.y - 1})
-	n = append(n, Point{p.x + 0, p.y - 1})
-	n = append(n, Point{p.x + 1, p.y - 1})
-	n = append(n, Point{p.x - 1, p.y + 0})
-	n = append(n, Point{p.x + 1, p.y + 0})
-	n = append(n, Point{p.x - 1, p.y + 1})
-	n = append(n, Point{p.x + 0, p.y + 1})
-	n = append(n, Point{p.x + 1, p.y + 1})
-	return n
-}
-
-func (p Point) ManhattanDistance(o Point) int {
-	return int(math.Abs(float64(p.x)-float64(o.x)) +
-		math.Abs(float64(p.y)-float64(o.y)))
-}
 
 func FindPosition(in int) Point {
 	var i int
@@ -71,7 +37,7 @@ func Part1(in int) int {
 	return p.ManhattanDistance(Point{0, 0})
 }
 
-func (p Point) NeighbourSum(m map[Point]int) int {
+func NeighbourSum(m map[Point]int, p Point) int {
 	s := 0
 	for _, np := range p.Neighbours8() {
 		if v, ok := m[np]; ok {
@@ -86,35 +52,35 @@ func Part2(in int) int {
 	g[Point{0, 0}] = 1
 	cur := Point{0, 0}
 	for i := 2; true; i += 2 {
-		cur.x++
-		g[cur] = cur.NeighbourSum(g)
+		cur.X++
+		g[cur] = NeighbourSum(g, cur)
 		if g[cur] > in {
 			return g[cur]
 		}
 		for y := 0; y < i-1; y++ {
-			cur.y++
-			g[cur] = cur.NeighbourSum(g)
+			cur.Y++
+			g[cur] = NeighbourSum(g, cur)
 			if g[cur] > in {
 				return g[cur]
 			}
 		}
 		for x := 0; x < i; x++ {
-			cur.x--
-			g[cur] = cur.NeighbourSum(g)
+			cur.X--
+			g[cur] = NeighbourSum(g, cur)
 			if g[cur] > in {
 				return g[cur]
 			}
 		}
 		for y := 0; y < i; y++ {
-			cur.y--
-			g[cur] = cur.NeighbourSum(g)
+			cur.Y--
+			g[cur] = NeighbourSum(g, cur)
 			if g[cur] > in {
 				return g[cur]
 			}
 		}
 		for x := 0; x < i; x++ {
-			cur.x++
-			g[cur] = cur.NeighbourSum(g)
+			cur.X++
+			g[cur] = NeighbourSum(g, cur)
 			if g[cur] > in {
 				return g[cur]
 			}
