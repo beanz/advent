@@ -1,0 +1,46 @@
+package aoc
+
+import (
+	"fmt"
+	"math"
+)
+
+// Point is a two dimensional point defined by x and y coordinates
+type Point struct {
+	X, Y int
+}
+
+func (p Point) String() string {
+	return fmt.Sprintf("%d,%d", p.X, p.Y)
+}
+
+// Neighbours returns the four neighbours of a point
+func (p Point) Neighbours() []Point {
+	n := []Point{}
+	n = append(n, Point{p.X, p.Y - 1})
+	n = append(n, Point{p.X - 1, p.Y})
+	n = append(n, Point{p.X + 1, p.Y})
+	n = append(n, Point{p.X, p.Y + 1})
+	return n
+}
+
+// Neighbours8 returns the eight neighbours of a point
+func (p Point) Neighbours8() []Point {
+	n := []Point{}
+	n = append(n, Point{p.X - 1, p.Y - 1})
+	n = append(n, Point{p.X + 0, p.Y - 1})
+	n = append(n, Point{p.X + 1, p.Y - 1})
+	n = append(n, Point{p.X - 1, p.Y + 0})
+	n = append(n, Point{p.X + 1, p.Y + 0})
+	n = append(n, Point{p.X - 1, p.Y + 1})
+	n = append(n, Point{p.X + 0, p.Y + 1})
+	n = append(n, Point{p.X + 1, p.Y + 1})
+	return n
+}
+
+// ManhattanDistance returns the Manhattan distance between a 2d point
+// and another 2d point
+func (p Point) ManhattanDistance(o Point) int {
+	return int(math.Abs(float64(p.X)-float64(o.X)) +
+		math.Abs(float64(p.Y)-float64(o.Y)))
+}
