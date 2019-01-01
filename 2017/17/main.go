@@ -58,13 +58,26 @@ func (g *Game) Part1(nums int) int {
 	return g.state.Cw.Num
 }
 
-func (g *Game) Part2() int {
+func (g *Game) Part2Brute() int {
 	g.Part1(50000000)
 	t := g.state
 	for t.Num != 0 {
 		t = t.Cw
 	}
 	return t.Cw.Num
+}
+
+func (g *Game) Part2() int {
+	cur := 0
+	ans := -1
+	for i := 1; i <= 50000000; i++ {
+		cur = (cur + g.steps) % i
+		if cur == 0 {
+			ans = i
+		}
+		cur++
+	}
+	return ans
 }
 
 func main() {
