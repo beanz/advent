@@ -62,20 +62,6 @@ type Attack struct {
 	p *Player
 }
 
-type Attacks []Attack
-
-func (a Attacks) Len() int {
-	return len(a)
-}
-
-func (a Attacks) Swap(i, j int) {
-	a[i], a[j] = a[j], a[i]
-}
-
-func (a Attacks) Less(i, j int) bool {
-	return a[i].p.Less(a[j].p)
-}
-
 type Alive map[rune]int
 
 type Game struct {
@@ -220,19 +206,21 @@ func checkVisited(v map[int]map[int]bool, l Location) bool {
 	return false
 }
 
-func move(g Game, p *Player) bool {
+func move(g Game, p *Player) {
 	todo := []StartEnd{}
 	for _, l := range emptyAdjacent(g, p.x, p.y) {
 		todo = append(todo, StartEnd{l, l})
 	}
 	visited := make(map[Location]bool)
-	found := []Attack{}
+	var found *Attack
 	for len(todo) > 0 {
 		newTodo := []StartEnd{}
 		for _, se := range todo {
 			l := se.e
 			if e := targetAt(g, p, l); e != nil {
-				found = append(found, Attack{se.s, e})
+				if found == nil || e.Less(found.p) {
+					found = &Attack{se.s, e}
+				}
 			}
 			for _, newL := range emptyAdjacent(g, l.x, l.y) {
 				if !visited[newL] {
@@ -242,20 +230,16 @@ func move(g Game, p *Player) bool {
 			}
 		}
 		todo = newTodo
-		if len(found) > 0 {
-			break
+		if found != nil {
+			//fmt.Printf("%s at %d,%d moves to %d,%d\n",
+			//	string(p.kind), p.x, p.y, found[0].s.x, found[0].s.y)
+			//fmt.Println(stringAt(string(p.kind), found[0].s.x, found[0].s.y) +
+			//	stringAt(".", p.x, p.y))
+			p.x, p.y = found.s.x, found.s.y
+			return
 		}
 	}
-	if len(found) > 0 {
-		sort.Sort(Attacks(found))
-		//fmt.Printf("%s at %d,%d moves to %d,%d\n",
-		//	string(p.kind), p.x, p.y, found[0].s.x, found[0].s.y)
-		//fmt.Println(stringAt(string(p.kind), found[0].s.x, found[0].s.y) +
-		//	stringAt(".", p.x, p.y))
-		p.x, p.y = found[0].s.x, found[0].s.y
-	}
-
-	return false
+	return
 }
 
 func turnFor(g Game, p *Player) {
