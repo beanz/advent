@@ -3,6 +3,8 @@ package main
 import (
 	//"fmt"
 	"testing"
+
+	. "github.com/beanz/advent-of-code-go"
 )
 
 func moveTest(t *testing.T, lines []string, x, y, ex, ey int) {
@@ -115,10 +117,7 @@ func TestGame6(t *testing.T) {
 }
 
 func TestGame7(t *testing.T) {
-	l, err := readLines("input.txt")
-	if err != nil {
-		t.Errorf("game input.txt could not be loaded: %s", err)
-	}
+	l := ReadLines("input.txt")
 	testPart1(t, l, 220480)
 	testPart2(t, l, 53576)
 }

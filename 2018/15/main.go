@@ -2,21 +2,12 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"sort"
-	"strings"
-)
 
-func readLines(file string) ([]string, error) {
-	b, err := ioutil.ReadFile(file)
-	if err != nil {
-		return nil, err
-	}
-	lines := strings.Split(string(b), "\n")
-	return lines[:len(lines)-1], nil
-}
+	. "github.com/beanz/advent-of-code-go"
+)
 
 type Player struct {
 	x, y    int
@@ -308,10 +299,7 @@ func main() {
 		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
 	}
 	input := os.Args[1]
-	lines, err := readLines(input)
-	if err != nil {
-		log.Fatalf("failed to read input %s: %s\n", input, err)
-	}
+	lines := ReadLines(input)
 
 	res := play1(lines)
 	fmt.Printf("Part 1: %d\n", res)
