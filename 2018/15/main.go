@@ -4,11 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	//"math"
 	"os"
-	//"regexp"
 	"sort"
-	//"strconv"
 	"strings"
 )
 
@@ -315,8 +312,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to read input %s: %s\n", input, err)
 	}
-
-	//fmt.Printf("%#v\n", strings.Split(strings.Replace(pretty(readGame(lines, 3)), " 200", "", 1000), "\n"))
 
 	res := play1(lines)
 	fmt.Printf("Part 1: %d\n", res)
