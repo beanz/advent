@@ -49,21 +49,6 @@ func (p Players) Less(i, j int) bool {
 	return p[i].Less(p[j])
 }
 
-type Enemies []*Player
-
-func (p Enemies) Len() int {
-	return len(p)
-}
-
-func (p Enemies) Swap(i, j int) {
-	p[i], p[j] = p[j], p[i]
-}
-
-func (p Enemies) Less(i, j int) bool {
-	return p[i].hp < p[j].hp ||
-		(p[i].hp == p[j].hp && Player(*p[i]).Less(p[j]))
-}
-
 type Location struct {
 	x, y int
 }
@@ -169,29 +154,31 @@ func pretty(g Game) string {
 	return s
 }
 
-func target(g Game, p *Player) (*Player, bool) {
+func target(g Game, p *Player) *Player {
 	return targetAt(g, p, Location{p.x, p.y})
 }
 
-func targetAt(g Game, p *Player, l Location) (*Player, bool) {
-	enemies := Players{}
+func targetAt(g Game, p *Player, l Location) *Player {
+	var enemy *Player
 	if e, ok := playerAt(g.players, l.x, l.y-1); ok && p.IsEnemy(e) {
-		enemies = append(enemies, e)
+		enemy = e
 	}
 	if e, ok := playerAt(g.players, l.x-1, l.y); ok && p.IsEnemy(e) {
-		enemies = append(enemies, e)
+		if enemy == nil || enemy.hp > e.hp {
+			enemy = e
+		}
 	}
 	if e, ok := playerAt(g.players, l.x+1, l.y); ok && p.IsEnemy(e) {
-		enemies = append(enemies, e)
+		if enemy == nil || enemy.hp > e.hp {
+			enemy = e
+		}
 	}
 	if e, ok := playerAt(g.players, l.x, l.y+1); ok && p.IsEnemy(e) {
-		enemies = append(enemies, e)
+		if enemy == nil || enemy.hp > e.hp {
+			enemy = e
+		}
 	}
-	if len(enemies) == 0 {
-		return nil, false
-	}
-	sort.Sort(Enemies(enemies))
-	return enemies[0], true
+	return enemy
 }
 
 func attack(g Game, p *Player, e *Player) {
@@ -244,7 +231,7 @@ func move(g Game, p *Player) bool {
 		newTodo := []StartEnd{}
 		for _, se := range todo {
 			l := se.e
-			if e, ok := targetAt(g, p, l); ok {
+			if e := targetAt(g, p, l); e != nil {
 				found = append(found, Attack{se.s, e})
 			}
 			for _, newL := range emptyAdjacent(g, l.x, l.y) {
@@ -273,12 +260,12 @@ func move(g Game, p *Player) bool {
 
 func turnFor(g Game, p *Player) {
 	//fmt.Printf("turnFor %s at %d,%d\n", string(p.kind), p.x, p.y)
-	if e, ok := target(g, p); ok {
+	if e := target(g, p); e != nil {
 		attack(g, p, e)
 		return
 	}
 	move(g, p)
-	if e, ok := target(g, p); ok {
+	if e := target(g, p); e != nil {
 		attack(g, p, e)
 		return
 	}
