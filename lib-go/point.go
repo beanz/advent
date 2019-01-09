@@ -14,6 +14,10 @@ func (p Point) String() string {
 	return fmt.Sprintf("%d,%d", p.X, p.Y)
 }
 
+func (p *Point) In(d Direction) Point {
+	return Point{p.X + d.Dx, p.Y + d.Dy}
+}
+
 // Neighbours returns the four neighbours of a point
 func (p Point) Neighbours() []Point {
 	n := []Point{}
@@ -43,4 +47,27 @@ func (p Point) Neighbours8() []Point {
 func (p Point) ManhattanDistance(o Point) int {
 	return int(math.Abs(float64(p.X)-float64(o.X)) +
 		math.Abs(float64(p.Y)-float64(o.Y)))
+}
+
+func (p Point) Size() float64 {
+	return math.Sqrt(float64(p.X)*float64(p.X) + float64(p.Y)*float64(p.Y))
+}
+
+type Point3D struct {
+	X, Y, Z int
+}
+
+func (p Point3D) String() string {
+	return fmt.Sprintf("%d,%d,%d", p.X, p.Y, p.Z)
+}
+
+func (p Point3D) ManhattanDistance(o Point3D) int {
+	return int(math.Abs(float64(p.X)-float64(o.X)) +
+		math.Abs(float64(p.Y)-float64(o.Y)) +
+		math.Abs(float64(p.Z)-float64(o.Z)))
+}
+
+func (p Point3D) Size() float64 {
+	return math.Sqrt(float64(p.X)*float64(p.X) +
+		float64(p.Y)*float64(p.Y) + float64(p.Z)*float64(p.Z))
 }
