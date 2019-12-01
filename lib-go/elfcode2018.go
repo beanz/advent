@@ -18,14 +18,14 @@ func (i *Inst) String() string {
 
 type ElfProg2018 struct {
 	prog  []*Inst
-	ip    int
+	IP    int
 	Reg   [6]int
 	bound int
 	debug bool
 }
 
 func (g *ElfProg2018) String() string {
-	return fmt.Sprintf("ip=%d %v %s", g.ip, g.Reg, g.prog[0])
+	return fmt.Sprintf("ip=%d %v %s", g.IP, g.Reg, g.prog[0])
 }
 
 func NewElfProg2018(lines []string) *ElfProg2018 {
@@ -40,9 +40,9 @@ func NewElfProg2018(lines []string) *ElfProg2018 {
 }
 
 func (g *ElfProg2018) Run(fn func(*ElfProg2018) bool) int {
-	for g.ip < len(g.prog) {
-		inst := g.prog[g.ip]
-		g.Reg[g.bound] = g.ip
+	for g.IP < len(g.prog) {
+		inst := g.prog[g.IP]
+		g.Reg[g.bound] = g.IP
 		switch inst.op {
 		case "addr":
 			g.Reg[inst.c] = g.Reg[inst.a] + g.Reg[inst.b]
@@ -101,11 +101,11 @@ func (g *ElfProg2018) Run(fn func(*ElfProg2018) bool) int {
 				g.Reg[inst.c] = 0
 			}
 		}
-		g.ip = g.Reg[g.bound]
-		g.ip++
+		g.IP = g.Reg[g.bound]
 		if fn(g) {
 			break
 		}
+		g.IP++
 	}
 	return g.Reg[0]
 }

@@ -42,11 +42,17 @@ func (p Point) Neighbours8() []Point {
 	return n
 }
 
+func Abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
 // ManhattanDistance returns the Manhattan distance between a 2d point
 // and another 2d point
 func (p Point) ManhattanDistance(o Point) int {
-	return int(math.Abs(float64(p.X)-float64(o.X)) +
-		math.Abs(float64(p.Y)-float64(o.Y)))
+	return Abs(p.X-o.X) + Abs(p.Y-o.Y)
 }
 
 func (p Point) Size() float64 {
@@ -62,9 +68,7 @@ func (p Point3D) String() string {
 }
 
 func (p Point3D) ManhattanDistance(o Point3D) int {
-	return int(math.Abs(float64(p.X)-float64(o.X)) +
-		math.Abs(float64(p.Y)-float64(o.Y)) +
-		math.Abs(float64(p.Z)-float64(o.Z)))
+	return Abs(p.X-o.X) + Abs(p.Y-o.Y) + Abs(p.Z-o.Z)
 }
 
 func (p Point3D) Size() float64 {
