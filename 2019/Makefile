@@ -15,7 +15,7 @@ times: ${ALL} input.txt
 	  echo ; \
 	done
 	@echo aoc.pl
-	@time perl aoc.pl input.txt
+	@AoC_TEST=1 time perl aoc.pl input.txt
 	@echo
 
 input.txt:
