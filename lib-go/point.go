@@ -42,13 +42,6 @@ func (p Point) Neighbours8() []Point {
 	return n
 }
 
-func Abs(x int) int {
-	if x < 0 {
-		return -x
-	}
-	return x
-}
-
 // ManhattanDistance returns the Manhattan distance between a 2d point
 // and another 2d point
 func (p Point) ManhattanDistance(o Point) int {
