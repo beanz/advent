@@ -27,9 +27,9 @@ func GCD(a, b int64) int64 {
 }
 
 func LCM(a, b int64, integers ...int64) int64 {
-	result := a * b / gcd(a, b)
+	result := a * b / GCD(a, b)
 	for i := 0; i < len(integers); i++ {
-		result = lcm(result, integers[i])
+		result = LCM(result, integers[i])
 	}
 	return result
 }
