@@ -60,18 +60,6 @@ func NewGame(lines []string) *Game {
 	return g
 }
 
-func gcd(a, b int) int {
-	a = Abs(a)
-	b = Abs(b)
-	if a > b {
-		a, b = b, a
-	}
-	for a != 0 {
-		a, b = (b % a), a
-	}
-	return b
-}
-
 func (g *Game) visible(a1, a2 Point) bool {
 	if v, ok := g.vc[PointPair{a1, a2}]; ok {
 		return v
@@ -81,7 +69,7 @@ func (g *Game) visible(a1, a2 Point) bool {
 	dy := a2.Y - a1.Y
 	//fmt.Printf("%s => %s\n  d=[%d,%d]\n", a1, a2, dx, dy)
 	if dx != 0 || dy != 0 {
-		gcd := gcd(dx, dy)
+		gcd := int(GCD(int64(dx), int64(dy)))
 		dx /= gcd
 		dy /= gcd
 		//fmt.Printf("  sd=[%d,%d]\n", dx, dy)

@@ -13,11 +13,6 @@ type TestCase struct {
 	best  Point
 }
 
-func TestGCD(t *testing.T) {
-	assert.Equal(t, 6, gcd(54, 24))
-	assert.Equal(t, 1, gcd(-2, -7))
-}
-
 func TestVisible(t *testing.T) {
 	g := NewGame([]string{
 		".#..#",
