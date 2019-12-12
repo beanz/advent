@@ -97,33 +97,6 @@ func (moons *Moons) Part1(steps int) int {
 	return s
 }
 
-func Abs64(a int64) int64 {
-	if a < 0 {
-		return -a
-	}
-	return a
-}
-
-func gcd(a, b int64) int64 {
-	a = Abs64(a)
-	b = Abs64(b)
-	if a > b {
-		a, b = b, a
-	}
-	for a != 0 {
-		a, b = (b % a), a
-	}
-	return b
-}
-
-func lcm(a, b int64, integers ...int64) int64 {
-	result := a * b / gcd(a, b)
-	for i := 0; i < len(integers); i++ {
-		result = lcm(result, integers[i])
-	}
-	return result
-}
-
 func (moons *Moons) axis(a MoonField) string {
 	s := ""
 	for _, m := range *moons {
@@ -154,7 +127,7 @@ func (moons *Moons) Part2() int64 {
 			}
 		}
 	}
-	return lcm(cycle[0], cycle[1], cycle[2])
+	return LCM(cycle[0], cycle[1], cycle[2])
 }
 
 func main() {
