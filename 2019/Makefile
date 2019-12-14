@@ -6,7 +6,7 @@ ALL=aoc-go aoc-cpp aoc-nim aoc-cr
 all: input.txt ${ALL}
 
 clean:
-	-rm -f ${ALL} main aoc
+	-rm -f ${ALL} main aoc $(notdir $(CURDIR)).test
 	-find . -name '*~' -print0 |xargs -0 rm -f
 
 times: ${ALL} input.txt
