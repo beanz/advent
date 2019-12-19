@@ -1,32 +1,6 @@
-import strutils, sequtils, deques, tables, hashes, intcode
+import strutils, sequtils, deques, tables, hashes, intcode, point
 
 var prog: seq[int64] = readLine(stdin).split(',').map(parseBiggestInt)
-
-type Point = object
-    x : int64
-    y : int64
-
-proc hash(p: Point): Hash =
-  result = p.x.hash !& p.y.hash
-  result = !$result
-
-type BoundingBox = object
-    mini: Point
-    maxi: Point
-
-proc NewBoundingBox() : BoundingBox =
-  return BoundingBox(mini: Point(x: 2147483647, y: 2147483647),
-                     maxi: Point(x: -2147483648, y: -2147483648))
-
-method Add(this: var BoundingBox, p: Point): void {.base.} =
-  if p.x < this.mini.x:
-    this.mini.x = p.x
-  if p.x > this.maxi.x:
-    this.maxi.x = p.x
-  if p.y < this.mini.y:
-    this.mini.y = p.y
-  if p.y > this.maxi.y:
-    this.maxi.y = p.y
 
 type Ship = object
     wall : Table[Point, bool]
