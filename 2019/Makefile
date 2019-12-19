@@ -25,8 +25,8 @@ input.txt:
 aoc-cpp: cpp/aoc.cpp
 	$(CC) -o $@ $<
 
-aoc-nim: aoc.nim
-	$(NIM) c --opt:speed -d:release $<
+aoc-nim: aoc.nim ../lib/intcode.nim
+	$(NIM) c --opt:speed -d:release -p:../lib $<
 	mv aoc $@
 
 aoc-cr: aoc.cr

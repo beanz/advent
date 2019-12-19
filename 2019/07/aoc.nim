@@ -1,97 +1,9 @@
-import strutils, sequtils, deques, algorithm
+import strutils, sequtils, algorithm, intcode
 
-var prog: seq[int64] = readLine(stdin).split(',').map(parseBiggestInt)
-
-type Inst = object
-    op: int64
-    param: array[3, int64]
-    address: array[3, int64]
-
-type IntComp = object
-    ip: int64
-    p: seq[int64]
-    inp: Deque[int64]
-    outp: Deque[int64]
-    done: bool
-    name: string
-
-proc opArity(op: int64): int64 =
-  if op == 99:
-    return 0
-  return [0,3,3,1,1,2,2,3,3,][op]
-
-method parseInst(this: var IntComp): Inst {.base.} =
-  var rawOp = this.p[this.ip]
-  this.ip += 1
-  var inst = Inst(op: (rawOp mod 100))
-  let immediate: array[3,bool] = [
-      (rawOp div 100) mod 10 == 1,
-      (rawOp div 1000) mod 10 == 1,
-      (rawOp div 10000) mod 10 == 1]
-  for i in countup(int64(0), opArity(inst.op)-1):
-    if immediate[i]:
-      inst.param[i] = this.p[this.ip]
-      inst.address[i] = -99
-    else:
-      inst.param[i] = this.p[this.p[this.ip]]
-      inst.address[i] = this.p[this.ip]
-    this.ip += 1
-  return inst
-
-method run(this: var IntComp): int64 {.base.} =
-  var l : int64 = len(this.p)
-  while this.ip < l:
-    let inst = this.parseInst()
-    case inst.op
-    of 1:
-      this.p[inst.address[2]] = inst.param[0] + inst.param[1]
-    of 2:
-      this.p[inst.address[2]] = inst.param[0] * inst.param[1]
-    of 3:
-      if len(this.inp) == 0:
-        this.p[inst.address[0]] = 0
-      else:
-        this.p[inst.address[0]] = this.inp.popFirst
-      #echo "3: ", this.p[inst.address[0]], " => ", inst.address[0]
-    of 4:
-      #echo "4: ", inst.param[0], " => output"
-      this.outp.addLast(inst.param[0])
-      return 0
-    of 5:
-      if inst.param[0] != 0:
-        this.ip = inst.param[1]
-    of 6:
-      if inst.param[0] == 0:
-        this.ip = inst.param[1]
-    of 7:
-      if inst.param[0] < inst.param[1]:
-        this.p[inst.address[2]] = 1
-      else:
-        this.p[inst.address[2]] = 0
-    of 8:
-      if inst.param[0] == inst.param[1]:
-        this.p[inst.address[2]] = 1
-      else:
-        this.p[inst.address[2]] = 0
-    of 99:
-      this.done = true
-      return 1
-    else:
-      this.done = true
-      return -1
-  this.done = true
-  return -2
-
-proc tryPhase(prog_c: seq[int64], phase: seq[int64]): int64 =
-  var u: seq[IntComp]
+proc tryPhase(prog: seq[int64], phase: seq[int64]): int64 =
+  var u: seq[IntCode]
   for i in countup(0, len(phase)-1):
-    var prog: seq[int64]
-    deepCopy(prog, prog_c)
-    var inp = initDeque[int64]()
-    inp.addLast(phase[i])
-    var outp = initDeque[int64]()
-    let g = IntComp(ip: 0, p: prog, inp: inp, outp: outp,
-                    done: false, name: $i)
+    let g = NewIntCode(prog, phase[i])
     u.add(g)
   var done : int64 = 0
   var last : int64 = 0
@@ -100,18 +12,19 @@ proc tryPhase(prog_c: seq[int64], phase: seq[int64]): int64 =
   while done < len(phase):
     done = 0
     for i in countup(0, len(phase)-1):
-      if u[i].done:
+      if u[i].Done():
         done += 1
       else:
+        if first:
+          u[i].AddInput(0)
         if not first:
-          u[i].inp.addLast(output)
+          u[i].AddInput(output)
         first = false
-        var rc = u[i].run()
-        if len(u[i].outp) != 0:
-          output = u[i].outp.popFirst
+        var rc = u[i].Run()
+        if rc == 0:
+          output = u[i].NextOutput()
           last = output
-          #echo i, ": received ", output, " (", rc, ")"
-        if rc != 0:
+        else:
           done += 1
   return last
 
@@ -132,16 +45,6 @@ proc part1(prog: seq[int64]): int64 =
 proc part2(prog: seq[int64]): int64 =
   return run(prog, 5)
 
-assert opArity(1) == 3;
-assert opArity(2) == 3;
-assert opArity(3) == 1;
-assert opArity(4) == 1;
-assert opArity(5) == 2;
-assert opArity(6) == 2;
-assert opArity(7) == 3;
-assert opArity(8) == 3;
-assert opArity(99) == 0;
-
 assert try_phase(@[int64(3),15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0],
                  @[int64(4),3,2,1,0]) == 43210
 assert part1(@[int64(3),15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0]) == 43210
@@ -156,5 +59,6 @@ assert part2(@[int64(3),52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,
                55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,
                99,0,0,0,0,10]) == 18216
 
+var prog: seq[int64] = readLine(stdin).split(',').map(parseBiggestInt)
 echo "Part 1: ", part1(prog)
 echo "Part 2: ", part2(prog)
