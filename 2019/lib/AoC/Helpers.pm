@@ -6,8 +6,8 @@ use Exporter qw(import);
 
 use constant
   {
-   DEBUG => $ENV{AoC_DEBUG},
-   TEST => $ENV{AoC_TEST},
+   DEBUG => $ENV{AoC_DEBUG}//0,
+   TEST => $ENV{AoC_TEST}//0,
    X => 0,
    Y => 1,
    MIN => 0,
@@ -47,6 +47,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
                                     red cyan yellow green blue magenta
                                     pretty_grid
                                     safe_exists
+                                    safe_value
                                     dd
                                     visit_checker
 
@@ -179,19 +180,19 @@ sub compassOpposite {
 sub assert {
   my ($msg, $exp) = @_;
   die "assert failed: $msg\n" unless ($exp);
-  print STDERR "$msg was true\n" if DEBUG;
+  print STDERR "$msg was true\n" if (DEBUG || TEST == 2);
 }
 
 sub assertEq {
   my ($msg, $act, $exp) = @_;
   die "failed $msg: expected $exp but was $act\n" unless ($exp eq $act);
-  print STDERR "$msg: $act was equal to $exp\n" if DEBUG;
+  print STDERR "$msg: $act was equal to $exp\n" if (DEBUG || TEST == 2);
 }
 
 sub assertGreaterThan {
   my ($msg, $act, $min) = @_;
   die "failed $msg: expected $act > $min\n" unless ($act > $min);
-  print STDERR "$msg: $act was greater than $min\n" if DEBUG;
+  print STDERR "$msg: $act was greater than $min\n" if (DEBUG || TEST == 2);
 }
 sub assertGT { assertGreaterThan(@_); }
 
