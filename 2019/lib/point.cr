@@ -5,6 +5,14 @@ struct Point
   def in(dir : Direction)
     return Point.new(x + dir.x, y + dir.y)
   end
+  def neighbours()
+    return [
+      Point.new(x, y-1),
+      Point.new(x-1, y),
+      Point.new(x+1, y),
+      Point.new(x, y+1)
+    ]
+  end
 end
 
 struct BoundingBox

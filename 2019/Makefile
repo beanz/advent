@@ -23,7 +23,7 @@ input.txt:
 	aoc-dump
 
 aoc-cpp: cpp/aoc.cpp
-	$(CC) -o $@ $<
+	$(CC) -I../lib -o $@ $<
 
 aoc-nim: aoc.nim ../lib/intcode.nim
 	$(NIM) c --opt:speed -d:release -p:../lib $<
