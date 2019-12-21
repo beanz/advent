@@ -8,6 +8,12 @@ proc hash*(p: Point): Hash =
   result = p.x.hash !& p.y.hash
   result = !$result
 
+method neighbours*(this: Point): seq[Point] {.base.} =
+  return @[Point(x: this.x, y: this.y-1),
+           Point(x: this.x-1, y: this.y),
+           Point(x: this.x+1, y: this.y),
+           Point(x: this.x, y: this.y+1)]
+
 type BoundingBox* = object
     mini*: Point
     maxi*: Point
