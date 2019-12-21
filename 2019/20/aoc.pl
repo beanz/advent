@@ -53,6 +53,36 @@ sub add_portal {
   }
 }
 
+sub optimaze {
+  my ($D) = @_;
+  #print `tput clear`.draw($D);
+  my $changes = 1;
+  while ($changes) {
+    #select undef, undef, undef, 1;
+    $changes = 0;
+    for my $y ($D->{bb}->[MINY]+2 .. $D->{bb}->[MAXY]-2) {
+      for my $x ($D->{bb}->[MINX]+2 .. $D->{bb}->[MAXX]-2) {
+        my $hk = hk($x,$y);
+        if ($D->{p}->{$hk} || $D->{m}->{$hk} ||
+            ($x == $D->{'AA'}->[X] && $y == $D->{'AA'}->[Y]) ||
+            ($x == $D->{'ZZ'}->[X] && $y == $D->{'ZZ'}->[Y])) {
+          next;
+        }
+        my $w = 0;
+        $w++ if ($D->{m}->{hk($x,$y-1)});
+        $w++ if ($D->{m}->{hk($x-1,$y)});
+        $w++ if ($D->{m}->{hk($x+1,$y)});
+        $w++ if ($D->{m}->{hk($x,$y+1)});
+        if ($w > 2) {
+          $D->{m}->{$hk} = 1;
+          $changes++;
+        }
+      }
+    }
+    #print `tput cup 0 0`.draw($D);
+  }
+}
+
 sub parse_input {
   my ($lines) = @_;
   my $D = {m => {}, bb => [], p => {} };
@@ -90,6 +120,7 @@ sub parse_input {
       }
     }
   }
+  optimaze($D);
   return $D;
 }
 
@@ -100,6 +131,10 @@ sub draw {
     for my $x ($D->{bb}->[MINX] .. $D->{bb}->[MAXX]) {
       if (defined $pos && $x == $pos->[X] && $y == $pos->[Y]) {
         $s .= '@';
+      } elsif ($x == $D->{'AA'}->[X] && $y == $D->{'AA'}->[Y]) {
+        $s .= 'S';
+      } elsif ($x == $D->{'ZZ'}->[X] && $y == $D->{'ZZ'}->[Y]) {
+        $s .= 'E';
       } elsif ($D->{p}->{hk($x,$y)}) {
         $s .= '~';
       } elsif ($D->{m}->{hk($x,$y)}) {
