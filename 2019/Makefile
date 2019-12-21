@@ -22,7 +22,7 @@ times: ${ALL} input.txt
 input.txt:
 	aoc-dump
 
-aoc-cpp: cpp/aoc.cpp
+aoc-cpp: cpp/aoc.cpp ../lib/*.hpp
 	$(CC) -I../lib -o $@ $<
 
 aoc-nim: aoc.nim ../lib/intcode.nim
