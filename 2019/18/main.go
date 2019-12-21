@@ -16,7 +16,6 @@ type Rogue struct {
 	m        map[Point]rune
 	bb       *BoundingBox
 	pos      Point
-	doors    int
 	keys     int
 	quadKeys map[rune]map[rune]bool
 	debug    bool
@@ -28,7 +27,6 @@ func NewRogue(lines []string) *Rogue {
 	bb.Add(Point{len(lines[0]) - 1, len(lines) - 1})
 	m := make(map[Point]rune)
 	pos := Point{-1, -1}
-	doors := 0
 	keys := 0
 	for y, line := range lines {
 		for x, ch := range line {
@@ -37,13 +35,11 @@ func NewRogue(lines []string) *Rogue {
 				ch = '.'
 			} else if 'a' <= ch && ch <= 'z' {
 				keys++
-			} else if 'A' <= ch && ch <= 'Z' {
-				doors++
 			}
 			m[Point{x, y}] = ch
 		}
 	}
-	return &Rogue{m, bb, pos, doors, keys, make(map[rune]map[rune]bool), false}
+	return &Rogue{m, bb, pos, keys, make(map[rune]map[rune]bool), false}
 }
 
 func (r *Rogue) String() string {
