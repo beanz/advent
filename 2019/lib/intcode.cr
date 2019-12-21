@@ -34,6 +34,28 @@ class IntCode
     @base = 0
   end
 
+  def initialize(prog : Array(Int64), input : Int64)
+    @prog = prog
+    @ip = 0
+    @inp = Deque(Int64).new(5)
+    @outp = Deque(Int64).new(5)
+    @done = false
+    @base = 0
+    @inp << input
+  end
+
+  def initialize(prog : Array(Int64), input : String)
+    @prog = prog
+    @ip = 0
+    @inp = Deque(Int64).new(5)
+    @outp = Deque(Int64).new(5)
+    @done = false
+    @base = 0
+    input.each_byte do |ch|
+      @inp << ch.to_i64
+    end
+  end
+
   def cloneWithInput(input : Int64)
     ic = IntCode.new(@prog.clone)
     ic.inp << input

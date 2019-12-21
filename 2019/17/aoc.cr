@@ -154,10 +154,7 @@ def part2(prog, scaff)
   full = [fnM, fnA, fnB, fnC, "n\n"].join("\n")
 
   prog[0] = 2
-  ic = IntCode.new(prog)
-  full.each_byte do |ch|
-    ic.inp << ch.to_i64
-  end
+  ic = IntCode.new(prog, full)
   outp = ic.runToHalt()
   return outp.last
 end
