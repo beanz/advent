@@ -27,6 +27,15 @@ proc NewIntCode*(cprog : seq[int64], inputs: varargs[int64]): IntCode =
     return IntCode(ip: 0, p: prog, base: 0,
                    inp: inp, outp: initDeque[int64](), done: false)
 
+proc NewIntCode*(cprog : seq[int64], input: string): IntCode =
+    var prog: seq[int64]
+    deepCopy(prog, cprog)
+    var inp = initDeque[int64]()
+    for ch in input:
+      inp.addLast(ord(ch))
+    return IntCode(ip: 0, p: prog, base: 0,
+                   inp: inp, outp: initDeque[int64](), done: false)
+
 method CloneWithInput*(this: IntCode, input: int64): IntCode {.base.} =
   var prog: seq[int64]
   deepCopy(prog, this.p)
