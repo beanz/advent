@@ -124,7 +124,7 @@ func (ic *IntCode) Run() int {
 		case 3:
 			if len(ic.in) == 0 {
 				//fmt.Printf("3: %d => %d\n", 0, inst.addr[0])
-				ic.p[inst.addr[0]] = 0
+				ic.p[inst.addr[0]] = -1
 			} else {
 				//fmt.Printf("3: %d => %d\n", ic.in[0], inst.addr[0])
 				ic.p[inst.addr[0]] = ic.in[0]
