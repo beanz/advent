@@ -29,3 +29,11 @@ func Magenta(s string) string {
 func Bold(s string) string {
 	return fmt.Sprintf("\033[7m%s\033[27m", s)
 }
+
+func ClearScreen() string {
+	return "\033[3K\033[H\033[2J"
+}
+
+func CursorTo(x int, y int) string {
+	return fmt.Sprintf("\033[%d;%dH", y, x)
+}
