@@ -29,7 +29,7 @@ aoc-nim: aoc.nim ../lib/*.nim
 	$(NIM) c --opt:speed -d:release -p:../lib $<
 	mv aoc $@
 
-aoc-cr: aoc.cr
+aoc-cr: aoc.cr ../lib/*.cr
 	$(CR) build -o $@ $<
 
 aoc-go: main.go

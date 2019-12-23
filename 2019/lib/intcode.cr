@@ -20,32 +20,39 @@ end
 
 class IntCode
   property ip : Int64
+  property prog : Array(Int64)
   property inp : Deque(Int64)
   property outp : Deque(Int64)
   property done : Bool
   property base : Int64
+  property name : String
+  property debug : Bool
 
   def initialize(prog : Array(Int64))
-    @prog = prog
+    @prog = prog.clone()
     @ip = 0
     @inp = Deque(Int64).new(5)
     @outp = Deque(Int64).new(5)
     @done = false
     @base = 0
+    @name = "IC"
+    @debug = false
   end
 
   def initialize(prog : Array(Int64), input : Int64)
-    @prog = prog
+    @prog = prog.clone()
     @ip = 0
     @inp = Deque(Int64).new(5)
     @outp = Deque(Int64).new(5)
     @done = false
     @base = 0
     @inp << input
+    @name = input.to_s
+    @debug = false
   end
 
   def initialize(prog : Array(Int64), input : String)
-    @prog = prog
+    @prog = prog.clone()
     @ip = 0
     @inp = Deque(Int64).new(5)
     @outp = Deque(Int64).new(5)
@@ -54,6 +61,8 @@ class IntCode
     input.each_byte do |ch|
       @inp << ch.to_i64
     end
+    @name = "IC"
+    @debug = false
   end
 
   def cloneWithInput(input : Int64)
@@ -94,38 +103,97 @@ class IntCode
     return inst
   end
 
+  def hexdump()
+    return String.build do |str|
+      0.step(to: @prog.size()-1, by: 8) do |i|
+        str << sprintf("%s %08d: ", @name, i)
+        (0..7).each do |j|
+          addr = i+j
+          if addr >= @prog.size()
+            break
+          end
+          str << sprintf("%6d ", @prog[addr])
+        end
+        str << "\n"
+      end
+    end
+  end
+
   def run()
     while @ip < @prog.size()
+      if @debug
+        #print(hexdump());
+        printf("%s ip=%d %d,%d,%d,%d\n", @name, @ip,
+               sprog(@ip+0), sprog(@ip+1), sprog(@ip+2), sprog(@ip+3))
+      end
       inst = parseInst()
       case inst.op
       when 1
+        if @debug
+          printf("%s add %d + %d = %d => %d\n",
+                 @name,
+                 inst.param[0], inst.param[1],
+                 inst.param[0] + inst.param[1],
+                 inst.addr[2])
+        end
         @prog[inst.addr[2]] = inst.param[0] + inst.param[1]
       when 2
+        if @debug
+          printf("%s mul %d * %d = %d => %d\n",
+                 @name,
+                 inst.param[0], inst.param[1],
+                 inst.param[0] * inst.param[1],
+                 inst.addr[2])
+        end
         @prog[inst.addr[2]] = inst.param[0] * inst.param[1]
       when 3
         if @inp.size() == 0
-          @prog[inst.addr[0]] = 0
+          @ip -= opArity(inst.op)+1
+          return 2
         else
           @prog[inst.addr[0]] = @inp.shift()
+          if @debug
+            printf("%s read %d => %d\n",
+                   @name, @prog[inst.addr[0]], inst.addr[0])
+          end
+          #print "< ", @prog[inst.addr[0]], "\n";
         end
       when 4
         @outp.push(inst.param[0])
+        if @debug
+          printf("%s write %d => output\n", @name, inst.param[0])
+        end
+        #print "> ", inst.param[0], "\n";
         return 0
       when 5
+        if @debug
+          printf("%s jnz %d to %d\n", @name, inst.param[0], inst.param[1])
+        end
         if inst.param[0] != 0
           @ip = inst.param[1]
         end
       when 6
+        if @debug
+          printf("%s jz %d to %d\n", @name, inst.param[0], inst.param[1])
+        end
         if inst.param[0] == 0
           @ip = inst.param[1]
         end
       when 7
+        if @debug
+          printf("%s lt %d < %d => %d\n", @name,
+                 inst.param[0], inst.param[1], inst.addr[2])
+        end
         if inst.param[0] < inst.param[1]
           @prog[inst.addr[2]] = 1
         else
           @prog[inst.addr[2]] = 0
         end
       when 8
+        if @debug
+          printf("%s eq %d == %d => %d\n", @name,
+                 inst.param[0], inst.param[1], inst.addr[2])
+        end
         if inst.param[0] == inst.param[1]
           @prog[inst.addr[2]] = 1
         else
@@ -133,6 +201,9 @@ class IntCode
         end
       when 9
         @base += inst.param[0]
+        if @debug
+          printf("%s base += %d == %d\n", @name, inst.param[0], @base)
+        end
       when 99
         @done = true
         return 1

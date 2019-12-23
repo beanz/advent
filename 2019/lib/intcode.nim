@@ -160,6 +160,13 @@ method RunWithCallbacks*(this: var IntCode,
         echo "IntCode error"
         return false
 
+method Output*(this: var IntCode, n : int): seq[int64] {.base.} =
+  var res : seq[int64]
+  if len(this.outp) >= n:
+    for i in countup(1, n):
+      res.add(this.outp.popFirst)
+  return res
+
 method NextOutput*(this: var IntCode): int64 {.base.} =
   if len(this.outp) > 0:
     return this.outp.popFirst
@@ -169,8 +176,9 @@ method NextOutput*(this: var IntCode): int64 {.base.} =
       return this.outp.popFirst
   return -99
 
-method AddInput*(this: var IntCode, input: int64): void {.base.} =
-  this.inp.addLast(input)
+method AddInput*(this: var IntCode, inputs: varargs[int64]): void {.base.} =
+  for input in inputs:
+     this.inp.addLast(input)
 
 method Done*(this: var IntCode): bool {.base.} =
   return this.done

@@ -165,6 +165,17 @@ public:
     return -1;
   }
 
+  vector<long> output(int n) {
+    vector<long> res;
+    if (this->outp.size() >= n) {
+      for (int i = 0; i < n; i++) {
+        res.push_back(this->outp.front());
+        this->outp.pop_front();
+      }
+    }
+    return res;
+  }
+
   bool run_with_callbacks(std::function<long()> inf, std::function<void(vector<long>)> outf, int outn) {
     while (!this->Done()) {
       auto rc = this->run();
