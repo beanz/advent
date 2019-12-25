@@ -1,0 +1,23 @@
+name: 18
+version: 0.1.0
+
+dependencies:
+  priority-queue:
+    github: spider-gazelle/priority-queue
+
+# authors:
+#   - name <email@example.com>
+
+# description: |
+#   Short description of 18
+
+# dependencies:
+#   pg:
+#     github: will/crystal-pg
+#     version: "~> 0.5"
+
+# development_dependencies:
+#   webmock:
+#     github: manastech/webmock.cr
+
+# license: MIT
