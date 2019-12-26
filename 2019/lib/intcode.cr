@@ -221,4 +221,36 @@ class IntCode
     end
     return @outp
   end
+
+  def nextOut()
+    while run() != 1
+      if @outp.size() == 1
+        return @outp.pop()
+      end
+    end
+    return -99
+  end
+
+  def runWithCallbacks(infn : -> Int64, outfn : Deque(Int64) -> , outn : Int64)
+    while ! @done
+      rc = run()
+      case rc
+      when 0
+        if @outp.size() == outn
+          o = Deque(Int64).new(outn)
+          (1..outn).each do |i|
+            o.push(@outp.shift)
+          end
+          outfn.call(o)
+        end
+      when 1
+        return true
+      when 2
+        @inp << infn.call()
+      else
+        print "IntCode error"
+        return false
+      end
+    end
+  end
 end

@@ -77,7 +77,7 @@ def part1(prog)
 end
 
 def nextFunc(path, off, ch)
-  shortest = 2147483647
+  shortest = Int32::MAX
   fn = ""
   (1..22).each do |i|
     sub = path[off..off+i]

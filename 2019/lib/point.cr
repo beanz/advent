@@ -18,8 +18,8 @@ end
 struct BoundingBox
   property min, max
   def initialize()
-    @min = Point.new(2147483647,2147483647)
-    @max = Point.new(-2147483648,-2147483648)
+    @min = Point.new(Int32::MAX, Int32::MAX)
+    @max = Point.new(Int32::MIN, Int32::MIN)
   end
   def add(p : Point)
     if p.x < min.x
