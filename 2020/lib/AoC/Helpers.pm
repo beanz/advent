@@ -24,6 +24,7 @@ use constant
 use Data::Dumper;
 use Storable qw/dclone/;
 use List::Util qw/min max minstr maxstr sum product pairs/;
+use List::MoreUtils qw/zip pairwise/;
 use POSIX qw/ceil floor round/;
 
 our %EXPORT_TAGS = ( 'all' => [ qw(
@@ -38,6 +39,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
 
                                     dclone
                                     min max minstr maxstr sum product pairs
+                                    zip pairwise
                                     minmax_xy
 
                                     assert assertEq
@@ -63,6 +65,10 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
                                     compassOpposite
 
                                     read_lines
+                                    read_lists
+                                    read_listy_records
+                                    read_chunks
+                                    read_chunky_records
 ) ] );
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our $VERSION = '0.01';
@@ -316,6 +322,44 @@ sub read_lines {
   my @c = <$fh>;
   chomp @c;
   return \@c;
+}
+
+sub read_lists {
+  my ($file, $rs, $fs) = @_;
+  $rs //= "\n";
+  $fs //= qr/\s+/;
+  open my $fh, '<', $file or die "Failed to open $file: $!\n";
+  local $/ = $rs;
+  my @c = <$fh>;
+  chomp @c;
+  return [ map { [ split $fs, $_ ] } @c ];
+}
+
+sub read_listy_records {
+  my ($file, $rs, $fs, $fn) = @_;
+  $rs //= "\n";
+  $fs //= qr/\s+/;
+  my $c = read_lists($file, $rs, $fs);
+  return [ map { { zip @$fn, @$_ } } @$c ];
+}
+
+sub read_chunks {
+  my ($file, $rs) = @_;
+  $rs //= "\n\n";
+  open my $fh, '<', $file or die "Failed to open $file: $!\n";
+  local $/ = $rs;
+  my @c = <$fh>;
+  chomp(@c);
+  return \@c;
+}
+
+sub read_chunky_records {
+  my ($file, $rs, $fs, $kvs) = @_;
+  $rs //= "\n\n";
+  $fs //= qr/\s+/;
+  $kvs //= qr/:/;
+  my $c = read_chunks($file, $rs);
+  return [ map { { map { split $kvs, $_ } split $fs, $_ } } @$c ];
 }
 
 1;

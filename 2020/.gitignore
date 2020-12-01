@@ -1,0 +1,8 @@
+*~
+*.test
+aoc
+a.out
+aoc-cpp
+aoc-go
+aoc-zig
+zig-cache
