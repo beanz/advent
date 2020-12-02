@@ -1,0 +1,3 @@
+#!/bin/sh
+exec \
+perl -lne '$t=2020;$o=$t-$_;print$_*$o if($s{$o});$s{$_}++;$o=$_;$t{$_+$o}=$_*$o for(keys%s);END{for(keys%s){$o=$t-$_;if($t{$o}){print$t{$o}*$_;last}};}'
