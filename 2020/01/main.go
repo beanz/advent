@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 
+	"gonum.org/v1/gonum/stat/combin"
+
 	. "github.com/beanz/advent-of-code-go"
 )
 
@@ -17,6 +19,22 @@ func (r *Report) String() string {
 	return fmt.Sprintf("%v", r.e)
 }
 
+func (r *Report) Solve(t int, k int) int {
+	gen := combin.NewCombinationGenerator(len(r.e), k)
+	for gen.Next() {
+		s := 0
+		p := 1
+		for _, i := range gen.Combination(nil) {
+			s += r.e[i]
+			p *= r.e[i]
+		}
+		if s == t {
+			return p
+		}
+	}
+	return 0
+}
+
 func NewReport(lines []string) *Report {
 	e, err := ReadInts(lines)
 	if err != nil {
@@ -26,27 +44,11 @@ func NewReport(lines []string) *Report {
 }
 
 func (r *Report) Part1() int {
-	for i := 0; i < len(r.e); i++ {
-		for j := i; j < len(r.e); j++ {
-			if r.e[i]+r.e[j] == 2020 {
-				return r.e[i] * r.e[j]
-			}
-		}
-	}
-	return 0
+	return r.Solve(2020, 2)
 }
 
 func (r *Report) Part2() int {
-	for i := 0; i < len(r.e); i++ {
-		for j := i; j < len(r.e); j++ {
-			for k := j; k < len(r.e); k++ {
-				if r.e[i]+r.e[j]+r.e[k] == 2020 {
-					return r.e[i] * r.e[j] * r.e[k]
-				}
-			}
-		}
-	}
-	return 0
+	return r.Solve(2020, 3)
 }
 
 func main() {
@@ -56,6 +58,6 @@ func main() {
 	lines := ReadLines(os.Args[1])
 	report := NewReport(lines)
 	//fmt.Print("%s\n", report)
-	fmt.Printf("Part 1: %d\n", report.Part1())
-	fmt.Printf("Part 2: %d\n", report.Part2())
+	fmt.Printf("Part 1: %d\n", report.Solve(2020, 2))
+	fmt.Printf("Part 2: %d\n", report.Solve(2020, 3))
 }
