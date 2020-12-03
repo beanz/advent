@@ -1,0 +1,2 @@
+#!/bin/sh
+exec perl -0ne '$w=index$_,"\n";$h=y/\n//;$i=$_;sub t{($x,$y)=@_;$_=$i;$wx=int 1+$x*$h/$y/$w;s/(.{$w})\n/$1 x$wx/eg;$d=$x+$wx*$w*$y-1;s/(.).{1,$d}/$1/g;y/#//;}print t(3,1)," ",t(3,1)*t(1,1)*t(5,1)*t(7,1)*t(1,2),"\n";'

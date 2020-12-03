@@ -51,7 +51,7 @@ sub calc2 {
   my $p = 1;
   for my $slope ([1,1],[3,1],[5,1],[7,1],[1,2]) {
     my $r = calc($i, $slope);
-    print STDERR $r, "\n" if (DEBUG);
+    print STDERR $r, "\n" if DEBUG;
     $p *= $r;
   }
   return $p;
