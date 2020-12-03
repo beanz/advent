@@ -1,0 +1,37 @@
+#!/bin/sh
+set -e
+set -u
+in=${1:-input.txt}
+
+snt=$(mktemp)
+trap "rm -f $snt" EXIT INT
+input_len=$(wc -l <$in)
+input_json="$(jq -r --slurp '{ input: . }' <$in )"
+
+sed -e'1,/[S]ENTIENT CODE FOLLOWS/ d;s/array[0-9]*/array'"$input_len"'/' \
+  <$0 >$snt
+
+sentient --machine lingeling $snt --assign "$input_json" | \
+  jq -r '"Part1: \(.part1)\nPart2: \(.part2)"'
+
+exit
+
+# SENTIENT CODE FOLLOWS
+
+int32 a1, b1, part1;
+int32 a2, b2, c2;
+int64 part2;
+array200<int16> input;
+
+invariant input.include?(a1) == true;
+invariant input.include?(b1) == true;
+invariant a1 + b1 == 2020;
+invariant part1 == a1 * b1;
+
+invariant input.include?(a2) == true;
+invariant input.include?(b2) == true;
+invariant input.include?(c2) == true;
+invariant a2 + b2 + c2 == 2020;
+invariant part2 == a2 * b2 * c2;
+
+expose input, part1, part2;
