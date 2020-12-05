@@ -1,0 +1,2 @@
+#!/bin/sh
+exec perl -0ne 'y/BFRL/1010/;$s=$_=join",",sort split/\n/;$s=0;s/([01]+)/$s+=$v=oct("0b$1");$v/eg;($min,$max)=m/^(\d+),.*,(\d+)$/;$p2=($min+$max)*(1+$max-$min)/2-$s;print "Part 1: $max\nPart 2: $p2\n";'
