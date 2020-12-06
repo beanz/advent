@@ -24,6 +24,12 @@ func ReadChunks(file string) []string {
 		log.Fatalf("File read %s failed: %s\n", file, err)
 	}
 	chunks := strings.Split(string(b), "\n\n")
+
+	// strip trailing single '\n' from final chunk
+	l := len(chunks) - 1
+	if chunks[l][len(chunks[l])-1] == '\n' {
+		chunks[l] = chunks[l][:len(chunks[l])-1]
+	}
 	return chunks
 }
 
