@@ -45,10 +45,6 @@ fn part1(inp: anytype) usize {
     return m;
 }
 
-fn exists(m: std.AutoHashMap(usize, bool), k: usize) bool {
-    return m.get(k) orelse false;
-}
-
 fn part2(inp: anytype) usize {
     var plan = std.AutoHashMap(usize, bool).init(alloc);
     defer plan.deinit();
@@ -57,7 +53,7 @@ fn part2(inp: anytype) usize {
     }
     var it = plan.iterator();
     while (it.next()) |e| {
-        if (exists(plan, e.key - 2) and !exists(plan, e.key - 1)) {
+        if (aoc.exists(plan, e.key - 2) and !aoc.exists(plan, e.key - 1)) {
             return e.key - 1;
         }
     }

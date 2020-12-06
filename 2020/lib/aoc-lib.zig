@@ -37,3 +37,7 @@ pub fn minc(m: anytype, k: anytype) void {
         m.*.put(k, 1) catch {};
     }
 }
+
+pub fn exists(m: anytype, k: anytype) bool {
+    return m.get(k) orelse false;
+}
