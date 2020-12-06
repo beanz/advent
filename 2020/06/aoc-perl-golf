@@ -1,0 +1,2 @@
+#!/bin/sh
+exec perl -0ne '$_.="\n";$o=$_;s/(.*?)\n\n/$f=$1;$u="";$f=~s!(.)!$c=$1;$u=~s:$c::g;$u.=$c;$c!eg;$p=($f=~s!\n!,!g);$p++;"$f!$u!".(length$u)."!$p\n"/seg;s/!(\d+)!/$p1+=$1;"!"/eg;print "Part 1: $p1\n";s/(.*)!(.*)!(\d+)\n/$f=$1;$u=$2;$p=$3;$cc=",";$u=~s!(.)!$c=$1;$n=($f=~s:$c::g);$cc.="$n,";$c!eg;$cc=~s!,$p\b!$p2++;",$p,"!eg;"$f!$u!$cc!$p\n"/eg;print "Part 2: $p2\n"'

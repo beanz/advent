@@ -21,7 +21,19 @@ pub fn readChunks(inp: anytype) anyerror!std.ArrayListAligned([]const u8, null) 
         if (chunk.len == 0) {
             break;
         }
-        try chunks.append(chunk);
+        if (chunk[chunk.len - 1] == '\n') {
+            try chunks.append(chunk[0 .. chunk.len - 1]);
+        } else {
+            try chunks.append(chunk);
+        }
     }
     return chunks;
+}
+
+pub fn minc(m: anytype, k: anytype) void {
+    if (m.*.get(k)) |v| {
+        m.*.put(k, v + 1) catch {};
+    } else {
+        m.*.put(k, 1) catch {};
+    }
 }
