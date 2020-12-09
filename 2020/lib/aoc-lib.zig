@@ -2,6 +2,21 @@ const std = @import("std");
 const ArrayList = std.ArrayList;
 const alloc = std.heap.page_allocator;
 
+pub fn readInts(inp: anytype) anyerror![]const i64 {
+    var ints = ArrayList(i64).init(alloc);
+    var it = std.mem.tokenize(inp, ":, \n");
+    while (it.next()) |is| {
+        if (is.len == 0) {
+            break;
+        }
+        const i = std.fmt.parseInt(i64, is, 10) catch {
+            continue;
+        };
+        try ints.append(i);
+    }
+    return ints.items;
+}
+
 pub fn readLines(inp: anytype) anyerror!std.ArrayListAligned([]const u8, null) {
     var lines = ArrayList([]const u8).init(alloc);
     var lit = std.mem.split(inp, "\n");
