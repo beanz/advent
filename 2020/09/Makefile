@@ -1,5 +1,5 @@
 CC=clang++-6.0
-ALL=aoc-go aoc-zig aoc.jq
+ALL=aoc-go aoc-zig
 
 all: input.txt ${ALL}
 
@@ -16,6 +16,9 @@ times: ${ALL} input.txt
 	done
 	@echo aoc.pl
 	@AoC_TEST=1 time perl aoc.pl input.txt
+	@echo
+	@echo aoc.jq
+	time ./aoc.jq < input.txt
 	@echo
 
 input.txt:
