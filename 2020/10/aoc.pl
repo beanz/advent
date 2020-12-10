@@ -51,11 +51,12 @@ sub calc2 {
 
 testPart1() if (TEST);
 
-print "Part 1: ", calc($i), "\n";
+my $part1 = calc($i);
+print "Part 1: ", $part1, "\n";
 
 testPart2() if (TEST);
 
-print "Part 2: ", calc2($i2), "\n";
+print "Part 2: ", calc2($i2, $part1), "\n";
 
 sub testPart1 {
   my @test_cases =
