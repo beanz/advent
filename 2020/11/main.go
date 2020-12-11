@@ -11,16 +11,17 @@ import (
 type Seat byte
 
 const (
-	Empty Seat = iota
+	None Seat = iota
 	Occupied
-	None
+	Empty
 	NoneOutside
 )
 
-type Seats map[Point]Seat
+type Seats []Seat
 
 type Map struct {
-	m     Seats
+	cur   Seats
+	new   Seats
 	w, h  int
 	debug bool
 }
@@ -28,20 +29,24 @@ type Map struct {
 func NewMap(lines []string) *Map {
 	h := len(lines)
 	w := len(lines[0])
-	mm := make(Seats, h*w)
+	m := make(Seats, h*w)
+	nm := make(Seats, h*w)
 	for y, line := range lines {
 		for x, s := range line {
 			if s == 'L' {
-				mm[Point{x, y}] = Empty
+				m[y*w+x] = Empty
+			} else if s == '#' {
+				m[y*w+x] = Occupied
+			} else {
+				m[y*w+x] = None
 			}
 		}
 	}
-	m := &Map{mm, w, h, false}
-	return m
+	return &Map{m, nm, w, h, DEBUG()}
 }
 
 func (m *Map) String() string {
-	s := fmt.Sprintf("%d x %d\n", m.w, m.h)
+	s := ""
 	for y := 0; y < m.h; y++ {
 		for x := 0; x < m.w; x++ {
 			if m.Seat(x, y) == Empty {
@@ -57,99 +62,82 @@ func (m *Map) String() string {
 	return s
 }
 
+func (m *Map) SetSeat(x, y int, state Seat) {
+	m.new[y*m.w+x] = state
+}
+
+func (m *Map) Swap() {
+	m.cur, m.new = m.new, m.cur
+}
+
 func (m *Map) Seat(x, y int) Seat {
-	if x < 0 || x > m.w-1 || y < 0 || y > m.h-1 {
-		return NoneOutside
+	if x >= 0 && x < m.w && y >= 0 && y < m.h {
+		return m.cur[y*m.w+x]
 	}
-	if v, ok := m.m[Point{x, y}]; ok {
-		return v
-	}
-	return None
+	return NoneOutside
 }
 
-func Next1(m *Map, x, y int) Seat {
-	n := m.Seat(x, y)
-	if n == None {
-		return None
-	}
-	neighbourOffsets := Point{x, y}.Neighbours8()
-	c := make(map[Seat]int, 4)
-	for _, n := range neighbourOffsets {
-		s := m.Seat(n.X, n.Y)
-		c[s]++
-	}
-	if n == Empty && c[Occupied] == 0 {
-		n = Occupied
-	} else if n == Occupied && c[Occupied] >= 4 {
-		n = Empty
-	}
-	return n
-}
-
-func Next2(m *Map, x, y int) Seat {
-	n := m.Seat(x, y)
-	if n == None {
-		return None
-	}
-	neighbourOffsets := Point{0, 0}.Neighbours8()
-	c := make(map[Seat]int, 4)
-	for _, o := range neighbourOffsets {
+func (m *Map) Next(cur Seat, x, y int, group int, sight bool) Seat {
+	oc := 0
+	for _, o := range EightNeighbourOffsets {
 		ox, oy := x, y
 		s := None
 		for {
 			ox, oy = ox+o.X, oy+o.Y
 			s = m.Seat(ox, oy)
-			if s == NoneOutside {
-				s = None
-				break
-			} else if s != None {
+			if s == NoneOutside || s != None || !sight {
 				break
 			}
 		}
-		c[s]++
+		if s == Occupied {
+			oc++
+		}
 	}
-	if n == Empty && c[Occupied] == 0 {
-		n = Occupied
-	} else if n == Occupied && c[Occupied] >= 5 {
-		n = Empty
+	if cur == Empty && oc == 0 {
+		return Occupied
+	} else if cur == Occupied && oc >= group {
+		return Empty
 	}
-	return n
+	return cur
 }
 
-func (m *Map) Run(fn func(*Map, int, int) Seat) int {
-	seen := make(map[int]bool)
+func (m *Map) Run(group int, sight bool) int {
 	for {
-		if m.debug {
-			fmt.Printf("%s", m)
-		}
-		nm := make(Seats, len(m.m))
+		ch := 0
 		oc := 0
 		for x := 0; x < m.w; x++ {
 			for y := 0; y < m.h; y++ {
-				newSeat := fn(m, x, y)
-				if newSeat != None {
-					nm[Point{x, y}] = newSeat
+				cur := m.Seat(x, y)
+				if cur == None {
+					continue
 				}
+				newSeat := m.Next(cur, x, y, group, sight)
+				if cur != newSeat {
+					ch++
+				}
+				m.SetSeat(x, y, newSeat)
 				if newSeat == Occupied {
 					oc++
 				}
 			}
 		}
-		if _, ok := seen[oc]; ok {
+		if m.debug {
+			fmt.Printf("%s", m)
+			fmt.Printf("changes=%d oc=%d\n", ch, oc)
+		}
+		if ch == 0 {
 			return oc
 		}
-		seen[oc] = true
-		m.m = nm
+		m.Swap()
 	}
-	return 1
 }
 
 func (m *Map) Part1() int {
-	return m.Run(Next1)
+	return m.Run(4, false)
 }
 
 func (m *Map) Part2() int {
-	return m.Run(Next2)
+	return m.Run(5, true)
 }
 
 func main() {
