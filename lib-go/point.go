@@ -10,6 +10,18 @@ type Point struct {
 	X, Y int
 }
 
+var EightNeighbourOffsets = []Point{
+	Point{X: -1, Y: -1}, Point{X: 0, Y: -1}, Point{X: 1, Y: -1},
+	Point{X: -1, Y: 0} /*                */, Point{X: 1, Y: 0},
+	Point{X: -1, Y: 1}, Point{X: 0, Y: 1}, Point{X: 1, Y: 1},
+}
+
+var FourNeighbourOffsets = []Point{
+	Point{X: 0, Y: -1},
+	Point{X: -1, Y: 0}, Point{X: 1, Y: 0},
+	Point{X: 0, Y: 1},
+}
+
 func (p Point) String() string {
 	return fmt.Sprintf("%d,%d", p.X, p.Y)
 }
