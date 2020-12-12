@@ -18,6 +18,15 @@ func ReadLines(file string) []string {
 	return lines[:len(lines)-1]
 }
 
+// ReadIntsFromFile slurps input from a file into a list of integers
+func ReadIntsFromFile(file string) []int {
+	b, err := ioutil.ReadFile(file)
+	if err != nil {
+		log.Fatalf("File read %s failed: %s\n", file, err)
+	}
+	return SimpleReadInts(string(b))
+}
+
 func ReadChunks(file string) []string {
 	b, err := ioutil.ReadFile(file)
 	if err != nil {
