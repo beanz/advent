@@ -1,6 +1,31 @@
 package aoc
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
+
+func VISUAL() bool {
+	return os.Getenv("AoC_VISUAL") != ""
+}
+
+func Screen() (int, int) {
+	if !VISUAL() {
+		return 80, 24
+	}
+	v := strings.Split(os.Getenv("AoC_VISUAL"), "x")
+	col, err := strconv.Atoi(v[0])
+	if err != nil {
+		panic("Invalid screen defined in AoC_VISUAL bad column number")
+	}
+	row, err := strconv.Atoi(v[1])
+	if err != nil {
+		panic("Invalid screen defined in AoC_VISUAL bad row number")
+	}
+	return col, row
+}
 
 func Red(s string) string {
 	return fmt.Sprintf("\033[31m%s\033[37m", s)

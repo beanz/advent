@@ -15,6 +15,21 @@ func (d Direction) String() string {
 	return fmt.Sprintf("[%d,%d]", d.Dx, d.Dy)
 }
 
+func (d Direction) Char() byte {
+	switch {
+	case d.Dx == 0 && d.Dy == -1:
+		return '^'
+	case d.Dx == 1 && d.Dy == 0:
+		return '>'
+	case d.Dx == 0 && d.Dy == 1:
+		return 'v'
+	case d.Dx == -1 && d.Dy == 0:
+		return '<'
+	default:
+		return '*'
+	}
+}
+
 func (d Direction) CCW() Direction {
 	switch {
 	case d.Dx == 0 && d.Dy == -1:
