@@ -20,26 +20,25 @@ func (p *Point) In(d Direction) Point {
 
 // Neighbours returns the four neighbours of a point
 func (p Point) Neighbours() []Point {
-	n := []Point{}
-	n = append(n, Point{p.X, p.Y - 1})
-	n = append(n, Point{p.X - 1, p.Y})
-	n = append(n, Point{p.X + 1, p.Y})
-	n = append(n, Point{p.X, p.Y + 1})
-	return n
+	return []Point{
+		Point{p.X, p.Y - 1},
+		Point{p.X - 1, p.Y},
+		Point{p.X + 1, p.Y},
+		Point{p.X, p.Y + 1}}
 }
 
 // Neighbours8 returns the eight neighbours of a point
 func (p Point) Neighbours8() []Point {
-	n := []Point{}
-	n = append(n, Point{p.X - 1, p.Y - 1})
-	n = append(n, Point{p.X + 0, p.Y - 1})
-	n = append(n, Point{p.X + 1, p.Y - 1})
-	n = append(n, Point{p.X - 1, p.Y + 0})
-	n = append(n, Point{p.X + 1, p.Y + 0})
-	n = append(n, Point{p.X - 1, p.Y + 1})
-	n = append(n, Point{p.X + 0, p.Y + 1})
-	n = append(n, Point{p.X + 1, p.Y + 1})
-	return n
+	return []Point{
+		Point{p.X - 1, p.Y - 1},
+		Point{p.X + 0, p.Y - 1},
+		Point{p.X + 1, p.Y - 1},
+		Point{p.X - 1, p.Y + 0},
+		Point{p.X + 1, p.Y + 0},
+		Point{p.X - 1, p.Y + 1},
+		Point{p.X + 0, p.Y + 1},
+		Point{p.X + 1, p.Y + 1},
+	}
 }
 
 // ManhattanDistance returns the Manhattan distance between a 2d point
