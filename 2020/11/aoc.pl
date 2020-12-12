@@ -13,144 +13,101 @@ my $i2 = read_map($file);
 #my $i = read_chunks($file);
 #my $i2 = read_chunks($file);
 
+use constant
+  {
+   NONE => 0,
+   EMPTY => 1,
+   OCCUPIED => 2,
+  };
+
+my @EIGHT_NEIGHBOUR_OFFSETS = @{eightNeighbourOffsets()};
+
+sub readfn {
+  $_[0] eq '.' ? NONE : ($_[0] eq 'L' ? EMPTY : OCCUPIED);
+}
+
+sub strfn {
+  $_[0] == NONE ? '.' : ($_[0] == EMPTY ? 'L' : '#');
+}
+
 sub read_map {
   my ($file) = @_;
-  my $l = read_lines($file);
-  my $h = scalar @$l;
-  my $w = length $l->[0];
-  my %m;
-  for my $y (0..$h-1) {
-    for my $x (0..$w-1) {
-      $m{hk($x,$y)} = substr $l->[$y], $x, 1;
-    }
+  my $m = read_dense_map($file, \&readfn, \&strfn);
+  my $n = $m->clone();
+  my %idx;
+  for my $i (0..$m->last_index) {
+    my $xy = $m->xy($i);
+    $idx{$i} = $xy if ($m->get(@$xy) != NONE);
   }
-  return { m => \%m, h => $h, w => $w };
+  return [$m, $n, \%idx];
 }
 
-sub pp {
-  my ($m) = @_;
-  my $s = "";
-  for my $y (0..$m->{h}-1) {
-    for my $x (0..$m->{w}-1) {
-      $s .= $m->{m}->{hk($x,$y)};
-    }
-    $s .= "\n";
-  }
-  return $s;
-}
-
-sub count {
-  my ($m) = @_;
+sub occupiedCount {
+  my ($m, $x, $y, $sight, $maxx, $maxy) = @_;
+  my $width = $maxx+1;
   my $c = 0;
-  for my $y (0..$m->{h}-1) {
-    for my $x (0..$m->{w}-1) {
-      $c++ if ($m->{m}->{hk($x,$y)} == '#');
-    }
-  }
-  return $c;
-}
-
-sub seat {
-  my ($m, $x, $y) = @_;
-  if ($x < 0 || $x > $m->{w}-1 || $y < 0 || $y > $m->{h}-1) {
-    return '.';
-  }
-  return $m->{m}->{hk($x,$y)};
-}
-
-sub calc {
-  my ($m) = @_;
-  my %s;
-  print pp($m) if (DEBUG > 1);
-  while (1) {
-    my %n;
-    my $c;
-    for my $y (0..$m->{h}-1) {
-      for my $x (0..$m->{w}-1) {
-        my $s = seat($m, $x, $y);
-        my $n = $s;
-        if ($s ne '.') {
-          my %c = ('#' => 0, '.' => 0, 'L' => 0);
-          for my $o (@{eightNeighbourOffsets([$x, $y])}) {
-            $c{seat($m, $x+$o->[X], $y+$o->[Y])}++;
-          }
-          if ($s eq 'L' && $c{'#'} == 0) {
-            $n = '#';
-          } elsif ($s eq '#' && $c{'#'} >= 4) {
-            $n = 'L';
-          }
-          $c++ if ($n eq '#');
-        }
-        $n{hk($x,$y)} = $n;
-      }
-    }
-    $m->{m} = \%n;
-    if (DEBUG) {
-      print pp($m) if (DEBUG > 1);
-      print $c, "\n";
-    }
-    if ($s{$c}) {
-      return $c;
-    }
-    $s{$c}++;
-  }
-  return 0;
-}
-
-sub neighbourCounts {
-  my ($m, $x, $y) = @_;
-  my %c = ('#' => 0, '.' => 0, 'L' => 0);
-  for my $o (@{eightNeighbourOffsets([$x, $y])}) {
+  for my $o (@EIGHT_NEIGHBOUR_OFFSETS) {
     my $ox = $x+$o->[X];
     my $oy = $y+$o->[Y];
-    my $s = '.';
-    while ($ox >= 0 && $ox <= $m->{w}-1 && $oy >= 0 && $oy <= $m->{h}-1) {
-      $s = seat($m, $ox, $oy);
-      if ($s ne '.') {
+    my $s = NONE;
+    while ($ox >= 0 && $ox <= $maxx && $oy >= 0 && $oy <= $maxy) {
+      $s = $m->get_idx($ox + $oy*$width);
+      if ($s != NONE or !$sight) {
         last;
       }
       $ox += $o->[X];
       $oy += $o->[Y];
     }
-    $c{$s}++;
+    $c++ if ($s == OCCUPIED);
   }
-  return \%c;
+  return $c;
+}
+
+sub run {
+  my ($cur, $new, $idx, $group, $sight) = @_;
+  print $cur->pretty(),"\n" if (DEBUG > 1);
+  my @i = keys %{$idx};
+  my $maxx = $cur->width-1;
+  my $maxy = $cur->height-1;
+  while (1) {
+    my %n;
+    my $c = 0;
+    my $ch = 0;
+    for my $i (@i) {
+      my ($x, $y) = @{$idx->{$i}};
+      my $s = $cur->get_idx($i);
+      my $n = $s;
+      my $oc = occupiedCount($cur, $x, $y, $sight, $maxx, $maxy);
+      if ($s == EMPTY && $oc == 0) {
+        $ch++;
+        $n = OCCUPIED;
+      } elsif ($s == OCCUPIED && $oc >= $group) {
+        $ch++;
+        $n = EMPTY;
+      }
+      $c++ if ($n == OCCUPIED);
+      $new->set_idx($i, $n);
+    }
+    $cur->swap($new);
+    if (DEBUG) {
+      print $cur->pretty() if (DEBUG > 1);
+      print "changes=$ch oc=$c\n";
+    }
+    if ($ch == 0) {
+      return $c;
+    }
+  }
+  return 1;
+}
+
+sub calc {
+  my ($m) = @_;
+  return run(@$m, 4, 0);
 }
 
 sub calc2 {
   my ($m) = @_;
-  my %s;
-  print pp($m) if (DEBUG > 1);
-  while (1) {
-    my %n;
-    my $c;
-    for my $y (0..$m->{h}-1) {
-      for my $x (0..$m->{w}-1) {
-        my $s = seat($m, $x, $y);
-        my $n = $s;
-        if ($s ne '.') {
-          my $cc = neighbourCounts($m, $x, $y);
-          if ($s eq 'L' && $cc->{'#'} == 0) {
-            $n = '#';
-          } elsif ($s eq '#' && $cc->{'#'} >= 5) {
-            $n = 'L';
-          }
-          $c++ if ($n eq '#');
-        }
-        $n{hk($x,$y)} = $n;
-      }
-    }
-    $m->{m} = \%n;
-    if (DEBUG) {
-      print pp($m) if (DEBUG > 1);
-      print $c, "\n";
-    }
-    if ($s{$c}) {
-      return $c;
-    }
-    $s{$c}++;
-  }
-  return 1;
+  return run(@$m, 5, 1);
 }
 
 testPart1() if (TEST);

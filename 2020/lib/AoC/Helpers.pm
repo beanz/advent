@@ -71,6 +71,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
                                     read_listy_records
                                     read_chunks
                                     read_chunky_records
+                                    read_dense_map
 ) ] );
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our $VERSION = '0.01';
@@ -370,6 +371,115 @@ sub read_chunky_records {
   $kvs //= qr/:/;
   my $c = read_chunks($file, $rs);
   return [ map { { map { split $kvs, $_ } split $fs, $_ } } @$c ];
+}
+
+{
+  package DenseMap;
+  use constant
+    {
+     HEIGHT => 0,
+     WIDTH => 1,
+     MAP => 2,
+     STRFN => 3,
+    };
+
+  sub _new {
+    my ($pkg, $ref) = @_;
+    bless $ref, $pkg;
+  }
+
+  sub clone {
+    my ($self) = @_;
+    (ref $self)->_new([
+                       $self->[HEIGHT],
+                       $self->[WIDTH],
+                       [@{$self->[MAP]}],
+                       $self->[STRFN]]);
+  }
+
+  sub from_file {
+    my ($pkg, $file, $readfn, $strfn) = @_;
+    $readfn //= sub { $_[0] };
+    $strfn //= sub { $_[0] };
+    my $l = AoC::Helpers::read_lines($file);
+    $pkg->_new([(scalar @$l),
+                (length $l->[0]),
+                [map { $readfn->($_) } split //, join '', @$l],
+                $strfn]);
+  }
+
+  sub swap {
+    my ($self, $partner) = @_;
+    ($self->[MAP], $partner->[MAP]) = ($partner->[MAP], $self->[MAP]);
+    $self;
+  }
+
+  sub len {
+    $_[0]->[WIDTH] * $_[0]->[HEIGHT]
+  }
+
+  sub last_index {
+    $_[0]->len - 1
+  }
+
+  sub height {
+    $_[0]->[HEIGHT];
+  }
+
+  sub width {
+    $_[0]->[WIDTH];
+  }
+
+  sub index {
+    my ($self, $x, $y) = @_;
+    if ($x < 0 || $x >= $self->[WIDTH] || $y < 0 || $y >= $self->[HEIGHT]) {
+      return undef;
+    }
+    return $self->[WIDTH]*$y + $x;
+  }
+
+  sub xy {
+    my ($self, $i) = @_;
+    [$i % $self->[WIDTH], int($i/$self->[WIDTH])];
+  }
+
+  sub get {
+    my ($self, $x, $y) = @_;
+    my $i = $self->index($x, $y) // return;
+    return $self->[MAP]->[$i];
+  }
+
+  sub get_idx {
+    return $_[0]->[MAP]->[$_[1]];
+  }
+
+  sub set_idx {
+    return $_[0]->[MAP]->[$_[1]] = $_[2];
+  }
+
+  sub set {
+    my ($self, $x, $y, $v) = @_;
+    my $i = $self->index($x, $y) // return;
+    return $self->[MAP]->[$i] = $v;
+  }
+
+  sub pretty {
+    my ($self) = @_;
+    my $s = "";
+    for my $y (0..$self->[HEIGHT]-1) {
+      for my $x (0..$self->[WIDTH]-1) {
+        $s .= $self->[STRFN]->($self->get($x,$y));
+      }
+      $s .= "\n";
+    }
+    return $s;
+  }
+
+  1;
+}
+
+sub read_dense_map {
+  return DenseMap->from_file(@_);
 }
 
 1;
