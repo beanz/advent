@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 
 	. "github.com/beanz/advent-of-code-go"
 )
@@ -19,6 +20,7 @@ type Nav struct {
 	ship  Point
 	dir   Direction
 	wp    Point
+	scale uint
 	debug bool
 }
 
@@ -36,7 +38,9 @@ func NewNav(lines []string) *Nav {
 		ship:  Point{X: 0, Y: 0},
 		dir:   Direction{Dx: 1, Dy: 0},
 		wp:    Point{X: 10, Y: -1},
-		debug: false}
+		scale: 1,
+		debug: DEBUG(),
+	}
 }
 
 func (n *Nav) String() string {
@@ -55,10 +59,56 @@ func (n *Nav) String() string {
 	return s
 }
 
+func (n *Nav) Draw(part2 bool) {
+	if !VISUAL() {
+		return
+	}
+	col, row := Screen()
+	s := ClearScreen()
+	sx := n.ship.X / int(n.scale)
+	sy := n.ship.Y / int(n.scale)
+	if Abs(sx) > col/2 || Abs(sy) > row/2 {
+		n.scale++
+		n.Draw(part2)
+		return
+	}
+	wx := (n.ship.X + n.wp.X) / int(n.scale)
+	wy := (n.ship.Y + n.wp.Y) / int(n.scale)
+	if Abs(wx) > col/2 || Abs(wy) > row/2 {
+		n.scale++
+		n.Draw(part2)
+		return
+	}
+	s += fmt.Sprintf("%s%c", CursorTo(col/2, row/2), 'O')
+	if part2 {
+		s += fmt.Sprintf("%s%c", CursorTo(col/2+wx, row/2+wy), 'W')
+	}
+	s += fmt.Sprintf("%s%c", CursorTo(col/2+sx, row/2+sy), n.dir.Char())
+	fmt.Print(s + "\n")
+	time.Sleep(20 * time.Millisecond)
+}
+
+func (n *Nav) Clear() {
+	if !VISUAL() {
+		return
+	}
+	fmt.Print(ClearScreen())
+}
+
+func (n *Nav) End() {
+	if !VISUAL() {
+		return
+	}
+	_, row := Screen()
+	fmt.Print(CursorTo(0, row-3))
+}
+
 func (n *Nav) Part1() int {
+	n.Clear()
 	if n.debug {
 		fmt.Printf("%s\n", n)
 	}
+	n.Draw(false)
 	for _, in := range n.inst {
 		switch in.act {
 		case 'N', 'S', 'E', 'W':
@@ -82,14 +132,15 @@ func (n *Nav) Part1() int {
 		if n.debug {
 			fmt.Printf("%s %c %d\n", n, in.act, in.val)
 		}
+		n.Draw(false)
 	}
+	n.End()
 	return n.ship.ManhattanDistance(Point{X: 0, Y: 0})
 }
 
 func (n *Nav) Part2() int {
-	if n.debug {
-		fmt.Printf("%s\n", n)
-	}
+	n.Clear()
+	n.Draw(true)
 	for _, in := range n.inst {
 		switch in.act {
 		case 'N', 'S', 'E', 'W':
@@ -114,7 +165,9 @@ func (n *Nav) Part2() int {
 		if n.debug {
 			fmt.Printf("%s %c %d\n", n, in.act, in.val)
 		}
+		n.Draw(true)
 	}
+	n.End()
 	return n.ship.ManhattanDistance(Point{X: 0, Y: 0})
 }
 
@@ -123,6 +176,8 @@ func main() {
 		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
 	}
 	lines := ReadLines(os.Args[1])
-	fmt.Printf("Part 1: %d\n", NewNav(lines).Part1())
-	fmt.Printf("Part 2: %d\n", NewNav(lines).Part2())
+	p1 := NewNav(lines).Part1()
+	p2 := NewNav(lines).Part2()
+	fmt.Printf("Part 1: %d\n", p1)
+	fmt.Printf("Part 2: %d\n", p2)
 }

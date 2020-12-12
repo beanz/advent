@@ -8,6 +8,7 @@ use constant
   {
    DEBUG => $ENV{AoC_DEBUG}//0,
    TEST => $ENV{AoC_TEST}//0,
+   VISUAL => $ENV{AoC_VISUAL}//0,
    X => 0,
    Y => 1,
    MIN => 0,
@@ -31,7 +32,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
                                     X Y
                                     MIN MAX
                                     MINX MINY MAXX MAXY
-                                    DEBUG TEST
+                                    DEBUG VISUAL TEST
                                     NUM_PI NUM_E SQRT_2
 
                                     log10
@@ -47,6 +48,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
 
                                     bold bold_on bold_off
                                     red cyan yellow green blue magenta
+                                    clear goto
                                     pretty_grid
                                     safe_exists
                                     safe_value
@@ -262,6 +264,14 @@ sub bold_on {
 
 sub bold_off {
   "\033[27m"
+}
+
+sub clear {
+  "\033[3J\033[H\033[2J"
+}
+
+sub goto {
+  sprintf "\033".'[%d;%dH', $_[0]+1, $_[1]+1;
 }
 
 sub pretty_grid {
