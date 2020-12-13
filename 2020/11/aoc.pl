@@ -5,7 +5,6 @@ use v5.10;
 use lib "../lib";
 use AoC::Helpers qw/:all/;
 #use Carp::Always qw/carp verbose/;
-my @EIGHT_NEIGHBOUR_OFFSETS = @{eightNeighbourOffsets()};
 
 my $file = shift // "input.txt";
 my $i = read_map($file);
@@ -21,6 +20,8 @@ use constant
    OCCUPIED => 2,
   };
 
+my @EIGHT_NEIGHBOUR_OFFSETS = @{eightNeighbourOffsets()};
+
 sub readfn {
   $_[0] eq '.' ? NONE : ($_[0] eq 'L' ? EMPTY : OCCUPIED);
 }
@@ -29,14 +30,27 @@ sub strfn {
   $_[0] == NONE ? '.' : ($_[0] == EMPTY ? 'L' : '#');
 }
 
-sub neighbours {
-  my ($m, $x, $y, $sight, $width, $height) = @_;
-  my @n;
+sub read_map {
+  my ($file) = @_;
+  my $m = read_dense_map($file, \&readfn, \&strfn);
+  my $n = $m->clone();
+  my %idx;
+  for my $i (0..$m->last_index) {
+    my $xy = $m->xy($i);
+    $idx{$i} = $xy if ($m->get(@$xy) != NONE);
+  }
+  return [$m, $n, \%idx];
+}
+
+sub occupiedCount {
+  my ($m, $x, $y, $sight, $maxx, $maxy) = @_;
+  my $width = $maxx+1;
+  my $c = 0;
   for my $o (@EIGHT_NEIGHBOUR_OFFSETS) {
     my $ox = $x+$o->[X];
     my $oy = $y+$o->[Y];
     my $s = NONE;
-    while ($ox >= 0 && $ox < $width && $oy >= 0 && $oy < $height) {
+    while ($ox >= 0 && $ox <= $maxx && $oy >= 0 && $oy <= $maxy) {
       $s = $m->get_idx($ox + $oy*$width);
       if ($s != NONE or !$sight) {
         last;
@@ -44,35 +58,7 @@ sub neighbours {
       $ox += $o->[X];
       $oy += $o->[Y];
     }
-    if ($s != NONE) {
-      push @n, $ox + $width*$oy;
-    }
-  }
-  return \@n;
-}
-
-sub read_map {
-  my ($file) = @_;
-  my $m = read_dense_map($file, \&readfn, \&strfn);
-  my $n = $m->clone();
-  my $width = $m->width;
-  my $height = $m->height;
-  my %cache;
-  for my $i (0..$m->last_index) {
-    my $xy = $m->xy($i);
-    next if ($m->get(@$xy) == NONE);
-    my $n1 = neighbours($m, @$xy, 0, $width, $height);
-    my $n2 = neighbours($m, @$xy, 1, $width, $height);
-    $cache{$i} = [$n1, $n2];
-  }
-  return [$m, $n, \%cache];
-}
-
-sub occupiedCount {
-  my ($m, $cache, $sight) = @_;
-  my $c = 0;
-  for my $i (@{$cache->[$sight ? 1 : 0]}) {
-    $c++ if ($m->get_idx($i) == OCCUPIED);
+    $c++ if ($s == OCCUPIED);
   }
   return $c;
 }
@@ -81,14 +67,17 @@ sub run {
   my ($cur, $new, $idx, $group, $sight) = @_;
   print $cur->pretty(),"\n" if (DEBUG > 1);
   my @i = keys %{$idx};
+  my $maxx = $cur->width-1;
+  my $maxy = $cur->height-1;
   while (1) {
     my %n;
     my $c = 0;
     my $ch = 0;
     for my $i (@i) {
+      my ($x, $y) = @{$idx->{$i}};
       my $s = $cur->get_idx($i);
       my $n = $s;
-      my $oc = occupiedCount($cur, $idx->{$i}, $sight);
+      my $oc = occupiedCount($cur, $x, $y, $sight, $maxx, $maxy);
       if ($s == EMPTY && $oc == 0) {
         $ch++;
         $n = OCCUPIED;
