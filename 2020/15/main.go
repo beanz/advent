@@ -9,23 +9,29 @@ import (
 )
 
 func Calc(nums []int, maxTurn int) int {
-	lastSeen := make(map[int]int)
+	lastSeen := make([]int, maxTurn)
 	n := 0
 	p := 0
-	for t := 1; t <= maxTurn; t++ {
-		if t <= len(nums) {
-			n = nums[t-1]
+	for t := 1; t <= len(nums); t++ {
+		n = nums[t-1]
+		//if DEBUG() {
+		//	fmt.Printf("%d: %d\n", t, n)
+		//}
+		if t > 1 {
+			lastSeen[p] = t
+		}
+		p = n
+	}
+	for t := len(nums) + 1; t <= maxTurn; t++ {
+		if lastSeen[p] > 0 {
+			n = t - lastSeen[p]
 		} else {
-			if lt, ok := lastSeen[p]; ok {
-				n = t - 1 - lt
-			} else {
-				n = 0
-			}
+			n = 0
 		}
-		if DEBUG() {
-			fmt.Printf("%d: %d\n", t, n)
-		}
-		lastSeen[p] = t - 1
+		//if DEBUG() {
+		//	fmt.Printf("%d: %d\n", t, n)
+		//}
+		lastSeen[p] = t
 		p = n
 	}
 	if DEBUG() {

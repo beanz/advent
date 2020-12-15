@@ -25,7 +25,7 @@ func TestPart1(t *testing.T) {
 	}
 	for _, tc := range tests {
 		r := Part1(ReadIntsFromFile(tc.file))
-		assert.Equal(t, tc.ans, r)
+		assert.Equal(t, tc.ans, r, tc.file)
 	}
 }
 
@@ -42,6 +42,6 @@ func TestPart2(t *testing.T) {
 	}
 	for _, tc := range tests {
 		r := Part2(ReadIntsFromFile(tc.file))
-		assert.Equal(t, tc.ans, r)
+		assert.Equal(t, tc.ans, r, tc.file)
 	}
 }

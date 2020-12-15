@@ -17,26 +17,26 @@ sub calc {
   my ($lines, $turn) = @_;
   $turn //= 2020;
   my @n = split /,/, $lines->[0];
-  my %lastSeen;
+  my @lastSeen;
   my $n;
   my $p;
-  for my $t (1..$turn) {
-    if (@n) {
-      $n = shift @n;
-    } else {
-      if (exists $lastSeen{$p}) {
-        $n = $t - 1 - $lastSeen{$p};
-      } else {
-        $n = 0;
-      }
-    }
-    print "$t: $n               \r" unless (($t % 10000) || !DEBUG);
+  for my $t (1..@n) {
+    $n = $n[$t-1];
     if ($t > 1) {
-      $lastSeen{$p} = $t - 1;
+      $lastSeen[$p] = $t;
     }
     $p = $n;
   }
-  print "\n" if ($turn > 10000 && DEBUG);
+  for my $t ((@n+1)..$turn) {
+    if (defined $lastSeen[$p]) {
+      $n = $t - $lastSeen[$p];
+    } else {
+      $n = 0;
+    }
+    $lastSeen[$p] = $t;
+    $p = $n;
+  }
+  # print scalar(grep defined $_, @lastSeen), "\n";
   return $n;
 }
 
