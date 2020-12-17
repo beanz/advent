@@ -11,6 +11,8 @@ use constant
    VISUAL => $ENV{AoC_VISUAL}//0,
    X => 0,
    Y => 1,
+   Z => 2,
+   Q => 3,
    MIN => 0,
    MAX => 1,
    MINX => 0,
@@ -29,7 +31,7 @@ use List::MoreUtils qw/zip pairwise/;
 use POSIX qw/ceil floor round/;
 
 our %EXPORT_TAGS = ( 'all' => [ qw(
-                                    X Y
+                                    X Y Z Q
                                     MIN MAX
                                     MINX MINY MAXX MAXY
                                     DEBUG VISUAL TEST
@@ -42,6 +44,11 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
                                     min max minstr maxstr sum product pairs
                                     zip pairwise
                                     minmax_xy
+                                    minmax
+                                    allin
+                                    neighbourbb
+                                    neighbours
+                                    allneighbours
 
                                     assert assertEq
                                     assertGT assertGreaterThan
@@ -223,6 +230,72 @@ sub minmax_xy {
   $bb->[MAXY] = $y if (!defined $bb->[MAXY] || $bb->[MAXY] < $y);
 }
 
+sub minmax {
+  my ($bb, @r) = @_;
+  for my $i (0..(@r-1)) {
+    my $v = shift @r;
+    $bb->[$i]->[MIN] = $v
+      if (!defined $bb->[$i]->[MIN] || $bb->[$i]->[MIN] > $v);
+    $bb->[$i]->[MAX] = $v
+      if (!defined $bb->[$i]->[MAX] || $bb->[$i]->[MAX] < $v);
+  }
+}
+
+sub neighbourbb {
+  my($dim) = @_;
+  my @bb;
+  for (0..$dim-1) {
+    push @bb, [-1,1];
+  }
+  return \@bb;
+}
+
+sub neighbours {
+  my($dim) = @_;
+  my $bb = neighbourbb($dim);
+  my @res;
+  for my $rec (allin($bb)) {
+    my $zeroes = 0;
+    for (0..$dim-1) {
+      if ($rec->[$_] == 0) {
+        $zeroes++;
+      }
+    }
+    push @res, $rec unless ($zeroes == $dim);
+  }
+  return @res;
+}
+
+sub allin {
+  my ($bb, $i) = @_;
+  $i //= 0;
+  if ($i == @$bb) {
+    return [];
+  }
+  my @res;
+  my @a = allin($bb, $i+1);
+  for my $j ($bb->[$i]->[MIN] .. $bb->[$i]->[MAX]) {
+    push @res, [$j, @$_] foreach (@a);
+  }
+  return @res;
+}
+
+
+sub allneighbours {
+  my ($neighbourset, $all) = @_;
+  my $maxdim = @{$neighbourset->[0]}-1;
+  my %seen;
+  my @res;
+  for my $nb (@$neighbourset) {
+    for my $c (@$all) {
+      my @nc = map { $c->[$_] + $nb->[$_] } (0..$maxdim);
+      push @res, \@nc unless (exists $seen{"@nc"});
+      $seen{"@nc"}++;
+    }
+  }
+  return @res;
+}
+
 sub dd {
   print STDERR Data::Dumper->Dump(@_);
 }
@@ -397,6 +470,15 @@ sub read_chunky_records {
                        $self->[STRFN]]);
   }
 
+  sub empty_clone {
+    my ($self) = @_;
+    (ref $self)->_new([
+                       $self->[HEIGHT],
+                       $self->[WIDTH],
+                       [],
+                       $self->[STRFN]]);
+  }
+
   sub from_file {
     my ($pkg, $file, $readfn, $strfn) = @_;
     $readfn //= sub { $_[0] };
@@ -445,7 +527,7 @@ sub read_chunky_records {
 
   sub get {
     my ($self, $x, $y) = @_;
-    my $i = $self->index($x, $y) // return;
+    my $i = $self->index($x, $y) // 0;
     return $self->[MAP]->[$i];
   }
 
