@@ -1,20 +1,17 @@
-const std = @import("std");
-const warn = std.debug.warn;
-const ArrayList = std.ArrayList;
-
-const input = @embedFile("input.txt");
-const out = &std.io.getStdOut().outStream();
-const alloc = std.heap.page_allocator;
+usingnamespace @import("aoc-lib.zig");
 
 test "examples" {
-    const example = @embedFile("test1.txt");
-    var report = try readLinesInt(example);
-    defer report.deinit();
-    std.debug.assert(part1(report.items) == 514579);
-    std.debug.assert(part2(report.items) == 241861950);
+    var report = readInts(test1file, i64);
+    defer free(report);
+    assertEq(@as(i64, 514579), part1(report));
+    assertEq(@as(i64, 241861950), part2(report));
+    var report2 = readInts(inputfile, i64);
+    defer free(report2);
+    assertEq(@as(i64, 41979), part1(report2));
+    assertEq(@as(i64, 193416912), part2(report2));
 }
 
-fn part1(exp: []i64) i64 {
+fn part1(exp: []const i64) i64 {
     var i: usize = 0;
     while (i < exp.len) {
         var j: usize = i;
@@ -29,7 +26,7 @@ fn part1(exp: []i64) i64 {
     return 0;
 }
 
-fn part2(exp: []i64) i64 {
+fn part2(exp: []const i64) i64 {
     var i: usize = 0;
     while (i < exp.len) {
         var j: usize = i;
@@ -48,23 +45,9 @@ fn part2(exp: []i64) i64 {
     return 0;
 }
 
-fn readLinesInt(inp: anytype) anyerror!std.ArrayListAligned(i64, null) {
-    var report = ArrayList(i64).init(alloc);
-    var lit = std.mem.split(inp, "\n");
-    while (lit.next()) |line| {
-        if (line.len == 0) {
-            break;
-        }
-        const n = try std.fmt.parseInt(i64, line, 10);
-        try report.append(n);
-    }
-    return report;
-}
-
 pub fn main() anyerror!void {
-    var report = try readLinesInt(input);
-    defer report.deinit();
-    //try out.print("{}\n", .{report.items.len});
-    try out.print("Part1: {}\n", .{part1(report.items)});
-    try out.print("Part2: {}\n", .{part2(report.items)});
+    var report = readInts(input(), i64);
+    defer free(report);
+    try print("Part1: {}\n", .{part1(report)});
+    try print("Part2: {}\n", .{part2(report)});
 }

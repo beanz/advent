@@ -1,15 +1,4 @@
-const std = @import("std");
-const math = std.math;
-const aoc = @import("aoc-lib.zig");
-const assert = std.testing.expect;
-const assertEq = std.testing.expectEqual;
-const warn = std.debug.warn;
-const ArrayList = std.ArrayList;
-
-const input = @embedFile("input.txt");
-const test1file = @embedFile("test1.txt");
-const out = &std.io.getStdOut().outStream();
-const alloc = std.heap.page_allocator;
+usingnamespace @import("aoc-lib.zig");
 
 const HH = struct {
     pub const Op = enum(u8) { acc, jmp, nop };
@@ -20,13 +9,13 @@ const HH = struct {
     ip: isize = 0,
     acc: i64 = 0,
 
-    pub fn fromInput(inp: anytype, allocator: *std.mem.Allocator) !*HH {
-        var code = try allocator.alloc(Inst, inp.items.len);
+    pub fn fromInput(inp: anytype, allocator: *Allocator) !*HH {
+        var code = try allocator.alloc(Inst, inp.len);
         var hh = try alloc.create(HH);
-        for (inp.items) |line, ip| {
-            var it = std.mem.split(line, " ");
+        for (inp) |line, ip| {
+            var it = split(line, " ");
             const opstr = it.next().?;
-            const arg = try std.fmt.parseInt(i64, it.next().?, 10);
+            const arg = try parseInt(i64, it.next().?, 10);
             var op: Op = undefined;
             switch (opstr[0]) {
                 'a' => {
@@ -51,7 +40,7 @@ const HH = struct {
         return hh;
     }
 
-    pub fn clone(self: *HH, allocator: *std.mem.Allocator) !*HH {
+    pub fn clone(self: *HH, allocator: *Allocator) !*HH {
         var code = try allocator.alloc(Inst, self.code.len);
         var hh = try alloc.create(HH);
         for (self.code) |inst, ip| {
@@ -70,13 +59,13 @@ const HH = struct {
     }
 
     pub fn run(self: *HH) void {
-        var seen = std.AutoHashMap(isize, bool).init(alloc);
+        var seen = AutoHashMap(isize, bool).init(alloc);
         while (self.ip < self.code.len) {
             if (seen.contains(self.ip)) {
                 break;
             }
             seen.put(self.ip, true) catch unreachable;
-            const inst = self.code[math.absCast(self.ip)];
+            const inst = self.code[absCast(self.ip)];
             switch (inst.op) {
                 Op.acc => {
                     self.acc += inst.arg;
@@ -103,18 +92,14 @@ const HH = struct {
 };
 
 test "examples" {
-    const test1 = try aoc.readLines(test1file);
-    const inp = try aoc.readLines(input);
+    const test1 = readLines(test1file);
+    const inp = readLines(inputfile);
 
-    var r: i64 = 5;
-    assertEq(r, part1(test1));
-    r = 8;
-    assertEq(r, part2(test1));
+    assertEq(@as(i64, 5), part1(test1));
+    assertEq(@as(i64, 8), part2(test1));
 
-    r = 1614;
-    assertEq(r, part1(inp));
-    r = 1260;
-    assertEq(r, part2(inp));
+    assertEq(@as(i64, 1614), part1(inp));
+    assertEq(@as(i64, 1260), part2(inp));
 }
 
 fn part1(inp: anytype) i64 {
@@ -139,7 +124,7 @@ fn part2(inp: anytype) i64 {
 }
 
 pub fn main() anyerror!void {
-    var spec = try aoc.readLines(input);
-    try out.print("Part1: {}\n", .{part1(spec)});
-    try out.print("Part2: {}\n", .{part2(spec)});
+    var spec = readLines(input());
+    try print("Part1: {}\n", .{part1(spec)});
+    try print("Part2: {}\n", .{part2(spec)});
 }

@@ -1,47 +1,26 @@
-const std = @import("std");
-const warn = std.debug.warn;
-const Args = std.process.args;
-const math = std.math;
-const aoc = @import("aoc-lib.zig");
-const assert = std.testing.expect;
-const assertEq = std.testing.expectEqual;
-
-const input = @embedFile("input.txt");
-const test1file = @embedFile("test1.txt");
-const test2file = @embedFile("test2.txt");
-const stdout = &std.io.getStdOut().outStream();
-const alloc = std.heap.page_allocator;
+usingnamespace @import("aoc-lib.zig");
 
 test "examples" {
-    const test1 = try aoc.readLines(test1file);
-    const test2 = try aoc.readLines(test2file);
-    const inp = try aoc.readLines(input);
+    const test1 = readLines(test1file);
+    const test2 = readLines(test2file);
+    const inp = readLines(inputfile);
 
-    var r: usize = 71;
     var map = Map.fromInput(test1, alloc) catch unreachable;
-    assertEq(r, map.RunOnce(4, false));
-    r = 20;
-    assertEq(r, map.RunOnce(4, false));
+    assertEq(@as(usize, 71), map.RunOnce(4, false));
+    assertEq(@as(usize, 20), map.RunOnce(4, false));
 
     map = Map.fromInput(test2, alloc) catch unreachable;
-    r = 29;
-    assertEq(r, map.RunOnce(4, false));
+    assertEq(@as(usize, 29), map.RunOnce(4, false));
 
     map = Map.fromInput(inp, alloc) catch unreachable;
-    r = 7906;
-    assertEq(r, map.RunOnce(4, false));
-    r = 148;
-    assertEq(r, map.RunOnce(4, false));
+    assertEq(@as(usize, 7906), map.RunOnce(4, false));
+    assertEq(@as(usize, 148), map.RunOnce(4, false));
 
-    r = 37;
-    assertEq(r, part1(test1));
-    r = 26;
-    assertEq(r, part2(test1));
+    assertEq(@as(usize, 37), part1(test1));
+    assertEq(@as(usize, 26), part2(test1));
 
-    r = 2481;
-    assertEq(r, part1(inp));
-    r = 2227;
-    assertEq(r, part2(inp));
+    assertEq(@as(usize, 2481), part1(inp));
+    assertEq(@as(usize, 2227), part2(inp));
 }
 
 const Map = struct {
@@ -57,9 +36,9 @@ const Map = struct {
     new: []SeatState,
     changes: usize,
 
-    pub fn fromInput(inp: std.ArrayListAligned([]const u8, null), allocator: *std.mem.Allocator) !*Map {
-        var h = inp.items.len;
-        var w = inp.items[0].len;
+    pub fn fromInput(inp: [][]const u8, allocator: *Allocator) !*Map {
+        var h = inp.len;
+        var w = inp[0].len;
         var map = try allocator.alloc(SeatState, h * w);
         var new = try allocator.alloc(SeatState, h * w);
         var m = try alloc.create(Map);
@@ -67,7 +46,7 @@ const Map = struct {
         m.new = new;
         m.h = h;
         m.w = w;
-        for (inp.items) |line, y| {
+        for (inp) |line, y| {
             for (line) |s, x| {
                 if (s == 'L') {
                     map[y * w + x] = .empty;
@@ -83,7 +62,7 @@ const Map = struct {
     }
 
     pub fn SetSeat(self: *Map, x: isize, y: isize, state: SeatState) void {
-        self.new[math.absCast(y) * self.w + math.absCast(x)] = state;
+        self.new[absCast(y) * self.w + absCast(x)] = state;
     }
 
     pub fn Swap(self: *Map) void {
@@ -96,7 +75,7 @@ const Map = struct {
         if (x < 0 or x > self.w - 1 or y < 0 or y > self.h - 1) {
             return .none_outside;
         }
-        return self.map[math.absCast(y) * self.w + math.absCast(x)];
+        return self.map[absCast(y) * self.w + absCast(x)];
     }
 
     pub fn Next(self: *Map, x: isize, y: isize, group: usize, sight: bool) SeatState {
@@ -132,18 +111,18 @@ const Map = struct {
             while (x < self.w) {
                 switch (self.Seat(x, y)) {
                     .empty => {
-                        stdout.print("{}", .{"L"}) catch unreachable;
+                        print("{}", .{"L"}) catch unreachable;
                     },
                     .occupied => {
-                        stdout.print("{}", .{"#"}) catch unreachable;
+                        print("{}", .{"#"}) catch unreachable;
                     },
                     else => {
-                        stdout.print("{}", .{"."}) catch unreachable;
+                        print("{}", .{"."}) catch unreachable;
                     },
                 }
                 x += 1;
             }
-            stdout.print("\n", .{}) catch unreachable;
+            print("\n", .{}) catch unreachable;
             y += 1;
         }
     }
@@ -188,25 +167,18 @@ const Map = struct {
     }
 };
 
-fn part1(in: std.ArrayListAligned([]const u8, null)) usize {
+fn part1(in: [][]const u8) usize {
     var map = Map.fromInput(in, alloc) catch unreachable;
     return map.Run(4, false);
 }
 
-fn part2(in: std.ArrayListAligned([]const u8, null)) usize {
+fn part2(in: [][]const u8) usize {
     var map = Map.fromInput(in, alloc) catch unreachable;
     return map.Run(5, true);
 }
 
 pub fn main() anyerror!void {
-    var args = Args();
-    const arg0 = args.next(alloc).?;
-    var lines: std.ArrayListAligned([]const u8, null) = undefined;
-    if (args.next(alloc)) |_| {
-        lines = try aoc.readLines(test1file);
-    } else {
-        lines = try aoc.readLines(input);
-    }
-    try stdout.print("Part1: {}\n", .{part1(lines)});
-    try stdout.print("Part2: {}\n", .{part2(lines)});
+    const lines = readLines(input());
+    try print("Part1: {}\n", .{part1(lines)});
+    try print("Part2: {}\n", .{part2(lines)});
 }

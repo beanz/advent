@@ -1,30 +1,15 @@
-const std = @import("std");
-const Args = std.process.args;
-const warn = std.debug.warn;
-const aoc = @import("aoc-lib.zig");
-const assert = std.testing.expect;
-const assertEq = std.testing.expectEqual;
+usingnamespace @import("aoc-lib.zig");
 
-const input = @embedFile("input.txt");
-const test1file = @embedFile("test1.txt");
-const test2file = @embedFile("test2.txt");
-const test3file = @embedFile("test3.txt");
-const test4file = @embedFile("test4.txt");
-const test5file = @embedFile("test5.txt");
-const test6file = @embedFile("test6.txt");
-const stdout = &std.io.getStdOut().outStream();
-const alloc = std.heap.page_allocator;
-
-fn part1(in: std.ArrayListAligned([]const u8, null)) u64 {
-    const dt = std.fmt.parseUnsigned(u64, in.items[0], 10) catch unreachable;
-    var min: u64 = std.math.maxInt(u64);
+fn part1(in: [][]const u8) u64 {
+    const dt = parseUnsigned(u64, in[0], 10) catch unreachable;
+    var min: u64 = maxInt(u64);
     var mbus: u64 = undefined;
-    var bit = std.mem.split(in.items[1], ",");
+    var bit = split(in[1], ",");
     while (bit.next()) |ts| {
         if (ts[0] == 'x') {
             continue;
         }
-        const t = std.fmt.parseUnsigned(u64, ts, 10) catch unreachable;
+        const t = parseUnsigned(u64, ts, 10) catch unreachable;
         const m = t - (dt % t);
         if (m < min) {
             min = m;
@@ -48,7 +33,7 @@ fn egcd(a: i64, b: i64, x: *i64, y: *i64) i64 {
     }
 }
 
-fn chinese(la: std.ArrayListAligned(i64, null), ln: std.ArrayListAligned(i64, null)) i64 {
+fn chinese(la: ArrayList(i64), ln: ArrayList(i64)) i64 {
     var p: i64 = 1;
     for (ln.items) |n| {
         p *= n;
@@ -72,10 +57,10 @@ fn chinese(la: std.ArrayListAligned(i64, null), ln: std.ArrayListAligned(i64, nu
     return x;
 }
 
-fn part2(in: std.ArrayListAligned([]const u8, null)) i64 {
-    var bit = std.mem.split(in.items[1], ",");
-    var a = std.ArrayList(i64).init(alloc);
-    var n = std.ArrayList(i64).init(alloc);
+fn part2(in: [][]const u8) i64 {
+    var bit = split(in[1], ",");
+    var a = ArrayList(i64).init(alloc);
+    var n = ArrayList(i64).init(alloc);
     var i: i64 = 0;
     while (bit.next()) |ts| {
         defer {
@@ -84,7 +69,7 @@ fn part2(in: std.ArrayListAligned([]const u8, null)) i64 {
         if (ts[0] == 'x') {
             continue;
         }
-        const t = std.fmt.parseUnsigned(i64, ts, 10) catch unreachable;
+        const t = parseUnsigned(i64, ts, 10) catch unreachable;
         //warn("Adding pair {} and {}\n", .{ t - i, t });
         a.append(t - i) catch unreachable;
         n.append(t) catch unreachable;
@@ -93,52 +78,33 @@ fn part2(in: std.ArrayListAligned([]const u8, null)) i64 {
 }
 
 test "examples" {
-    const test1 = try aoc.readLines(test1file);
-    const test2 = try aoc.readLines(test2file);
-    const test3 = try aoc.readLines(test3file);
-    const test4 = try aoc.readLines(test4file);
-    const test5 = try aoc.readLines(test5file);
-    const test6 = try aoc.readLines(test6file);
-    const inp = try aoc.readLines(input);
+    const test1 = readLines(test1file);
+    const test2 = readLines(test2file);
+    const test3 = readLines(test3file);
+    const test4 = readLines(test4file);
+    const test5 = readLines(test5file);
+    const test6 = readLines(test6file);
+    const inp = readLines(inputfile);
 
-    var r: u64 = 295;
-    assertEq(r, part1(test1));
-    r = 130;
-    assertEq(r, part1(test2));
-    r = 295;
-    assertEq(r, part1(test3));
-    assertEq(r, part1(test4));
-    assertEq(r, part1(test5));
-    r = 47;
-    assertEq(r, part1(test6));
-    r = 3035;
-    assertEq(r, part1(inp));
+    assertEq(@as(u64, 295), part1(test1));
+    assertEq(@as(u64, 130), part1(test2));
+    assertEq(@as(u64, 295), part1(test3));
+    assertEq(@as(u64, 295), part1(test4));
+    assertEq(@as(u64, 295), part1(test5));
+    assertEq(@as(u64, 47), part1(test6));
+    assertEq(@as(u64, 3035), part1(inp));
 
-    var r2: i64 = 1068781;
-    assertEq(r2, part2(test1));
-    r2 = 3417;
-    assertEq(r2, part2(test2));
-    r2 = 754018;
-    assertEq(r2, part2(test3));
-    r2 = 779210;
-    assertEq(r2, part2(test4));
-    r2 = 1261476;
-    assertEq(r2, part2(test5));
-    r2 = 1202161486;
-    assertEq(r2, part2(test6));
-    r2 = 725169163285238;
-    assertEq(r2, part2(inp));
+    assertEq(@as(i64, 1068781), part2(test1));
+    assertEq(@as(i64, 3417), part2(test2));
+    assertEq(@as(i64, 754018), part2(test3));
+    assertEq(@as(i64, 779210), part2(test4));
+    assertEq(@as(i64, 1261476), part2(test5));
+    assertEq(@as(i64, 1202161486), part2(test6));
+    assertEq(@as(i64, 725169163285238), part2(inp));
 }
 
 pub fn main() anyerror!void {
-    var args = Args();
-    const arg0 = args.next(alloc).?;
-    var lines: std.ArrayListAligned([]const u8, null) = undefined;
-    if (args.next(alloc)) |_| {
-        lines = try aoc.readLines(test1file);
-    } else {
-        lines = try aoc.readLines(input);
-    }
-    try stdout.print("Part1: {}\n", .{part1(lines)});
-    try stdout.print("Part2: {}\n", .{part2(lines)});
+    const lines = readLines(input());
+    try print("Part1: {}\n", .{part1(lines)});
+    try print("Part2: {}\n", .{part2(lines)});
 }

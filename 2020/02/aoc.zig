@@ -1,31 +1,22 @@
-const std = @import("std");
-const assert = std.testing.expect;
-const assertEq = std.testing.expectEqual;
-const warn = std.debug.warn;
-const ArrayList = std.ArrayList;
-
-const input = @embedFile("input.txt");
-const out = &std.io.getStdOut().outStream();
-const alloc = std.heap.page_allocator;
+usingnamespace @import("aoc-lib.zig");
 
 test "examples" {
-    const example = @embedFile("test1.txt");
-    var r: usize = 2;
-    assertEq(r, part1(example));
-    r = 1;
-    assertEq(r, part2(example));
+    assertEq(@as(usize, 2), part1(test1file));
+    assertEq(@as(usize, 1), part2(test1file));
+    assertEq(@as(usize, 454), part1(inputfile));
+    assertEq(@as(usize, 649), part2(inputfile));
 }
 
 fn part1(inp: anytype) usize {
-    var lit = std.mem.split(inp, "\n");
+    var lit = split(inp, "\n");
     var c: usize = 0;
     while (lit.next()) |line| {
         if (line.len == 0) {
             break;
         }
-        var fit = std.mem.tokenize(line, "- :");
-        const n1 = std.fmt.parseInt(i64, fit.next().?, 10) catch unreachable;
-        const n2 = std.fmt.parseInt(i64, fit.next().?, 10) catch unreachable;
+        var fit = tokenize(line, "- :");
+        const n1 = parseInt(i64, fit.next().?, 10) catch unreachable;
+        const n2 = parseInt(i64, fit.next().?, 10) catch unreachable;
         const ch = (fit.next().?)[0];
         const str = fit.next().?;
         var cc: i64 = 0;
@@ -42,15 +33,15 @@ fn part1(inp: anytype) usize {
 }
 
 fn part2(inp: anytype) usize {
-    var lit = std.mem.split(inp, "\n");
+    var lit = split(inp, "\n");
     var c: usize = 0;
     while (lit.next()) |line| {
         if (line.len == 0) {
             break;
         }
-        var fit = std.mem.tokenize(line, "- :");
-        const n1 = std.fmt.parseUnsigned(usize, fit.next().?, 10) catch unreachable;
-        const n2 = std.fmt.parseUnsigned(usize, fit.next().?, 10) catch unreachable;
+        var fit = tokenize(line, "- :");
+        const n1 = parseUnsigned(usize, fit.next().?, 10) catch unreachable;
+        const n2 = parseUnsigned(usize, fit.next().?, 10) catch unreachable;
         const ch = (fit.next().?)[0];
         const str = fit.next().?;
         var cc: i64 = 0;
@@ -69,7 +60,7 @@ fn part2(inp: anytype) usize {
 }
 
 pub fn main() anyerror!void {
-    //try out.print("{}\n", .{report.items.len});
-    try out.print("Part1: {}\n", .{part1(input)});
-    try out.print("Part2: {}\n", .{part2(input)});
+    const in = input();
+    try print("Part1: {}\n", .{part1(in)});
+    try print("Part2: {}\n", .{part2(in)});
 }

@@ -1,15 +1,4 @@
-const std = @import("std");
-const Args = std.process.args;
-const math = std.math;
-const warn = std.debug.warn;
-const aoc = @import("aoc-lib.zig");
-const assert = std.testing.expect;
-const assertEq = std.testing.expectEqual;
-
-const input = @embedFile("input.txt");
-const test1file = @embedFile("test1.txt");
-const stdout = &std.io.getStdOut().outStream();
-const alloc = std.heap.page_allocator;
+usingnamespace @import("aoc-lib.zig");
 
 test "direction" {
     const TC = struct {
@@ -53,7 +42,7 @@ const Direction = struct {
                 d.dy = 0;
             },
             else => {
-                std.debug.panic("Compass {} not supported", .{c});
+                debug.panic("Compass {} not supported", .{c});
             },
         }
         return d;
@@ -83,7 +72,7 @@ const Point = struct {
         self.y += d.dy;
     }
     pub fn ManDist(self: *Point) usize {
-        return math.absCast(self.x) + math.absCast(self.y);
+        return absCast(self.x) + absCast(self.y);
     }
     pub fn CCW(self: *Point) void {
         var t = self.x;
@@ -108,12 +97,12 @@ const Nav = struct {
     wp: Point,
     debug: bool,
 
-    pub fn fromInput(inp: std.ArrayListAligned([]const u8, null), allocator: *std.mem.Allocator) !*Nav {
-        var l = inp.items.len;
+    pub fn fromInput(inp: [][]const u8, allocator: *Allocator) !*Nav {
+        var l = inp.len;
         var inst = try allocator.alloc(Inst, l);
         var nav = try alloc.create(Nav);
-        for (inp.items) |line, i| {
-            const n = try std.fmt.parseUnsigned(usize, line[1..], 10);
+        for (inp) |line, i| {
+            const n = try parseUnsigned(usize, line[1..], 10);
             inst[i].act = line[0];
             inst[i].val = n;
         }
@@ -161,7 +150,7 @@ const Nav = struct {
                     }
                 },
                 else => {
-                    std.debug.panic("Invalid nav instruction: {}", .{in});
+                    debug.panic("Invalid nav instruction: {}", .{in});
                 },
             }
             if (self.debug) {
@@ -207,7 +196,7 @@ const Nav = struct {
                     }
                 },
                 else => {
-                    std.debug.panic("Invalid nav instruction: {}", .{in});
+                    debug.panic("Invalid nav instruction: {}", .{in});
                 },
             }
             if (self.debug) {
@@ -219,53 +208,42 @@ const Nav = struct {
 
     pub fn Print(self: *Nav) void {
         if (self.ship.x >= 0) {
-            stdout.print("{} {}", .{ "east", math.absCast(self.ship.x) }) catch unreachable;
+            print("{} {}", .{ "east", absCast(self.ship.x) }) catch unreachable;
         } else {
-            stdout.print("{} {}", .{ "west", math.absCast(self.ship.x) }) catch unreachable;
+            print("{} {}", .{ "west", absCast(self.ship.x) }) catch unreachable;
         }
         if (self.ship.y <= 0) {
-            stdout.print(" {} {}", .{ "north", math.absCast(self.ship.y) }) catch unreachable;
+            print(" {} {}", .{ "north", absCast(self.ship.y) }) catch unreachable;
         } else {
-            stdout.print(" {} {}", .{ "south", math.absCast(self.ship.y) }) catch unreachable;
+            print(" {} {}", .{ "south", absCast(self.ship.y) }) catch unreachable;
         }
-        stdout.print(" [{},{}]\n", .{ self.dir.dx, self.dir.dy }) catch unreachable;
+        print(" [{},{}]\n", .{ self.dir.dx, self.dir.dy }) catch unreachable;
     }
 };
 
-fn part1(in: std.ArrayListAligned([]const u8, null)) usize {
+fn part1(in: [][]const u8) usize {
     var nav = Nav.fromInput(in, alloc) catch unreachable;
     return nav.Part1();
 }
 
-fn part2(in: std.ArrayListAligned([]const u8, null)) usize {
+fn part2(in: [][]const u8) usize {
     var nav = Nav.fromInput(in, alloc) catch unreachable;
     return nav.Part2();
 }
 
 test "examples" {
-    const test1 = try aoc.readLines(test1file);
-    const inp = try aoc.readLines(input);
+    const test1 = readLines(test1file);
+    const inp = readLines(inputfile);
 
-    var r: usize = 25;
-    assertEq(r, part1(test1));
-    r = 286;
-    assertEq(r, part2(test1));
+    assertEq(@as(usize, 25), part1(test1));
+    assertEq(@as(usize, 286), part2(test1));
 
-    r = 759;
-    assertEq(r, part1(inp));
-    r = 45763;
-    assertEq(r, part2(inp));
+    assertEq(@as(usize, 759), part1(inp));
+    assertEq(@as(usize, 45763), part2(inp));
 }
 
 pub fn main() anyerror!void {
-    var args = Args();
-    const arg0 = args.next(alloc).?;
-    var lines: std.ArrayListAligned([]const u8, null) = undefined;
-    if (args.next(alloc)) |_| {
-        lines = try aoc.readLines(test1file);
-    } else {
-        lines = try aoc.readLines(input);
-    }
-    try stdout.print("Part1: {}\n", .{part1(lines)});
-    try stdout.print("Part2: {}\n", .{part2(lines)});
+    const lines = readLines(input());
+    try print("Part1: {}\n", .{part1(lines)});
+    try print("Part2: {}\n", .{part2(lines)});
 }

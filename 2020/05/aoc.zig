@@ -1,19 +1,10 @@
-const std = @import("std");
-const aoc = @import("aoc-lib.zig");
-const assert = std.testing.expect;
-const assertEq = std.testing.expectEqual;
-const warn = std.debug.warn;
-const ArrayList = std.ArrayList;
-
-const input = @embedFile("input.txt");
-const out = &std.io.getStdOut().outStream();
-const alloc = std.heap.page_allocator;
+usingnamespace @import("aoc-lib.zig");
 
 test "examples" {
-    const test1 = try aoc.readLines(@embedFile("test1.txt"));
-    var r: usize = 2;
-    assertEq(r, part1(test1));
-    assertEq(r, part2(test1));
+    assertEq(@as(usize, 820), part1(readLines(test1file)));
+    assertEq(@as(usize, 0), part2(readLines(test1file)));
+    assertEq(@as(usize, 947), part1(readLines(inputfile)));
+    assertEq(@as(usize, 636), part2(readLines(inputfile)));
 }
 
 fn seat(dir: []const u8) usize {
@@ -36,7 +27,7 @@ fn seat(dir: []const u8) usize {
 
 fn part1(inp: anytype) usize {
     var m: usize = 0;
-    for (inp.items) |dir| {
+    for (inp) |dir| {
         const s = seat(dir);
         if (s > m) {
             m = s;
@@ -46,14 +37,14 @@ fn part1(inp: anytype) usize {
 }
 
 fn part2(inp: anytype) usize {
-    var plan = std.AutoHashMap(usize, bool).init(alloc);
+    var plan = AutoHashMap(usize, bool).init(alloc);
     defer plan.deinit();
-    for (inp.items) |dir| {
+    for (inp) |dir| {
         plan.put(seat(dir), true) catch {};
     }
     var it = plan.iterator();
     while (it.next()) |e| {
-        if (aoc.exists(plan, e.key - 2) and !aoc.exists(plan, e.key - 1)) {
+        if (plan.contains(e.key - 2) and !plan.contains(e.key - 1)) {
             return e.key - 1;
         }
     }
@@ -61,8 +52,7 @@ fn part2(inp: anytype) usize {
 }
 
 pub fn main() anyerror!void {
-    var plan = try aoc.readLines(input);
-    //try out.print("{}\n", .{report.items.len});
-    try out.print("Part1: {}\n", .{part1(plan)});
-    try out.print("Part2: {}\n", .{part2(plan)});
+    var plan = readLines(input());
+    try print("Part1: {}\n", .{part1(plan)});
+    try print("Part2: {}\n", .{part2(plan)});
 }
