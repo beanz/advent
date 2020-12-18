@@ -1,0 +1,2 @@
+#!/bin/sh
+exec perl -lne 'sub A{$_=$_[0];while(s/\(([^()]+)\)/A($1,$_[1])/e||($_[1]&&s/(\d+ \+ \d+)/eval$1/e)||s/^(\d+ [+*] \d+)/eval$1/e){return$_ unless($_=~/\D/);}}$c+=A($s=$_);$d+=A($s,1);END{print"Part 1: $c\nPart 2: $d"}'

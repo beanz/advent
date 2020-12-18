@@ -1,0 +1,2 @@
+#!/bin/sh
+exec perl -lne 'BEGIN{$b=$a=bless[0],"M"}package M;sub N{bless[@_],"M"}sub a{N($_[0][0]+$_[1][0])}sub m{N($_[0][0]*$_[1][0])}use overload"-"=>\&m,"+"=>\&a,"*"=>\&a;sub c{$_=$_[0];s/(\d+)/N($1)/g;s/\*/-/g;s/\+/*/g if($_[1]);eval;}$a+=c($c=$_);$b+=c($c,1);END{print$a->[0]," ",$b->[0]}'
