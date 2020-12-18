@@ -1,45 +1,114 @@
 usingnamespace @import("aoc-lib.zig");
 
+const Operator = enum { plus, times };
+const Bracket = enum { open, close };
+const TokenType = enum { operand, operator, bracket };
+const Token = union(TokenType) {
+    operand: usize,
+    operator: Operator,
+    bracket: Bracket,
+};
+
+pub fn RPN(exp: []Token) usize {
+    var stack = ArrayList(usize).init(alloc);
+    defer stack.deinit();
+    for (exp) |t| {
+        switch (t) {
+            .operand => |*n| {
+                stack.append(n.*) catch unreachable;
+            },
+            .operator => |*op| {
+                const l: usize = stack.items.len;
+                var first = stack.items[l - 1];
+                var second = stack.items[l - 2];
+                _ = stack.orderedRemove(l - 1);
+                if (op.* == .plus) {
+                    stack.items[l - 2] = first + second;
+                } else {
+                    stack.items[l - 2] = first * second;
+                }
+            },
+            .bracket => {
+                debug.panic("brackets not allowed here", .{});
+            },
+        }
+    }
+    assertEq(@as(usize, 1), stack.items.len);
+    return stack.items[stack.items.len - 1];
+}
+
+pub fn ShuntingYard(s: []const u8, part2: bool) []Token {
+    var output = ArrayList(Token).init(alloc);
+    defer output.deinit();
+    var operator = ArrayList(Token).init(alloc);
+    defer operator.deinit();
+    var i: usize = 0;
+    while (i < s.len) {
+        defer i += 1;
+        const term = s[i];
+        switch (term) {
+            ' ' => {
+                continue;
+            },
+            '0'...'9' => {
+                output.append(Token{ .operand = @as(usize, (term - '0')) }) catch unreachable;
+            },
+            '+', '*' => {
+                while (operator.items.len > 0) {
+                    const peek = operator.items[operator.items.len - 1];
+                    switch (peek) {
+                        .operator => {
+                            if (part2 and peek.operator == Operator.times) {
+                                break;
+                            }
+                            output.append(peek) catch unreachable;
+                            _ = operator.orderedRemove(operator.items.len - 1);
+                        },
+                        else => {
+                            break;
+                        },
+                    }
+                }
+                if (term == '+') {
+                    operator.append(Token{ .operator = .plus }) catch unreachable;
+                } else {
+                    operator.append(Token{ .operator = .times }) catch unreachable;
+                }
+            },
+            '(' => {
+                operator.append(Token{ .bracket = .open }) catch unreachable;
+            },
+            ')' => {
+                while (operator.items.len > 0) {
+                    const peek = operator.items[operator.items.len - 1];
+                    switch (peek) {
+                        .operator => {
+                            output.append(peek) catch unreachable;
+                            _ = operator.orderedRemove(operator.items.len - 1);
+                        },
+                        else => {
+                            break;
+                        },
+                    }
+                }
+                if (operator.items.len > 0 and
+                    operator.items[operator.items.len - 1].bracket == Bracket.open)
+                {
+                    _ = operator.orderedRemove(operator.items.len - 1);
+                }
+            },
+            else => {},
+        }
+    }
+    while (operator.items.len > 0) {
+        output.append(operator.items[operator.items.len - 1]) catch unreachable;
+        _ = operator.orderedRemove(operator.items.len - 1);
+    }
+    return output.toOwnedSlice();
+}
+
 pub fn Calc(s: []const u8, part2: bool) usize {
-    const v = parseUnsigned(usize, s, 10) catch {
-        const l = s.len;
-        if (s[l - 1] >= '0' and s[l - 1] <= '9') {
-            const last = parseUnsigned(usize, s[l - 1 .. l], 10) catch unreachable;
-            const prev = Calc(s[0 .. l - 4], part2);
-            if (s[l - 3] == '+') {
-                return prev + last;
-            } else {
-                return prev * last;
-            }
-        }
-        if (s[l - 1] == ')') {
-            var i: usize = l - 1;
-            var lvl: usize = 1;
-            while (lvl != 0) {
-                if (i == 0) {
-                    debug.panic("failed to find matching '(': {}", .{s});
-                }
-                i -= 1;
-                if (s[i] == ')') {
-                    lvl += 1;
-                } else if (s[i] == '(') {
-                    lvl -= 1;
-                }
-            }
-            const bv = Calc(s[i + 1 .. l - 1], false);
-            if (i == 0) {
-                return bv;
-            }
-            const prev = Calc(s[0 .. i - 3], part2);
-            if (s[i - 2] == '+') {
-                return prev + bv;
-            } else {
-                return prev * bv;
-            }
-        }
-        debug.panic("invalid: {}", .{s});
-    };
-    return v;
+    return RPN(ShuntingYard(s, part2));
 }
 
 pub fn Part1(s: [][]const u8) usize {
@@ -58,8 +127,33 @@ pub fn Part2(s: [][]const u8) usize {
     return t;
 }
 
+test "RPN" {
+    var exp = [1]Token{Token{ .operand = 2 }};
+    assertEq(@as(usize, 2), RPN(exp[0..]));
+    var exp3 = [3]Token{
+        Token{ .operand = 2 },
+        Token{ .operand = 3 },
+        Token{ .operator = .plus },
+    };
+    assertEq(@as(usize, 5), RPN(exp3[0..]));
+    var exp5 = [5]Token{
+        Token{ .operand = 3 },
+        Token{ .operand = 4 },
+        Token{ .operand = 5 },
+        Token{ .operator = .times },
+        Token{ .operator = .plus },
+    };
+    assertEq(@as(usize, 23), RPN(exp5[0..]));
+}
+
+test "ShuntingYard" {
+    var exp = [1]Token{Token{ .operand = 2 }};
+    assertEq(@as(usize, 3), ShuntingYard("2 + 3", false).len);
+    assertEq(@as(usize, 5), RPN(ShuntingYard("2 + 3", false)));
+}
+
 test "Calc" {
-    assertEq(@as(usize, 10), Calc("10", false));
+    assertEq(@as(usize, 9), Calc("9", false));
     assertEq(@as(usize, 5), Calc("2 + 3", false));
     assertEq(@as(usize, 6), Calc("2 * 3", false));
     assertEq(@as(usize, 9), Calc("1 + 2 * 3", false));
@@ -72,6 +166,16 @@ test "Calc" {
     assertEq(@as(usize, 437), Calc("5 + (8 * 3 + 9 + 3 * 4 * 3)", false));
     assertEq(@as(usize, 12240), Calc("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))", false));
     assertEq(@as(usize, 13632), Calc("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", false));
+}
+
+test "Calc2" {
+    assertEq(@as(usize, 231), Calc("1 + 2 * 3 + 4 * 5 + 6", true));
+    assertEq(@as(usize, 51), Calc("1 + (2 * 3) + (4 * (5 + 6))", true));
+    assertEq(@as(usize, 46), Calc("2 * 3 + (4 * 5)", true));
+    assertEq(@as(usize, 1440), Calc("8 * 3 + 9 + 3 * 4 * 3", true));
+    assertEq(@as(usize, 1445), Calc("5 + (8 * 3 + 9 + 3 * 4 * 3)", true));
+    assertEq(@as(usize, 669060), Calc("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))", true));
+    assertEq(@as(usize, 23340), Calc("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", true));
 }
 
 test "examples" {
