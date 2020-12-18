@@ -55,6 +55,19 @@ func ReadInts(lines []string) ([]int, error) {
 	return nums, nil
 }
 
+func ReadInt64s(lines []string) ([]int64, error) {
+	nums := make([]int64, 0, len(lines))
+
+	for _, line := range lines {
+		n, err := strconv.ParseInt(line, 10, 64)
+		if err != nil {
+			return nil, err
+		}
+		nums = append(nums, n)
+	}
+	return nums, nil
+}
+
 func XSloppyReadInts(lines []string) []int {
 	nums := make([]int, 0, len(lines))
 	for _, line := range lines {
@@ -85,6 +98,26 @@ func SimpleReadInts(l string) []int {
 		return !(unicode.IsNumber(c) || c == '-')
 	}
 	values, err := ReadInts(strings.FieldsFunc(n, f))
+	if err != nil {
+		log.Fatalf("SimpleReadInts error: %s\n", err)
+	}
+	return values
+}
+
+func SimpleReadInt64s(l string) []int64 {
+	n := ""
+	for i := 0; i < len(l); i++ {
+		if l[i] == '-' &&
+			(i == len(l)-1 || !unicode.IsNumber(rune(l[i+1]))) {
+			n += " "
+		} else {
+			n += string(l[i])
+		}
+	}
+	f := func(c rune) bool {
+		return !(unicode.IsNumber(c) || c == '-')
+	}
+	values, err := ReadInt64s(strings.FieldsFunc(n, f))
 	if err != nil {
 		log.Fatalf("SimpleReadInts error: %s\n", err)
 	}
