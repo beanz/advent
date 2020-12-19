@@ -105,8 +105,9 @@ func (m *Matcher) Part2() int {
 	re31 := m.Regexp(31)
 	re42 := m.Regexp(42)
 	m.rules[8] = Rule{ch: re42 + "+"}
-	ns := make([]string, 40)
-	for i := 0; i < 40; i++ {
+	maxRepeats := 5
+	ns := make([]string, maxRepeats)
+	for i := 0; i < maxRepeats; i++ {
 		n := fmt.Sprintf("{%d}", i+1)
 		ns[i] = re42 + n + re31 + n
 	}

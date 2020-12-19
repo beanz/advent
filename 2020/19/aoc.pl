@@ -56,7 +56,7 @@ sub calc {
   #dd([$r, \@v],[qw/r v/]);
   for my $v (@v) {
     #print "checking $v\n";
-    $t++ if ($v =~ /$re/);
+    $t++ if ($v =~ $re);
   }
   return $t;
 }
@@ -70,7 +70,7 @@ sub calc2 {
   #print "re42 = $re42\n";
   #print "re31 = $re31\n";
   $r->{8} = make_re($r, 42).'+';
-  $r->{11} = '(?:'.(join'|', map "$re42\{$_}$re31\{$_}", (1..40)).')';
+  $r->{11} = '(?:'.(join'|', map "$re42\{$_}$re31\{$_}", (1..5)).')';
   my $re = '^'.make_re($r, 0).'$';
   #print "made $re\n";
   my @v = split/\n/,$in->[1];
