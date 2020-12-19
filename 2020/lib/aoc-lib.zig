@@ -71,6 +71,8 @@ pub const maxInt = math.maxInt;
 pub const ArrayList = std.ArrayList;
 pub const StringHashMap = std.StringHashMap;
 pub const AutoHashMap = std.AutoHashMap;
+pub const Stack = std.atomic.Stack;
+pub const SegmentedList = std.SegmentedList;
 
 // test
 pub const assert = std.testing.expect;
