@@ -123,3 +123,35 @@ func SimpleReadInt64s(l string) []int64 {
 	}
 	return values
 }
+
+func MustParseUint64(s string) uint64 {
+	n, err := strconv.ParseUint(s, 10, 64)
+	if err != nil {
+		log.Fatalf("%s not valid uint64\n", s)
+	}
+	return n
+}
+
+func MustParseInt64(s string) int64 {
+	n, err := strconv.ParseInt(s, 10, 64)
+	if err != nil {
+		log.Fatalf("%s not valid int64\n", s)
+	}
+	return n
+}
+
+func MustParseUint(s string) uint {
+	n, err := strconv.ParseUint(s, 10, 32)
+	if err != nil {
+		log.Fatalf("%s not valid uint32\n", s)
+	}
+	return uint(n)
+}
+
+func MustParseInt(s string) int {
+	n, err := strconv.ParseInt(s, 10, 32)
+	if err != nil {
+		log.Fatalf("%s not valid int32\n", s)
+	}
+	return int(n)
+}
