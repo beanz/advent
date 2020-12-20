@@ -73,6 +73,8 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
                                     compassOffset
                                     compassOpposite
 
+                                    rotate_lines
+
                                     read_lines
                                     read_lists
                                     read_listy_records
@@ -398,6 +400,15 @@ sub safe_value {
     }
   }
   return $h->{$k[$#k]};
+}
+
+sub rotate_lines {
+  my ($lines) = @_;
+  my @l;
+  for my $i (0..(length $lines->[0])-1) {
+    push @l, join '', map { substr $_, $i, 1 } reverse @$lines;
+  }
+  return \@l;
 }
 
 sub read_lines {
