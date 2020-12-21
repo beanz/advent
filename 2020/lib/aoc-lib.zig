@@ -159,6 +159,13 @@ pub fn minc(m: anytype, k: anytype) void {
     }
 }
 
-// pub fn exists(m: anytype, k: anytype) bool {
-//     return m.get(k) orelse false;
-// }
+pub fn stringLessThan(c: void, a: []const u8, b: []const u8) bool {
+    var i: usize = 0;
+    while (i < a.len and i < b.len and a[i] == b[i]) {
+        i += 1;
+    }
+    if (a[i] == b[i]) {
+        return a.len < b.len;
+    }
+    return a[i] < b[i];
+}
