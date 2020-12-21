@@ -32,12 +32,11 @@ func ReadChunks(file string) []string {
 	if err != nil {
 		log.Fatalf("File read %s failed: %s\n", file, err)
 	}
-	chunks := strings.Split(string(b), "\n\n")
+	chunks := strings.Split(strings.TrimSuffix(string(b), "\n\n"), "\n\n")
 
 	// strip trailing single '\n' from final chunk
-	l := len(chunks) - 1
-	if chunks[l][len(chunks[l])-1] == '\n' {
-		chunks[l] = chunks[l][:len(chunks[l])-1]
+	if len(chunks) > 0 {
+		chunks[len(chunks)-1] = strings.TrimSuffix(chunks[len(chunks)-1], "\n")
 	}
 	return chunks
 }
@@ -122,36 +121,4 @@ func SimpleReadInt64s(l string) []int64 {
 		log.Fatalf("SimpleReadInts error: %s\n", err)
 	}
 	return values
-}
-
-func MustParseUint64(s string) uint64 {
-	n, err := strconv.ParseUint(s, 10, 64)
-	if err != nil {
-		log.Fatalf("%s not valid uint64\n", s)
-	}
-	return n
-}
-
-func MustParseInt64(s string) int64 {
-	n, err := strconv.ParseInt(s, 10, 64)
-	if err != nil {
-		log.Fatalf("%s not valid int64\n", s)
-	}
-	return n
-}
-
-func MustParseUint(s string) uint {
-	n, err := strconv.ParseUint(s, 10, 32)
-	if err != nil {
-		log.Fatalf("%s not valid uint32\n", s)
-	}
-	return uint(n)
-}
-
-func MustParseInt(s string) int {
-	n, err := strconv.ParseInt(s, 10, 32)
-	if err != nil {
-		log.Fatalf("%s not valid int32\n", s)
-	}
-	return int(n)
 }
