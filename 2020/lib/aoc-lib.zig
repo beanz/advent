@@ -8,6 +8,7 @@ pub const dupe = std.mem.dupe;
 pub const copy = std.mem.copy;
 pub const memset = std.mem.set;
 pub const Allocator = std.mem.Allocator;
+pub const ArenaAllocator = std.heap.ArenaAllocator;
 
 // sort
 pub const sort = std.sort;
