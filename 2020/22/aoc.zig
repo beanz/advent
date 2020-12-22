@@ -82,12 +82,8 @@ const Game = struct {
         return result;
     }
 
-    pub fn key(all: anytype, d1: []u8, d2: []u8) []u8 {
-        var result = all.alloc(u8, d1.len + 1 + d2.len) catch unreachable;
-        copy(u8, result[0..], d1);
-        result[d1.len] = 0;
-        copy(u8, result[d1.len + 1 ..], d2);
-        return result;
+    pub fn key(all: anytype, d1: []u8, d2: []u8) usize {
+        return Score(d1) * (31 + Score(d2));
     }
 
     pub fn Combat(g: *Game, in: [2][]u8, part2: bool) Result {
@@ -96,7 +92,7 @@ const Game = struct {
         defer arenaAllocator.deinit();
         var arena = &arenaAllocator.allocator;
         var d = [2][]u8{ copyd(arena, in[0]), copyd(arena, in[1]) };
-        var seen = StringHashMap(bool).init(arena);
+        var seen = AutoHashMap(usize, bool).init(arena);
         defer seen.deinit();
         var first = true;
         while (d[0].len > 0 and d[1].len > 0) {
@@ -169,12 +165,12 @@ test "seen" {
     const test1 = readChunks(test1file);
     const inp = readChunks(inputfile);
 
-    var seen = StringHashMap(bool).init(alloc);
+    var seen = AutoHashMap(usize, bool).init(alloc);
     defer seen.deinit();
 
     var g1 = Game.init(test1);
-    var k1 = Game.key(g1.d1, g1.d2);
-    var k2 = Game.key(g1.d2, g1.d1);
+    var k1 = Game.key(alloc, g1.d1, g1.d2);
+    var k2 = Game.key(alloc, g1.d2, g1.d1);
     assertEq(false, seen.contains(k1));
     assertEq(false, seen.contains(k2));
     try seen.put(k1, true);
@@ -185,8 +181,8 @@ test "seen" {
     assertEq(true, seen.contains(k2));
 
     var g = Game.init(inp);
-    k1 = Game.key(g.d1, g.d2);
-    k2 = Game.key(g.d2, g.d1);
+    k1 = Game.key(alloc, g.d1, g.d2);
+    k2 = Game.key(alloc, g.d2, g.d1);
     assertEq(false, seen.contains(k1));
     assertEq(false, seen.contains(k2));
     try seen.put(k1, true);
@@ -212,6 +208,6 @@ test "examples" {
 pub fn main() anyerror!void {
     const chunks = readChunks(input());
     var g = Game.init(chunks);
-    //try print("Part1: {}\n", .{g.Part1()});
+    try print("Part1: {}\n", .{g.Part1()});
     try print("Part2: {}\n", .{g.Part2()});
 }

@@ -38,7 +38,8 @@ sub rc {
   my %seen;
   my $r = 1;
   while (@$p1 && @$p2) {
-    my $k = join '!', map { join ',', @$_ } $p1, $p2;
+    my $k = score($p1) * (31 + score($p2));
+    #$k = join '!', map { join ',', @$_ } $p1, $p2;
     print "$r: $k\n" if DEBUG;
     return $p1 if ($seen{$k});
     $seen{$k}++;

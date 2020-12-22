@@ -8,7 +8,7 @@ import (
 )
 
 func TestKey(t *testing.T) {
-	seen := make(map[string]bool)
+	seen := make(map[int]bool)
 	k1 := Key([]int{27, 47, 28}, []int{34, 29, 39, 32, 26, 24, 36, 19, 43, 31, 35, 30})
 	assert.False(t, seen[k1], "key not present to begin with")
 	seen[k1] = true
@@ -44,10 +44,10 @@ func TestPart2(t *testing.T) {
 	}
 }
 
-var result string
+var result int
 
 func benchKey(b *testing.B, d1, d2 []int) {
-	var r string
+	var r int
 	for n := 0; n < b.N; n++ {
 		r = Key(d1, d2)
 	}

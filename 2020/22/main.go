@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"log"
 	"os"
@@ -28,7 +27,7 @@ func NewGame(in []string) *Game {
 	return &Game{p1[1:], p2[1:], DEBUG()}
 }
 
-func (g *Game) Score(d []int) int {
+func Score(d []int) int {
 	s := 0
 	for i := 1; i <= len(d); i++ {
 		s += (1 + len(d) - i) * d[i-1]
@@ -36,17 +35,8 @@ func (g *Game) Score(d []int) int {
 	return s
 }
 
-func Key(d1, d2 []int) string {
-	buf := make([]byte, 0, 55)
-	buffer := bytes.NewBuffer(buf)
-	for _, v := range d1 {
-		buffer.WriteByte(byte(v))
-	}
-	buffer.WriteByte('~')
-	for _, v := range d2 {
-		buffer.WriteByte(byte(v))
-	}
-	return buffer.String()
+func Key(d1, d2 []int) int {
+	return Score(d1) * Score(d2)
 }
 
 func DS(d []int) string {
@@ -58,7 +48,7 @@ func DS(d []int) string {
 }
 
 func (g *Game) Combat(d1, d2 []int, part2 bool) (Player, []int) {
-	seen := make(map[string]bool)
+	seen := make(map[int]bool)
 	round := 1
 	for len(d1) > 0 && len(d2) > 0 {
 		if g.debug {
@@ -123,7 +113,7 @@ func (g *Game) Combat(d1, d2 []int, part2 bool) (Player, []int) {
 
 func (g *Game) Play(part2 bool) int {
 	_, d := g.Combat(g.p1, g.p2, part2)
-	return g.Score(d)
+	return Score(d)
 }
 
 func (g *Game) Part1() int {
