@@ -78,6 +78,12 @@ pub const SegmentedList = std.SegmentedList;
 // test
 pub const assert = std.testing.expect;
 pub const assertEq = std.testing.expectEqual;
+pub fn assertStrEq(exp: []const u8, act: []const u8) void {
+    if (!std.mem.eql(u8, exp, act)) {
+        warn("expected, '{}' but was '{}'\n", .{ exp, act });
+    }
+    assert(std.mem.eql(u8, exp, act));
+}
 
 pub fn DEBUG() i32 {
     const debug = try std.os.getEnvVarOwned(alloc, "AoC_DEBUG");
