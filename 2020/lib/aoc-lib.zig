@@ -176,3 +176,52 @@ pub fn stringLessThan(c: void, a: []const u8, b: []const u8) bool {
     }
     return a[i] < b[i];
 }
+
+pub fn rotateLines(lines: [][]const u8) [][]const u8 {
+    const end = lines.len - 1;
+    var tmp = alloc.alloc([]u8, lines[0].len) catch unreachable;
+    var i: usize = 0;
+    while (i < lines[0].len) {
+        tmp[i] = alloc.alloc(u8, lines.len) catch unreachable;
+        i += 1;
+    }
+    i = 0;
+    while (i < lines[0].len) {
+        var j: usize = 0;
+        while (j < lines.len) {
+            tmp[i][j] = lines[end - j][i];
+            j += 1;
+        }
+        i += 1;
+    }
+    return tmp;
+}
+
+pub fn reverseLines(lines: [][]const u8) void {
+    const end = lines.len - 1;
+    var j: usize = 0;
+    while (j < lines.len / 2) {
+        var tmp = lines[j];
+        lines[j] = lines[end - j];
+        lines[end - j] = tmp;
+        j += 1;
+    }
+}
+
+pub fn countCharsInLines(lines: [][]const u8, findCh: u8) usize {
+    var c: usize = 0;
+    for (lines) |line| {
+        for (line) |ch| {
+            if (ch == findCh) {
+                c += 1;
+            }
+        }
+    }
+    return c;
+}
+
+pub fn prettyLines(lines: [][]const u8) void {
+    for (lines) |line| {
+        warn("{}\n", .{line});
+    }
+}
