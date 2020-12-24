@@ -8,68 +8,74 @@ import (
 	. "github.com/beanz/advent-of-code-go"
 )
 
-type HexTile struct {
-	q, r int16
+type HexTile uint
+
+func NewHexTile(q, r int8) HexTile {
+	return HexTile((uint(int(q)+127) << 8) + uint(int(r)+127))
 }
 
-func NewHexTile(q, r int16) *HexTile {
-	return &HexTile{q, r}
+func (h HexTile) K() uint {
+	return uint(h)
 }
 
-func (h *HexTile) K() uint {
-	return (uint(int(h.q)+500) << 10) + uint(int(h.r)+500)
+func (h HexTile) Q() int8 {
+	return int8(int(h>>8) - 127)
 }
 
-func (h *HexTile) Q() int16 {
-	return h.q
+func (h HexTile) R() int8 {
+	return int8(int(h&0xff) - 127)
 }
 
-func (h *HexTile) R() int16 {
-	return h.r
-}
-
-func (h *HexTile) Move(moves string) {
+func NewHexTileFromString(moves string) HexTile {
 	s := moves
+	q := int8(0)
+	r := int8(0)
 	for len(s) > 0 {
 		switch {
 		case s[0] == 'e':
 			s = s[1:]
-			h.q++
+			q++
 		case s[0] == 'w':
 			s = s[1:]
-			h.q--
+			q--
 		case s[0:2] == "se":
 			s = s[2:]
-			h.r--
+			r--
 		case s[0:2] == "sw":
 			s = s[2:]
-			h.q--
-			h.r--
+			q--
+			r--
 		case s[0:2] == "nw":
 			s = s[2:]
-			h.r++
+			r++
 		case s[0:2] == "ne":
 			s = s[2:]
-			h.q++
-			h.r++
+			q++
+			r++
 		default:
 			log.Fatalf("invalid hex tile moves: %s\n", s)
 		}
 	}
+	return NewHexTile(q, r)
 }
 
-func (h *HexTile) NB() []*HexTile {
-	return []*HexTile{
-		&HexTile{h.q + 1, h.r + 0},
-		&HexTile{h.q + 0, h.r - 1},
-		&HexTile{h.q - 1, h.r - 1},
-		&HexTile{h.q - 1, h.r + 0},
-		&HexTile{h.q + 0, h.r + 1},
-		&HexTile{h.q + 1, h.r + 1},
+func HexTileNeighbourOffsets() {
+	ht := NewHexTile(0, 0)
+	q := ht.Q()
+	r := ht.R()
+
+	for _, n := range []HexTile{
+		NewHexTile(q+1, r+0),
+		NewHexTile(q+0, r-1),
+		NewHexTile(q-1, r-1),
+		NewHexTile(q-1, r+0),
+		NewHexTile(q+0, r+1),
+		NewHexTile(q+1, r+1)} {
+		fmt.Printf("%d\n", int(ht)-int(n))
 	}
 }
 
-type HexTiles map[uint]*HexTile
+type HexTiles map[HexTile]bool
 
 type Game struct {
 	init  HexTiles
@@ -80,13 +86,11 @@ type Game struct {
 func NewGame(in []string) *Game {
 	init := make(HexTiles)
 	for _, l := range in {
-		ht := NewHexTile(0, 0)
-		ht.Move(l)
-		k := ht.K()
-		if _, ok := init[k]; ok {
-			delete(init, k)
+		ht := NewHexTileFromString(l)
+		if _, ok := init[ht]; ok {
+			delete(init, ht)
 		} else {
-			init[k] = ht
+			init[ht] = true
 		}
 	}
 	return &Game{init, nil, true}
@@ -96,17 +100,18 @@ func (g *Game) Part1() int {
 	return len(g.init)
 }
 
-func (g *Game) Check(ht *HexTile, done map[uint]bool) bool {
-	if done[ht.K()] {
+func (g *Game) Check(ht HexTile, done HexTiles) bool {
+	if done[ht] {
 		return false
 	}
 	nc := 0
-	for _, nt := range ht.NB() {
-		if _, ok := (*g.cur)[nt.K()]; ok {
+	for _, no := range []int{-256, 1, 257, 256, -1, -257} {
+		nt := HexTile(int(ht) + no)
+		if _, ok := (*g.cur)[nt]; ok {
 			nc++
 		}
 	}
-	_, ok := (*g.cur)[ht.K()]
+	_, ok := (*g.cur)[ht]
 	if (ok && !(nc == 0 || nc > 2)) ||
 		(!ok && nc == 2) {
 		return true
@@ -119,14 +124,15 @@ func (g *Game) Iter() int {
 		g.cur = &g.init
 	}
 	next := make(HexTiles)
-	done := make(map[uint]bool)
-	for _, ht := range *g.cur {
+	done := make(HexTiles)
+	for ht := range *g.cur {
 		if g.Check(ht, done) {
-			next[ht.K()] = ht
+			next[ht] = true
 		}
-		for _, nht := range ht.NB() {
+		for _, no := range []int{-256, 1, 257, 256, -1, -257} {
+			nht := HexTile(int(ht) + no)
 			if g.Check(nht, done) {
-				next[nht.K()] = nht
+				next[nht] = true
 			}
 		}
 	}
@@ -149,6 +155,7 @@ func main() {
 
 	lines := ReadLines(os.Args[1])
 	g := NewGame(lines)
+	//HexTileNeighbourOffsets()
 	fmt.Printf("Part 1: %d\n", g.Part1())
 	fmt.Printf("Part 2: %d\n", g.Part2(100))
 }
