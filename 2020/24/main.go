@@ -9,22 +9,22 @@ import (
 )
 
 type HexTile struct {
-	q, r int
+	q, r int16
 }
 
-func NewHexTile(q, r int) *HexTile {
+func NewHexTile(q, r int16) *HexTile {
 	return &HexTile{q, r}
 }
 
-func (h *HexTile) K() string {
-	return fmt.Sprintf("%d,%d", h.q, h.r)
+func (h *HexTile) K() uint {
+	return (uint(int(h.q)+500) << 10) + uint(int(h.r)+500)
 }
 
-func (h *HexTile) Q() int {
+func (h *HexTile) Q() int16 {
 	return h.q
 }
 
-func (h *HexTile) R() int {
+func (h *HexTile) R() int16 {
 	return h.r
 }
 
@@ -69,7 +69,7 @@ func (h *HexTile) NB() []*HexTile {
 	}
 }
 
-type HexTiles map[string]*HexTile
+type HexTiles map[uint]*HexTile
 
 type Game struct {
 	init  HexTiles
@@ -96,7 +96,7 @@ func (g *Game) Part1() int {
 	return len(g.init)
 }
 
-func (g *Game) Check(ht *HexTile, done map[string]bool) bool {
+func (g *Game) Check(ht *HexTile, done map[uint]bool) bool {
 	if done[ht.K()] {
 		return false
 	}
@@ -119,7 +119,7 @@ func (g *Game) Iter() int {
 		g.cur = &g.init
 	}
 	next := make(HexTiles)
-	done := make(map[string]bool)
+	done := make(map[uint]bool)
 	for _, ht := range *g.cur {
 		if g.Check(ht, done) {
 			next[ht.K()] = ht
