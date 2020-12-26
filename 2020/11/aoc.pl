@@ -6,12 +6,10 @@ use lib "../lib";
 use AoC::Helpers qw/:all/;
 #use Carp::Always qw/carp verbose/;
 
+my @EIGHT_NEIGHBOUR_OFFSETS = @{eightNeighbourOffsets()};
+
 my $file = shift // "input.txt";
 my $i = read_map($file);
-#dd([$i]); exit;
-my $i2 = read_map($file);
-#my $i = read_chunks($file);
-#my $i2 = read_chunks($file);
 
 use constant
   {
@@ -19,8 +17,6 @@ use constant
    EMPTY => 1,
    OCCUPIED => 2,
   };
-
-my @EIGHT_NEIGHBOUR_OFFSETS = @{eightNeighbourOffsets()};
 
 sub readfn {
   $_[0] eq '.' ? NONE : ($_[0] eq 'L' ? EMPTY : OCCUPIED);
@@ -33,38 +29,58 @@ sub strfn {
 sub read_map {
   my ($file) = @_;
   my $m = read_dense_map($file, \&readfn, \&strfn);
-  my $n = $m->clone();
   my %idx;
+  my $maxx = $m->width-1;
+  my $maxy = $m->height-1;
   for my $i (0..$m->last_index) {
     my $xy = $m->xy($i);
-    $idx{$i} = $xy if ($m->get(@$xy) != NONE);
+    if ($m->get(@$xy) != NONE) {
+      $idx{$i} =
+        [@$xy,
+         neighbourIndexes($m, $xy, 0, $maxx, $maxy),
+         neighbourIndexes($m, $xy, 1, $maxx, $maxy)];
+    }
   }
-  return [$m, $n, \%idx];
+  return [$m, \%idx];
 }
 
-sub occupiedCount {
-  my ($m, $x, $y, $sight, $maxx, $maxy) = @_;
+sub neighbourIndexes {
+  my ($m, $xy, $sight, $maxx, $maxy) = @_;
+  my ($x, $y) = @$xy;
   my $width = $maxx+1;
-  my $c = 0;
+  my @n;
   for my $o (@EIGHT_NEIGHBOUR_OFFSETS) {
     my $ox = $x+$o->[X];
     my $oy = $y+$o->[Y];
+    my $oi;
     my $s = NONE;
     while ($ox >= 0 && $ox <= $maxx && $oy >= 0 && $oy <= $maxy) {
-      $s = $m->get_idx($ox + $oy*$width);
+      $oi = $ox + $oy*$width;
+      $s = $m->get_idx($oi);
       if ($s != NONE or !$sight) {
         last;
       }
       $ox += $o->[X];
       $oy += $o->[Y];
     }
-    $c++ if ($s == OCCUPIED);
+    push @n, $oi if ($s != NONE);
+  }
+  return \@n;
+}
+
+sub occupiedCount {
+  my ($m, $ni) = @_;
+  my $c = 0;
+  for my $i (@$ni) {
+    $c++ if ($m->get_idx($i) == OCCUPIED);
   }
   return $c;
 }
 
 sub run {
-  my ($cur, $new, $idx, $group, $sight) = @_;
+  my ($map, $idx, $group, $sight) = @_;
+  my $cur = $map->clone();
+  my $new = $map->clone();
   print $cur->pretty(),"\n" if (DEBUG > 1);
   my @i = keys %{$idx};
   my $maxx = $cur->width-1;
@@ -74,10 +90,10 @@ sub run {
     my $c = 0;
     my $ch = 0;
     for my $i (@i) {
-      my ($x, $y) = @{$idx->{$i}};
+      my ($x, $y, $ni, $niS) = @{$idx->{$i}};
       my $s = $cur->get_idx($i);
       my $n = $s;
-      my $oc = occupiedCount($cur, $x, $y, $sight, $maxx, $maxy);
+      my $oc = occupiedCount($cur, $sight ? $niS : $ni);
       if ($s == EMPTY && $oc == 0) {
         $ch++;
         $n = OCCUPIED;
@@ -116,7 +132,7 @@ print "Part 1: ", calc($i), "\n";
 
 testPart2() if (TEST);
 
-print "Part 2: ", calc2($i2), "\n";
+print "Part 2: ", calc2($i), "\n";
 
 sub testPart1 {
   my @test_cases =
