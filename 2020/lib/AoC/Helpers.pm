@@ -26,8 +26,8 @@ use constant
 
 use Data::Dumper;
 use Storable qw/dclone/;
-use List::Util qw/min max minstr maxstr sum product pairs/;
-use List::MoreUtils qw/zip pairwise/;
+use List::Util qw/min max minstr maxstr sum product pairs all any/;
+use List::MoreUtils qw/zip pairwise minmax/;
 use POSIX qw/ceil floor round/;
 
 our %EXPORT_TAGS = ( 'all' => [ qw(
@@ -42,9 +42,11 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
 
                                     dclone
                                     min max minstr maxstr sum product pairs
+                                    all any
                                     zip pairwise
-                                    minmax_xy
                                     minmax
+                                    minmax_xy
+                                    minmax_dim
                                     allin
                                     neighbourbb
                                     neighbours
@@ -232,7 +234,7 @@ sub minmax_xy {
   $bb->[MAXY] = $y if (!defined $bb->[MAXY] || $bb->[MAXY] < $y);
 }
 
-sub minmax {
+sub minmax_dim {
   my ($bb, @r) = @_;
   for my $i (0..(@r-1)) {
     my $v = shift @r;

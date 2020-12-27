@@ -19,21 +19,11 @@ sub calc {
   $pre //= 25;
   my @sums = ();
   for my $i (0 .. $pre-2) {
-    for my $j ($i+1 .. $pre-1) {
-      push @{$sums[$i]}, $in->[$i] + $in->[$j];
-    }
+    $sums[$i] = [ map { $in->[$i] + $_ } @{$in}[$i+1 .. $pre-1] ];
   }
   for my $i ($pre .. (@$in-1)) {
     print "$in->[$i]  @{$in}[$i-$pre .. $i-1]\n" if DEBUG;
-    my $valid = undef;
-    for my $s (@sums) {
-      for my $t (@$s) {
-        if ($t == $in->[$i]) {
-          $valid = 1;
-          last;
-        }
-      }
-    }
+    my $valid = any { any { $_ == $in->[$i] } @$_ } @sums;
     return $in->[$i] unless ( $valid );
     shift @sums;
     for my $j (0..@sums-1) {
@@ -58,7 +48,7 @@ sub calc2 {
       $start++;
     }
   }
-  return (min @{$in}[$start..$end]) + (max @{$in}[$start..$end])
+  return sum minmax @{$in}[$start..$end];
 }
 
 testPart1() if (TEST);

@@ -24,7 +24,7 @@ sub read_map {
       push @c, 0 for (0..$dim-3);
       if ('#' eq substr $lines->[$y], $x, 1) {
         $m{"@c"} = 1;
-        minmax($bb, @c);
+        minmax_dim($bb, @c);
       }
     }
   }
@@ -67,8 +67,8 @@ sub pretty {
 sub iter {
   my ($m) = @_;
   my $n = { map => {}, bb => [], dim => $m->{dim}, c => 0, nb => $m->{nb} };
-  minmax($n->{bb}, map { $m->{bb}->[$_]->[MIN]-1 } (0..$m->{dim}-1));
-  minmax($n->{bb}, map { $m->{bb}->[$_]->[MAX]+1 } (0..$m->{dim}-1));
+  minmax_dim($n->{bb}, map { $m->{bb}->[$_]->[MIN]-1 } (0..$m->{dim}-1));
+  minmax_dim($n->{bb}, map { $m->{bb}->[$_]->[MAX]+1 } (0..$m->{dim}-1));
   # check whole bounding box ... slower # for my $c (allin($n->{bb})) {
   for my $c (allneighbours($m->{nb},
                            [map { [ split/,/,$_ ] } keys %{$m->{map}}])) {
