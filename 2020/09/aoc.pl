@@ -17,17 +17,29 @@ my $i2 = read_lines($file);
 sub calc {
   my ($in, $pre) = @_;
   $pre //= 25;
+  my @sums = ();
+  for my $i (0 .. $pre-2) {
+    for my $j ($i+1 .. $pre-1) {
+      push @{$sums[$i]}, $in->[$i] + $in->[$j];
+    }
+  }
   for my $i ($pre .. (@$in-1)) {
     print "$in->[$i]  @{$in}[$i-$pre .. $i-1]\n" if DEBUG;
-    my $iter = combinations([@{$in}[$i-$pre .. $i-1]], 2);
     my $valid = undef;
-    while (my $c = $iter->next) {
-      if ((sum @$c) == $in->[$i]) {
-        $valid = 1;
-        last;
+    for my $s (@sums) {
+      for my $t (@$s) {
+        if ($t == $in->[$i]) {
+          $valid = 1;
+          last;
+        }
       }
     }
     return $in->[$i] unless ( $valid );
+    shift @sums;
+    for my $j (0..@sums-1) {
+      push @{$sums[$j]}, $in->[$i-$pre+$j+1]+$in->[$i];
+    }
+    push @sums, [$in->[$i-1] + $in->[$i]];
   }
   return 0;
 }
