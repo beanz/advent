@@ -24,6 +24,7 @@ sub calc {
     while (my $c = $iter->next) {
       if ((sum @$c) == $in->[$i]) {
         $valid = 1;
+        last;
       }
     }
     return $in->[$i] unless ( $valid );
@@ -33,15 +34,19 @@ sub calc {
 
 sub calc2 {
   my ($in, $part1) = @_;
-  for my $n (1 .. @{$in}-1) {
-    for my $j (0..@{$in}-$n-1) {
-      print "$n $j ", ($j+$n), " @{$in}[$j..$j+$n]\n" if DEBUG;
-      if ((sum @{$in}[$j..$j+$n]) == $part1) {
-        return (min @{$in}[$j..$j+$n]) + (max @{$in}[$j..$j+$n]);
-      }
+  my $start = 0;
+  my $end = 2;
+  my $sum = sum @{$in}[$start..$end];
+  while ($sum != $part1 || $start == ($end - 1)) {
+    if ($sum < $part1) {
+      $end++;
+      $sum += $in->[$end];
+    } else {
+      $sum -= $in->[$start];
+      $start++;
     }
   }
-  return 0;
+  return (min @{$in}[$start..$end]) + (max @{$in}[$start..$end])
 }
 
 testPart1() if (TEST);

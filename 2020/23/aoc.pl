@@ -23,11 +23,11 @@ my $i2 = $reader->($file);
   }
   sub pp {
     my ($self) = @_;
-    my @s = ($self->val);
-    my $cup = $self->cw;
-    while ($cup->val != $self->val) {
-      push @s, $cup->val;
-      $cup = $cup->cw;
+    my @s = ($self->[VALUE]);
+    my $cup = $self->[CW];
+    while ($cup->[VALUE] != $self->[VALUE]) {
+      push @s, $cup->[VALUE];
+      $cup = $cup->[CW];
     }
     join ' ', @s;
   }
@@ -67,10 +67,10 @@ my $i2 = $reader->($file);
   sub part1 {
     my ($self) = @_;
     my $s = "";
-    my $cup = $self->cw;
-    while ($cup->val != $self->val) {
-      $s .= $cup->val;
-      $cup = $cup->cw;
+    my $cup = $self->[CW];
+    while ($cup->[VALUE] != $self->[VALUE]) {
+      $s .= $cup->[VALUE];
+      $cup = $cup->[CW];
     }
     $s;
   }
@@ -101,16 +101,16 @@ sub run {
   }
   for my $move (1..$moves) {
     my $pick = $cur->pick();
-    my $dst = $cur->val;
+    my $dst = $cur->[Cup::VALUE];
     do {
       $dst--;
       $dst = $max if ($dst == 0);
-    } while ($pick->val == $dst ||
-             $pick->cw->val == $dst ||
-             $pick->cw->cw->val == $dst);
+    } while ($pick->[Cup::VALUE] == $dst ||
+             $pick->[Cup::CW]->[Cup::VALUE] == $dst ||
+             $pick->[Cup::CCW]->[Cup::VALUE] == $dst);
     my $dcup = $cup[$dst];
     $dcup->insert($pick);
-    $cur = $cur->cw;
+    $cur = $cur->[Cup::CW];
   }
   return $cup[1];
 }

@@ -8,20 +8,21 @@ use Carp::Always qw/carp verbose/;
 
 my $file = shift // "input.txt";
 my $i = read_lines($file);
+my %seen;
+my %pairs;
 
 sub calc {
-  my ($i, $part) = @_;
-  $part //= 1;
-  for my $a (0..(scalar @$i-1)) {
-    for my $b ($a+1 .. (scalar @$i-1)) {
-#      print "$a $b $i->[$a] + $i->[$b] = ", $i->[$a] + $i->[$b], "\n"
-#        if (DEBUG);
-      if ($i->[$a] + $i->[$b] == 2020) {
-        return $i->[$a] * $i->[$b];
-      }
+  my ($i) = @_;
+  my $res;
+  for my $a (@$i) {
+    my $rem = 2020-$a;
+    if ($seen{$rem}) {
+      $res = $a * $rem;
     }
+    $pairs{$a+$_} = $a*$_ for (keys %seen);
+    $seen{$a}++;
   }
-  return 0;
+  return $res;
 }
 
 if (TEST) {
@@ -39,18 +40,14 @@ my $part1 = calc($i);
 print "Part 1: ", $part1, "\n";
 
 sub calc2 {
-  my ($i, $part) = @_;
-  $part //= 1;
-  for my $a (0..(scalar @$i-1)) {
-    for my $b ($a+1 .. (scalar @$i-1)) {
-      for my $c ($b+1 .. (scalar @$i-1)) {
-        if ($i->[$a] + $i->[$b] + $i->[$c] == 2020) {
-          return $i->[$a] * $i->[$b] * $i->[$c];
-        }
-      }
+  my ($i) = @_;
+  for my $a (@$i) {
+    my $rem = 2020 - $a;
+    if (exists $pairs{$rem}) {
+      return $a * $pairs{$rem};
     }
   }
-  return 0;
+  return;
 }
 
 if (TEST) {
