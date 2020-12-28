@@ -50,9 +50,13 @@ sub rc {
     if ($part2 && @$p1 >= $c1 && @$p2 >= $c2) {
       my @np1 = map $p1->[$_], (0..$c1-1);
       my @np2 = map $p2->[$_], (0..$c2-1);
-      print "sg!\n" if DEBUG;
-      my $sw = rc(\@np1, \@np2, 1);
-      $w = $sw eq \@np1 ? $p1 : $p2;
+      if (max @np1 > max @np2) {
+        $w = $p1;
+      } else {
+        print "sg!\n" if DEBUG;
+        my $sw = rc(\@np1, \@np2, 1);
+        $w = $sw eq \@np1 ? $p1 : $p2;
+      }
     } else {
       $w = $c1 > $c2 ? $p1 : $p2;
     }
