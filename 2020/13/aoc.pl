@@ -33,7 +33,7 @@ sub calc {
 
 use ntheory qw/chinese/;
 
-sub calc2 {
+sub calc2o {
   my ($in) = @_;
   my $min = 9999999999999;
   my @t = split /,/, $in->[1];
@@ -44,6 +44,31 @@ sub calc2 {
     push @p, [$t[$i]-$i, $t[$i]];
   }
   return chinese(@p);
+}
+
+sub calc2 {
+  my ($in) = @_;
+  my @t = split /,/, $in->[1];
+  my $period = shift @t;
+  my $t = 0;
+  my $offset;
+  for my $i (1..@t) {
+    my $bus = $t[$i-1];
+    next if ($bus eq 'x');
+    $offset = undef;
+    while (1) {
+      if (($t + $i) % $bus == 0) {
+        if (!defined $offset) {
+          $offset = $t;
+        } else {
+          $period = $t - $offset;
+          last;
+        }
+      }
+      $t += $period;
+    }
+  }
+  return $offset
 }
 
 testPart1() if (TEST);
