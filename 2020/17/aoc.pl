@@ -70,9 +70,20 @@ sub iter {
   minmax_dim($n->{bb}, map { $m->{bb}->[$_]->[MIN]-1 } (0..$m->{dim}-1));
   minmax_dim($n->{bb}, map { $m->{bb}->[$_]->[MAX]+1 } (0..$m->{dim}-1));
   # check whole bounding box ... slower # for my $c (allin($n->{bb})) {
+  my %cache;
   for my $c (allneighbours($m->{nb},
                            [map { [ split/,/,$_ ] } keys %{$m->{map}}])) {
-    my $nc = nc($m, @$c);
+    my @rk = @$c;
+    for my $i (2..@rk-1) {
+      $rk[$i] = abs($rk[$i]);
+    }
+    my $rk = join'!',@rk;
+    my $nc;
+    if ($cache{$rk}) {
+      $nc = $cache{$rk};
+    } else {
+      $cache{$rk} = $nc = nc($m, @$c);
+    }
     my $sq = sq($m, @$c);
     if (($sq && $nc == 2) || $nc == 3) {
       $sq = 1;
