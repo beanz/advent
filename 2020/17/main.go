@@ -21,6 +21,21 @@ func (c Cube) Key() int {
 	return k
 }
 
+func (c Cube) SymKey() int {
+	k := 0
+	for i, x := range c {
+		k <<= 5
+		if i > 1 && x < 0 {
+			k += (-x + 15)
+		} else {
+			k += (x + 15)
+		}
+	}
+	k <<= 5
+	k += len(c)
+	return k
+}
+
 func KeyToCube(k int) Cube {
 	dim := k & 0x1f
 	k >>= 5
@@ -171,9 +186,17 @@ func (m *Map) NeighbourCount(c Cube) int {
 func (m *Map) Iter() int {
 	n := 0
 	a := 0
+	sym := make(map[int]int, len(m.cur)/2)
 	for _, c := range m.AllNeighbours() {
 		a++
-		nc := m.NeighbourCount(c)
+		sk := c.SymKey()
+		var nc int
+		var ok bool
+		nc, ok = sym[sk]
+		if !ok {
+			nc = m.NeighbourCount(c)
+			sym[sk] = nc
+		}
 		cur := m.Get(c)
 		var new bool
 		if (cur && nc == 2) || nc == 3 {
