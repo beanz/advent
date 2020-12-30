@@ -10,6 +10,9 @@ use constant {
   TEST => $ENV{AoC_TEST},
 };
 
+my $endTime = 2503;
+$endTime = 1000 if (@ARGV && $ARGV[0] eq 'test1.txt');
+
 my @i = <>;
 chomp @i;
 
@@ -68,12 +71,14 @@ chomp @test_input;
 if (TEST) {
   print "Test 1: ", calc(\@test_input, 1000), " == 1120\n";
 }
-print "Part 1: ", calc(\@i, 2503), "\n";
+print "Part 1: ", calc(\@i, $endTime), "\n";
 
 sub calc2 {
   my $r = calc_aux(@_);
-  for my $n (keys %$r) {
-    print "$n: ", $r->{$n}->{score}, "\n";
+  if (DEBUG) {
+    for my $n (keys %$r) {
+      print "$n: ", $r->{$n}->{score}, "\n";
+    }
   }
   return max(map { $_->{score} } values %$r);
 }
@@ -82,4 +87,4 @@ if (TEST) {
   print "Test 2: ", calc2(\@test_input, 1), " == 689\n";
   print "Test 2: ", calc2(\@test_input, 1000), " == 689\n";
 }
-print "Part 2: ", calc2(\@i, 2503), "\n";
+print "Part 2: ", calc2(\@i, $endTime), "\n";
