@@ -1,0 +1,20 @@
+package main
+
+import (
+	"github.com/stretchr/testify/assert"
+	"testing"
+
+	. "github.com/beanz/advent2015/lib"
+)
+
+func TestRun(t *testing.T) {
+	g := NewComp([]string{"inc a", "jio a, +2", "tpl a", "inc a"})
+	g.Run()
+	assert.Equal(t, uint(2), g.reg[RA], "simple set reg a to 2")
+}
+
+func TestParts(t *testing.T) {
+	g := NewComp(ReadFileLines("input.txt"))
+	assert.Equal(t, uint(255), g.Part1(), "part 1")
+	assert.Equal(t, uint(334), g.Part2(), "part 2")
+}
