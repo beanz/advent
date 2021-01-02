@@ -1,17 +1,15 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"os"
-
 	"crypto/md5"
-	. "github.com/beanz/advent-of-code-go"
+	"fmt"
+
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Game struct {
 	doorID string
-	index  int
+	ns     *NumStr
 	debug  bool
 }
 
@@ -20,7 +18,11 @@ func (g *Game) String() string {
 }
 
 func readGame(line string) *Game {
-	return &Game{line, 3231900, false}
+	return &Game{line, NewNumStr(line), false}
+}
+
+func (g *Game) reset() {
+	g.ns = NewNumStr(g.doorID)
 }
 
 func (g *Game) nextPassword() string {
@@ -34,9 +36,8 @@ func (g *Game) nextPassword() string {
 func (g *Game) nextSum() string {
 	var sum string
 	for {
-		str := fmt.Sprintf("%s%d", g.doorID, g.index)
-		sum = fmt.Sprintf("%x", md5.Sum([]byte(str)))
-		g.index++
+		sum = fmt.Sprintf("%x", md5.Sum(g.ns.Bytes()))
+		g.ns.Inc()
 		if sum[0] == '0' && sum[1] == '0' && sum[2] == '0' && sum[3] == '0' &&
 			sum[4] == '0' {
 			break
@@ -83,20 +84,16 @@ func (g *Game) nextStrongPassword() string {
 }
 
 func (g *Game) Part2() string {
+	g.reset()
 	return g.nextStrongPassword()
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	input := os.Args[1]
-	game := readGame(ReadLines(input)[0])
+	game := readGame(ReadInputLines()[0])
 
 	res := game.Part1()
 	fmt.Printf("Part 1: %s\n", res)
 
-	game.index = 0
 	res = game.Part2()
 	fmt.Printf("Part 2: %s\n", res)
 }

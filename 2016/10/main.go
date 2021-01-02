@@ -3,11 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 	"regexp"
 	"strconv"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Output struct {
@@ -203,11 +202,7 @@ func (g *Game) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	input := os.Args[1]
-	game := readGame(ReadLines(input))
+	game := readGame(ReadInputLines())
 
 	//fmt.Printf("%s\n", game)
 	res := game.Part1()

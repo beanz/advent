@@ -2,10 +2,8 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Game struct {
@@ -76,17 +74,10 @@ func (g *Game) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	input := os.Args[1]
-	game := readGame(ReadLines(input)[0])
-	//fmt.Printf("%s\n", game)
+	game := readGame(ReadInputLines()[0])
 	res := game.Part1()
 	fmt.Printf("Part 1: %d\n", res)
-	//fmt.Printf("%s\n", game)
 
 	res = game.Part2()
 	fmt.Printf("Part 2: %d\n", res)
-	//fmt.Printf("%s\n", game)
 }

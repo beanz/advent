@@ -2,12 +2,9 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"regexp"
-	"strconv"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Node struct {
@@ -29,10 +26,10 @@ func readGame(lines []string) *Game {
 		if m == nil {
 			continue
 		}
-		x, _ := strconv.Atoi(m[1])
-		y, _ := strconv.Atoi(m[2])
-		u, _ := strconv.Atoi(m[4])
-		f, _ := strconv.Atoi(m[5])
+		x := MustParseInt(m[1])
+		y := MustParseInt(m[2])
+		u := MustParseInt(m[4])
+		f := MustParseInt(m[5])
 		g.nodes[Point{x, y}] = &Node{u, f}
 		if x >= g.w {
 			g.w = x + 1
@@ -96,11 +93,7 @@ func (g Game) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	input := os.Args[1]
-	game := readGame(ReadLines(input))
+	game := readGame(ReadInputLines())
 	fmt.Printf("Part 1: %d\n", game.Part1())
 	fmt.Printf("Part 2: %d\n", game.Part2())
 }

@@ -2,10 +2,9 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
-	"strconv"
 	"strings"
+
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Game struct {
@@ -67,19 +66,12 @@ func (g *Game) Play() string {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input> <size>\n", os.Args[0])
-	}
-	input := os.Args[1]
-	size, err := strconv.Atoi(os.Args[2])
-	if err != nil {
-		log.Fatalf("invalid size argument %s\n", err)
-	}
-
-	game := Game{input, size, true}
+	in := ReadInputLines()
+	game := Game{in[0], 272, true}
 	res := game.Play()
 	fmt.Printf("Part 1: %s\n", res)
 
+	game = Game{in[0], 35651584, true}
 	res = game.Play()
 	fmt.Printf("Part 2: %s\n", res)
 }

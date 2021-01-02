@@ -3,10 +3,8 @@ package main
 import (
 	"crypto/md5"
 	"fmt"
-	"log"
-	"os"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Game struct {
@@ -95,11 +93,8 @@ func (g Game) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input>\n", os.Args[0])
-	}
-	input := os.Args[1]
-	game := Game{4, 4, input, false}
+	in := ReadInputLines()
+	game := Game{4, 4, in[0], false}
 	fmt.Printf("Part 1: %s\n", game.Part1())
 	fmt.Printf("Part 2: %d\n", game.Part2())
 }

@@ -2,12 +2,8 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
-	"regexp"
-	"strconv"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Disc struct {
@@ -27,25 +23,9 @@ type Game struct {
 
 func readGame(lines []string) *Game {
 	game := Game{[]Disc{}, false}
-	lineRe := regexp.MustCompile(`Disc #(\d+) has (\d+) positions; at time=0, it is at position (\d+).`)
 	for _, line := range lines {
-		m := lineRe.FindStringSubmatch(line)
-		if m == nil {
-			log.Fatalf("invalid line:\n%s\n", line)
-		}
-		num, err := strconv.Atoi(m[1])
-		if err != nil {
-			log.Fatalf("invalid disc in line:\n%s\n", line)
-		}
-		positions, err := strconv.Atoi(m[2])
-		if err != nil {
-			log.Fatalf("invalid number of positions in line:\n%s\n", line)
-		}
-		start, err := strconv.Atoi(m[3])
-		if err != nil {
-			log.Fatalf("invalid start position in line:\n%s\n", line)
-		}
-		game.discs = append(game.discs, Disc{num, positions, start})
+		ints := Ints(line)
+		game.discs = append(game.discs, Disc{ints[0], ints[1], ints[3]})
 	}
 	return &game
 }
@@ -75,15 +55,7 @@ func (g *Game) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	input := os.Args[1]
-	game := readGame(ReadLines(input))
-	//fmt.Printf("%s\n", game)
+	game := readGame(ReadInputLines())
 	fmt.Printf("Part 1: %d\n", game.Part1())
-	//fmt.Printf("%s\n", game)
-
 	fmt.Printf("Part 2: %d\n", game.Part2())
-	//fmt.Printf("%s\n", game)
 }

@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

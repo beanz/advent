@@ -2,11 +2,8 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
-	"strconv"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Game struct {
@@ -76,16 +73,10 @@ func (g Game) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input>\n", os.Args[0])
-	}
-	input, err := strconv.Atoi(os.Args[1])
-	if err != nil {
-		log.Fatalf("Invalid argument input, %s: %s\n", os.Args[1], err)
-	}
-	game := NewGame(input, false)
+	in := ReadInputInts()
+	game := NewGame(in[0], false)
 	fmt.Printf("Part 1: %d\n", game.Part1())
 
-	game = NewGame(input, false)
+	game = NewGame(in[0], false)
 	fmt.Printf("Part 2: %d\n", game.Part2())
 }
