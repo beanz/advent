@@ -3,12 +3,8 @@ package main
 import (
 	"fmt"
 
-	. "github.com/beanz/advent2015/lib"
+	. "github.com/beanz/advent/lib-go"
 )
-
-type Point struct {
-	x, y int
-}
 
 func calc(in []string) (int, int) {
 	p1 := make(map[Point]bool, 2700)
@@ -20,24 +16,24 @@ func calc(in []string) (int, int) {
 	for i, ch := range in[0] {
 		switch ch {
 		case '^':
-			p1p.y--
+			p1p.Y--
 			p1[p1p] = true
-			p2p[i%2].y--
+			p2p[i%2].Y--
 			p2[p2p[i%2]] = true
 		case '>':
-			p1p.x++
+			p1p.X++
 			p1[p1p] = true
-			p2p[i%2].x++
+			p2p[i%2].X++
 			p2[p2p[i%2]] = true
 		case 'v':
-			p1p.y++
+			p1p.Y++
 			p1[p1p] = true
-			p2p[i%2].y++
+			p2p[i%2].Y++
 			p2[p2p[i%2]] = true
 		case '<':
-			p1p.x--
+			p1p.X--
 			p1[p1p] = true
-			p2p[i%2].x--
+			p2p[i%2].X--
 			p2[p2p[i%2]] = true
 		}
 	}

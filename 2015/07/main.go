@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	. "github.com/beanz/advent2015/lib"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Wiring map[string]interface{}

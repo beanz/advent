@@ -3,6 +3,8 @@ package main
 import (
 	"github.com/stretchr/testify/assert"
 	"testing"
+
+	. "github.com/beanz/advent/lib-go"
 )
 
 type TestCase struct {
@@ -40,7 +42,7 @@ func TestPart2(t *testing.T) {
 }
 
 func TestInput(t *testing.T) {
-	p1, p2 := calc(readFileBytes("input.txt"))
+	p1, p2 := calc(ReadFileBytes("input.txt"))
 	assert.Equal(t, 138, p1, "Part 1 on input.txt")
 	assert.Equal(t, 1771, p2, "Part 2 on input.txt")
 }

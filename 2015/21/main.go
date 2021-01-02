@@ -5,7 +5,7 @@ import (
 	"math"
 	"strings"
 
-	. "github.com/beanz/advent2015/lib"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Fighter struct {
@@ -141,14 +141,4 @@ func main() {
 	g := NewGame(in)
 	fmt.Printf("Part 1: %d\n", g.Part1())
 	fmt.Printf("Part 2: %d\n", g.Part2())
-}
-
-func MaxInt(a int, b ...int) int {
-	max := a
-	for _, v := range b {
-		if v > a {
-			max = v
-		}
-	}
-	return max
 }

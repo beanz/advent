@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	. "github.com/beanz/advent2015/lib"
+	. "github.com/beanz/advent/lib-go"
 )
 
 func Iter(s string) string {

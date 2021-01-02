@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	. "github.com/beanz/advent2015/lib"
+	. "github.com/beanz/advent/lib-go"
 )
 
 func calc(in []string) (int, int) {
@@ -19,7 +19,7 @@ func calc(in []string) (int, int) {
 		paper += 2 * (p1 + p2 + p3)
 		paper += p1
 		ribbon += 2 * (dim[0] + dim[1])
-		ribbon += IntProduct(dim)
+		ribbon += Product(dim...)
 	}
 	return paper, ribbon
 }

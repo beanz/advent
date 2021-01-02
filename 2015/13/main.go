@@ -5,7 +5,7 @@ import (
 	"math"
 	"strings"
 
-	. "github.com/beanz/advent2015/lib"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Table struct {
@@ -35,11 +35,8 @@ func NewTable(in []string) *Table {
 
 func (t *Table) Calc() int {
 	max := math.MinInt32
-	orig := []int{}
-	for i := 0; i < len(t.p); i++ {
-		orig = append(orig, i)
-	}
-	for perm := make([]int, len(orig)); perm[0] < len(perm); nextPerm(perm) {
+	p := NewPerms(len(t.p))
+	for perm := p.Get(); !p.Done(); perm = p.Next() {
 		s := 0
 		for i := 0; i < len(perm); i++ {
 			p1, p2 := t.p[perm[i]], t.p[perm[(i+1)%len(perm)]]
@@ -67,14 +64,4 @@ func main() {
 	t := NewTable(s)
 	fmt.Printf("Part 1: %d\n", t.Part1())
 	fmt.Printf("Part 2: %d\n", t.Part2())
-}
-
-func nextPerm(p []int) {
-	for i := len(p) - 1; i >= 0; i-- {
-		if i == 0 || p[i] < len(p)-i-1 {
-			p[i]++
-			return
-		}
-		p[i] = 0
-	}
 }

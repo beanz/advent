@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"strings"
 
-	. "github.com/beanz/advent2015/lib"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Rule struct {

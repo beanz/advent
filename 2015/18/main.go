@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	. "github.com/beanz/advent2015/lib"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Life struct {

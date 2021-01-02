@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	. "github.com/beanz/advent2015/lib"
+	aoc "github.com/beanz/advent/lib-go"
 )
 
 const (
@@ -35,7 +35,7 @@ func NewComp(in []string) *Comp {
 		} else if ss[1][0] == 'a' {
 			reg = RA
 		}
-		ints := Ints(ss[1])
+		ints := aoc.Ints(ss[1])
 		offset := 0
 		if len(ints) > 0 {
 			offset = ints[0]
@@ -93,7 +93,7 @@ func (c *Comp) Part2() uint {
 }
 
 func main() {
-	g := NewComp(ReadInputLines())
+	g := NewComp(aoc.ReadInputLines())
 	fmt.Printf("Part 1: %d\n", g.Part1())
 	fmt.Printf("Part 2: %d\n", g.Part2())
 }

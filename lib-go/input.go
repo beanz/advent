@@ -1,12 +1,50 @@
 package aoc
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 	"unicode"
 )
+
+func InputFile() string {
+	if len(os.Args) < 2 {
+		panic(fmt.Sprintf("Usage: %s <input.txt>\n", os.Args[0]))
+	}
+	return os.Args[1]
+}
+
+func ReadFileBytes(file string) []byte {
+	b, err := ioutil.ReadFile(file)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to read %s: %s\n", file, err))
+	}
+	return b
+}
+
+func ReadInputBytes() []byte {
+	return ReadFileBytes(InputFile())
+}
+
+func ReadFileLines(file string) []string {
+	return strings.Split(strings.TrimSuffix(string(ReadFileBytes(file)), "\n"), "\n")
+}
+
+func ReadInputLines() []string {
+	return ReadFileLines(InputFile())
+}
+
+func ReadFileChunks(file string) []string {
+	return strings.Split(strings.TrimSuffix(string(ReadFileBytes(file)),
+		"\n\n"), "\n\n")
+}
+
+func ReadInputChunks() []string {
+	return ReadFileChunks(InputFile())
+}
 
 // ReadLines slurps input from a file into a list of lines (strings)
 func ReadLines(file string) []string {
@@ -16,6 +54,14 @@ func ReadLines(file string) []string {
 	}
 	lines := strings.Split(string(b), "\n")
 	return lines[:len(lines)-1]
+}
+
+func ReadFileInts(file string) []int {
+	return Ints(string(ReadFileBytes(file)))
+}
+
+func ReadInputInts() []int {
+	return ReadFileInts(InputFile())
 }
 
 // ReadIntsFromFile slurps input from a file into a list of integers
@@ -39,19 +85,6 @@ func ReadChunks(file string) []string {
 		chunks[len(chunks)-1] = strings.TrimSuffix(chunks[len(chunks)-1], "\n")
 	}
 	return chunks
-}
-
-func ReadInts(lines []string) ([]int, error) {
-	nums := make([]int, 0, len(lines))
-
-	for _, line := range lines {
-		n, err := strconv.Atoi(line)
-		if err != nil {
-			return nil, err
-		}
-		nums = append(nums, n)
-	}
-	return nums, nil
 }
 
 func ReadInt64s(lines []string) ([]int64, error) {
@@ -96,10 +129,7 @@ func SimpleReadInts(l string) []int {
 	f := func(c rune) bool {
 		return !(unicode.IsNumber(c) || c == '-')
 	}
-	values, err := ReadInts(strings.FieldsFunc(n, f))
-	if err != nil {
-		log.Fatalf("SimpleReadInts error: %s\n", err)
-	}
+	values := ReadInts(strings.FieldsFunc(n, f))
 	return values
 }
 

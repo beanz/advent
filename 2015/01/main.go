@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os"
+
+	. "github.com/beanz/advent/lib-go"
 )
 
 func calc(in []byte) (int, int) {
@@ -26,24 +26,8 @@ func calc(in []byte) (int, int) {
 	return co - cc, first
 }
 
-func readFileBytes(file string) []byte {
-	b, err := ioutil.ReadFile(file)
-	if err != nil {
-		panic(fmt.Sprintf("Failed to read %s: %s\n", file, err))
-	}
-	return b
-}
-
-func readInputBytes() []byte {
-	if len(os.Args) < 2 {
-		panic(fmt.Sprintf("Usage: %s <input.txt>\n", os.Args[0]))
-	}
-	file := os.Args[1]
-	return readFileBytes(file)
-}
-
 func main() {
-	b := readInputBytes()
+	b := ReadInputBytes()
 	p1, p2 := calc(b)
 	fmt.Printf("Part 1: %d\n", p1)
 	fmt.Printf("Part 2: %d\n", p2)

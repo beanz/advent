@@ -3,40 +3,8 @@ package main
 import (
 	"fmt"
 
-	. "github.com/beanz/advent2015/lib"
+	. "github.com/beanz/advent/lib-go"
 )
-
-type PW struct {
-	b []byte
-	l int
-}
-
-func NewPW(pw string) *PW {
-	b := make([]byte, len(pw)+10)
-	copy(b, []byte(pw))
-	return &PW{b: b, l: len(pw)}
-}
-
-func (pw *PW) Bytes() []byte {
-	return pw.b[:pw.l]
-}
-
-func (pw *PW) String() string {
-	return string(pw.Bytes())
-}
-
-func (pw *PW) Inc() {
-	for i := pw.l - 1; i >= 0; i-- {
-		pw.b[i]++
-		if pw.b[i] <= 'z' {
-			return
-		}
-		pw.b[i] = 'a'
-	}
-	pw.b[0] = 'a'
-	pw.b[pw.l] = 'a'
-	pw.l++
-}
 
 func Valid(pw string) bool {
 	seen := make(map[string]bool, len(pw)/2)
@@ -66,7 +34,7 @@ func Valid(pw string) bool {
 }
 
 func Next(cur string) string {
-	pw := NewPW(cur)
+	pw := NewPerlyString(cur)
 	pw.Inc()
 	for ; !Valid(pw.String()); pw.Inc() {
 	}

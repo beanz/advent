@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	. "github.com/beanz/advent2015/lib"
+	. "github.com/beanz/advent/lib-go"
 )
 
 func Count1(s string) int {

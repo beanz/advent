@@ -4,7 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"testing"
 
-	. "github.com/beanz/advent2015/lib"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type TestCase struct {
@@ -25,8 +25,8 @@ func TestPart1(t *testing.T) {
 
 func TestPart2(t *testing.T) {
 	tests := []TestCase{
-		{"test1.txt", 11171160},
-		{"input.txt", 57600000},
+		{"test1.txt", 57600000},
+		{"input.txt", 11171160},
 	}
 	for _, tc := range tests {
 		r := NewRecipe(ReadFileLines(tc.file))

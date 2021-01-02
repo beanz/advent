@@ -5,21 +5,11 @@ import (
 	"math"
 	"strings"
 
-	. "github.com/beanz/advent2015/lib"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Ing struct {
 	cap, dur, fla, tex, cal int
-}
-
-func MaxInt(a int, b ...int) int {
-	max := a
-	for _, v := range b {
-		if v > a {
-			max = v
-		}
-	}
-	return max
 }
 
 type Recipe struct {
@@ -63,23 +53,6 @@ func (r *Recipe) Score(amounts []int) (int, int) {
 	//fmt.Printf("amounts=%v => %d * %d * %d * %d = %d\n",
 	// amounts, cap, dur, fla, tex, score)
 	return score, cal
-}
-
-func Variations(k, n int) [][]int {
-	if k == 1 {
-		return [][]int{[]int{n}}
-	}
-	res := [][]int{}
-	for i := 0; i <= n; i++ {
-		sr := Variations(k-1, n-i)
-		for _, e := range sr {
-			r := make([]int, len(e)+1)
-			r[0] = i
-			copy(r[1:], e)
-			res = append(res, r)
-		}
-	}
-	return res
 }
 
 func (r *Recipe) Calc() {

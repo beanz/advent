@@ -4,7 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"testing"
 
-	. "github.com/beanz/advent2015/lib"
+	aoc "github.com/beanz/advent/lib-go"
 )
 
 func TestRun(t *testing.T) {
@@ -14,7 +14,7 @@ func TestRun(t *testing.T) {
 }
 
 func TestParts(t *testing.T) {
-	g := NewComp(ReadFileLines("input.txt"))
+	g := NewComp(aoc.ReadFileLines("input.txt"))
 	assert.Equal(t, uint(255), g.Part1(), "part 1")
 	assert.Equal(t, uint(334), g.Part2(), "part 2")
 }

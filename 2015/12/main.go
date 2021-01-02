@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"strings"
 
-	. "github.com/beanz/advent2015/lib"
+	. "github.com/beanz/advent/lib-go"
 )
 
 func Part1(s string) int {
 	ints := Ints(s)
-	return IntSum(ints)
+	return Sum(ints...)
 }
 
 func CountObj(o interface{}) int {
@@ -50,7 +50,7 @@ func CountObj(o interface{}) int {
 func Part2(s string) int {
 	si := strings.Index(s, "{")
 	if si == -1 {
-		return IntSum(Ints(s))
+		return Sum(Ints(s)...)
 	}
 	var obj interface{}
 	err := json.Unmarshal([]byte(s), &obj)

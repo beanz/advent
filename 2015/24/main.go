@@ -5,7 +5,7 @@ import (
 	"math"
 	"sort"
 
-	. "github.com/beanz/advent2015/lib"
+	. "github.com/beanz/advent/lib-go"
 )
 
 func SolveAux(in []int, sum int) [][]int {
@@ -39,7 +39,7 @@ func SolveAux(in []int, sum int) [][]int {
 
 func Solve(in []int, groups int) int {
 	sort.Sort(sort.Reverse(sort.IntSlice(in)))
-	sum := IntSum(in)
+	sum := Sum(in...)
 	target := sum / groups
 	sol := SolveAux(in, target)
 	min := uint64(math.MaxUint64)

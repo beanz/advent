@@ -5,7 +5,7 @@ import (
 	"math"
 	"strings"
 
-	. "github.com/beanz/advent2015/lib"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Routes struct {
@@ -38,10 +38,10 @@ func NewRoutes(in []string) *Routes {
 }
 
 func (r *Routes) Calc() {
-	perms := Permutations(0, len(r.p)-1)
 	min := math.MaxInt32
 	max := math.MinInt32
-	for _, perm := range perms {
+	perms := NewPerms(len(r.p))
+	for perm := perms.Get(); !perms.Done(); perm = perms.Next() {
 		dist := 0
 		cur := r.p[perm[0]]
 		todo := make([]string, len(perm)-1)
@@ -76,36 +76,4 @@ func main() {
 	r := NewRoutes(ReadInputLines())
 	fmt.Printf("Part 1: %d\n", r.Part1())
 	fmt.Printf("Part 2: %d\n", r.Part2())
-}
-
-func Permutations(min, max int) [][]int {
-	orig := []int{}
-	for i := min; i <= max; i++ {
-		orig = append(orig, i)
-	}
-	var helper func([]int, int)
-	res := [][]int{}
-
-	helper = func(orig []int, n int) {
-		if n == 1 {
-			tmp := make([]int, len(orig))
-			copy(tmp, orig)
-			res = append(res, tmp)
-		} else {
-			for i := 0; i < n; i++ {
-				helper(orig, n-1)
-				if n%2 == 1 {
-					tmp := orig[i]
-					orig[i] = orig[n-1]
-					orig[n-1] = tmp
-				} else {
-					tmp := orig[0]
-					orig[0] = orig[n-1]
-					orig[n-1] = tmp
-				}
-			}
-		}
-	}
-	helper(orig, len(orig))
-	return res
 }

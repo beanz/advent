@@ -4,43 +4,8 @@ import (
 	"crypto/md5"
 	"fmt"
 
-	. "github.com/beanz/advent2015/lib"
+	. "github.com/beanz/advent/lib-go"
 )
-
-type NumStr struct {
-	b  []byte
-	l  int
-	pl int
-}
-
-func NewNumStr(prefix string) *NumStr {
-	pl := len(prefix)
-	b := make([]byte, pl+10)
-	copy(b, []byte(prefix))
-	b[len(prefix)] = '0'
-	return &NumStr{b: b, l: pl + 1, pl: pl}
-}
-
-func (n *NumStr) Bytes() []byte {
-	return n.b[:n.l]
-}
-
-func (n *NumStr) String() string {
-	return string(n.b[:n.l])
-}
-
-func (n *NumStr) Inc() {
-	for i := n.l - 1; i >= n.pl; i-- {
-		n.b[i]++
-		if n.b[i] <= '9' {
-			return
-		}
-		n.b[i] = '0'
-	}
-	n.b[n.pl] = '1'
-	n.b[n.l] = '0'
-	n.l++
-}
 
 func calc(secret string) (int, int) {
 	var p1 int
