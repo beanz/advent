@@ -2,7 +2,7 @@
 use warnings FATAL => 'all';
 use strict;
 use v5.10;
-use lib "../lib";
+use lib "../../lib-perl";
 use AoC::Helpers qw/:all/;
 #use Carp::Always qw/carp verbose/;
 use constant
@@ -44,7 +44,7 @@ sub all_combinations {
           if DEBUG;
         push @res, $next->[PICKED];
         if (!defined $shortest || $shortest > scalar @{$next->[PICKED]}) {
-          print STDERR "  new shortest\n";
+          print STDERR "  new shortest\n" if DEBUG;
           $shortest = @{$next->[PICKED]}
         }
       } else {
@@ -64,7 +64,7 @@ sub all_combinations {
         if DEBUG;
       push @res, [$cap, @{$next->[PICKED]}];
       if (!defined $shortest || $shortest > scalar @{$next->[PICKED]}) {
-        print STDERR "  new shortest\n";
+        print STDERR "  new shortest\n" if DEBUG;
         $shortest = @{$next->[PICKED]}
       }
     } elsif (($cap + $sum) < $remaining) {
