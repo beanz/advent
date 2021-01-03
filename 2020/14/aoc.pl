@@ -2,7 +2,7 @@
 use warnings FATAL => 'all';
 use strict;
 use v5.10;
-use lib "../lib";
+use lib "../../lib-perl";
 no warnings 'portable';
 use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
