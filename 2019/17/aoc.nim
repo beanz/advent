@@ -148,7 +148,7 @@ proc part2(prog: var seq[int64], scaff: Scaffold) : int64 =
   prog[0] = 2
   var ic = NewIntCode(prog)
   for ch in full:
-    ic.AddInput(ord(ch))
+    ic.AddInput(int64(ord(ch)))
   var output = ic.RunToHalt()
   return output.peekLast
 
