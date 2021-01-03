@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 use warnings FATAL => 'all';
 use strict;
-use v5.10;
-use lib "../lib";
+use v5.20;
+use lib "../../lib-perl";
 use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
 
@@ -52,7 +52,7 @@ if (TEST) {
     );
   for my $tc (@test_cases) {
     my $res = calc(parse_input([$tc->[0]]));
-    assertEq('Test 1 $tc->[0]', $tc->[1], $res);
+    assertEq('Test 1 '.$tc->[0], $tc->[1], $res);
   }
 }
 
@@ -71,7 +71,7 @@ if (TEST) {
     );
   for my $tc (@test_cases) {
     my $res = calc2(parse_input([$tc->[0]]));
-    assertEq('Test 1 $tc->[0]', $tc->[1], $res);
+    assertEq('Test 2 '.$tc->[0], $tc->[1], $res);
   }
 }
 

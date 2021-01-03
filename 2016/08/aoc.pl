@@ -1,7 +1,10 @@
 #!/usr/bin/perl
-use warnings;
+use warnings FATAL => 'all';
 use strict;
-use List::Util qw/sum/;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 
 my $w = 50;
 my $h = 6;
@@ -13,7 +16,7 @@ if (@ARGV && $ARGV[0] =~ /test/) {
 my %s;
 while (<>) {
   chomp;
-  print $_, "\n";
+  print $_, "\n" if DEBUG;
   if (/rect (\d+)x(\d+)/) {
     my ($rw, $rh) = ($1, $2);
     for my $y (0..$rh-1) {
@@ -40,11 +43,12 @@ while (<>) {
   } else {
     warn "Invalid instruction: $_\n";
   }
-  print pp(\%s), "\n";
+  print pp(\%s), "\n" if DEBUG;
 }
 
 my $count = sum(map { scalar keys %{$s{$_}} } keys %s);
 print "Part 1: $count\n";
+print "Part 2:\n\n", pp(\%s),"\n";
 
 sub pp {
   my ($s) = @_;
