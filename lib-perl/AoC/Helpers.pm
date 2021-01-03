@@ -6,10 +6,13 @@ use Exporter qw(import);
 
 use constant
   {
-   DEBUG => $ENV{AoC_DEBUG},
-   TEST => $ENV{AoC_TEST},
+   DEBUG => $ENV{AoC_DEBUG}//0,
+   TEST => $ENV{AoC_TEST}//0,
+   VISUAL => $ENV{AoC_VISUAL}//0,
    X => 0,
    Y => 1,
+   Z => 2,
+   Q => 3,
    MIN => 0,
    MAX => 1,
    MINX => 0,
@@ -23,14 +26,15 @@ use constant
 
 use Data::Dumper;
 use Storable qw/dclone/;
-use List::Util qw/min max minstr maxstr sum product pairs/;
+use List::Util qw/min max minstr maxstr sum product pairs all any/;
+use List::MoreUtils qw/zip pairwise minmax/;
 use POSIX qw/ceil floor round/;
 
 our %EXPORT_TAGS = ( 'all' => [ qw(
-                                    X Y
+                                    X Y Z Q
                                     MIN MAX
                                     MINX MINY MAXX MAXY
-                                    DEBUG TEST
+                                    DEBUG VISUAL TEST
                                     NUM_PI NUM_E SQRT_2
 
                                     log10
@@ -38,15 +42,25 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
 
                                     dclone
                                     min max minstr maxstr sum product pairs
+                                    all any
+                                    zip pairwise
+                                    minmax
                                     minmax_xy
+                                    minmax_dim
+                                    allin
+                                    neighbourbb
+                                    neighbours
+                                    allneighbours
 
                                     assert assertEq
                                     assertGT assertGreaterThan
 
                                     bold bold_on bold_off
                                     red cyan yellow green blue magenta
+                                    clear goto
                                     pretty_grid
                                     safe_exists
+                                    safe_value
                                     dd
                                     visit_checker
 
@@ -61,7 +75,14 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
                                     compassOffset
                                     compassOpposite
 
+                                    rotate_lines
+
                                     read_lines
+                                    read_lists
+                                    read_listy_records
+                                    read_chunks
+                                    read_chunky_records
+                                    read_dense_map
 ) ] );
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our $VERSION = '0.01';
@@ -179,19 +200,19 @@ sub compassOpposite {
 sub assert {
   my ($msg, $exp) = @_;
   die "assert failed: $msg\n" unless ($exp);
-  print STDERR "$msg was true\n" if DEBUG;
+  print STDERR "$msg was true\n" if (DEBUG || TEST == 2);
 }
 
 sub assertEq {
   my ($msg, $act, $exp) = @_;
   die "failed $msg: expected $exp but was $act\n" unless ($exp eq $act);
-  print STDERR "$msg: $act was equal to $exp\n" if DEBUG;
+  print STDERR "$msg: $act was equal to $exp\n" if (DEBUG || TEST == 2);
 }
 
 sub assertGreaterThan {
   my ($msg, $act, $min) = @_;
   die "failed $msg: expected $act > $min\n" unless ($act > $min);
-  print STDERR "$msg: $act was greater than $min\n" if DEBUG;
+  print STDERR "$msg: $act was greater than $min\n" if (DEBUG || TEST == 2);
 }
 sub assertGT { assertGreaterThan(@_); }
 
@@ -211,6 +232,72 @@ sub minmax_xy {
   $bb->[MAXX] = $x if (!defined $bb->[MAXX] || $bb->[MAXX] < $x);
   $bb->[MINY] = $y if (!defined $bb->[MINY] || $bb->[MINY] > $y);
   $bb->[MAXY] = $y if (!defined $bb->[MAXY] || $bb->[MAXY] < $y);
+}
+
+sub minmax_dim {
+  my ($bb, @r) = @_;
+  for my $i (0..(@r-1)) {
+    my $v = shift @r;
+    $bb->[$i]->[MIN] = $v
+      if (!defined $bb->[$i]->[MIN] || $bb->[$i]->[MIN] > $v);
+    $bb->[$i]->[MAX] = $v
+      if (!defined $bb->[$i]->[MAX] || $bb->[$i]->[MAX] < $v);
+  }
+}
+
+sub neighbourbb {
+  my($dim) = @_;
+  my @bb;
+  for (0..$dim-1) {
+    push @bb, [-1,1];
+  }
+  return \@bb;
+}
+
+sub neighbours {
+  my($dim) = @_;
+  my $bb = neighbourbb($dim);
+  my @res;
+  for my $rec (allin($bb)) {
+    my $zeroes = 0;
+    for (0..$dim-1) {
+      if ($rec->[$_] == 0) {
+        $zeroes++;
+      }
+    }
+    push @res, $rec unless ($zeroes == $dim);
+  }
+  return @res;
+}
+
+sub allin {
+  my ($bb, $i) = @_;
+  $i //= 0;
+  if ($i == @$bb) {
+    return [];
+  }
+  my @res;
+  my @a = allin($bb, $i+1);
+  for my $j ($bb->[$i]->[MIN] .. $bb->[$i]->[MAX]) {
+    push @res, [$j, @$_] foreach (@a);
+  }
+  return @res;
+}
+
+
+sub allneighbours {
+  my ($neighbourset, $all) = @_;
+  my $maxdim = @{$neighbourset->[0]}-1;
+  my %seen;
+  my @res;
+  for my $nb (@$neighbourset) {
+    for my $c (@$all) {
+      my @nc = map { $c->[$_] + $nb->[$_] } (0..$maxdim);
+      push @res, \@nc unless (exists $seen{"@nc"});
+      $seen{"@nc"}++;
+    }
+  }
+  return @res;
 }
 
 sub dd {
@@ -255,6 +342,14 @@ sub bold_on {
 
 sub bold_off {
   "\033[27m"
+}
+
+sub clear {
+  "\033[3J\033[H\033[2J"
+}
+
+sub goto {
+  sprintf "\033".'[%d;%dH', $_[0]+1, $_[1]+1;
 }
 
 sub pretty_grid {
@@ -309,12 +404,177 @@ sub safe_value {
   return $h->{$k[$#k]};
 }
 
+sub rotate_lines {
+  my ($lines) = @_;
+  my @l;
+  for my $i (0..(length $lines->[0])-1) {
+    push @l, join '', map { substr $_, $i, 1 } reverse @$lines;
+  }
+  return \@l;
+}
+
 sub read_lines {
   my $file = shift;
   open my $fh, '<', $file or die "Failed to open $file: $!\n";
   my @c = <$fh>;
   chomp @c;
   return \@c;
+}
+
+sub read_lists {
+  my ($file, $rs, $fs) = @_;
+  $rs //= "\n";
+  $fs //= qr/\s+/;
+  open my $fh, '<', $file or die "Failed to open $file: $!\n";
+  local $/ = $rs;
+  my @c = <$fh>;
+  chomp @c;
+  return [ map { [ split $fs, $_ ] } @c ];
+}
+
+sub read_listy_records {
+  my ($file, $rs, $fs, $fn) = @_;
+  $rs //= "\n";
+  $fs //= qr/\s+/;
+  my $c = read_lists($file, $rs, $fs);
+  return [ map { { zip @$fn, @$_ } } @$c ];
+}
+
+sub read_chunks {
+  my ($file, $rs) = @_;
+  $rs //= "\n\n";
+  open my $fh, '<', $file or die "Failed to open $file: $!\n";
+  local $/ = $rs;
+  my @c = <$fh>;
+  chomp(@c);
+  return \@c;
+}
+
+sub read_chunky_records {
+  my ($file, $rs, $fs, $kvs) = @_;
+  $rs //= "\n\n";
+  $fs //= qr/\s+/;
+  $kvs //= qr/:/;
+  my $c = read_chunks($file, $rs);
+  return [ map { { map { split $kvs, $_ } split $fs, $_ } } @$c ];
+}
+
+{
+  package DenseMap;
+  use constant
+    {
+     HEIGHT => 0,
+     WIDTH => 1,
+     MAP => 2,
+     STRFN => 3,
+    };
+
+  sub _new {
+    my ($pkg, $ref) = @_;
+    bless $ref, $pkg;
+  }
+
+  sub clone {
+    my ($self) = @_;
+    (ref $self)->_new([
+                       $self->[HEIGHT],
+                       $self->[WIDTH],
+                       [@{$self->[MAP]}],
+                       $self->[STRFN]]);
+  }
+
+  sub empty_clone {
+    my ($self) = @_;
+    (ref $self)->_new([
+                       $self->[HEIGHT],
+                       $self->[WIDTH],
+                       [],
+                       $self->[STRFN]]);
+  }
+
+  sub from_file {
+    my ($pkg, $file, $readfn, $strfn) = @_;
+    $readfn //= sub { $_[0] };
+    $strfn //= sub { $_[0] };
+    my $l = AoC::Helpers::read_lines($file);
+    $pkg->_new([(scalar @$l),
+                (length $l->[0]),
+                [map { $readfn->($_) } split //, join '', @$l],
+                $strfn]);
+  }
+
+  sub swap {
+    my ($self, $partner) = @_;
+    ($self->[MAP], $partner->[MAP]) = ($partner->[MAP], $self->[MAP]);
+    $self;
+  }
+
+  sub len {
+    $_[0]->[WIDTH] * $_[0]->[HEIGHT]
+  }
+
+  sub last_index {
+    $_[0]->len - 1
+  }
+
+  sub height {
+    $_[0]->[HEIGHT];
+  }
+
+  sub width {
+    $_[0]->[WIDTH];
+  }
+
+  sub index {
+    my ($self, $x, $y) = @_;
+    if ($x < 0 || $x >= $self->[WIDTH] || $y < 0 || $y >= $self->[HEIGHT]) {
+      return undef;
+    }
+    return $self->[WIDTH]*$y + $x;
+  }
+
+  sub xy {
+    my ($self, $i) = @_;
+    [$i % $self->[WIDTH], int($i/$self->[WIDTH])];
+  }
+
+  sub get {
+    my ($self, $x, $y) = @_;
+    my $i = $self->index($x, $y) // 0;
+    return $self->[MAP]->[$i];
+  }
+
+  sub get_idx {
+    return $_[0]->[MAP]->[$_[1]];
+  }
+
+  sub set_idx {
+    return $_[0]->[MAP]->[$_[1]] = $_[2];
+  }
+
+  sub set {
+    my ($self, $x, $y, $v) = @_;
+    my $i = $self->index($x, $y) // return;
+    return $self->[MAP]->[$i] = $v;
+  }
+
+  sub pretty {
+    my ($self) = @_;
+    my $s = "";
+    for my $y (0..$self->[HEIGHT]-1) {
+      for my $x (0..$self->[WIDTH]-1) {
+        $s .= $self->[STRFN]->($self->get($x,$y));
+      }
+      $s .= "\n";
+    }
+    return $s;
+  }
+
+  1;
+}
+
+sub read_dense_map {
+  return DenseMap->from_file(@_);
 }
 
 1;
