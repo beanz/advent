@@ -1,5 +1,5 @@
-require "../lib/input.cr"
-require "../lib/point.cr"
+require "input.cr"
+require "point.cr"
 require "priority-queue"
 
 struct SearchRecord

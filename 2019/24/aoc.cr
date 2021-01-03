@@ -1,5 +1,5 @@
-#require "../lib/intcode.cr"
-#require "../lib/point.cr"
+#require "intcode.cr"
+#require "point.cr"
 
 def aeq(act, exp)
   if act != exp

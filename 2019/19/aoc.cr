@@ -1,4 +1,4 @@
-require "../lib/intcode.cr"
+require "intcode.cr"
 
 class Beam
   property size : Int64

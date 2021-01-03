@@ -1,5 +1,5 @@
-require "../lib/point.cr"
-require "../lib/intcode.cr"
+require "point.cr"
+require "intcode.cr"
 
 class Ship
   property wall

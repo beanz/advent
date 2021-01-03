@@ -1,5 +1,5 @@
-require "../lib/input.cr"
-require "../lib/intcode.cr"
+require "input.cr"
+require "intcode.cr"
 
 def runscript(prog : Array(Int64), script)
   ic = IntCode.new(prog, script)

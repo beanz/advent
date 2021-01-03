@@ -1,4 +1,4 @@
-require "../lib/intcode.cr"
+require "intcode.cr"
 
 def run(prog, infunc, outfunc)
   ic = IntCode.new(prog.clone)

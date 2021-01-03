@@ -1,5 +1,5 @@
-require "../lib/intcode.cr"
-require "../lib/point.cr"
+require "intcode.cr"
+require "point.cr"
 
 class Hull
   property m

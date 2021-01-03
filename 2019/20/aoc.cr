@@ -1,4 +1,4 @@
-require "../lib/point.cr"
+require "point.cr"
 
 def aeq(act, exp)
   if act != exp

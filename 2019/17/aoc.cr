@@ -1,5 +1,5 @@
-require "../lib/intcode.cr"
-require "../lib/point.cr"
+require "intcode.cr"
+require "point.cr"
 
 prog = File.read("input.txt").rstrip("\n").split(",").map &.to_i64
 
