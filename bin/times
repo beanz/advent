@@ -1,0 +1,36 @@
+#!/usr/bin/perl
+use strict;
+use warnings FATAL => 'all';
+
+my %t;
+my %l;
+for my $f (glob '????/??/*.err') {
+  open my $fh, '<', $f or do {
+    warn "Failed to open $f: $!\n";
+    next;
+  };
+  my ($y, $d, $l) = ($f =~ m!(\d{4})\/(\d{2})/.*aoc[.-](\w+)!);
+  my $v;
+  while (<$fh>) {
+    my ($t,$ts, $rss, $exit) = /TIME: (\S+) (\S+) (\S+) (\S+)/;
+    next unless (defined $t);
+    $t{$y.'-12-'.$d}->{$l} = [$t, $rss, $exit];
+    $l{$l}++;
+  }
+}
+
+my @lang = sort keys %l;
+print "Day,", (join ',', map { $_.'-t' , $_.'-rss', $_.'-rc'
+                             }  @lang), "\n";
+for my $d (sort keys %t) {
+  my @d = $d;
+  for my $l (@lang) {
+    unless (exists $t{$d}->{$l}) {
+      push @d, 0, 0, 0;
+      next;
+    }
+    my ($t, $rss, $rc) = @{$t{$d}->{$l}};
+    push @d, ($t >= 120 ? -1: $t), $rss, $rc;
+  }
+  printf "%s\n", join ',', @d;
+}

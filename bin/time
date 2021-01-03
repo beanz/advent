@@ -1,0 +1,4 @@
+#!/bin/sh
+
+exec /usr/bin/time --format "TIME: %e %E %M %x\n" \
+     timeout -k 10 120 "$@"
