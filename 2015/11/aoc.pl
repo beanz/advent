@@ -1,14 +1,10 @@
 #!/usr/bin/perl
-use warnings;
-use strict;
-use v5.10;
-use List::Util qw/min max minstr maxstr sum product pairs/;
-use Carp::Always qw/carp verbose/;
 use warnings FATAL => 'all';
-use constant {
-  DEBUG => $ENV{AoC_DEBUG},
-  TEST => $ENV{AoC_TEST},
-};
+use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 
 my @i = <>;
 chomp @i;
@@ -47,7 +43,7 @@ if (TEST) {
   my %tests = qw/abcdefgh abcdffaa ghijklmn ghjaabcc/;
   for my $in (keys %tests) {
     my $out = calc($in);
-    print "calc($in) = ", $out, " == ", $tests{$in}, "\n";
+    assertEq("calc($in)", $out, $tests{$in});
   }
 }
 my $part1 = calc($i[0]);

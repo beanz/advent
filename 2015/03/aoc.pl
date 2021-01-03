@@ -1,20 +1,17 @@
 #!/usr/bin/perl
-use warnings;
-use strict;
-use v5.10;
-use List::Util qw/min product pairs/;
-use Carp::Always qw/carp verbose/;
 use warnings FATAL => 'all';
+use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 use constant {
-  DEBUG => $ENV{AoC_DEBUG},
   V => {
         '>' => [1,0],
         '<' => [-1,0],
         '^' => [0,-1],
         'v' => [0,1],
        },
-  X => 0,
-  Y => 1,
 };
 
 sub houses {
@@ -26,13 +23,20 @@ sub houses {
     $y += V->{$d}->[Y];
     $h{$x.','.$y}++;
   }
-  return \%h;
+  return ~~keys %h;
 }
 
-print ~~keys%{houses(">")}, " = 2\n";
-print ~~keys%{houses("^>v<")}, " = 4\n";
-print ~~keys%{houses("^v^v^v^v^v")}, " = 2\n";
-
+if (TEST) {
+  my @tests =
+    (
+     [">", 2],
+     ["^>v<", 4],
+     ["^v^v^v^v^v", 2],
+    );
+  for my $tc (@tests) {
+    assertEq("houses('$tc->[0]')", houses($tc->[0]), $tc->[1]);
+  }
+}
 
 sub robo_houses {
   my $i = shift;
@@ -48,14 +52,22 @@ sub robo_houses {
     $yr += V->{$dr}->[Y];
     $h{$xr.','.$yr}++;
   }
-  return \%h;
+  return scalar keys %h;
 }
 
-print ~~keys%{robo_houses("^v")}, " = 3\n";
-print ~~keys%{robo_houses("^>v<")}, " = 3\n";
-print ~~keys%{robo_houses("^v^v^v^v^v")}, " = 11\n";
+if (TEST) {
+  my @tests =
+    (
+     ["^v", 3],
+     ["^>v<", 3],
+     ["^v^v^v^v^v", 11],
+    );
+  for my $tc (@tests) {
+    assertEq("robo_houses('$tc->[0]')", robo_houses($tc->[0]), $tc->[1]);
+  }
+}
 
 my $i = <>;
 chomp $i;
-print "Part 1: ", ~~keys%{houses($i)}, "\n";
-print "Part 2: ", ~~keys%{robo_houses($i)}, "\n";
+print "Part 1: ", houses($i), "\n";
+print "Part 2: ", robo_houses($i), "\n";

@@ -1,15 +1,11 @@
 #!/usr/bin/perl
-use warnings;
-use strict;
-use v5.10;
-use Algorithm::Combinatorics qw/combinations_with_repetition/;
-use List::Util qw/min max minstr maxstr sum product pairs/;
-use Carp::Always qw/carp verbose/;
 use warnings FATAL => 'all';
-use constant {
-  DEBUG => $ENV{AoC_DEBUG},
-  TEST => $ENV{AoC_TEST},
-};
+use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
+use Algorithm::Combinatorics qw/combinations_with_repetition/;
 
 my @i = <>;
 chomp @i;
@@ -89,11 +85,11 @@ EOF
 chomp @test_input;
 
 if (TEST) {
-  print "Test 1: ", calc(\@test_input), " == 62842880\n";
+  assertEq("Test 1", calc(\@test_input), 62842880);
 }
 print "Part 1: ", calc(\@i), "\n";
 
 if (TEST) {
-  print "Test 2: ", calc(\@test_input, 500), " == 57600000\n";
+  assertEq("Test 2", calc(\@test_input, 500), 57600000);
 }
 print "Part 2: ", calc(\@i, 500), "\n";

@@ -1,15 +1,11 @@
 #!/usr/bin/perl
-use warnings;
+use warnings FATAL => 'all';
 use strict;
-use v5.10;
-use List::Util qw/min product pairs/;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
 use Digest::MD5 qw/md5_hex/;
-use warnings FATAL => 'all';
-use constant {
-  DEBUG => $ENV{AoC_DEBUG},
-};
-
 
 sub adventcoin {
  my ($secret, $num) = @_;
@@ -26,10 +22,12 @@ sub adventcoin {
  return $i;
 }
 
-print adventcoin("abcdef"), " = 609043\n";
-print adventcoin("pqrstuv"), " = 1048970\n";
+if (TEST) {
+  assertEq("adventcoin('abcdef')", adventcoin('abcdef'), 609043);
+  assertEq("adventcoin('pqrstuv')", adventcoin('pqrstuv'), 1048970);
+}
 
 my $i = <>;
 chomp $i;
 print "Part 1: ", adventcoin($i), "\n";
-print "Part 1: ", adventcoin($i, 6), "\n";
+print "Part 2: ", adventcoin($i, 6), "\n";

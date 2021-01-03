@@ -1,13 +1,10 @@
 #!/usr/bin/perl
-use warnings;
-use strict;
-use v5.10;
-use List::Util qw/min/;
-use Carp::Always qw/carp verbose/;
 use warnings FATAL => 'all';
-use constant {
-  DEBUG => $ENV{AoC_DEBUG},
-};
+use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 
 my %fn =
   (
@@ -52,15 +49,17 @@ my %fn2 =
    'toggle' => sub { my ($l, $x, $y) = @_; $l->{$x.'.'.$y}+=2; return 2; },
   );
 
-my %l = ();
-apply(\%l, "turn on 0,0 through 999,999");
-print ~~keys%l, " = 1000000\n";
-apply(\%l, "toggle 0,0 through 999,0");
-print ~~keys%l, " = 999000\n";
-apply(\%l, "turn off 499,499 through 500,500");
-print ~~keys%l, " = 998996\n";
+if (TEST) {
+  my %l = ();
+  apply(\%l, "turn on 0,0 through 999,999");
+  assertEq("turn on 0,0 through 999,999", ~~keys%l, 1000000);
+  apply(\%l, "toggle 0,0 through 999,0");
+  assertEq("toggle 0,0 through 999,0", ~~keys%l, 999000);
+  apply(\%l, "turn off 499,499 through 500,500");
+  assertEq("turn off 499,499 through 500,500", ~~keys%l, 998996);
+}
 
-%l = ();
+my %l = ();
 my @i = <>;
 chomp @i;
 for my $i (@i) {
@@ -81,13 +80,15 @@ sub apply2 {
   return;
 }
 
-my @s = ({}, 0);
-apply2(\@s, "turn on 0,0 through 0,0");
-print $s[1], " = 1\n";
-apply2(\@s, "toggle 0,0 through 999,999");
-print $s[1], " = 2000001\n";
+if (TEST) {
+  my @s = ({}, 0);
+  apply2(\@s, "turn on 0,0 through 0,0");
+  assertEq("turn on 0,0 through 0,0", $s[1], 1);
+  apply2(\@s, "toggle 0,0 through 999,999");
+  assertEq("toggle 0,0 through 999,999", $s[1], 2000001);
+}
 
-@s = ({}, 0);
+my @s = ({}, 0);
 for my $i (@i) {
   apply2(\@s, $i);
 }

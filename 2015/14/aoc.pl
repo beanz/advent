@@ -1,14 +1,10 @@
 #!/usr/bin/perl
-use warnings;
-use strict;
-use v5.10;
-use List::Util qw/min max minstr maxstr sum product pairs/;
-use Carp::Always qw/carp verbose/;
 use warnings FATAL => 'all';
-use constant {
-  DEBUG => $ENV{AoC_DEBUG},
-  TEST => $ENV{AoC_TEST},
-};
+use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 
 my $endTime = 2503;
 $endTime = 1000 if (@ARGV && $ARGV[0] eq 'test1.txt');
@@ -69,7 +65,7 @@ EOF
 chomp @test_input;
 
 if (TEST) {
-  print "Test 1: ", calc(\@test_input, 1000), " == 1120\n";
+  assertEq("Test 1", calc(\@test_input, 1000), 1120);
 }
 print "Part 1: ", calc(\@i, $endTime), "\n";
 
@@ -84,7 +80,8 @@ sub calc2 {
 }
 
 if (TEST) {
-  print "Test 2: ", calc2(\@test_input, 1), " == 689\n";
-  print "Test 2: ", calc2(\@test_input, 1000), " == 689\n";
+  assertEq("Test 2 (1)", calc2(\@test_input, 1), 1);
+  assertEq("Test 2 (1000)", calc2(\@test_input, 1000), 689);
 }
+
 print "Part 2: ", calc2(\@i, $endTime), "\n";

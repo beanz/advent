@@ -1,13 +1,10 @@
 #!/usr/bin/perl
-use warnings;
-use strict;
-use v5.10;
-use List::Util qw/min product/;
-use Carp::Always qw/carp verbose/;
 use warnings FATAL => 'all';
-use constant {
-  DEBUG => $ENV{AoC_DEBUG},
-};
+use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 
 sub area {
   2*$_[0]*$_[1]
@@ -23,8 +20,10 @@ sub paper {
   return $a1 + $a2 + $a3 + $as;
 }
 
-print paper("2x3x4"), " = 58\n";
-print paper("1x1x10"), " = 43\n";
+if (TEST) {
+  assertEq("paper('2x3x4')", paper("2x3x4"), 58);
+  assertEq("paper('1x1x10')", paper("1x1x10"), 43);
+}
 
 sub ribbon {
   my $d = shift;
@@ -32,8 +31,10 @@ sub ribbon {
   return 2*($d[0]+$d[1]) + product(@d);
 }
 
-print ribbon("2x3x4"), " = 34\n";
-print ribbon("1x1x10"), " = 13\n";
+if (TEST) {
+  assertEq("ribbon('2x3x4')", ribbon("2x3x4"), 34);
+  assertEq("ribbon('1x1x10')", ribbon("1x1x10"), 14);
+}
 
 my @i = <>;
 my $area = 0;

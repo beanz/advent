@@ -1,17 +1,16 @@
 #!/usr/bin/perl
 use warnings FATAL => 'all';
 use strict;
-use v5.10;
+use v5.20;
 use lib "../../lib-perl";
 use AoC::Helpers qw/:all/;
-#use Carp::Always qw/carp verbose/;
+use Carp::Always qw/carp verbose/;
 use constant { A => 0, B => 1 };
 
 my @i = <>;
 chomp @i;
 
 my $i = parse_input(\@i);
-#dd([$i],[qw/i/]);
 
 sub parse_input {
   my ($lines) = @_;
@@ -80,8 +79,7 @@ EOF
 if (TEST) {
   my $res;
   $res = calc($test_input);
-  print "Test 1: $res->{a} == 2\n";
-  die "failed\n" unless ($res->{a} == 2);
+  assertEq("Test 1", $res->{a}, 2);
 }
 
 my $part1 = calc($i);
@@ -90,8 +88,7 @@ print "Part 1: ", $part1->{b}, "\n";
 if (TEST) {
   my $res;
   $res = calc($test_input, 1);
-  print "Test 2: $res->{a} == 7\n";
-  die "failed\n" unless ($res->{a} == 7);
+  assertEq("Test 2", $res->{a}, 7);
 }
 
 $i = parse_input(\@i); # reset input

@@ -1,14 +1,10 @@
 #!/usr/bin/perl
-use warnings;
-use strict;
-use v5.10;
-use List::Util qw/min max minstr maxstr sum product pairs/;
-use Carp::Always qw/carp verbose/;
 use warnings FATAL => 'all';
-use constant {
-  DEBUG => $ENV{AoC_DEBUG},
-  TEST => $ENV{AoC_TEST},
-};
+use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 
 my @i = <>;
 chomp @i;
@@ -32,8 +28,7 @@ if (TEST) {
       ($l =~ /(.*) and (.*) both have a sum of (\d+)/);
     for my $v ($a, $b) {
       my $res = calc($v);
-      print "Test calc($v) = $res == $expected_sum\n";
-      die "Test calc($v) = $res != $expected_sum\n" unless ($res == $expected_sum);
+      assertEq("calc($v)", $res, $expected_sum);
     }
   }
 }
@@ -88,8 +83,7 @@ if (TEST) {
       ($l =~ /^(.*) has a sum of (\d+)/);
     die "bad test line: $l\n" unless (defined $v);
     my $res = calc2($v);
-    print "Test2 calc2($v) = $res == $expected_sum\n";
-    die "Test2 calc2($v) = $res != $expected_sum\n" unless ($res == $expected_sum);
+    assertEq("calc2($v)", $res, $expected_sum);
   }
 }
 print "Part 2: ", calc2($i[0]), "\n";

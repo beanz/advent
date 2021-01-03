@@ -1,13 +1,11 @@
 #!/usr/bin/perl
-use warnings;
-use strict;
-use v5.10;
-use List::Util qw/min max minstr maxstr sum product pairs/;
-use Carp::Always qw/carp verbose/;
 use warnings FATAL => 'all';
+use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 use constant {
-  DEBUG => $ENV{AoC_DEBUG},
-  TEST => $ENV{AoC_TEST},
   PART => { map { $_ => 1 } split //, ($ENV{AoC_PART} // '12') },
 };
 
@@ -83,7 +81,7 @@ EOF
        g => 114, h => 65412, i => 65079, x => 123, y => 456);
     my $res = join ', ', map { $_.': '.$w{$_} } sort keys %w;
     for my $w (sort keys %expect) {
-      printf "  %d == %d\n", $expect{$w}, cw('test', \%w, $w);
+      assertEq("$w $expect{$w}", $expect{$w}, cw('test', \%w, $w));
     }
   }
   my %w;

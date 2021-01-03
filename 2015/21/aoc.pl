@@ -1,19 +1,13 @@
 #!/usr/bin/perl
-use warnings;
-use strict;
-use v5.10;
-use List::Util qw/min max minstr maxstr sum product pairs/;
-use Algorithm::Combinatorics qw/combinations/;
-use Carp::Always qw/carp verbose/;
-use POSIX qw/ceil/;
-use Data::Dumper; sub dd { print Data::Dumper->Dump(@_); }
 use warnings FATAL => 'all';
+use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
+use Algorithm::Combinatorics qw/combinations/;
 use constant
   {
-   DEBUG => $ENV{AoC_DEBUG},
-   TEST => $ENV{AoC_TEST},
-   X => 0,
-   Y => 1,
    COST => 0,
    DAMAGE => 1,
    ARMOR => 2,

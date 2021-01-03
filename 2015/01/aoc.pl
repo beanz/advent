@@ -1,14 +1,12 @@
 #!/usr/bin/perl
-use warnings;
-use strict;
-use v5.10;
-use Carp::Always qw/carp verbose/;
 use warnings FATAL => 'all';
-use constant {
-  DEBUG => $ENV{AoC_DEBUG},
-};
+use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 
-sub floor {
+sub lfloor {
   my $i = shift;
   return ($i =~ y/\(//) - ($i =~ y/\)//);
 }
@@ -28,19 +26,35 @@ sub basement {
   return -1;
 }
 
-print floor("(())"), " = 0\n";
-print floor("()()"), " = 0\n";
-print floor("((("), " = 3\n";
-print floor("(()(()("), " = 3\n";
-print floor("))((((("), " = 3\n";
-print floor("())"), " = -1\n";
-print floor("))("), " = -1\n";
-print floor(")))"), " = -3\n";
-print floor(")())())"), " = -3\n";
-print basement(")"), " = 1\n";
-print basement("()())"), " = 5\n";
+if (TEST) {
+  my @tests =
+    (
+     ["(())", 0],
+     ["()()", 0],
+     ["(((", 3],
+     ["(()(()(", 3],
+     ["))(((((", 3],
+     ["())", -1],
+     ["))(", -1],
+     [")))", -3],
+     [")())())", -3],
+    );
+  for my $tc (@tests) {
+    assertEq("Test 1 [$tc->[0]]", lfloor($tc->[0]), $tc->[1]);
+  }
+
+  @tests =
+    (
+     [")", 1],
+     ["()())", 5],
+    );
+
+  for my $tc (@tests) {
+    assertEq("Test 2 [$tc->[0]]", basement($tc->[0]), $tc->[1]);
+  }
+}
 
 my $i = <>;
 chomp $i;
-print "Part 1: ", floor($i), "\n";
+print "Part 1: ", lfloor($i), "\n";
 print "Part 2: ", basement($i), "\n";

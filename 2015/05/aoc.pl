@@ -1,13 +1,10 @@
 #!/usr/bin/perl
-use warnings;
-use strict;
-use v5.10;
-use List::Util qw/sum/;
-use Carp::Always qw/carp verbose/;
 use warnings FATAL => 'all';
-use constant {
-  DEBUG => $ENV{AoC_DEBUG},
-};
+use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 
 my $vowel = 'aeiou';
 my $good = join '|', map { $_.$_ } 'a' .. 'z';
@@ -28,11 +25,19 @@ sub nice {
   return $vowels >= 3 && $good && !$bad ? 1 : '0';
 }
 
-print nice('ugknbfddgicrmopn'), " = 1\n";
-print nice('aaa'), " = 1\n";
-print nice('jchzalrnumimnmhp'), " = 0\n";
-print nice('haegwjzuvuyypxyu'), " = 0\n";
-print nice('dvszwmarrgswjxmb'), " = 0\n";
+if (TEST) {
+  my @tests =
+    (
+     ['ugknbfddgicrmopn', 1],
+     ['aaa', 1],
+     ['jchzalrnumimnmhp', 0],
+     ['haegwjzuvuyypxyu', 0],
+     ['dvszwmarrgswjxmb', 0],
+    );
+  for my $tc (@tests) {
+    assertEq("nice('$tc->[0]')", nice($tc->[0]), $tc->[1]);
+  }
+}
 
 sub nice2 {
   my ($i) = @_;
@@ -43,10 +48,18 @@ sub nice2 {
   return $pair && $repeat ? '1' : 0;
 }
 
-print nice2('qjhvhtzxzqqjkmpb'), " = 1\n";
-print nice2('xxyxx'), " = 1\n";
-print nice2('uurcxstgmygtbstg'), " = 0\n";
-print nice2('ieodomkazucvgmuy'), " = 0\n";
+if (TEST) {
+  my @tests =
+    (
+     ['qjhvhtzxzqqjkmpb', 1],
+     ['xxyxx', 1],
+     ['uurcxstgmygtbstg', 0],
+     ['ieodomkazucvgmuy', 0],
+    );
+  for my $tc (@tests) {
+    assertEq("nice2('$tc->[0]')", nice2($tc->[0]), $tc->[1]);
+  }
+}
 
 my @i = <>;
 chomp @i;

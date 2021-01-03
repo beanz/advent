@@ -1,16 +1,12 @@
 #!/usr/bin/perl
-use warnings;
-use strict;
-use v5.10;
-use List::Util qw/min max minstr maxstr sum product pairs/;
-use Carp::Always qw/carp verbose/;
 use warnings FATAL => 'all';
+use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 use constant
   {
-   DEBUG => $ENV{AoC_DEBUG},
-   TEST => $ENV{AoC_TEST},
-   X => 0,
-   Y => 1,
    LIGHTS => 0,
    H => 1,
    W => 2,
@@ -57,7 +53,7 @@ sub on {
   return (substr $l->[LIGHTS]->[$y], $x, 1) eq '#' ? 1 : 0;
 }
 
-sub neighbours {
+sub neighbours_count {
   my ($l, $x, $y) = @_;
   state $neighbours = [[-1,1],[0,1],[1,1],[-1,0],[1,0],[-1,-1],[0,-1],[1,-1]];
   my $c = 0;
@@ -80,7 +76,7 @@ sub iter {
     my $new = '';
     for my $x (0..$l->[W]-1) {
       #print STDERR "checking $x, $y\n" if DEBUG;
-      my $n_on = neighbours($l, $x, $y);
+      my $n_on = neighbours_count($l, $x, $y);
       #print STDERR "  $n_on\n" if DEBUG;
       if ( ( on($l, $x, $y) && ($n_on == 2 || $n_on == 3) ) || $n_on == 3) {
         $new .= '#';
@@ -101,13 +97,13 @@ sub lines2lights {
 
 sub calc {
   my ($lights, $steps) = @_;
-  print pp($lights), "\n" if DEBUG;
+  print pp($lights), "\n" if (DEBUG > 1);
   for my $i (0..$steps-1) {
-    print STDERR "Iteration: $i\r";
+    print STDERR "Iteration: $i\r" if DEBUG;
     iter($lights);
-    print pp($lights),"\n" if DEBUG;
+    print pp($lights),"\n" if (DEBUG > 1);
   }
-  print STDERR "\n";
+  print STDERR "\n" if DEBUG;
   return count_on($lights);
 }
 
@@ -127,27 +123,26 @@ if (TEST) {
   for my $test (@on_tests) {
     my ($x, $y, $exp) = @$test;
     my $on = on($lights, $x, $y) ? 1 : 0;
-    print "Neighbour test $x, $y = $on == $exp\n";
-    die "failed\n" unless ($on == $exp);
+    assertEq("on test $x,$y", $on, $exp);
   }
 
   my @neighbour_tests = ([0, 0, 1], [5, 5, 1], [1, 4, 6]);
   for my $test (@neighbour_tests) {
     my ($x, $y, $exp) = @$test;
-    my $num = neighbours($lights, $x, $y);
-    print "Neighbour test $x, $y = $num == $exp\n";
-    die "failed\n" unless ($num == $exp);
+    my $num = neighbours_count($lights, $x, $y);
+    assertEq("neighbour $x,$y", $num, $exp);
   }
 
   my $res = calc($lights, 4);
-  print "Test 1: $res == 4\n";
-  die "failed\n" unless ($res == 4);
+  assertEq("Test 1", $res, 4);
 }
 
 my $lights = lines2lights(\@i);
 
-printf "Dimensions %dx%d (WxH)\n", $lights->[W], $lights->[H];
-print "Initial on: ", count_on($lights), "\n";
+if (DEBUG) {
+  printf "Dimensions %dx%d (WxH)\n", $lights->[W], $lights->[H];
+  print "Initial on: ", count_on($lights), "\n";
+}
 print "Part 1: ", calc($lights, 100), "\n";
 
 if (TEST) {
@@ -156,8 +151,7 @@ if (TEST) {
   $lights->[P2] = 1;
   for my $test (@on_tests) {
     my $on = on($lights, @$test) ? 1 : 0;
-    print "Neighbour test @$test = $on == 1\n";
-    die "failed\n" unless ($on == 1);
+    assertEq("neighbour @$test", $on, 1); 
   }
 
   my $res = calc($lights, 5);
@@ -167,5 +161,5 @@ if (TEST) {
 
 $lights = lines2lights(\@i);
 $lights->[P2] = 1;
-print "Initial on: ", count_on($lights), "\n";
+print "Initial on: ", count_on($lights), "\n" if DEBUG;
 print "Part 2: ", calc($lights, 100), "\n";

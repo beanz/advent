@@ -1,13 +1,11 @@
 #!/usr/bin/perl
-use warnings;
-use strict;
-use v5.10;
-use List::Util qw/min max minstr maxstr sum product pairs/;
-use Carp::Always qw/carp verbose/;
 use warnings FATAL => 'all';
+use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 use constant {
-  DEBUG => $ENV{AoC_DEBUG},
-  TEST => $ENV{AoC_TEST},
   LEFT => 0,
   PICKED => 1,
 };
@@ -77,8 +75,7 @@ my $test_res;
 if (TEST) {
   $test_res = calc(\@test_input, 25);
   my $num = @$test_res;
-  print "Test 1: $num == 4\n";
-  die "failed\n" unless ($num == 4);
+  assertEq("Test 1", $num, 4);
 }
 
 my $part1 = calc(\@i, 150);
@@ -92,6 +89,6 @@ sub calc2 {
 }
 
 if (TEST) {
-  print "Test 2: ", calc2($test_res), " == 3\n";
+  assertEq('Test 2', calc2($test_res), 3);
 }
 print "Part 2: ", calc2($part1), "\n";

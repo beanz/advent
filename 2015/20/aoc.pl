@@ -1,19 +1,12 @@
 #!/usr/bin/perl
-use warnings;
+use warnings FATAL => 'all';
 use strict;
-use v5.10;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 use Math::Prime::Util qw/factor/;
 use Algorithm::Combinatorics qw/combinations/;
-use List::Util qw/uniqnum min max minstr maxstr sum product pairs/;
-use Carp::Always qw/carp verbose/;
-use warnings FATAL => 'all';
-use constant
-  {
-   DEBUG => $ENV{AoC_DEBUG},
-   TEST => $ENV{AoC_TEST},
-   X => 0,
-   Y => 1,
-  };
 
 my $i = <>;
 chomp $i;
@@ -50,12 +43,10 @@ EOF
   for my $test (@test_input) {
     my ($h, $p) = ($test =~ /House (\d+) got (\d+)/);
     my $res = num_presents($h);
-    print "Test num presents house=$h: $res == $p\n";
-    die "failed\n" unless ($res == $p);
+    assertEq("Test num presents house=$h", $res, $p);
   }
   my $res = calc(150);
-  print "Test calc(150): $res == 8\n";
-  die "failed\n" unless ($res == 8);
+  assertEq('Test calc(150)', $res, 8);
 }
 
 sub calc {
@@ -87,12 +78,10 @@ EOF
   for my $test (@test_input) {
     my ($h, $p) = ($test =~ /House (\d+) got (\d+)/);
     my $res = num_presents($h, 1);
-    print "Test num presents house=$h: $res == $p\n";
-    die "failed\n" unless ($res == $p);
+    assertEq("Test num presents house=$h part2", $res, $p);
   }
   my $res = calc2(150);
-  print "Test calc2(150): $res == 8\n";
-  die "failed\n" unless ($res == 8);
+  assertEq('Test calc2(150)', $res, 8);
 }
 
 sub calc2 {

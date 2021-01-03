@@ -1,14 +1,10 @@
 #!/usr/bin/perl
-use warnings;
-use strict;
-use v5.10;
-use List::Util qw/min max minstr maxstr sum product pairs/;
-use Carp::Always qw/carp verbose/;
 use warnings FATAL => 'all';
-use constant {
-  DEBUG => $ENV{AoC_DEBUG},
-  TEST => $ENV{AoC_TEST},
-};
+use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 
 my @i = <>;
 chomp @i;
@@ -32,8 +28,7 @@ if (TEST) {
   for my $l (@test_input) {
     my ($in, $out) = ($l =~ /(\d+) becomes (\d+)/);
     my $res = calc($in);
-    print "Test 1 calc($in) = $res == $out\n";
-    die "$res != $out\n" unless ($res eq $out);
+    assertEq("Test 1 calc($in)", $out, $res);
   }
 }
 my $c = $i[0];
