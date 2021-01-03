@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 use warnings FATAL => 'all';
 use strict;
-use v5.10;
-use lib "../lib";
+use v5.20;
+use lib "../../lib-perl";
 use AoC::Helpers qw/:all/;
-#use Carp::Always qw/carp verbose/;
+use Carp::Always qw/carp verbose/;
 
 my @i = <>;
 chomp @i;
@@ -191,7 +191,7 @@ sub pour {
 sub calc {
   my ($s) = @_;
   pour($s);
-  print pp($s);
+  print pp($s) if DEBUG;
   return water_count($s);
 }
 

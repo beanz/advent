@@ -1,10 +1,10 @@
 #!/usr/bin/perl
 use warnings FATAL => 'all';
 use strict;
-use v5.10;
-use lib "../lib";
+use v5.20;
+use lib "../../lib-perl";
 use AoC::Helpers qw/:all/;
-#use Carp::Always qw/carp verbose/;
+use Carp::Always qw/carp verbose/;
 
 use constant
   {
@@ -32,7 +32,7 @@ sub square {
   return (substr $yard->[YARD]->[$y], $x, 1)
 }
 
-sub neighbours {
+sub neighbour_counts {
   my ($l, $x, $y) = @_;
   state $neighbours = [[-1,1],[0,1],[1,1],[-1,0],[1,0],[-1,-1],[0,-1],[1,-1]];
   my @r = (0,0,0);
@@ -73,7 +73,7 @@ sub iter {
     my $new = '';
     for my $x (0..$l->[W]-1) {
       my $sq = square($l, $x, $y);
-      my $c = neighbours($l, $x, $y);
+      my $c = neighbour_counts($l, $x, $y);
       if ($sq eq '.') {
         if ($c->[TREES] >= 3) {
           $new .= '|';
@@ -136,10 +136,10 @@ if (TEST) {
   $res = square($test_input, 1, 0);
   print "Square Test 1b: $res == #\n";
   die "failed\n" unless ($res eq '#');
-  $res = neighbours($test_input, 1, 0);
+  $res = neighbour_counts($test_input, 1, 0);
   print "Neighbours Test 1a: @$res == 0 0 5\n";
   die "failed\n" unless ("@$res" eq '0 0 5');
-  $res = neighbours($test_input, 8, 1);
+  $res = neighbour_counts($test_input, 8, 1);
   print "Neighbours Test 1b: @$res == 2 3 3\n";
   die "failed\n" unless ("@$res" eq '2 3 3');
 

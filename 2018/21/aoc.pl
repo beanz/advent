@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 use warnings FATAL => 'all';
 use strict;
-use v5.10;
-use lib "../lib";
+use v5.20;
+use lib "../../lib-perl";
 use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
 
@@ -102,14 +102,15 @@ sub run {
     $r[$bound] = $ip;
     if ($ip == 28) {
       unless (defined $previous) {
-        print "Part1: ", $r[5], "\n";
+        print "Part 1: ", $r[5], "\n";
       }
       if ($vc->($r[5])) {
-        print "Part2: ", $previous, "\n";
+        print "Part 2: ", $previous, "\n";
+        exit;
       }
       $previous = $r[5];
     }
-    print STDERR "ip=$ip [@r] $op @operands\n" if ($ip == 28 || DEBUG);
+    print STDERR "ip=$ip [@r] $op @operands\n" if ($ip == 28 && DEBUG);
     $ops{$op}->(\@r, @operands);
     $ip = $r[$bound];
     $ip++;

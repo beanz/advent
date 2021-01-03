@@ -1,15 +1,11 @@
 #!/usr/bin/perl
-use warnings;
-use strict;
-use v5.10;
-use List::Util qw/min max minstr maxstr sum product pairs/;
-use Carp::Always qw/carp verbose/;
 use warnings FATAL => 'all';
+use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 use constant {
-  DEBUG => $ENV{AoC_DEBUG},
-  TEST => $ENV{AoC_TEST},
-  X => 0,
-  Y => 1,
   P => 2,
 };
 
@@ -220,7 +216,7 @@ sub calc {
       if ($s->{alive}->{E} == 0 || $s->{alive}->{G} == 0) {
         # end
         my $hp = sum(map { $s->{p}->{$_}->{hp} } keys %{$s->{p}});
-        print pp($s, undef, undef, "End: HP=$hp Round=$round\n");
+        print pp($s, undef, undef, "End: HP=$hp Round=$round\n") if DEBUG;
         return $hp*($round-1);
       }
       my ($x, $y) = map { 0+$_ } reverse split /:/, $k;

@@ -1,13 +1,10 @@
 #!/usr/bin/perl
-use warnings;
-use strict;
-use v5.10;
-use Carp::Always qw/carp verbose/;
 use warnings FATAL => 'all';
-use constant {
-  DEBUG => $ENV{AoC_DEBUG},
-  TEST => $ENV{AoC_TEST},
-};
+use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 
 my $input;
 {

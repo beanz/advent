@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 use warnings FATAL => 'all';
 use strict;
-use v5.10;
-use lib "../lib";
+use v5.20;
+use lib "../../lib-perl";
 use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
 use constant { DIST => 2 };

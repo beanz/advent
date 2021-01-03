@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 use warnings FATAL => 'all';
 use strict;
-use v5.10;
-use lib "../lib";
+use v5.20;
+use lib "../../lib-perl";
 use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
 
@@ -18,7 +18,7 @@ my @i = <>;
 chomp @i;
 
 my $i = parse_input(\@i);
-dd([$i],[qw/i/]);
+#dd([$i],[qw/i/]);
 
 sub parse_input {
   my ($lines) = @_;
@@ -47,8 +47,8 @@ sub parse_input {
     $bb[MIN]->[$d] = min(map { $_->[$d] } @s);
     $bb[MAX]->[$d] = max(map { $_->[$d] } @s);
     $size[$d] = $bb[MAX]->[$d] - $bb[MIN]->[$d];
-    print "Min: ", $bb[MIN]->[$d], "\n";
-    print "Max: ", $bb[MAX]->[$d], "\n";
+    print "Min: ", $bb[MIN]->[$d], "\n" if DEBUG;
+    print "Max: ", $bb[MAX]->[$d], "\n" if DEBUG;
   }
   return { bots => \@s, max => $max_id, size => \@size,
            avg => \@sum, bb => \@bb };
@@ -199,8 +199,8 @@ sub scale {
   for my $d (X, Y, Z) {
     $bb[MIN]->[$d] = min(map { $_->[$d] } @b);
     $bb[MAX]->[$d] = max(map { $_->[$d] } @b);
-    print "Min: ", $bb[MIN]->[$d], "\n";
-    print "Max: ", $bb[MAX]->[$d], "\n";
+    print "Min: ", $bb[MIN]->[$d], "\n" if DEBUG;
+    print "Max: ", $bb[MAX]->[$d], "\n" if DEBUG;
     $size[$d] = $bb[MAX]->[$d] - $bb[MIN]->[$d];
   }
   return { bots => \@b, bb => \@bb, size => \@size };
@@ -219,20 +219,21 @@ sub best {
     for my $y ($bb->[MIN]->[Y] ..$bb->[MAX]->[Y]) {
       for my $x ($bb->[MIN]->[X] ..$bb->[MAX]->[X]) {
         my $cur = [$x, $y, $z];
-        printf STDERR "Checking %s\r", ppp($cur);
+        printf STDERR "Checking %s\r", ppp($cur) if DEBUG;
         my $not = notInRange($cur, $i->{bots});
         if (@$not == $min) {
           #printf STDERR "New equal best, %s, missing %d\n", ppp($cur), ~~@$not;
           push @best, [$x, $y, $z, $min];
         } elsif (@$not < $min) {
           $min = @$not;
-          printf STDERR "New best, %s, missing %d\n", ppp($cur), ~~@$not;
+          printf STDERR "New best, %s, missing %d\n", ppp($cur), ~~@$not
+            if DEBUG;
           @best = ([$x, $y, $z, $min]);
         }
       }
     }
   }
-  print STDERR "\n";
+  print STDERR "\n" if DEBUG;
   return \@best;
 }
 
@@ -244,7 +245,7 @@ sub calc4 {
          $i->{size}->[Z] / $scale > 32) {
     $scale *= 2;
   }
-  print STDERR "Scale: $scale\n";
+  print STDERR "Scale: $scale\n" if DEBUG;
   my $scaled = scale($i, $scale);
   my $bb = dclone($scaled->{bb});
   #dd([$bb],[qw/bb/]);
@@ -259,13 +260,13 @@ sub calc4 {
     for my $d (X, Y, Z) {
       my $min = $bb->[MIN]->[$d] = min(map { $_->[$d] } @$best)*2 - 2;
       my $max = $bb->[MAX]->[$d] = max(map { $_->[$d] } @$best)*2 + 2;
-      printf "%s < %s < %s\n", $min, (['x', 'y', 'z']->[$d]), $max;
+      printf "%s < %s < %s\n", $min, (['x', 'y', 'z']->[$d]), $max if DEBUG;
     }
   }
   my @best_dist = sort { $a->[1] <=> $b->[1]
                        } map { [$_, manhattanDistance3D([0,0,0],$_)]
                              } @$best;
-  dd([\@best_dist],[qw/bd/]);
+  #dd([\@best_dist],[qw/bd/]);
   return $best_dist[0]->[1];
 }
 
@@ -292,14 +293,15 @@ sub calc3 {
   while (@todo) {
     my $cur = shift @todo;
     next if $vc->(@$cur); # visited via shorter path
-    printf STDERR "%10d\r", ~~@todo;
+    printf STDERR "%10d\r", ~~@todo if DEBUG;
     my $not = notInRange($cur, $i->{bots});
     #printf "Testing at %s missing %d\n", ppp($cur), scalar @$not;
     my $count = $num - scalar @$not;
 #    print "  Not: ", (join ' ', map { join ',', @$_ } @$not), "\n";
     if ($count > $max) {
       my $md = manhattanDistance3D($cur, [0,0,0]);
-      printf "\nFound new max %d at %s (%d)\n", $count, ppp($cur), $md;
+      printf "\nFound new max %d at %s (%d)\n", $count, ppp($cur), $md
+        if DEBUG;
       $max = $count;
       $max_pos = $cur;
       last if ($count == @{$i->{bots}});
@@ -362,14 +364,15 @@ sub calc2 {
   while (@todo) {
     my $cur = shift @todo;
     #    printf "Testing at %d,%d,%d\n", @$cur;
-    printf "%10d\r", ~~@todo;
+    printf "%10d\r", ~~@todo if DEBUG;
     next if $vc->(@$cur); # visited via shorter path
     my $not = notInRange($cur, $i->{bots});
     my $count = $num - scalar @$not;
 #    print "  Not: ", (join ' ', map { join ',', @$_ } @$not), "\n";
     if ($count > $max) {
       my $md = manhattanDistance3D($cur, [0,0,0]);
-      printf "\nFound new max %d at %d,%d,%d (%d)\n", $count, @$cur, $md;
+      printf "\nFound new max %d at %d,%d,%d (%d)\n", $count, @$cur, $md
+         if DEBUG;
       $max = $count;
       $max_pos = $cur;
       last if ($count == @{$i->{bots}});
