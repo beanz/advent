@@ -1,16 +1,19 @@
 #!/usr/bin/perl
-use warnings;
+use warnings FATAL => 'all';
 use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 
-use constant {
-  X => 0,
-  Y => 1,
-};
+my @i = <>;
+chomp @i;
+
+my @i2 = @{[@i]};
 
 my @p;
-my $bound = sqrt(<>);
-while (<>) {
-  chomp;
+my $bound = sqrt(shift @i);
+for (@i) {
   push @p, [split /, /];
 }
 
@@ -88,4 +91,45 @@ for my $i (0..$#p) {
     }
   }
 }
-print $max, "\n";
+print 'Part 1: ', $max, "\n";
+
+my $d = shift @i2;
+@p = ();
+my @min;
+my @max;
+for (@i2) {
+  my ($x, $y) = split /, /;
+  push @p, [$x, $y];
+  if (!defined $min[X] || $min[X] > $x) {
+    $min[X] = $x;
+  }
+  if (!defined $max[X] || $max[X] < $x) {
+    $max[X] = $x;
+  }
+  if (!defined $min[Y] || $min[Y] > $y) {
+    $min[Y] = $y;
+  }
+  if (!defined $max[Y] || $max[Y] < $y) {
+    $max[Y] = $y;
+  }
+}
+
+sub sd {
+  my ($x, $y, $d) = @_;
+  my $s = 0;
+  for my $p (@p) {
+    $s += md([$x,$y], $p);
+  }
+  return $s;
+}
+
+$b = sqrt $d;
+my $a;
+for my $y ($min[Y]-$b .. $max[Y]+$b) {
+ LOOP:
+  for my $x ($min[X]-$b .. $max[X]+$b) {
+    my $in = sd($x, $y) < $d;
+    $a++ if ($in);
+  }
+}
+print 'Part 2: ', $a, "\n";

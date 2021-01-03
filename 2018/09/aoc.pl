@@ -1,15 +1,18 @@
-#!/usr/bin/perl -l
-
-use warnings;
+#!/usr/bin/perl
+use warnings FATAL => 'all';
 use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 
-unless (defined caller) {
-  while (<>) {
-    if (/(\d+) players; last marble is worth (\d+) points/) {
-      print play($1,$2);
-    }
-  }
-}
+my @i = <>;
+chomp @i;
+
+$i[0] =~ /(\d+) players; last marble is worth (\d+) points/;
+my ($players, $worth) = ($1, $2);
+print 'Part 1: ', play($players, $worth), "\n";
+print 'Part 2: ', play($players, $worth*100), "\n";
 
 sub pp {
   my ($cm, $c) = @_;

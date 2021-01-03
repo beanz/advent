@@ -1,13 +1,48 @@
 #!/usr/bin/perl
-use warnings;
+use warnings FATAL => 'all';
 use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
 
-unless (defined caller) {
-  my $workload = <>;
-  my $workers = <>;
-  my @lines = <>;
-  print run($workload, $workers, \@lines), "\n";
+my @i = <>;
+chomp @i;
+
+my $j = shift @i;
+my %dep;
+my %todo;
+for (@i) {
+  if (/Step (\S+) must be finished before step (\S+) can begin/) {
+    $dep{$2}->{$1}++;
+    $todo{$1}++;
+    $todo{$2}++;
+  }
 }
+
+my @available_work = grep !exists $dep{$_}, sort keys %todo;
+
+sub work {
+  my $n = shift;
+  for my $k (keys %dep) {
+    delete $dep{$k}->{$n};
+    next if (scalar keys %{$dep{$k}});
+    delete $dep{$k};
+    @available_work = sort @available_work, $k;
+  }
+}
+
+my $s;
+while (@available_work) {
+  my $n = shift @available_work;
+  work($n);
+  $s .= $n;
+}
+print 'Part 1: ', $s, "\n";
+
+my $workload = $j;
+my $workers = shift @i;
+print 'Part 2: ', run($workload, $workers, \@i), "\n";
 
 sub run {
   my ($workload, $workers, $lines) = @_;

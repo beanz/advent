@@ -1,17 +1,20 @@
 #!/usr/bin/perl
-use warnings;
-use strict;
-use v5.10;
-use List::Util qw/min max/;
-use Carp::Always qw/carp verbose/;
 use warnings FATAL => 'all';
+use strict;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
+
+my @i = <>;
+chomp @i;
 
 my %c = ();
 my @t = ();
 my $y = 0;
-my %r = ( ">" => "-", "<" => "-", "^" => "|", "v" => "|" );
-my %v = ( ">" => [1,0], "<" => [-1,0], "^" => [0,-1], "v" => [0,1] );
-while (<>) {
+my %r = ( '>' => '-', '<' => '-', '^' => '|', 'v' => '|' );
+my %v = ( '>' => [1,0], '<' => [-1,0], '^' => [0,-1], 'v' => [0,1] );
+for (@i) {
   chomp;
   while (m/([<>^v])/g) {
     my $x = pos($_) - 1;
@@ -73,28 +76,34 @@ sub check_end {
   my ($c) = @_;
   my @k = sort keys %$c;
   if (@k == 0) {
-    print "No last cart\n";
+    print "Part 2: No last cart\n";
     exit;
   } elsif (@k == 1) {
-    printf "Last cart at %d,%d\n", reverse map { $_+0 } split /,/, $k[0];
+    my @part2 = reverse map { $_+0 } split /,/, $k[0];
+    printf "Part 2: %d,%d\n", @part2;
     exit;
   }
 }
 
 my $t = 1;
+my $part1;
 while (1) {
-  print STDERR "T: $t\n" if ($ENV{AoC_DEBUG});
+  print STDERR "T: $t\n" if DEBUG;
   my @todo = sort keys %c;
   while (@todo) {
     my $xy = shift @todo;
     next if (!exists $c{$xy});
     my ($y, $x) = map { $_+0 } split /,/, $xy;
     my ($nx, $ny, $nd, $nm) = @{move(\@t, \%c, $x, $y)};
-    print STDERR "Moving $x, $y => $nx, $ny\n" if ($ENV{AoC_DEBUG});
+    print STDERR "Moving $x, $y => $nx, $ny\n" if DEBUG;
     delete $c{$xy};
     my $nxy = key($nx, $ny);
     if (exists $c{$nxy}) {
-      print "Crash at $nx,$ny\n";
+      print "Crash at $nx,$ny\n" if DEBUG;
+      unless (defined $part1) {
+        $part1 = "$nx,$ny";
+        print 'Part 1: ', $part1, "\n";
+      }
       delete $c{$nxy};
       next;
     }

@@ -1,16 +1,64 @@
 #!/usr/bin/perl
-use warnings;
+use warnings FATAL => 'all';
 use strict;
-use v5.10;
-use constant { X => 0, Y => 1 };
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
+use constant { VX => 2, VY => 3 };
 
-my $serial = <>;
-chomp $serial;
-my $size = <>;
+my @i = <>;
+chomp @i;
+
+{
+  my $serial = $i[0];
+  my $size = 3;
+  $size =~ s/\s+.*//;
+  my $grid_min = $i[2];
+  $grid_min = [ split /\s+/, $grid_min ];
+  my $grid_max = $i[3];
+  $grid_max = [ split /\s+/, $grid_max ];
+
+  my $max;
+  my $max_id;
+  my %p;
+  for my $y ($grid_min->[Y] .. $grid_max->[Y]-$size+1) {
+    print STDERR "$y\r" if DEBUG;
+    for my $x ($grid_min->[X] .. $grid_max->[X]-$size+1) {
+      my $l;
+      for my $i (0..$size-1) {
+        for my $j (0..$size-1) {
+          $l += level1($x+$i, $y+$j, $serial);
+        }
+      }
+      if (!defined $max || $max < $l) {
+        $max = $l;
+        $max_id = "$x,$y";
+        print STDERR "\n! $max $max_id\n" if DEBUG;
+      }
+    }
+  }
+  print STDERR "\n" if DEBUG;
+  print 'Part 1: ', $max_id, "\n";
+
+  sub level1 {
+    my ($x, $y, $serial) = @_;
+    my $r = $x + 10;
+    my $p = $r * $y;
+    $p += $serial;
+    $p *= $r;
+    my ($h) = ($p =~ /(.)..$/);
+    return $h - 5;
+  }
+}
+
+my $serial = $i[0];
+my $size = $i[1];
 my ($size_min, $size_max) = split /\s+/, $size;
-my $grid_min = <>;
+$size =~ s/\s+.*//;
+my $grid_min = $i[2];
 $grid_min = [ split /\s+/, $grid_min ];
-my $grid_max = <>;
+my $grid_max = $i[3];
 $grid_max = [ split /\s+/, $grid_max ];
 
 my $max;
@@ -41,19 +89,19 @@ for my $size ($size_min..$size_max) {
 
     #print STDERR "$y\r";
     for my $x ($grid_min->[X] .. $grid_max->[X]-$size+1) {
-      printf STDERR "%3d, %3d %3d\r", $x, $y, $size;
+      printf STDERR "%3d, %3d %3d\r", $x, $y, $size if DEBUG;
       last if ($x + $size-1 > $grid_max->[X] || $y + $size-1 > $grid_max->[Y]);
       my $l = level_square($x, $y, $size);
       if (!defined $max || $max < $l) {
         $max = $l;
         $max_id = "$x,$y,$size";
-        #print STDERR "\n! $max $max_id\n"
+        print STDERR "\n! $max $max_id\n" if DEBUG;
       }
     }
   }
 }
-print STDERR "\n";
-print "$max_id $max\n";
+print STDERR "\n" if DEBUG;
+print 'Part 2: ', $max_id, "\n";
 
 sub key {
   join ':', @_

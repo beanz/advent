@@ -1,12 +1,17 @@
 #!/usr/bin/perl
-use warnings;
+use warnings FATAL => 'all';
 use strict;
-use v5.10;
+use v5.20;
+use lib "../../lib-perl";
+use AoC::Helpers qw/:all/;
+use Carp::Always qw/carp verbose/;
+use constant { VX => 2, VY => 3 };
 
-use constant { X => 0, Y => 1, VX => 2, VY => 3 };
+my @i = <>;
+chomp @i;
 
 my @p;
-while (<>) {
+for (@i) {
   unless (/position=<\s*([-\d]+),\s*([-\d]+)> velocity=<\s*([-\d]+),\s*([-\d]+)>/) {
     die "Invalid line: $_\n";
   }
@@ -26,8 +31,8 @@ sub pp {
     }
     print "\n";
   }
-  print "Overlap: ", ($overlap ? 'yes' : 'no'), "\n";
-  print "Time: $t\n";
+  print "Overlap: ", ($overlap ? 'yes' : 'no'), "\n" if DEBUG;
+  print "Time: $t\n" if DEBUG;
 }
 
 sub get_state {
@@ -105,5 +110,8 @@ for $t ($lower .. $upper) {
     $best_state = [$c, $min, $max, $overlap, $t];
   }
 }
+
+print "Part 1:\n\n";
 pp(@$best_state);
-#get_state([], -1);
+print "\n";
+print "Part 2: ", $best_state->[4], "\n";
