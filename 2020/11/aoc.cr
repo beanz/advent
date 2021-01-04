@@ -9,6 +9,7 @@ end
 class Seats
   property cur
   property new
+  property nc
   property w : Int32
   property h : Int32
   property changes : Int32
@@ -17,32 +18,28 @@ class Seats
     @h = inp.size
     @w = inp[0].size
     @changes = 0
-    @cur = Array(Seat).new(@w*@h, Seat::None)
-    @new = Array(Seat).new(@w*@h, Seat::None)
+    @cur = Array(Seat).new(@h*@w, Seat::None)
+    @new = Array(Seat).new(@h*@w, Seat::None)
     inp.each_index do |y|
       inp[y].split("").each_index do |x|
-        @cur[(y*@w+x).to_i64] = Seat::Empty if inp[y][x] == 'L'
+        @cur[y*@w+x] = Seat::Empty if inp[y][x] == 'L'
       end
     end
-  end
-
-  def seat(x, y)
-    if !(0 <= x < @w) || !(0 <= y < @h)
-      return Seat::None
+    empty_neighbour_list = Array(Int32).new(0)
+    @nc = Array(Array(Array(Int32))).new
+    @nc << Array(Array(Int32)).new(@h*@w, empty_neighbour_list)
+    @nc << Array(Array(Int32)).new(@h*@w, empty_neighbour_list)
+    @cur.each_with_index do |s, i|
+      next if s == Seat::None
+      x = i % w
+      y = i // w
+      @nc[0][i] = neighbours(x, y, false)
+      @nc[1][i] = neighbours(x, y, true)
     end
-    return @cur[y*@w+(x%@w)]
   end
 
-  def set(x, y, v)
-    @new[y*@w+(x%@w)] = v
-  end
-
-  def swap()
-    @cur, @new = @new, @cur
-  end
-
-  def neighbour_count(x, y, sight)
-    nc = 0
+  def neighbours(x, y, sight)
+    nc = Array(Int32).new
     [[-1,-1],[0,-1],[1,-1],[-1,0],[1,0],[-1,1],[0,1],[1,1]].each do |o|
       ox = x+o[0]
       oy = y+o[1]
@@ -55,33 +52,59 @@ class Seats
         ox += o[0]
         oy += o[1]
       end
-      if s == Seat::Occupied
-        nc += 1
+      if s == Seat::Empty
+        nc << (ox + @w * oy)
       end
+    end
+    return nc
+  end
+
+  def seat(x, y)
+    if !(0 <= x < @w) || !(0 <= y < @h)
+      return Seat::None
+    end
+    return @cur[y*@w+x]
+  end
+
+  def seat(i)
+    return @cur[i]
+  end
+
+  def set(i, v)
+    @new[i] = v
+  end
+
+  def swap()
+    @cur, @new = @new, @cur
+  end
+
+  def occupied_count(i, nc_index)
+    nc = 0
+    @nc[nc_index][i].each do |ni|
+      nc += 1 if seat(ni) == Seat::Occupied
     end
     return nc
   end
 
   def iter(group)
     @changes = 0
+    nc_index = if group == 5 1 else 0 end
     oc = 0
-    (0..@h-1).each do |y|
-      (0..@w-1).each do |x|
-        cur = seat(x,y)
-        next if cur == Seat::None
-        nc = neighbour_count(x, y, group == 5)
-        new = cur
-        if cur == Seat::Empty && nc == 0
-          @changes += 1
-          new = Seat::Occupied
-        elsif cur == Seat::Occupied && nc >= group
-          @changes += 1
-          new = Seat::Empty
-        end
-        set(x, y, new)
-        if new == Seat::Occupied
-          oc += 1
-        end
+    (0..@w*@h-1).each do |i|
+      cur = seat(i)
+      next if cur == Seat::None
+      nc = occupied_count(i, nc_index)
+      new = cur
+      if cur == Seat::Empty && nc == 0
+        @changes += 1
+        new = Seat::Occupied
+      elsif cur == Seat::Occupied && nc >= group
+        @changes += 1
+        new = Seat::Empty
+      end
+      set(i, new)
+      if new == Seat::Occupied
+        oc += 1
       end
     end
     swap()
