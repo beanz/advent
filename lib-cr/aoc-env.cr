@@ -1,7 +1,8 @@
-def DEBUG()
+
+def debug()
   return ENV.has_key?("AoC_DEBUG")
 end
 
-def TEST()
+def test()
   return ENV.has_key?("AoC_TEST")
 end
