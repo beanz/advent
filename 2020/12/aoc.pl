@@ -66,9 +66,8 @@ sub calc2 {
   my ($in) = @_;
   my $c = 0;
   my $p = [0,0];
-  my $dir = compassOffset('E');
   my $wp = [10, -1];
-  print pp($p), " ", pd($dir), "\n" if (DEBUG);
+  print pp($p), " ", pp($wp), "\n" if (DEBUG);
   for my $l (@$in) {
     my ($a, $n) = split//, $l, 2;
     if ($a =~ /^(?:N|S|E|W)$/) {
@@ -99,7 +98,7 @@ sub calc2 {
     } else {
       die "$l\n";
     }
-    print pp($p), " ", pd($dir), ": $a $n\n" if (DEBUG);
+    print pp($p), " ", pp($wp), ": $a $n\n" if (DEBUG);
   }
   return manhattanDistance($p, [0,0]);
 }
