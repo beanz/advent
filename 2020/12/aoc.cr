@@ -1,4 +1,5 @@
 require "aoc-lib.cr"
+require "point.cr"
 
 class Nav
   property inst
@@ -10,61 +11,58 @@ class Nav
     end
   end
   def part1()
-    dir = [1,0]
-    pos = [0,0]
+    dir = Point.new('E')
+    pos = Point.new(0,0)
     @inst.each do |m|
       case m[0]
       when 'F'
-        pos[0] += dir[0] * m[1]
-        pos[1] += dir[1] * m[1]
+        pos.move(dir, m[1])
       when 'N'
-        pos[1] -= m[1]
+        pos.move_y(-1 * m[1])
       when 'S'
-        pos[1] += m[1]
+        pos.move_y(m[1])
       when 'E'
-        pos[0] += m[1]
+        pos.move_x(m[1])
       when 'W'
-        pos[0] -= m[1]
+        pos.move_x(-1 * m[1])
       when 'L'
         (1..m[1]//90).each do |_|
-          dir[0], dir[1] = dir[1], -1*dir[0]
+          dir.ccw()
         end
       when 'R'
         (1..m[1]//90).each do |_|
-          dir[0], dir[1] = -1 * dir[1], dir[0]
+          dir.cw()
         end
       end
     end
-    return pos[0].abs+pos[1].abs
+    return pos.manhattan()
   end
   def part2()
-    dir = [1,0]
-    pos = [0,0]
-    wp = [10,-1]
+    pos = Point.new(0,0)
+    wp = Point.new(10,-1)
     @inst.each do |m|
       case m[0]
       when 'F'
-        pos[0] += wp[0] * m[1]
-        pos[1] += wp[1] * m[1]
+        pos.move(wp, m[1])
       when 'N'
-        wp[1] -= m[1]
+        wp.move_y(-1 * m[1])
       when 'S'
-        wp[1] += m[1]
+        wp.move_y(m[1])
       when 'E'
-        wp[0] += m[1]
+        wp.move_x(m[1])
       when 'W'
-        wp[0] -= m[1]
+        wp.move_x(-1 * m[1])
       when 'L'
         (1..m[1]//90).each do |_|
-          wp[0], wp[1] = wp[1], -1*wp[0]
+          wp.ccw()
         end
       when 'R'
         (1..m[1]//90).each do |_|
-          wp[0], wp[1] = -1 * wp[1], wp[0]
+          wp.cw()
         end
       end
     end
-    return pos[0].abs+pos[1].abs
+    return pos.manhattan()
   end
 end
 
