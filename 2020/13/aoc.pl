@@ -57,6 +57,7 @@ sub calc2 {
     next if ($bus eq 'x');
     $offset = undef;
     while (1) {
+      print "$bus $i $t ", ($offset // "undef"), "\n" if DEBUG;
       if (($t + $i) % $bus == 0) {
         if (!defined $offset) {
           $offset = $t;

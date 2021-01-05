@@ -96,6 +96,7 @@ sub iter {
     }
   }
   print "Live: $n->{c}\n" if DEBUG;
+  print pretty($m) if (DEBUG > 1);
   return $n;
 }
 
