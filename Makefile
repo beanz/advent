@@ -128,6 +128,7 @@ clean-nim:
 
 clean-zig:
 	rm -f ${ZIG_LOG} ${ZIG_ERR} ${ZIG_BIN}
+	find . -type d -name 'zig-cache' -print0| xargs -r -0 rm -rf
 
 clean-misc:
 	find . -name '*~' -print0|xargs -r -0 rm -f
