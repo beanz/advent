@@ -66,7 +66,7 @@ cr-cpu.svg: aoc-cr-rel
 	perf record -F 99 --call-graph dwarf ./$<
 	perf script | $(FG_HOME)/stackcollapse-perf.pl >out.perf-folded
 	$(FG_HOME)/flamegraph.pl out.perf-folded >$@
-	-rm out.perf-folded perf.data perf.data.old
+	-rm -f out.perf-folded perf.data perf.data.old
 
 cr-prof: cr-cpu.svg
 	google-chrome $<
@@ -75,7 +75,7 @@ zig-cpu.svg: aoc-zig
 	perf record -F 99 --call-graph dwarf ./$<
 	perf script | $(FG_HOME)/stackcollapse-perf.pl >out.perf-folded
 	$(FG_HOME)/flamegraph.pl out.perf-folded >$@
-	-rm out.perf-folded perf.data perf.data.old
+	-rm -f out.perf-folded perf.data perf.data.old
 
 zig-prof: zig-cpu.svg
 	google-chrome $<
