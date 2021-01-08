@@ -43,8 +43,7 @@ pub fn ShuntingYard(s: []const u8, part2: bool) []Token {
     var operator = ArrayList(Token).init(alloc);
     defer operator.deinit();
     var i: usize = 0;
-    while (i < s.len) {
-        defer i += 1;
+    while (i < s.len) : (i += 1) {
         const term = s[i];
         switch (term) {
             ' ' => {

@@ -28,15 +28,13 @@ pub fn HexTileFromString(m: []const u8) usize {
     var q: i8 = 0;
     var r: i8 = 0;
     var i: usize = 0;
-    while (i < m.len) {
+    while (i < m.len) : (i += 1) {
         switch (m[i]) {
             'e' => {
                 q += 1;
-                i += 1;
             },
             'w' => {
                 q -= 1;
-                i += 1;
             },
             's' => {
                 if (m[i + 1] == 'e') {
@@ -45,7 +43,7 @@ pub fn HexTileFromString(m: []const u8) usize {
                     q -= 1;
                     r -= 1;
                 }
-                i += 2;
+                i += 1;
             },
             'n' => {
                 if (m[i + 1] == 'e') {
@@ -54,7 +52,7 @@ pub fn HexTileFromString(m: []const u8) usize {
                 } else {
                     r += 1;
                 }
-                i += 2;
+                i += 1;
             },
             else => {
                 unreachable;
@@ -159,12 +157,12 @@ const HexLife = struct {
         var day: usize = 1;
         var bc: usize = 0;
         var next_bb = BB.init(alloc) catch unreachable;
-        while (day <= days) {
+        while (day <= days) : (day += 1) {
             bc = 0;
             var q = cur_bb.qmin - 1;
-            while (q <= cur_bb.qmax + 1) {
+            while (q <= cur_bb.qmax + 1) : (q += 1) {
                 var r = cur_bb.rmin - 1;
-                while (r <= cur_bb.rmax + 1) {
+                while (r <= cur_bb.rmax + 1) : (r += 1) {
                     var nc: usize = 0;
                     var ht = HexTile(q, r);
                     for (HexTileNeighbours(ht)) |n| {
@@ -181,14 +179,11 @@ const HexLife = struct {
                         bc += 1;
                         next_bb.Update(Q(ht), R(ht));
                     }
-                    r += 1;
                 }
-                q += 1;
             }
             if (s.debug) {
                 warn("Day {}: {} ({})\n", .{ day, bc, next.count() });
             }
-            day += 1;
             var tmp = cur;
             cur = next;
             next = tmp;

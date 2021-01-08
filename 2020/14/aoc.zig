@@ -66,7 +66,7 @@ fn part2(in: [][]const u8) usize {
             var addrs = ArrayList(usize).init(alloc);
             addrs.append(addr) catch unreachable;
             var m: usize = (1 << 35);
-            while (m >= 1) {
+            while (m >= 1) : (m >>= 1) {
                 if ((m & maskx) != 0) {
                     for (addrs.items) |a| {
                         if ((a & m) != 0) { // existing entry has 1
@@ -76,7 +76,6 @@ fn part2(in: [][]const u8) usize {
                         }
                     }
                 }
-                m >>= 1;
             }
             for (addrs.items) |a| {
                 mem.put(a, val) catch unreachable;

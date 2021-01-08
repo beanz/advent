@@ -106,9 +106,9 @@ const Map = struct {
 
     pub fn Print(self: *Map) void {
         var y: isize = 0;
-        while (y < self.h) {
+        while (y < self.h) : (y += 1) {
             var x: isize = 0;
-            while (x < self.w) {
+            while (x < self.w) : (x += 1) {
                 switch (self.Seat(x, y)) {
                     .empty => {
                         print("{}", .{"L"}) catch unreachable;
@@ -120,10 +120,8 @@ const Map = struct {
                         print("{}", .{"."}) catch unreachable;
                     },
                 }
-                x += 1;
             }
             print("\n", .{}) catch unreachable;
-            y += 1;
         }
     }
 
@@ -131,12 +129,9 @@ const Map = struct {
         self.changes = 0;
         var oc: usize = 0;
         var x: isize = 0;
-        while (x < self.w) {
+        while (x < self.w) : (x += 1) {
             var y: isize = 0;
-            while (y < self.h) {
-                defer {
-                    y += 1;
-                }
+            while (y < self.h) : (y += 1) {
                 var cur = self.Seat(x, y);
                 if (cur == .none) {
                     continue;
@@ -150,7 +145,6 @@ const Map = struct {
                     oc += 1;
                 }
             }
-            x += 1;
         }
         self.Swap();
         return oc;

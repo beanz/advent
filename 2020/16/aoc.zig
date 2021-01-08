@@ -22,9 +22,8 @@ const Mess = struct {
     fn bit(v: i64) i64 {
         var b: i64 = 1;
         var bc: usize = 0;
-        while (bc < v) {
+        while (bc < v) : (bc += 1) {
             b <<= 1;
-            bc += 1;
         }
         return b;
     }
@@ -32,9 +31,8 @@ const Mess = struct {
     fn find1bit(v: i64) i64 {
         var count: i64 = 0;
         var n: i64 = 1;
-        while ((v & n) == 0) {
+        while ((v & n) == 0) : (n <<= 1) {
             count += 1;
-            n <<= 1;
         }
         return count;
     }
@@ -42,11 +40,10 @@ const Mess = struct {
     pub fn count1s(v: i64) i64 {
         var count: i64 = 0;
         var n: i64 = 1 << 32;
-        while (n > 0) {
+        while (n > 0) : (n >>= 1) {
             if ((n & v) != 0) {
                 count += 1;
             }
-            n >>= 1;
         }
         return count;
     }

@@ -13,34 +13,29 @@ test "examples" {
 
 fn part1(exp: []const i64) i64 {
     var i: usize = 0;
-    while (i < exp.len) {
+    while (i < exp.len) : (i += 1) {
         var j: usize = i;
-        while (j < exp.len) {
+        while (j < exp.len) : (j += 1) {
             if (exp[i] + exp[j] == 2020) {
                 return exp[i] * exp[j];
             }
-            j += 1;
         }
-        i += 1;
     }
     return 0;
 }
 
 fn part2(exp: []const i64) i64 {
     var i: usize = 0;
-    while (i < exp.len) {
+    while (i < exp.len) : (i += 1) {
         var j: usize = i;
-        while (j < exp.len) {
+        while (j < exp.len) : (j += 1) {
             var k: usize = i;
-            while (k < exp.len) {
+            while (k < exp.len) : (k += 1) {
                 if (exp[i] + exp[j] + exp[k] == 2020) {
                     return exp[i] * exp[j] * exp[k];
                 }
-                k += 1;
             }
-            j += 1;
         }
-        i += 1;
     }
     return 0;
 }

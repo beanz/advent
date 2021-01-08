@@ -49,11 +49,6 @@ const Matcher = struct {
     }
 
     pub fn MatchAux(m: *Matcher, v: []const u8, i: usize, todo: *SegmentedList(usize, 32)) bool {
-        // var q: usize = 0;
-        // while (q < todo.count()) {
-        //     warn("TD: {}\n", .{todo.at(q).*});
-        //     q += 1;
-        // }
         const rem_len = v.len - i;
         if (todo.count() > rem_len) {
             //warn("more todo but nothing left to match", .{});
@@ -84,15 +79,13 @@ const Matcher = struct {
                 for (opt.*) |rs| {
                     var todo_n = &SegmentedList(usize, 32).init(alloc);
                     var k: usize = 0;
-                    while (k < todo.count()) {
+                    while (k < todo.count()) : (k += 1) {
                         todo_n.push(todo.at(k).*) catch unreachable;
-                        k += 1;
                     }
 
                     k = rs.len;
-                    while (k > 0) {
+                    while (k > 0) : (k -= 1) {
                         todo_n.push(rs[k - 1]) catch unreachable;
-                        k -= 1;
                     }
                     if (m.MatchAux(v, i, todo_n)) {
                         return true;

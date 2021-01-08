@@ -42,7 +42,7 @@ const Tile = struct {
         s.bottom = 0;
         s.left = 0;
         var i: usize = 0;
-        while (i < s.width) {
+        while (i < s.width) : (i += 1) {
             s.top <<= 1;
             s.left <<= 1;
             s.bottom <<= 1;
@@ -59,7 +59,6 @@ const Tile = struct {
             if (s.lines[i][0] == '#') {
                 s.left += 1;
             }
-            i += 1;
         }
     }
 };
@@ -191,7 +190,7 @@ const Water = struct {
         }
         var next = s.tiles.get(match) orelse unreachable;
         var i: u8 = 0;
-        while (i < 8) {
+        while (i < 8) : (i += 1) {
             if (next.left == edge) {
                 return next.num;
             }
@@ -200,7 +199,6 @@ const Water = struct {
             } else {
                 next.rotate();
             }
-            i += 1;
         }
         warn("Failed to find next tile orientation\n", .{});
         return 0;
@@ -228,7 +226,7 @@ const Water = struct {
         }
         var next = s.tiles.get(match) orelse unreachable;
         var i: u8 = 0;
-        while (i < 8) {
+        while (i < 8) : (i += 1) {
             if (next.top == edge) {
                 return next.num;
             }
@@ -237,7 +235,6 @@ const Water = struct {
             } else {
                 next.rotate();
             }
-            i += 1;
         }
         warn("  Failed to find next tile orientation\n", .{});
         return 0;
@@ -278,7 +275,7 @@ const Water = struct {
         }
         layout[0] = t.num;
         var i: usize = 1;
-        while (i < s.width * s.width) {
+        while (i < s.width * s.width) : (i += 1) {
             var tn: usize = undefined;
             if ((i % s.width) == 0) {
                 tn = s.FindBottomTile(layout[i - s.width]);
@@ -293,29 +290,24 @@ const Water = struct {
                 warn("Found #{}: {}\n", .{ i, tn });
             }
             layout[i] = tn;
-            i += 1;
         }
         var tl = t.width - 2;
         var nl = s.width * tl;
         var res = alloc.alloc([]u8, nl) catch unreachable;
         var irow: usize = 0;
-        while (irow < s.width) {
+        while (irow < s.width) : (irow += 1) {
             var trow: usize = 0;
-            while (trow < t.width - 2) {
+            while (trow < t.width - 2) : (trow += 1) {
                 res[irow * tl + trow] = alloc.alloc(u8, nl) catch unreachable;
                 var icol: usize = 0;
-                while (icol < s.width) {
+                while (icol < s.width) : (icol += 1) {
                     var tt = s.tiles.get(layout[irow * s.width + icol]) orelse unreachable;
                     var tcol: usize = 0;
-                    while (tcol < t.width - 2) {
+                    while (tcol < t.width - 2) : (tcol += 1) {
                         res[irow * tl + trow][icol * tl + tcol] = tt.lines[trow + 1][tcol + 1];
-                        tcol += 1;
                     }
-                    icol += 1;
                 }
-                trow += 1;
             }
-            irow += 1;
         }
         return res;
     }

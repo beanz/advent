@@ -123,30 +123,26 @@ const Nav = struct {
                 'N', 'S', 'E', 'W' => {
                     var dir = Direction.newFromCompass(in.act) catch unreachable;
                     var i: usize = 0;
-                    while (i < in.val) {
+                    while (i < in.val) : (i += 1) {
                         self.ship.In(dir);
-                        i += 1;
                     }
                 },
                 'L' => {
                     var i: usize = 0;
-                    while (i < in.val) {
+                    while (i < in.val) : (i += 90) {
                         self.dir.CCW();
-                        i += 90;
                     }
                 },
                 'R' => {
                     var i: usize = 0;
-                    while (i < in.val) {
+                    while (i < in.val) : (i += 90) {
                         self.dir.CW();
-                        i += 90;
                     }
                 },
                 'F' => {
                     var i: usize = 0;
-                    while (i < in.val) {
+                    while (i < in.val) : (i += 1) {
                         self.ship.In(self.dir);
-                        i += 1;
                     }
                 },
                 else => {
@@ -169,30 +165,26 @@ const Nav = struct {
                 'N', 'S', 'E', 'W' => {
                     var dir = Direction.newFromCompass(in.act) catch unreachable;
                     var i: usize = 0;
-                    while (i < in.val) {
+                    while (i < in.val) : (i += 1) {
                         self.wp.In(dir);
-                        i += 1;
                     }
                 },
                 'L' => {
                     var i: usize = 0;
-                    while (i < in.val) {
+                    while (i < in.val) : (i += 90) {
                         self.wp.CCW();
-                        i += 90;
                     }
                 },
                 'R' => {
                     var i: usize = 0;
-                    while (i < in.val) {
+                    while (i < in.val) : (i += 90) {
                         self.wp.CW();
-                        i += 90;
                     }
                 },
                 'F' => {
                     var i: usize = 0;
-                    while (i < in.val) {
+                    while (i < in.val) : (i += 1) {
                         self.ship.Add(self.wp);
-                        i += 1;
                     }
                 },
                 else => {

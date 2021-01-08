@@ -13,37 +13,34 @@ test "examples" {
 
 fn part1(nums: []const i64, pre: usize) i64 {
     var i = pre;
-    while (i < nums.len) {
+    while (i < nums.len) : (i += 1) {
         var valid = false;
         var j: usize = i - pre;
-        while (j <= i) {
+        while (j <= i) : (j += 1) {
             var k: usize = j;
-            while (k <= i) {
+            while (k <= i) : (k += 1) {
                 if (nums[j] + nums[k] == nums[i]) {
                     valid = true;
                 }
-                k += 1;
             }
-            j += 1;
         }
         if (!valid) {
             return nums[i];
         }
-        i += 1;
     }
     return 0;
 }
 
 fn part2(nums: []const i64, p1: i64) i64 {
     var n: usize = 1;
-    while (n < nums.len) {
+    while (n < nums.len) : (n += 1) {
         var i: usize = 0;
-        while (i < nums.len - n) {
+        while (i < nums.len - n) : (i += 1) {
             var s: i64 = 0;
             var min: i64 = maxInt(i64);
             var max: i64 = minInt(i64);
             var j = i;
-            while (j <= i + n) {
+            while (j <= i + n) : (j += 1) {
                 if (nums[j] < min) {
                     min = nums[j];
                 }
@@ -51,14 +48,11 @@ fn part2(nums: []const i64, p1: i64) i64 {
                     max = nums[j];
                 }
                 s += nums[j];
-                j += 1;
             }
             if (s == p1) {
                 return min + max;
             }
-            i += 1;
         }
-        n += 1;
     }
     return 0;
 }

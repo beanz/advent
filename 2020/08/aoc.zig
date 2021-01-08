@@ -60,7 +60,7 @@ const HH = struct {
 
     pub fn run(self: *HH) void {
         var seen = AutoHashMap(isize, bool).init(alloc);
-        while (self.ip < self.code.len) {
+        while (self.ip < self.code.len) : (self.ip += 1) {
             if (seen.contains(self.ip)) {
                 break;
             }
@@ -75,7 +75,6 @@ const HH = struct {
                 },
                 Op.nop => {},
             }
-            self.ip += 1;
         }
     }
 

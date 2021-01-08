@@ -42,17 +42,15 @@ const Cup = struct {
     pub fn string(c: *Cup) []const u8 {
         var l: usize = 1;
         var n = c.cw;
-        while (n != c) {
+        while (n != c) : (n = n.cw) {
             l += 1;
-            n = n.cw;
         }
         var res = alloc.alloc(u8, l) catch unreachable;
         res[0] = @intCast(u8, c.val) + '0';
         n = c.cw;
         var i: usize = 1;
-        while (n != c) {
+        while (n != c) : (n = n.cw) {
             res[i] = @intCast(u8, n.val) + '0';
-            n = n.cw;
             i += 1;
         }
         return res;
@@ -61,16 +59,14 @@ const Cup = struct {
     pub fn part1string(c: *Cup) []const u8 {
         var l: usize = 0;
         var n = c.cw;
-        while (n != c) {
+        while (n != c) : (n = n.cw) {
             l += 1;
-            n = n.cw;
         }
         var res = alloc.alloc(u8, l) catch unreachable;
         var i: usize = 0;
         n = c.cw;
-        while (n != c) {
+        while (n != c) : (n = n.cw) {
             res[i] = @intCast(u8, n.val) + '0';
-            n = n.cw;
             i += 1;
         }
         return res;
@@ -97,10 +93,9 @@ test "cup" {
     assertEq(c1, c2.ccw);
     var i: usize = 3;
     var c = c2;
-    while (i < 10) {
+    while (i < 10) : (i += 1) {
         c.insertAfter(Cup.init(arena, i));
         c = c.cw;
-        i += 1;
     }
     assertStrEq("123456789", c1.string());
     assertStrEq("23456789", c1.part1string());
@@ -117,9 +112,8 @@ const Game = struct {
         var l = in[0].len;
         self.init = alloc.alloc(u8, l) catch unreachable;
         var i: usize = 0;
-        while (i < l) {
+        while (i < l) : (i += 1) {
             self.init[i] = in[0][i] - '0';
-            i += 1;
         }
         return self;
     }
@@ -130,24 +124,22 @@ const Game = struct {
         map[g.init[0]] = cur;
         var last = cur;
         var i: usize = 1;
-        while (i < g.init.len) {
+        while (i < g.init.len) : (i += 1) {
             var v = g.init[i];
             var n = Cup.init(all, v);
             map[v] = n;
             last.insertAfter(n);
             last = n;
-            i += 1;
         }
         i = 10;
-        while (i <= max) {
+        while (i <= max) : (i += 1) {
             var n = Cup.init(all, i);
             map[i] = n;
             last.insertAfter(n);
             last = n;
-            i += 1;
         }
         var move: usize = 1;
-        while (move <= moves) {
+        while (move <= moves) : (move += 1) {
             var pick = cur.pick();
             var dst = cur.val;
             while (true) {
@@ -164,7 +156,6 @@ const Game = struct {
             var dcup = map[dst];
             dcup.insertAfter(pick);
             cur = cur.cw;
-            move += 1;
         }
 
         return map[1];

@@ -6,15 +6,14 @@ fn calc(nums: []const usize, maxTurn: usize) usize {
     var n: usize = undefined;
     var p: usize = undefined;
     var t: usize = 1;
-    while (t <= nums.len) {
+    while (t <= nums.len) : (t += 1) {
         n = nums[t - 1];
         if (t > 1) {
             lastSeen[p] = t;
         }
         p = n;
-        t += 1;
     }
-    while (t <= maxTurn) {
+    while (t <= maxTurn) : (t += 1) {
         if (lastSeen[p] != 0) {
             n = t - lastSeen[p];
         } else {
@@ -22,7 +21,6 @@ fn calc(nums: []const usize, maxTurn: usize) usize {
         }
         lastSeen[p] = t;
         p = n;
-        t += 1;
     }
     return n;
 }

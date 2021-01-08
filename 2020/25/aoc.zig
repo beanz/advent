@@ -23,14 +23,13 @@ fn expMod(ia: u64, ib: u64, m: u64) u64 {
     var a = ia;
     var b = ib;
     var c: u64 = 1;
-    while (b > 0) {
+    while (b > 0) : (b /= 2) {
         if ((b % 2) == 1) {
             c *= a;
             c %= m;
         }
         a *= a;
         a %= m;
-        b /= 2;
     }
     return c;
 }

@@ -106,18 +106,19 @@ fn eyeColorEq(ec: []const u8, str: []const u8) bool {
         return false;
     }
     var i: usize = 0;
-    while (i < ec.len) {
+    while (i < ec.len) : (i += 1) {
         if (ec[i] != str[i]) {
             return false;
         }
-        i += 1;
     }
     return true;
 }
 
 fn validEyeColor(ec: []const u8) bool {
-    return eyeColorEq(ec, "amb") or eyeColorEq(ec, "blu") or eyeColorEq(ec, "brn") or eyeColorEq(ec, "gry") or
-        eyeColorEq(ec, "grn") or eyeColorEq(ec, "hzl") or eyeColorEq(ec, "oth");
+    return eyeColorEq(ec, "amb") or eyeColorEq(ec, "blu") or
+        eyeColorEq(ec, "brn") or eyeColorEq(ec, "gry") or
+        eyeColorEq(ec, "grn") or eyeColorEq(ec, "hzl") or
+        eyeColorEq(ec, "oth");
 }
 
 fn validPID(pid: []const u8) bool {

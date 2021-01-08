@@ -47,12 +47,11 @@ fn count(cj: i64, tj: i64, ni: usize, nums: []i64, state: *AutoHashMap(usize, i6
     var c: i64 = 0;
     var rem = nums[1..];
     var i: usize = 0;
-    while (ni + i < nums.len and i < 3) {
+    while (ni + i < nums.len and i < 3) : (i += 1) {
         var j = nums[ni + i];
         if ((j - cj) <= 3) {
             c += count(j, tj, ni + i + 1, nums, state);
         }
-        i += 1;
     }
     state.put(k, c) catch unreachable;
     return c;

@@ -25,15 +25,13 @@ const Map = struct {
         var s2: i8 = size >> 1;
         m.w2 = s2;
         var y: i8 = 0;
-        while (y < inp.len) {
+        while (y < inp.len) : (y += 1) {
             var x: i8 = 0;
-            while (x < inp[@intCast(usize, y)].len) {
+            while (x < inp[@intCast(usize, y)].len) : (x += 1) {
                 if (inp[@intCast(usize, y)][@intCast(usize, x)] == '#') {
                     m.Set(OFF - s2 + x, OFF - s2 + y, OFF, OFF);
                 }
-                x += 1;
             }
-            y += 1;
         }
         m.Swap();
         return m;
@@ -51,14 +49,14 @@ const Map = struct {
             qend = zend;
         }
         var q: i8 = qstart;
-        while (q <= qend) {
+        while (q <= qend) : (q += 1) {
             var z: i8 = zstart;
-            while (z <= zend) {
+            while (z <= zend) : (z += 1) {
                 var y: i8 = xystart;
                 warn("q={} z={}\n", .{ q, z });
-                while (y <= xyend) {
+                while (y <= xyend) : (y += 1) {
                     var x: i8 = xystart;
-                    while (x <= xyend) {
+                    while (x <= xyend) : (x += 1) {
                         const cur = self.Get(x, y, z, q);
                         if (cur) {
                             warn("#", .{});
@@ -66,14 +64,10 @@ const Map = struct {
                         } else {
                             warn(".", .{});
                         }
-                        x += 1;
                     }
                     warn(" ({} {})\n", .{ y, index(11, y, z, q) });
-                    y += 1;
                 }
-                z += 1;
             }
-            q += 1;
             warn("\n", .{});
         }
     }
@@ -133,13 +127,13 @@ const Map = struct {
             qend = zend;
         }
         var q: i8 = qstart;
-        while (q <= qend) {
+        while (q <= qend) : (q += 1) {
             var z: i8 = zstart;
-            while (z <= zend) {
+            while (z <= zend) : (z += 1) {
                 var y: i8 = xystart;
-                while (y <= xyend) {
+                while (y <= xyend) : (y += 1) {
                     var x: i8 = xystart;
-                    while (x <= xyend) {
+                    while (x <= xyend) : (x += 1) {
                         const nc = self.NeighbourCount(x, y, z, q, part2);
                         const cur = self.Get(x, y, z, q);
                         var new = false;
@@ -150,13 +144,9 @@ const Map = struct {
                             self.Set(x, y, z, q);
                             n += 1;
                         }
-                        x += 1;
                     }
-                    y += 1;
                 }
-                z += 1;
             }
-            q += 1;
         }
 
         self.Swap();
@@ -167,12 +157,11 @@ const Map = struct {
     pub fn Calc(self: *Map, part2: bool) usize {
         var r: usize = 0;
         var i: i8 = 0;
-        while (i < 6) {
+        while (i < 6) : (i += 1) {
             r = self.Iter(i, part2);
             if (self.debug) {
                 warn("Iter {}: {}\n", .{ i, r });
             }
-            i += 1;
         }
         return r;
     }

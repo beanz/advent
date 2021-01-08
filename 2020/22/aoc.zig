@@ -42,9 +42,8 @@ const Game = struct {
     pub fn Score(d: []const u8) usize {
         var s: usize = 0;
         var i: usize = 1;
-        while (i <= d.len) {
+        while (i <= d.len) : (i += 1) {
             s += (1 + d.len - i) * @as(usize, d[i - 1]);
-            i += 1;
         }
         return s;
     }
