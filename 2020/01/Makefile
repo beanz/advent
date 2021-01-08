@@ -4,7 +4,7 @@ CR_LIB=$(CR_DIR)/share/crystal/src:../../lib-cr
 CR=$(CR_DIR)/bin/crystal
 #NIM=$(HOME)/Tmp/nim-1.0.4/bin/nim
 NIM=$(HOME)/Tmp/nim-1.4.2/bin/nim
-ALL=aoc-go aoc-zig aoc-cr
+ALL=aoc-go aoc-zig aoc-cr aoc-nim
 EXTRA=aoc-gccgo aoc-zig-rel gocpu.out aoc-cr-rel cr-cpu.svg \
   zig-cpu.svg perf.data perf.data.old
 FG_HOME=$(HOME)/git/github/brendangregg/FlameGraph
@@ -28,6 +28,9 @@ times: ${ALL} input.txt
 	@echo
 	@echo aoc-cr
 	@time ./aoc-cr
+	@echo
+	@echo aoc-nim
+	@time ./aoc-nim
 	@echo
 	@if [ -f aoc.jq ]; then \
 	  echo aoc.jq ; \

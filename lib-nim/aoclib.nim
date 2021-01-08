@@ -1,5 +1,7 @@
-import os, strutils, sequtils, intsets, sugar, sequtils, tables, sets
-export strutils, sequtils, intsets, sugar, sequtils, tables, sets
+import os, strutils, sequtils, intsets,
+       sugar, sequtils, tables, sets, parseutils, math
+export strutils, sequtils, intsets, sugar, sequtils,
+       tables, sets, parseutils, math
 
 proc debug*(): bool =
   return getEnv("AoC_DEBUG", "0") == "1"
@@ -53,3 +55,15 @@ proc readChunkyRecords*(file: string): seq[Table[string,string]] =
 
 proc readInputChunkyRecords*(): seq[Table[string,string]] =
   return readChunkyRecords(inputFile())
+
+proc mustParseBin*(s : string): int =
+  var num : int = 0
+  discard parseBin[int](s, num)
+  return num
+
+proc maxInt*(ints : seq[int]): int =
+  var m : int = -2147483647
+  for n in ints:
+    if m < n:
+      m = n
+  return m
