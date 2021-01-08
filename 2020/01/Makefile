@@ -2,6 +2,8 @@ CC=clang++-6.0
 CR_DIR=$(HOME)/Tmp/crystal-0.35.1-1
 CR_LIB=$(CR_DIR)/share/crystal/src:../../lib-cr
 CR=$(CR_DIR)/bin/crystal
+#NIM=$(HOME)/Tmp/nim-1.0.4/bin/nim
+NIM=$(HOME)/Tmp/nim-1.4.2/bin/nim
 ALL=aoc-go aoc-zig aoc-cr
 EXTRA=aoc-gccgo aoc-zig-rel gocpu.out aoc-cr-rel cr-cpu.svg \
   zig-cpu.svg perf.data perf.data.old
@@ -36,13 +38,17 @@ times: ${ALL} input.txt
 input.txt:
 	aoc-dump
 
-aoc-cr: aoc.cr
+aoc-cr: aoc.cr ../../lib-cr/*.cr
 	CRYSTAL_PATH=$(CR_LIB) $(CR) build -o aoc-cr aoc.cr
 
 aoc-cr-rel: aoc.cr
 	CRYSTAL_PATH=$(CR_LIB) $(CR) build --release --debug -o $@ $<
 
-aoc-zig: aoc.zig
+aoc-nim: aoc.nim ../../lib-nim/*.nim
+	$(NIM) c --opt:speed -d:release -p:../../lib-nim $<
+	mv aoc $@
+
+aoc-zig: aoc.zig aoc-lib.zig
 	zig build-exe --name $@ $<
 
 aoc-zig-rel: aoc.zig
