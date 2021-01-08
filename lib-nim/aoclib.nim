@@ -1,7 +1,7 @@
 import os, strutils, sequtils, intsets,
-       sugar, sequtils, tables, sets, parseutils, math
+       sugar, sequtils, tables, sets, parseutils, math, deques
 export strutils, sequtils, intsets, sugar, sequtils,
-       tables, sets, parseutils, math
+       tables, sets, parseutils, math, deques
 
 proc debug*(): bool =
   return getEnv("AoC_DEBUG", "0") == "1"
@@ -30,12 +30,19 @@ proc readChunks*(file: string): seq[string] =
 proc readInputChunks*(): seq[string] =
   return readChunks(inputFile())
 
-proc readInts*(file: string): seq[int64] =
+proc readInts*(file: string): seq[int] =
+  let f = open(file)
+  return f.readAll().strip(chars = {'\n'}).split({'\n',' ', ','}).map(parseInt)
+
+proc readInputInts*(): seq[int] =
+  return readInts(inputFile())
+
+proc readInt64s*(file: string): seq[int64] =
   let f = open(file)
   return f.readAll().strip(chars = {'\n'}).split({'\n',' ', ','}).map(parseBiggestInt)
 
-proc readInputInts*(): seq[int64] =
-  return readInts(inputFile())
+proc readInputInt64s*(): seq[int64] =
+  return readInt64s(inputFile())
 
 proc readLists*(file: string): seq[seq[string]] =
   return readLines(file).map(l => l.split({'-',',',':',' '}))
