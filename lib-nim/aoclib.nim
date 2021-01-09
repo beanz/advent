@@ -1,7 +1,8 @@
 import os, strutils, sequtils, intsets,
-       sugar, sequtils, tables, sets, parseutils, math, deques, algorithm
+       sugar, sequtils, tables, sets, parseutils, math, deques, algorithm,
+       point
 export strutils, sequtils, intsets, sugar, sequtils,
-       tables, sets, parseutils, math, deques, algorithm
+       tables, sets, parseutils, math, deques, algorithm, point
 
 proc debug*(): bool =
   return getEnv("AoC_DEBUG", "0") == "1"
