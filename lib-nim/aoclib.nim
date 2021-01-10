@@ -1,8 +1,8 @@
 import os, strutils, sequtils, intsets,
        sugar, sequtils, tables, sets, parseutils, math, deques, algorithm,
-       point
+       point, bitops
 export strutils, sequtils, intsets, sugar, sequtils,
-       tables, sets, parseutils, math, deques, algorithm, point
+       tables, sets, parseutils, math, deques, algorithm, point, bitops
 
 proc debug*(): bool =
   return getEnv("AoC_DEBUG", "0") == "1"
@@ -75,3 +75,27 @@ proc maxInt*(ints : seq[int]): int =
     if m < n:
       m = n
   return m
+
+proc isqrt*(n : int) : int =
+  if n < 0:
+    raise newException(ValueError, "isqrt of negative is invalid: " & $(n))
+  if n == 1:
+    return n
+  var b = fastLog2(n) + 1
+  var x = (1 shl ((b-1) shr 1)) or (n shr ((b shr 1) + 1))
+  var t : int = n div x
+  while t < x:
+    x = (x + t) shr 1
+    t = n div x
+  return x
+
+proc rotateStrings*(lines : seq[string]) : seq[string] =
+  let w = lines[0].len
+  let h = lines.len
+  var n : seq[string] = @[]
+  for i in countup(0, w-1):
+    var l = ""
+    for j in countup(0, h-1):
+      l &= lines[w-1-j][i]
+    n.add(l)
+  return n
