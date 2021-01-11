@@ -38,6 +38,13 @@ proc readInts*(file: string): seq[int] =
 proc readInputInts*(): seq[int] =
   return readInts(inputFile())
 
+proc readUInts*(file: string): seq[uint] =
+  let f = open(file)
+  return f.readAll().strip(chars = {'\n'}).split({'\n',' ', ','}).map(parseUInt)
+
+proc readInputUInts*(): seq[uint] =
+  return readUInts(inputFile())
+
 proc readInt64s*(file: string): seq[int64] =
   let f = open(file)
   return f.readAll().strip(chars = {'\n'}).split({'\n',' ', ','}).map(parseBiggestInt)
