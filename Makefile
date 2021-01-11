@@ -36,7 +36,7 @@ CC=g++-7
 CR_DIR=$(HOME)/Tmp/crystal-0.35.1-1
 CR_LIB=$(CR_DIR)/share/crystal/src:lib-cr
 CR=$(CR_DIR)/bin/crystal
-NIM=$(HOME)/Tmp/nim-1.0.4/bin/nim
+NIM=$(HOME)/Tmp/nim-1.4.2/bin/nim
 
 TIME=../../bin/time
 
@@ -72,10 +72,10 @@ zig: ${ZIG_LOG} ${ZIG_BIN}
 	cd $(dir $@) && go build -o aoc-go main.go
 
 %/aoc-cpp: %/cpp/aoc.cpp
-	$(CC) -I$(dir $@)../lib -o $@ $<
+	$(CC) -I$(dir $@)../../lib-cpp -o $@ $<
 
 %/aoc-nim: %/aoc.nim
-	$(NIM) c --opt:speed -d:release -p:$(dir $@)../lib $<
+	$(NIM) c --opt:speed -d:release -p:$(dir $@)../../lib-nim $<
 	mv $(dir $@)/aoc $@
 
 %/aoc-cr: %/aoc.cr

@@ -7,10 +7,10 @@
 #include <limits>
 #include <assert.h>
 #include <sstream>
-#include "../../lib/assert.hpp"
-#include "../../lib/input.hpp"
-#include "../../lib/intcode.hpp"
-#include "../../lib/point.hpp"
+#include "assert.hpp"
+#include "input.hpp"
+#include "intcode.hpp"
+#include "point.hpp"
 
 
 using namespace std;

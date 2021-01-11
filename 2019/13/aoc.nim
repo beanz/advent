@@ -1,4 +1,4 @@
-import strutils, sequtils, deques, intcode
+import aoclib, intcode
 
 proc part1(prog: seq[int64]): int64 =
   var blocks = 0
@@ -37,6 +37,6 @@ proc part2(prog_c: seq[int64]): int64 =
   discard ic.RunWithCallbacks(joystickInput, playBreakout, 3)
   return score
 
-var prog: seq[int64] = readLine(stdin).split(',').map(parseBiggestInt)
+var prog = readInputInt64s()
 echo "Part 1: ", part1(prog)
 echo "Part 2: ", part2(prog)

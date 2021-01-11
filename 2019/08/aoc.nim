@@ -1,6 +1,6 @@
-import strutils, sequtils
+import aoclib
 
-var inp: string = readLine(stdin)
+var inp = readInputLines()[0]
 
 proc part1(inp: string): int64 =
   var res = 0

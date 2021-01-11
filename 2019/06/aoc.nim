@@ -1,12 +1,10 @@
-import strutils, sequtils, tables
+import aoclib
 
 type Game = object
     orbits : Table[string, string]
     cache : Table[string, Table[string, int]]
 
-var inp: seq[string]
-for line in stdin.lines:
-  inp.add(line)
+var inp = readInputLines()
 
 proc parse(inp: seq[string]) : Game =
   var g = Game()

@@ -1,10 +1,10 @@
-import strutils, sequtils, deques, tables, hashes, intcode, point
+import aoclib, intcode, point
 
 type Hull = object
     tiles : Table[Point, bool]
     bb : BoundingBox
     pos : Point
-    dir : Direction
+    dir : Point
 
 method input(this: var Hull): int64 {.base.} =
   if this.tiles.hasKey(this.pos) and this.tiles[this.pos]:
@@ -17,11 +17,11 @@ method output(this: var Hull, val: int64): void {.base.} =
 method process(this: var Hull, col: int64, turn: int64): void {.base.} =
   this.output(col)
   if turn == 1:
-    this.dir = this.dir.CW()
+    this.dir.cw
   else:
-    this.dir = this.dir.CCW()
-  this.pos.x += this.dir.x
-  this.pos.y += this.dir.y
+    this.dir.ccw
+  this.pos.moveX(this.dir.x)
+  this.pos.moveY(this.dir.y)
   this.bb.Add(this.pos)
 
 proc run(prog: seq[int64], input: int64): Hull =
@@ -29,7 +29,7 @@ proc run(prog: seq[int64], input: int64): Hull =
   var h = Hull(tiles: initTable[Point, bool](),
                bb: NewBoundingBox(),
                pos: Point(x: 0, y: 0),
-               dir: Direction(x: 0, y: -1))
+               dir: Point(x: 0, y: -1))
   while not ic.Done():
     let col = ic.NextOutput()
     if col == -99:
@@ -56,6 +56,6 @@ proc part2(prog: seq[int64]): string =
     s.add('\n')
   return s
 
-var prog: seq[int64] = readLine(stdin).split(',').map(parseBiggestInt)
+var prog: seq[int64] = readInputInt64s()
 echo "Part 1: ", part1(prog)
 echo "Part 2:\n", part2(prog)

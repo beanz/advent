@@ -1,4 +1,4 @@
-import strutils, sequtils, os
+import aoclib
 
 let REP = [0, 1, 0, -1]
 
@@ -59,29 +59,17 @@ proc part2(inp: seq[uint8]): string =
     s = calc2(s)
   return digits(s, 8)
 
-proc readFile(file : string) : seq[uint8] =
-  let f = open(file)
-  var line1 = f.readLine()
-  var s : seq[uint8]
-  for ch in line1:
-    s.add(cast[uint8](ch) - 48)
-  return s
-
-if existsEnv("AoC_TEST"):
+if runTests():
   echo "Running tests"
-  assert part1(readFile("test1a.txt"), 4) == "01029498"
-  assert part1(readFile("test1b.txt"), 100) == "24176176"
-  assert part1(readFile("test1c.txt"), 100) == "73745418"
-  assert part1(readFile("test1d.txt"), 100) == "52432133"
-  assert part2(readFile("test2a.txt")) == "84462026"
-  assert part2(readFile("test2b.txt")) == "78725270"
-  assert part2(readFile("test2c.txt")) == "53553731"
+  assert part1(readUInt8s("test1a.txt"), 4) == "01029498"
+  assert part1(readUInt8s("test1b.txt"), 100) == "24176176"
+  assert part1(readUInt8s("test1c.txt"), 100) == "73745418"
+  assert part1(readUInt8s("test1d.txt"), 100) == "52432133"
+  assert part2(readUInt8s("test2a.txt")) == "84462026"
+  assert part2(readUInt8s("test2b.txt")) == "78725270"
+  assert part2(readUInt8s("test2c.txt")) == "53553731"
   echo "Tests PASSED"
 
-var file = "input.txt"
-if paramCount() > 0:
-  file=paramStr(1)
-
-var inp: seq[uint8] = readFile(file)
+var inp: seq[uint8] = readInputUInt8s()
 echo "Part 1: ", part1(inp, 100)
 echo "Part 2: ", part2(inp)

@@ -1,4 +1,4 @@
-import strutils, sequtils, deques, os, intcode
+import aoclib, intcode
 
 type Beam = object
     prog: seq[int64]
@@ -66,12 +66,8 @@ method part2(this: var Beam): int64 {.base.} =
       return x*10000 + y
   return -1
 
-proc readFile(file : string) : seq[int64] =
-  let f = open(file)
-  return f.readLine().split(',').map(parseBiggestInt)
-
-if existsEnv("AoC_TEST"):
-  var prog = readFile("input.txt")
+if runTests():
+  var prog = readInt64s("input.txt")
   var beam = NewBeam(prog)
   assert beam.part1() == 211
   beam.size = 5
@@ -80,10 +76,6 @@ if existsEnv("AoC_TEST"):
   assert beam.squareFitsY(45) == 36
   assert beam.part2() == 360045
 
-var file = "input.txt"
-if paramCount() > 0:
-  file=paramStr(1)
-
-var beam = NewBeam(readFile(file))
+var beam = NewBeam(readInputInt64s())
 echo "Part 1: ", beam.part1()
 echo "Part 2: ", beam.part2()

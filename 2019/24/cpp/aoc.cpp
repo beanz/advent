@@ -4,8 +4,8 @@
 #include <set>
 #include <map>
 #include <assert.h>
-#include "../../lib/input.hpp"
-#include "../../lib/assert.hpp"
+#include "input.hpp"
+#include "assert.hpp"
 
 using namespace std;
 

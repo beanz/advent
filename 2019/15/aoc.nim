@@ -1,6 +1,6 @@
-import strutils, sequtils, deques, tables, hashes, intcode, point
+import aoclib, intcode, point
 
-var prog: seq[int64] = readLine(stdin).split(',').map(parseBiggestInt)
+var prog = readInputInt64s()
 
 type Ship = object
     wall : Table[Point, bool]
@@ -37,7 +37,7 @@ proc compassToInput(dir : string) : int64 =
     else:
       return 4
 
-proc compassXOffset(dir : string) : int64 =
+proc compassXOffset(dir : string) : int =
   case dir:
     of "N":
       return 0
@@ -48,7 +48,7 @@ proc compassXOffset(dir : string) : int64 =
     else:
       return 1
 
-proc compassYOffset(dir : string) : int64 =
+proc compassYOffset(dir : string) : int =
   case dir:
     of "N":
       return -1

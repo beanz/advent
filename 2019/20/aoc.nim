@@ -1,4 +1,4 @@
-import strutils, sequtils, point, tables, os, input, deques
+import aoclib, point
 
 type Portal = object
     exit: Point
@@ -30,9 +30,9 @@ proc NewDonut(lines : seq[string]): Donut =
   bb.Add(Point(x: 0, y: 0))
   bb.Add(Point(x: len(lines[0])-1, y: len(lines)-1))
   var rp = initTable[string, Point]()
-  proc isPortal(x: int64, y: int64) : bool =
+  proc isPortal(x: int, y: int) : bool =
     return 'A' <= lines[y][x] and lines[y][x] <= 'Z'
-  proc addPortal(p : Point, bx: int64, by: int64, ch1: char, ch2 : char) =
+  proc addPortal(p : Point, bx: int, by: int, ch1: char, ch2 : char) =
     let name : string = ch1 & ch2
     walls[Point(x: bx, y: by)] = true
     if name == "AA":
@@ -135,22 +135,18 @@ method part1(this: Donut): int {.base.} =
 method part2(this: Donut): int {.base.} =
   return this.search(true)
 
-var file = "input.txt"
-if paramCount() > 0:
-  file=paramStr(1)
+if false:
+  assert NewDonut(aoclib.readLines("test1a.txt")).part1() == 23;
+  assert NewDonut(aoclib.readLines("test1b.txt")).part1() == 58;
+  assert NewDonut(aoclib.readLines("input.txt")).part1() == 482;
 
-if existsEnv("AoC_TEST"):
-  assert NewDonut(input.readLines("test1a.txt")).part1() == 23;
-  assert NewDonut(input.readLines("test1b.txt")).part1() == 58;
-  assert NewDonut(input.readLines("input.txt")).part1() == 482;
-
-  assert NewDonut(input.readLines("test1a.txt")).part2() == 26;
-  assert NewDonut(input.readLines("test2a.txt")).part2() == 396;
-  assert NewDonut(input.readLines("input.txt")).part2() == 5912;
+  assert NewDonut(aoclib.readLines("test1a.txt")).part2() == 26;
+  assert NewDonut(aoclib.readLines("test2a.txt")).part2() == 396;
+  assert NewDonut(aoclib.readLines("input.txt")).part2() == 5912;
   echo "TESTS PASSED"
 
 
-var inp = input.readLines(file)
+var inp = readInputLines()
 var donut = NewDonut(inp)
 #echo donut.String()
 echo "Part 1: ", donut.part1()

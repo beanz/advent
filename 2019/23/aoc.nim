@@ -1,4 +1,4 @@
-import input, intcode, os, deques
+import aoclib, intcode
 
 proc part1(prog: seq[int64]): int64 =
   var ic : seq[IntCode]
@@ -55,10 +55,6 @@ proc part2(prog: seq[int64]): int64 =
       ic[0].AddInput(natX, natY)
   return 2
 
-var file = "input.txt"
-if paramCount() > 0:
-  file=paramStr(1)
-
-var prog = readInts(file)
+var prog = readInputInt64s()
 echo "Part 1: ", part1(prog)
 echo "Part 2: ", part2(prog)

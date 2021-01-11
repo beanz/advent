@@ -1,6 +1,6 @@
-import strutils, sequtils
+import aoclib
 
-var prog: seq[int64] = readLine(stdin).split(',').map(parseBiggestInt)
+var prog: seq[int64] = readInputInt64s()
 
 proc part1(prog_c: seq[int64]): int64 =
   var prog: seq[int64]

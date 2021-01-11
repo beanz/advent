@@ -1,4 +1,4 @@
-import strutils, sequtils, math
+import aoclib
 
 let
   X = 0
@@ -75,9 +75,9 @@ proc part2(c_moons: seq[Moon]): int64 =
 
   return lcm(lcm(cycle[X], cycle[Y]), cycle[Z])
 
-proc readFile(file : string): seq[Moon] =
+proc parseFile(file : string): seq[Moon] =
   var res : seq[Moon]
-  for line in lines file:
+  for line in aoclib.readLines(file):
     let v = line.split(",").map(
       proc (x: string): int64 =
         parseBiggestInt(strip(x, chars={' ', '<', '>', '=', 'x', 'y', 'z'}))
@@ -86,12 +86,12 @@ proc readFile(file : string): seq[Moon] =
     res.add(m)
   return res
 
-assert part1(readFile("test1a.txt"), 10) == 179
-assert part1(readFile("test1b.txt"), 100) == 1940
+assert part1(parseFile("test1a.txt"), 10) == 179
+assert part1(parseFile("test1b.txt"), 100) == 1940
 
-echo "Part 1: ", part1(readFile("input.txt"), 1000)
+echo "Part 1: ", part1(parseFile("input.txt"), 1000)
 
-assert part2(readFile("test1a.txt")) == 2772
-assert part2(readFile("test2.txt")) == 4686774924
+assert part2(parseFile("test1a.txt")) == 2772
+assert part2(parseFile("test2.txt")) == 4686774924
 
-echo "Part 2: ", part2(readFile("input.txt"))
+echo "Part 2: ", part2(parseFile("input.txt"))

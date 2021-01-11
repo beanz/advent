@@ -1,4 +1,4 @@
-import input, os, sets, tables
+import aoclib
 
 proc bug(n: int, x: int, y: int): bool =
   if y < 0 or y >= 5 or x < 0 or x >= 5:
@@ -134,10 +134,10 @@ proc pp2(m: Table[int,int]): string =
     minD = min(d, minD)
   var s = ""
   for d in countup(minD, maxD):
-    s.add("Depth ")
-    s.add(d)
-    s.add("\n")
-    s.add(pp(m[d]))
+    s &= "Depth "
+    s &= $(d)
+    s &= "\n"
+    s &= pp(m[d])
   return s
 
 proc part2(inp: seq[string], minutes: int): int =
@@ -163,18 +163,15 @@ proc part2(inp: seq[string], minutes: int): int =
     m = newM
   return count(m)
 
-if existsEnv("AoC_TEST"):
-  assert part1(input.readlines("test.txt")) == 2129920
-  assert part1(input.readlines("input.txt")) == 6520863
-  assert part2(input.readlines("test.txt"), 1) == 27
-  assert part2(input.readlines("test.txt"), 10) == 99
-  assert part2(input.readlines("input.txt"), 1) == 21
-  assert part2(input.readlines("input.txt"), 200) == 1970
+if runTests():
+  assert part1(aoclib.readLines("test.txt")) == 2129920
+  assert part1(aoclib.readLines("input.txt")) == 6520863
+  assert part2(aoclib.readLines("test.txt"), 1) == 27
+  assert part2(aoclib.readLines("test.txt"), 10) == 99
+  assert part2(aoclib.readLines("input.txt"), 1) == 21
+  assert part2(aoclib.readLines("input.txt"), 200) == 1970
 
-var file = "input.txt"
-if paramCount() > 0:
-  file=paramStr(1)
-var inp = input.readLines(file)
+var inp = readInputLines()
 
 echo "Part 1: ", part1(inp)
 

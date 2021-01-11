@@ -1,6 +1,6 @@
-import strutils, sequtils, intcode, deques
+import aoclib, intcode
 
-var prog: seq[int64] = readLine(stdin).split(',').map(parseBiggestInt)
+var prog: seq[int64] = readInputInt64s()
 
 proc part1(prog: seq[int64]): int64 =
   var ic = NewIntCode(prog, 1)

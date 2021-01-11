@@ -1,4 +1,4 @@
-import input, intcode, os, deques
+import aoclib, intcode
 
 proc runscript(prog : seq[int64], script : string) : int64 =
   var ic = NewIntCode(prog, script)
@@ -20,10 +20,6 @@ proc part2(prog: seq[int64]): int64 =
   return  runscript(prog,
      "NOT B T\nNOT C J\nOR J T\nAND H T\nNOT A J\nOR T J\nAND D J\nRUN\n");
 
-var file = "input.txt"
-if paramCount() > 0:
-  file=paramStr(1)
-
-var prog = readInts(file)
+var prog = readInputInt64s()
 echo "Part 1: ", part1(prog)
 echo "Part 2: ", part2(prog)

@@ -5,9 +5,9 @@
 #include <algorithm>
 #include <limits>
 #include <assert.h>
-#include "../../lib/assert.hpp"
-#include "../../lib/input.hpp"
-#include "../../lib/intcode.hpp"
+#include "assert.hpp"
+#include "input.hpp"
+#include "intcode.hpp"
 
 using namespace std;
 

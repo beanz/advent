@@ -1,8 +1,6 @@
-import strutils, tables
+import aoclib
 
-var inp: seq[string]
-for line in stdin.lines:
-  inp.add(line)
+var inp = readInputLines()
 
 type Input = object
   ch: string

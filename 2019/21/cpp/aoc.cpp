@@ -7,9 +7,9 @@
 #include <limits>
 #include <assert.h>
 #include <sstream>
-#include "../../lib/input.hpp"
-#include "../../lib/intcode.hpp"
-#include "../../lib/assert.hpp"
+#include "input.hpp"
+#include "intcode.hpp"
+#include "assert.hpp"
 
 using namespace std;
 

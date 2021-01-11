@@ -1,4 +1,4 @@
-import strutils, sequtils, tables
+import aoclib
 
 proc path(s: string): Table[(int,int), int] =
   var p = initTable[(int,int), int]()
@@ -38,9 +38,7 @@ proc calc(inp: seq[string]): (int,int) =
 
   return (dist,steps)
 
-var inp: seq[string]
-for line in stdin.lines:
-  inp.add(line)
+var inp = readInputLines()
 
 assert calc(@["R8,U5,L5,D3", "U7,R6,D4,L4"]) == (6, 30)
 assert calc(@["R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51",

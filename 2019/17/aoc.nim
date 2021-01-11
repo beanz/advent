@@ -1,18 +1,18 @@
-import strutils, sequtils, deques, tables, intcode, point
+import aoclib, intcode, point
 
 type Scaffold = object
     m : Table[Point, bool]
     bb : BoundingBox
     pos : Point
     bot : Point
-    dir : Direction
+    dir : Point
 
 proc NewScaffold() : Scaffold =
   return Scaffold(m: initTable[Point,bool](),
                   bb: NewBoundingBox(),
                   pos: Point(x: 0, y: 0),
                   bot: Point(x: -1, y: -1),
-                  dir: Direction(x: 0, y: -1))
+                  dir: Point(x: 0, y: -1))
 
 method isPipe(this: Scaffold, p : Point): bool {.base.} =
   return this.m.hasKey(p) and this.m[p]
@@ -83,7 +83,7 @@ proc part2(prog: var seq[int64], scaff: Scaffold) : int64 =
   var path : seq[int64]
   while true:
     #echo scaff.String()
-    var np = pos.In(dir)
+    var np = pos.pointIn(dir)
     #echo "trying forwards (", dir, "): ", np
     if scaff.isPipe(np):
       #echo "forward!"
@@ -93,16 +93,16 @@ proc part2(prog: var seq[int64], scaff: Scaffold) : int64 =
       else:
         path.add(1)
     else:
-      let left = dir.CCW()
-      let np = pos.In(left)
+      let left = dir.pointCcw()
+      let np = pos.pointIn(left)
       #echo "trying left (", left, "): ", np
       if scaff.isPipe(np):
         #echo "left!"
         dir = left
         path.add(-1) # -1 == LEFT
       else:
-        let right = dir.CW()
-        let np = pos.In(right)
+        let right = dir.pointCw()
+        let np = pos.pointIn(right)
         #echo "trying right(", right, "): ", np
         if scaff.isPipe(np):
           #echo "right!"
@@ -152,7 +152,7 @@ proc part2(prog: var seq[int64], scaff: Scaffold) : int64 =
   var output = ic.RunToHalt()
   return output.peekLast
 
-var prog: seq[int64] = readLine(stdin).split(',').map(parseBiggestInt)
+var prog = readInputInt64s()
 var scaff = part1(prog)
 echo "Part 1: ", scaff.alignmentSum()
 echo "Part 2: ", part2(prog, scaff)

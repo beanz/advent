@@ -1,11 +1,15 @@
 import os, strutils, sequtils, intsets,
        sugar, sequtils, tables, sets, parseutils, math, deques, algorithm,
-       point, bitops, hashes
+       point, bitops, hashes, strformat
 export strutils, sequtils, intsets, sugar, sequtils,
-       tables, sets, parseutils, math, deques, algorithm, point, bitops, hashes
+       tables, sets, parseutils, math, deques, algorithm, point, bitops,
+       hashes, strformat
 
 proc debug*(): bool =
   return getEnv("AoC_DEBUG", "0") == "1"
+
+proc runTests*(): bool =
+  return getEnv("AoC_TEST", "0") == "1"
 
 proc inputFile*(): string =
   if paramCount() > 0:
@@ -51,6 +55,24 @@ proc readInt64s*(file: string): seq[int64] =
 
 proc readInputInt64s*(): seq[int64] =
   return readInt64s(inputFile())
+
+proc readUInt64s*(file: string): seq[uint64] =
+  let f = open(file)
+  return f.readAll().strip(chars = {'\n'}).split({'\n',' ', ','}).map(parseBiggestUInt)
+
+proc readInputUInt64s*(): seq[uint64] =
+  return readUInt64s(inputFile())
+
+proc readUInt8s*(file : string) : seq[uint8] =
+  let f = open(file)
+  var line1 = f.readLine()
+  var s : seq[uint8]
+  for ch in line1:
+    s.add(cast[uint8](ch) - 48)
+  return s
+
+proc readInputUInt8s*() : seq[uint8] =
+  return readUInt8s(inputFile())
 
 proc readLists*(file: string): seq[seq[string]] =
   return readLines(file).map(l => l.split({'-',',',':',' '}))

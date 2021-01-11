@@ -1,4 +1,4 @@
-import strutils, sequtils, sets, tables, hashes, math, algorithm
+import aoclib
 
 type
   Asteroid = object
@@ -126,13 +126,14 @@ assert ts.angle(Asteroid(x: 2, y: 4)) == 3.141592653589793  # s
 assert ts.angle(Asteroid(x: 0, y: 2)) == 4.71238898038469   # w
 assert ts.angle(Asteroid(x: 0, y: 0)) == 5.497787143782138  # nw
 
-var testin: seq[string] = readFile("test2a.txt")
-ts = NewSpace(testin)
-let order = [801, 900, 901, 1000, 902, 1101, 1201, 1102, 1501]
-for i in countup(0, len(order)-1):
-  assert ts.part2(i+1) == order[i]
+if runTests():
+  var testin: seq[string] = readFile("test2a.txt")
+  ts = NewSpace(testin)
+  let order = [801, 900, 901, 1000, 902, 1101, 1201, 1102, 1501]
+  for i in countup(0, len(order)-1):
+    assert ts.part2(i+1) == order[i]
 
-var inp: seq[string] = readFile("input.txt")
+var inp = readInputLines()
 var space = NewSpace(inp)
 
 echo "Part 1: ", space.part1()

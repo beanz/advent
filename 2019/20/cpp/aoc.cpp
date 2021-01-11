@@ -5,8 +5,8 @@
 #include <deque>
 #include <map>
 #include <assert.h>
-#include "../../lib/point.hpp"
-#include "../../lib/input.hpp"
+#include "point.hpp"
+#include "input.hpp"
 
 using namespace std;
 

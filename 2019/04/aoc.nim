@@ -1,6 +1,6 @@
-import strutils, sequtils, strformat, algorithm
+import aoclib
 
-var inp: seq[int64] = readLine(stdin).split('-').map(parseBiggestInt)
+var inp = readInputLines()[0].split("-").map(parseBiggestInt)
 
 proc count(s: string, ch: char): int =
   var c = 0
