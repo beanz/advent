@@ -57,7 +57,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
 
                                     bold bold_on bold_off
                                     red cyan yellow green blue magenta
-                                    clear goto
+                                    clear mcursor
                                     pretty_grid
                                     safe_exists
                                     safe_value
@@ -348,7 +348,7 @@ sub clear {
   "\033[3J\033[H\033[2J"
 }
 
-sub goto {
+sub mcursor {
   sprintf "\033".'[%d;%dH', $_[0]+1, $_[1]+1;
 }
 

@@ -89,7 +89,7 @@ sub run {
     #print $self->hexdump();
     printf("%s ip=%d %d,%d,%d,%d\n",
            $self->{name}, $self->{ip}, map { $self->{p}->[$self->{ip}+$_]//0
-                                           } (0..3)) if DEBUG;
+                                           } (0..3)) if (DEBUG > 2);
     my $inst = $self->parse_inst();
     # printf "op=%d param=%s addr=%s\n",
     #   $inst->{op}, ppv($inst->{param}), ppv($inst->{addr});
@@ -98,14 +98,14 @@ sub run {
       printf "$self->{name} add %d + %d = %d => %d\n",
         $inst->{param}->[0], $inst->{param}->[1],
         $inst->{param}->[0] + $inst->{param}->[1],
-        $inst->{addr}->[2] if DEBUG;
+        $inst->{addr}->[2] if (DEBUG > 2);
       $self->{p}->[$inst->{addr}->[2]] =
         $inst->{param}->[0] + $inst->{param}->[1];
     } elsif ($op == 2) {
       printf "$self->{name} mul %d * %d = %d => %d\n",
         $inst->{param}->[0], $inst->{param}->[1],
         $inst->{param}->[0] * $inst->{param}->[1],
-        $inst->{addr}->[2] if DEBUG;
+        $inst->{addr}->[2] if (DEBUG > 2);
       $self->{p}->[$inst->{addr}->[2]] =
         $inst->{param}->[0] * $inst->{param}->[1];
     } elsif ($op == 3) {
@@ -114,41 +114,42 @@ sub run {
         $self->{ip} -= arity($op)+1;
         return 2;
       }
-      printf "$self->{name} read %d => %d\n", $v, $inst->{addr}->[0] if DEBUG;
+      printf "$self->{name} read %d => %d\n", $v, $inst->{addr}->[0]
+        if (DEBUG > 2);
       $self->{p}->[$inst->{addr}->[0]] = $v;
     } elsif ($op == 4) {
       printf "$self->{name} write %d => output\n",
-        $inst->{param}->[0] if DEBUG;
+        $inst->{param}->[0] if (DEBUG > 2);
       push @{$self->{o}}, $inst->{param}->[0];
       return 0;
     } elsif ($op == 5) {
       printf "$self->{name} jnz %d to %d\n",
-        $inst->{param}->[0], $inst->{param}->[1] if DEBUG;
+        $inst->{param}->[0], $inst->{param}->[1] if (DEBUG > 2);
       if ($inst->{param}->[0] != 0) {
         $self->{ip} = $inst->{param}->[1];
       }
     } elsif ($op == 6) {
       printf "$self->{name} jz %d to %d\n",
-        $inst->{param}->[0], $inst->{param}->[1] if DEBUG;
+        $inst->{param}->[0], $inst->{param}->[1] if (DEBUG > 2);
       if ($inst->{param}->[0] == 0) {
         $self->{ip} = $inst->{param}->[1];
       }
     } elsif ($op == 7) {
       printf "$self->{name} lt %d < %d => %d\n",
         $inst->{param}->[0], $inst->{param}->[1], $inst->{addr}->[2]
-        if DEBUG;
+        if (DEBUG > 2);
       $self->{p}->[$inst->{addr}->[2]] =
         $inst->{param}->[0] < $inst->{param}->[1] ? 1 : 0;
     } elsif ($op == 8) {
       printf "$self->{name} eq %d == %d => %d\n",
         $inst->{param}->[0], $inst->{param}->[1], $inst->{addr}->[2]
-        if DEBUG;
+        if (DEBUG > 2);
       $self->{p}->[$inst->{addr}->[2]] =
         $inst->{param}->[0] == $inst->{param}->[1] ? 1 : 0;
     } elsif ($op == 9) {
       $self->{b} += $inst->{param}->[0];
       printf "$self->{name} base += %d == %d\n",
-        $inst->{param}->[0], $self->{b} if DEBUG;
+        $inst->{param}->[0], $self->{b} if (DEBUG > 2);
     } elsif ($op == 99) {
       $self->{done}=1;
       return 1;
