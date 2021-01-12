@@ -45,6 +45,7 @@ sub calc {
   my ($prog) = @_;
   my $ic = IntCode->new($prog, [$i]);
   my $auto;
+  my $all_output = "";
   while (!$ic->{done}) {
     my $rc = $ic->run();
     if ($rc == 0) {
@@ -53,9 +54,10 @@ sub calc {
         my $ch = shift @{$ic->{o}};
         $s .= chr($ch);
       }
-      print $s;
-      if ($s =~ /Analysis complete/) {
-        exit;
+      print $s if DEBUG;
+      $all_output .= $s;
+      if ($all_output =~ /by typing (\d+) on the keypad/) {
+        return $1
       }
     } elsif ($rc == 2) {
       if ($auto) {
