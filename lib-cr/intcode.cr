@@ -253,4 +253,9 @@ class IntCode
       end
     end
   end
+  def addInput(s : String)
+    s.each_byte do |c|
+      @inp << c.to_i64
+    end
+  end
 end
