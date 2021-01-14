@@ -176,6 +176,21 @@ public:
     return res;
   }
 
+  string outputString() {
+    string res = "";
+    while (this->outp.size() > 0) {
+      res += char(this->outp.front());
+      this->outp.pop_front();
+    }
+    return res;
+  }
+
+  void addInput(string s) {
+    for (auto i = 0; i < s.size(); i++) {
+      inp.push_back((long)s[i]);
+    }
+  }
+
   bool run_with_callbacks(std::function<long()> inf, std::function<void(vector<long>)> outf, int outn) {
     while (!this->Done()) {
       auto rc = this->run();
