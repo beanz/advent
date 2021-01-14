@@ -167,6 +167,13 @@ method Output*(this: var IntCode, n : int): seq[int64] {.base.} =
       res.add(this.outp.popFirst)
   return res
 
+method OutputString*(this: var IntCode): string {.base.} =
+  var s = ""
+  for x in this.outp.items():
+    s &= chr(x)
+  this.outp.clear
+  return s
+
 method NextOutput*(this: var IntCode): int64 {.base.} =
   if len(this.outp) > 0:
     return this.outp.popFirst
@@ -178,7 +185,11 @@ method NextOutput*(this: var IntCode): int64 {.base.} =
 
 method AddInput*(this: var IntCode, inputs: varargs[int64]): void {.base.} =
   for input in inputs:
-     this.inp.addLast(input)
+    this.inp.addLast(input)
+
+method AddInput*(this: var IntCode, input: string): void {.base.} =
+  for c in input:
+    this.inp.addLast(c.ord)
 
 method Done*(this: var IntCode): bool {.base.} =
   return this.done

@@ -1,9 +1,9 @@
 import os, strutils, sequtils, intsets,
        sugar, sequtils, tables, sets, parseutils, math, deques, algorithm,
-       point, bitops, hashes, strformat
+       point, bitops, hashes, strformat, random
 export strutils, sequtils, intsets, sugar, sequtils,
        tables, sets, parseutils, math, deques, algorithm, point, bitops,
-       hashes, strformat
+       hashes, strformat, random
 
 proc debug*(): bool =
   return getEnv("AoC_DEBUG", "0") == "1"
