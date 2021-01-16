@@ -4,12 +4,18 @@ use warnings FATAL => 'all';
 
 my %t;
 my %l;
-for my $f (glob '????/??/*.err') {
+my @logs = glob '????/??/*.err';
+push @logs, glob 'aoc-rust/target/release/aoc-????-??.err';
+
+for my $f (@logs) {
   open my $fh, '<', $f or do {
     warn "Failed to open $f: $!\n";
     next;
   };
-  my ($y, $d, $l) = ($f =~ m!(\d{4})\/(\d{2})/.*aoc[.-](\w+)!);
+  next unless ($f =~ m!(\d{4})\/(\d{2})/.*aoc[.-](\w+)! ||
+               $f =~ m!(\d{4})-(\d{2}).(\w+)!);
+  my ($y, $d, $l) = ($1, $2, $3);
+  $l = 'rs' if ($l eq 'err');
   my $v;
   while (<$fh>) {
     my ($t,$ts, $rss, $exit) = /TIME: (\S+) (\S+) (\S+) (\S+)/;

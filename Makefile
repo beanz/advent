@@ -11,6 +11,12 @@ GO_BIN=$(subst /main.go,/aoc-go,${GO_SRC})
 GO_LOG=$(subst /main.go,/aoc-go.log,${GO_SRC})
 GO_ERR=$(subst /main.go,/aoc-go.err,${GO_SRC})
 
+RS_SRC=$(sort $(wildcard aoc-rust/src/bin/aoc-????-??.rs))
+RS_BIN=$(subst src/bin,target/release,${RS_SRC:.rs=})
+#RS_BIN=$(addsuffix /aoc-rs,$(subst -,/,$(subst aoc-rust/target/release/aoc-,,${RS_REL})))
+RS_LOG=$(addsuffix .log,${RS_BIN})
+RS_ERR=$(addsuffix .err,${RS_BIN})
+
 ZIG_SRC=$(sort $(wildcard ????/??/aoc.zig))
 ZIG_BIN=$(subst /aoc.zig,/aoc-zig,${ZIG_SRC})
 ZIG_LOG=$(subst /aoc.zig,/aoc-zig.log,${ZIG_SRC})
@@ -42,8 +48,8 @@ TIME=../../bin/time
 
 .DELETE_ON_ERROR: /bin/true
 
-all: ${GO_BIN} ${CPP_BIN} ${NIM_BIN} ${ZIG_BIN} ${CR_BIN} ${PERL_CHK}
-run: ${GO_LOG} ${CPP_LOG} ${NIM_LOG} ${ZIG_LOG} ${CR_LOG} ${PERL_LOG}
+all: ${GO_BIN} ${CPP_BIN} ${NIM_BIN} ${ZIG_BIN} ${CR_BIN} ${PERL_CHK} ${RS_BIN}
+run: ${GO_LOG} ${CPP_LOG} ${NIM_LOG} ${ZIG_LOG} ${CR_LOG} ${PERL_LOG} ${RS_LOG}
 
 build: cpp-build cr-build go-build nim-build perl-build zig--build
 
@@ -64,6 +70,12 @@ perl-build: ${PERL_CHK}
 
 zig-build: ${ZIG_BIN}
 zig: ${ZIG_LOG} ${ZIG_BIN}
+
+rs-build: ${RS_BIN}
+rs: ${RS_LOG} ${RS_BIN}
+
+aoc-rust/target/release/aoc-%: aoc-rust/src/bin/aoc-%.rs
+	cd aoc-rust && cargo build --release --bin "*$(@F)"
 
 %/aoc.pl.chk: %/aoc.pl
 	(cd $(dir $@) && perl -c aoc.pl && touch $(notdir $@)) || exit 1
@@ -97,6 +109,12 @@ zig: ${ZIG_LOG} ${ZIG_BIN}
 	     tee $(notdir $<).log ) 2>&1 1>&3 | \
 	     tee $(notdir $<).err ) 3>&1 1>&2
 
+aoc-rust/target/release/%.log: aoc-rust/target/release/%
+	cd $(dir $@) && \
+	  ( ( ../${TIME} ./$(notdir $<) ../../../$(addsuffix /input.txt,$(subst -,/,$(subst aoc-rust/target/release/aoc-,,$<))) | \
+	     tee $(notdir $<).log ) 2>&1 1>&3 | \
+	     tee $(notdir $<).err ) 3>&1 1>&2
+
 %.log: %
 	cd $(dir $@) && \
 	  ( ( ${TIME} ./$(notdir $<) input.txt | \
@@ -109,6 +127,10 @@ zig: ${ZIG_LOG} ${ZIG_BIN}
 	     tee aoc.pl.err ) 3>&1 1>&2
 
 clean: clean-perl clean-go clean-zig clean-nim clean-cr clean-cpp clean-misc
+
+clean-rs:
+	rm -f ${RS_LOG} ${RS_ERR} ${RS_BIN}
+	rm -rf aoc-rust/target
 
 clean-perl:
 	rm -f ${PERL_LOG} ${PERL_ERR} ${PERL_CHK}
@@ -217,3 +239,16 @@ zig2019-build: $(filter 2019/%,${ZIG_BIN})
 zig2019: $(filter 2019/%,${ZIG_LOG})
 zig2020-build: $(filter 2020/%,${ZIG_BIN})
 zig2020: $(filter 2020/%,${ZIG_LOG})
+
+rs2015-build: $(filter 2015-%,${RS_BIN})
+rs2015: $(filter 2015-%,${RS_LOG})
+rs2016-build: $(filter 2016-%,${RS_BIN})
+rs2016: $(filter 2016-%,${RS_LOG})
+rs2017-build: $(filter 2017-%,${RS_BIN})
+rs2017: $(filter 2017-%,${RS_LOG})
+rs2018-build: $(filter 2018-%,${RS_BIN})
+rs2018: $(filter 2018-%,${RS_LOG})
+rs2019-build: $(filter 2019-%,${RS_BIN})
+rs2019: $(filter 2019-%,${RS_LOG})
+rs2020-build: $(filter 2020-%,${RS_BIN})
+rs2020: $(filter 2020-%,${RS_LOG})
