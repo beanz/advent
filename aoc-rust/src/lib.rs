@@ -31,6 +31,10 @@ pub fn read_input_line() -> String {
     read_line(input_file())
 }
 
+pub fn is_test() -> bool {
+    input_file().ends_with("input.txt")
+}
+
 pub fn input_file() -> String {
     let args: Vec<String> = env::args().collect();
     if args.len() > 1 {
