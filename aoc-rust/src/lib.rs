@@ -39,6 +39,28 @@ pub fn input_file() -> String {
     "input.txt".to_string()
 }
 
+pub fn ints<T>(s: &str) -> impl Iterator<Item = T> + '_
+where
+    T: num::Integer + std::str::FromStr,
+    <T as std::str::FromStr>::Err: std::fmt::Debug,
+{
+    return s
+        .split(|c| !(c == '-' || ('0'..='9').contains(&c)))
+        .filter(|x| !x.is_empty() && *x != "-")
+        .map(|x| x.parse::<T>().unwrap());
+}
+
+pub fn uints<T>(s: &str) -> impl Iterator<Item = T> + '_
+where
+    T: num::Integer + std::str::FromStr,
+    <T as std::str::FromStr>::Err: std::fmt::Debug,
+{
+    return s
+        .split(|c| !('0'..='9').contains(&c))
+        .filter(|x| !x.is_empty())
+        .map(|x| x.parse::<T>().unwrap());
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 pub struct Point {
     x: i64,

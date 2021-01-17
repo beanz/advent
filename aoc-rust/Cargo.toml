@@ -9,3 +9,5 @@ edition = "2018"
 [dependencies]
 rust-crypto = "^0.2"
 itertools = "0.10.0"
+num = "0.3.1"
+json = "0.12.4"
