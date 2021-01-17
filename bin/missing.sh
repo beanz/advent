@@ -5,4 +5,8 @@ for d in ????/?? ; do
   for f in $F; do
     test -f $d/$f || echo $d/$f missing
   done
+  Y=${d%/*}
+  D=${d#*/}
+  R=aoc-rust/src/bin/aoc-$Y-$D.rs
+  test -f $R || echo $R missing
 done

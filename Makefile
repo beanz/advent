@@ -51,6 +51,18 @@ TIME=../../bin/time
 all: ${GO_BIN} ${CPP_BIN} ${NIM_BIN} ${ZIG_BIN} ${CR_BIN} ${PERL_CHK} ${RS_BIN}
 run: ${GO_LOG} ${CPP_LOG} ${NIM_LOG} ${ZIG_LOG} ${CR_LOG} ${PERL_LOG} ${RS_LOG}
 
+todo:
+	@bin/missing.sh |sort -R|head -1
+
+todo-%:
+	@bin/missing.sh |fgrep ".$(subst todo-,,$@) " | sort -R| head -1
+
+missing:
+	@bin/missing.sh
+
+missing-%:
+	@bin/missing.sh | grep $(subst missing-,,$@)
+
 build: cpp-build cr-build go-build nim-build perl-build zig--build
 
 cpp-build: ${CPP_BIN}
