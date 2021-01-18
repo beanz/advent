@@ -18,6 +18,19 @@ pub fn read_input_lines() -> io::Lines<io::BufReader<File>> {
     read_lines(input_file())
 }
 
+fn vec_lines<P>(filename: P) -> Vec<String>
+where
+    P: AsRef<Path>,
+{
+    read_lines(filename)
+        .map(|l| l.expect("Could not parse line"))
+        .collect()
+}
+
+pub fn vec_input_lines() -> Vec<String> {
+    vec_lines(input_file())
+}
+
 pub fn read_line<P>(filename: P) -> String
 where
     P: AsRef<Path>,
