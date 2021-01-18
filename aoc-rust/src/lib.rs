@@ -1,5 +1,6 @@
 use std::env;
 use std::fmt;
+use std::fs;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
@@ -29,6 +30,17 @@ where
 
 pub fn read_input_line() -> String {
     read_line(input_file())
+}
+
+pub fn slurp_file<P>(filename: P) -> String
+where
+    P: AsRef<Path>,
+{
+    fs::read_to_string(filename).expect("Failed to read file")
+}
+
+pub fn slurp_input_file() -> String {
+    slurp_file(input_file())
 }
 
 pub fn is_test() -> bool {
