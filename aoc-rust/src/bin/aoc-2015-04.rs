@@ -35,7 +35,7 @@ fn main() {
 }
 
 #[test]
-#[ignore]
+#[cfg_attr(not(feature = "slow_tests"), ignore)]
 fn calc_works() {
     for &(inp, exp) in [
         ("abcdef", (609043, 6742839)),
