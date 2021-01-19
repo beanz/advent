@@ -11,6 +11,7 @@ slow_tests = []
 
 [dependencies]
 rust-crypto = "^0.2"
-itertools = "0.10.0"
+itertools = "^0.10.0"
 num = "0.3.1"
 json = "0.12.4"
+rand = "0.8.2"

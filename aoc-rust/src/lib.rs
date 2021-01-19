@@ -176,3 +176,23 @@ impl fmt::Display for NumStr {
         write!(f, "{}", str::from_utf8(&self.b[0..self.l]).unwrap())
     }
 }
+
+pub fn isqrt(x: usize) -> usize {
+    let ix = x as isize;
+    let mut q: isize = 1;
+    while q <= ix {
+        q <<= 2;
+    }
+    let mut z = ix;
+    let mut r: isize = 0;
+    while q > 1 {
+        q >>= 2;
+        let t = z - r - q;
+        r >>= 1;
+        if t >= 0 {
+            z = t;
+            r += q;
+        }
+    }
+    r as usize
+}
