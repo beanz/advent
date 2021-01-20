@@ -51,8 +51,9 @@ func NewGame(in []int) *Game {
 }
 
 type State struct {
-	me   *Me
-	boss *Boss
+	me    *Me
+	boss  *Boss
+	debug bool
 }
 
 func (s *State) Clone() *State {
@@ -62,112 +63,123 @@ func (s *State) Clone() *State {
 	for k, v := range s.me.active {
 		nm.active[k] = v
 	}
-	return &State{me: &nm, boss: &Boss{hp: s.boss.hp, damage: s.boss.damage}}
+	return &State{
+		me:    &nm,
+		boss:  &Boss{hp: s.boss.hp, damage: s.boss.damage},
+		debug: s.debug}
 }
 
-func (g *Game) Turn(state *State, sp Spell) *State {
-	armor := 0
-	if state.me.active[Shield] > 0 {
-		if g.debug {
-			fmt.Printf("Shield active increasing armor\n")
-		}
-		armor = 7
-	}
-	if g.debug {
+func (s *State) Turn(sp Spell) {
+	if s.debug {
 		fmt.Printf("-- Player turn --\n")
 		fmt.Printf("- Player has %d hit points, %d armor, %d mana\n",
-			state.me.hp, armor, state.me.mana)
-		fmt.Printf("- Boss has %d hit points\n", state.boss.hp)
+			s.me.hp, s.me.armor, s.me.mana)
+		fmt.Printf("- Boss has %d hit points\n", s.boss.hp)
 	}
-	for k := range state.me.active {
-		state.me.hp += k.heal
-		state.me.mana += k.mana
-		state.boss.hp -= k.damage
-		state.me.active[k]--
-		if g.debug {
+	for k := range s.me.active {
+		s.me.hp += k.heal
+		s.me.mana += k.mana
+		s.boss.hp -= k.damage
+		s.me.active[k]--
+		if s.debug {
 			fmt.Printf("%s active\n", k.name)
 		}
-		if state.me.active[k] == 0 {
-			if g.debug {
+		if s.me.active[k] == 0 {
+			if k.armor != 0 {
+				s.me.armor -= k.armor
+			}
+			if s.debug {
 				fmt.Printf("%s wears off\n", k.name)
 			}
-			delete(state.me.active, k)
+			delete(s.me.active, k)
 		}
 	}
-	state.me.mana -= sp.cost
-	state.me.manaSpent += sp.cost
+	s.me.mana -= sp.cost
+	s.me.manaSpent += sp.cost
 
 	if sp.turns > 0 {
-		if g.debug {
+		if s.debug {
 			fmt.Printf("Player casts %s\n", sp.name)
 		}
-		state.me.active[sp] = sp.turns
+		s.me.active[sp] = sp.turns
+		if sp.armor != 0 {
+			s.me.armor += sp.armor
+		}
 	} else {
-		if g.debug {
-			fmt.Printf("Player casts %s\n", sp.name)
+		if s.debug {
+			fmt.Printf("Player casts %s with instant effects\n", sp.name)
 		}
-		state.me.hp += sp.heal
-		state.me.mana += sp.mana
-		state.boss.hp -= sp.damage
+		s.me.hp += sp.heal
+		s.me.mana += sp.mana
+		s.boss.hp -= sp.damage
 	}
-	if g.debug && state.boss.hp <= 0 {
-		fmt.Printf("Boss is dead\n")
-		return state
+	if s.boss.hp <= 0 {
+		if s.debug {
+			fmt.Printf("Boss is dead\n")
+		}
+		return
 	}
 
-	if state.me.active[Shield] > 0 {
-		if g.debug {
-			fmt.Printf("Shield active increasing armor\n")
-		}
-		armor = 7
-	}
-	if g.debug {
+	if s.debug {
 		fmt.Printf("\n")
 		fmt.Printf("-- Boss turn --\n")
 		fmt.Printf("- Player has %d hit points, %d armor, %d mana\n",
-			state.me.hp, armor, state.me.mana)
-		fmt.Printf("- Boss has %d hit points\n", state.boss.hp)
+			s.me.hp, s.me.armor, s.me.mana)
+		fmt.Printf("- Boss has %d hit points\n", s.boss.hp)
 	}
-	for k := range state.me.active {
-		state.me.hp += k.heal
-		state.me.mana += k.mana
-		state.boss.hp -= k.damage
-		state.me.active[k]--
-		if g.debug {
-			fmt.Printf("%s active (%d)\n", k.name, state.me.active[k])
+	for k := range s.me.active {
+		s.me.hp += k.heal
+		s.me.mana += k.mana
+		s.boss.hp -= k.damage
+		s.me.active[k]--
+		if s.debug {
+			fmt.Printf("%s active (%d)\n", k.name, s.me.active[k])
 		}
-		if state.me.active[k] == 0 {
-			if g.debug {
+		if s.me.active[k] == 0 {
+			if k.armor != 0 {
+				s.me.armor -= k.armor
+			}
+			if s.debug {
 				fmt.Printf("%s wears off\n", k.name)
 			}
-			delete(state.me.active, k)
+			delete(s.me.active, k)
 		}
 	}
-	if g.debug && state.boss.hp <= 0 {
-		fmt.Printf("Boss is dead\n")
-		return state
+	if s.boss.hp <= 0 {
+		if s.debug {
+			fmt.Printf("Boss is dead\n")
+		}
+		return
 	}
-	damage := MaxInt(1, state.boss.damage-armor)
-	if g.debug {
+	damage := MaxInt(1, s.boss.damage-s.me.armor)
+	if s.debug {
 		fmt.Printf("Boss attacks for %d damage\n\n", damage)
 	}
-	state.me.hp -= damage
-	if g.debug && state.me.hp <= 0 {
-		fmt.Printf("Player is dead\n")
+	s.me.hp -= damage
+	if s.me.hp <= 0 {
+		if s.debug {
+			fmt.Printf("Player is dead\n")
+		}
 	}
-	return state
 }
 
-func (g *Game) Calc() int {
+func (g *Game) Calc(hardMode bool) int {
 	minCost := math.MaxInt32
 	todo := []*State{&State{
 		&Me{hp: 50, mana: 500, active: make(map[Spell]int)},
 		&Boss{hp: g.bossHp, damage: g.bossDamage},
+		g.debug,
 	}}
 	for len(todo) > 0 {
 		cur := todo[0]
 		todo = todo[1:]
 
+		if hardMode {
+			cur.me.hp--
+			if cur.me.hp <= 0 {
+				continue
+			}
+		}
 		for _, spell := range AllSpells {
 			if cur.me.active[spell] > 1 {
 				continue // currently active
@@ -175,7 +187,9 @@ func (g *Game) Calc() int {
 			if cur.me.mana < spell.cost {
 				continue // can't afford spell
 			}
-			new := g.Turn(cur.Clone(), spell)
+
+			new := cur.Clone()
+			new.Turn(spell)
 			if new.boss.hp <= 0 {
 				if g.debug {
 					fmt.Printf("Player wins %d (%d)\n",
@@ -197,36 +211,11 @@ func (g *Game) Calc() int {
 }
 
 func (g *Game) Part1() int {
-	return g.Calc()
+	return g.Calc(false)
 }
 
 func (g *Game) Part2() int {
-	g.part2 = true
-	return g.Calc()
-}
-
-func (g *Game) Trial1() {
-	state := &State{
-		&Me{hp: 10, mana: 250, active: make(map[Spell]int)},
-		&Boss{hp: 13, damage: 8},
-	}
-	g.debug = true
-	for _, sp := range []Spell{Poison, MagicMissile} {
-		state = g.Turn(state, sp)
-	}
-	panic("Trial 1\n")
-}
-
-func (g *Game) Trial2() {
-	state := &State{
-		&Me{hp: 10, mana: 250, active: make(map[Spell]int)},
-		&Boss{hp: 14, damage: 8},
-	}
-	g.debug = true
-	for _, sp := range []Spell{Recharge, Shield, Drain, Poison, MagicMissile} {
-		state = g.Turn(state, sp)
-	}
-	panic("Trial 2\n")
+	return g.Calc(true)
 }
 
 func main() {
