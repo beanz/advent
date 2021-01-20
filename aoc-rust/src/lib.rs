@@ -177,6 +177,7 @@ impl fmt::Display for NumStr {
     }
 }
 
+#[allow(clippy::many_single_char_names)]
 pub fn isqrt(x: usize) -> usize {
     let ix = x as isize;
     let mut q: isize = 1;
