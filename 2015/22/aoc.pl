@@ -356,29 +356,26 @@ if (TEST) {
   assertEq("player HP", -6, $game->{player}->{HP});
   assertEq("player Armor", 0, $game->{player}->{Armor});
   assertEq("player MANA", 24, $game->{player}->{MANA});
-  # $game = dclone($i);
-  # play_turn($game, 'player', 'Poison');
-  # play_turn($game, 'boss');
-  # play_turn($game, 'player', 'Recharge');
-  # play_turn($game, 'boss');
-  # play_turn($game, 'player', 'Magic Missile');
-  # play_turn($game, 'boss');
-  # play_turn($game, 'player', 'Magic Missile');
-  # play_turn($game, 'boss');
-  # play_turn($game, 'player', 'Poison');
-  # play_turn($game, 'boss');
-  # play_turn($game, 'player', 'Recharge');
-  # play_turn($game, 'boss');
-  # play_turn($game, 'player', 'Magic Missile');
-  # play_turn($game, 'boss');
-  # play_turn($game, 'player', 'Magic Missile');
-  # play_turn($game, 'boss');
-  # play_turn($game, 'player', 'Poison');
-  # play_turn($game, 'boss');
-  # play_turn($game, 'player', 'Magic Missile');
-  # play_turn($game, 'boss');
-  # play_turn($game, 'player', 'Magic Missile');
-  # play_turn($game, 'boss');
+
+  $game = dclone($i);
+  for my $r (['Poison', 68, 40],
+             ['Recharge', 62, 30],
+             ['Shield', 56, 27],
+             ['Poison', 50, 24],
+             ['Recharge', 44, 21],
+             ['Shield', 38, 18],
+             ['Poison', 32, 15],
+             ['Recharge', 26, 12],
+             ['Shield', 20, 9],
+             ['Magic Missile', 13, 6],
+             ['Poison', 10, 3],
+             ['Magic Missile', 0, 3],
+            ) {
+    play_turn($game, 'player', $r->[0]);
+    play_turn($game, 'boss');
+    assertEq("boss HP", $game->{boss}->{HP}, $r->[1]);
+    assertEq("player HP", $game->{player}->{HP}, $r->[2]);
+  }
 }
 
 
