@@ -31,6 +31,18 @@ pub fn vec_input_lines() -> Vec<String> {
     vec_lines(input_file())
 }
 
+pub fn lines<P>(file: P) -> Vec<String>
+where
+    P: AsRef<Path>,
+{
+    let lines: Vec<_> = read_lines(file).collect::<Result<_, _>>().unwrap();
+    lines
+}
+
+pub fn input_lines() -> Vec<String> {
+    lines(input_file())
+}
+
 pub fn read_line<P>(filename: P) -> String
 where
     P: AsRef<Path>,
