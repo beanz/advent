@@ -28,6 +28,15 @@ fn valid(s: &str) -> bool {
     has_straight && !has_bad && num_pairs >= 2
 }
 
+#[test]
+fn valid_works() {
+    assert_eq!(valid("hijklmmn"), false);
+    assert_eq!(valid("abbceffg"), false);
+    assert_eq!(valid("abbcegjk"), false);
+    assert_eq!(valid("abcdffaa"), true);
+    assert_eq!(valid("ghjaabcc"), true);
+}
+
 pub struct PerlyString {
     b: Box<[u8]>,
     l: usize,
@@ -78,18 +87,16 @@ pub fn next(s: &str) -> String {
     perly.string()
 }
 
+#[test]
+#[cfg_attr(not(feature = "slow_tests"), ignore)]
+fn next_works() {
+    assert_eq!(next("abcdefgh"), "abcdffaa", "next(abcdffaa)");
+    assert_eq!(next("ghijklmn"), "ghjaabcc", "next(ghijklmn)");
+}
+
 fn main() {
     let inp = aoc::read_input_line();
     let p1 = next(&inp);
     println!("Part 1: {}", p1);
     println!("Part 2: {}", next(&p1));
-}
-
-#[test]
-fn valid_works() {
-    assert_eq!(valid("hijklmmn"), false);
-    assert_eq!(valid("abbceffg"), false);
-    assert_eq!(valid("abbcegjk"), false);
-    assert_eq!(valid("abcdffaa"), true);
-    assert_eq!(valid("ghjaabcc"), true);
 }
