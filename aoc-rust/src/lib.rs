@@ -92,16 +92,16 @@ where
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 pub struct Point {
-    x: i64,
-    y: i64,
+    x: isize,
+    y: isize,
 }
 
 impl Point {
-    pub const fn new(x: i64, y: i64) -> Point {
+    pub const fn new(x: isize, y: isize) -> Point {
         Point { x, y }
     }
-    pub fn manhattan(&self) -> u64 {
-        self.x.abs() as u64 + self.y.abs() as u64
+    pub fn manhattan(&self) -> usize {
+        self.x.abs() as usize + self.y.abs() as usize
     }
     pub fn mov(&mut self, ch: char) {
         match ch {
