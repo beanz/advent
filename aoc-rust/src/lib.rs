@@ -140,6 +140,12 @@ impl NumStr {
         let l = pl + 1;
         NumStr { b, l, pl }
     }
+    pub fn string(&self) -> String {
+        self.b[0..self.l]
+            .iter()
+            .map(|x| format!("{:02x}", x))
+            .collect::<String>()
+    }
     pub fn bytes(&self) -> &[u8] {
         &self.b[0..self.l]
     }
