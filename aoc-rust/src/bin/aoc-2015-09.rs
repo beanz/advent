@@ -15,7 +15,7 @@ impl Routes {
     }
     fn city_id(&mut self, city: &str) -> u16 {
         let next = self.places.len() as u16;
-        return *self.places.entry(city.to_string()).or_insert(next);
+        *self.places.entry(city.to_string()).or_insert(next)
     }
     fn add(&mut self, s: &str) {
         let words: Vec<&str> = s.split(' ').collect();
@@ -52,9 +52,8 @@ impl Routes {
 }
 
 fn main() {
-    let inp = aoc::read_input_lines().map(|l| l.unwrap());
     let mut routes = Routes::new();
-    for l in inp {
+    for l in aoc::input_lines() {
         routes.add(&l);
     }
     let (p1, p2) = routes.minmax();

@@ -48,9 +48,8 @@ fn max_score(deers: &[Deer], t: usize) -> usize {
 }
 
 fn main() {
-    let deers: Vec<Deer> = aoc::read_input_lines()
-        .map(|l| Deer::new(&l.unwrap()))
-        .collect();
+    let deers: Vec<Deer> =
+        aoc::input_lines().iter().map(|l| Deer::new(l)).collect();
     let race_time = {
         if aoc::is_test() {
             1000

@@ -6,7 +6,12 @@ pub fn nice(s: &str) -> (bool, bool) {
     let mut sep_repeat = false;
     let b: &[u8] = s.as_bytes();
     for i in 0..s.len() {
-        if b[i] == b'a' || b[i] == b'e' || b[i] == b'i' || b[i] == b'o' || b[i] == b'u' {
+        if b[i] == b'a'
+            || b[i] == b'e'
+            || b[i] == b'i'
+            || b[i] == b'o'
+            || b[i] == b'u'
+        {
             vowel_count += 1;
         }
         if i == s.len() - 1 {
@@ -41,10 +46,10 @@ pub fn nice(s: &str) -> (bool, bool) {
     )
 }
 
-pub fn calc(lines: std::io::Lines<std::io::BufReader<std::fs::File>>) -> (usize, usize) {
+pub fn calc(lines: &[String]) -> (usize, usize) {
     let mut p1: usize = 0;
     let mut p2: usize = 0;
-    for l in lines.map(|x| x.unwrap()) {
+    for l in lines {
         let (b1, b2) = nice(&l);
         if b1 {
             p1 += 1;
@@ -57,8 +62,7 @@ pub fn calc(lines: std::io::Lines<std::io::BufReader<std::fs::File>>) -> (usize,
 }
 
 fn main() {
-    let inp = aoc::read_input_lines();
-    let (p1, p2) = calc(inp);
+    let (p1, p2) = calc(&aoc::input_lines());
     println!("Part 1: {}", p1);
     println!("Part 2: {}", p2);
 }

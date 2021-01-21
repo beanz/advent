@@ -6,36 +6,15 @@ use std::io::{self, BufRead};
 use std::path::Path;
 use std::str;
 
-pub fn read_lines<P>(filename: P) -> io::Lines<io::BufReader<File>>
+pub fn lines<P>(filename: P) -> Vec<String>
 where
     P: AsRef<Path>,
 {
     let file = File::open(filename).expect("Failed to read input");
-    io::BufReader::new(file).lines()
-}
-
-pub fn read_input_lines() -> io::Lines<io::BufReader<File>> {
-    read_lines(input_file())
-}
-
-fn vec_lines<P>(filename: P) -> Vec<String>
-where
-    P: AsRef<Path>,
-{
-    read_lines(filename)
-        .map(|l| l.expect("Could not parse line"))
-        .collect()
-}
-
-pub fn vec_input_lines() -> Vec<String> {
-    vec_lines(input_file())
-}
-
-pub fn lines<P>(file: P) -> Vec<String>
-where
-    P: AsRef<Path>,
-{
-    let lines: Vec<_> = read_lines(file).collect::<Result<_, _>>().unwrap();
+    let lines: Vec<_> = io::BufReader::new(file)
+        .lines()
+        .collect::<Result<_, _>>()
+        .unwrap();
     lines
 }
 
@@ -47,10 +26,7 @@ pub fn read_line<P>(filename: P) -> String
 where
     P: AsRef<Path>,
 {
-    read_lines(filename)
-        .map(|x| x.unwrap())
-        .next()
-        .expect("Empty input?")
+    slurp_file(filename).trim().to_string()
 }
 
 pub fn read_input_line() -> String {

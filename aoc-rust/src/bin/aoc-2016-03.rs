@@ -10,7 +10,7 @@ fn possible_works() {
     assert_eq!(possible(&[237, 956, 841]), true, "possible 237, 956, 841");
 }
 
-fn part1(lines: &Vec<&str>) -> usize {
+fn part1(lines: &[String]) -> usize {
     lines
         .iter()
         .filter(|l| possible(&aoc::ints::<usize>(l).collect::<Vec<usize>>()))
@@ -20,23 +20,23 @@ fn part1(lines: &Vec<&str>) -> usize {
 #[test]
 fn part1_works() {
     assert_eq!(
-        part1(&vec![
-            "   39  703  839",
-            "  229  871    3",
-            "  237  956  841",
+        part1(&[
+            "   39  703  839".to_string(),
+            "  229  871    3".to_string(),
+            "  237  956  841".to_string(),
         ]),
         1,
         "part 1 sample"
     );
 }
 
-fn part2(lines: &Vec<&str>) -> usize {
+fn part2(lines: &[String]) -> usize {
     lines
         .chunks(3)
         .map(|l3| {
-            let l0ints = aoc::ints::<usize>(l3[0]).collect::<Vec<usize>>();
-            let l1ints = aoc::ints::<usize>(l3[1]).collect::<Vec<usize>>();
-            let l2ints = aoc::ints::<usize>(l3[2]).collect::<Vec<usize>>();
+            let l0ints = aoc::ints::<usize>(&l3[0]).collect::<Vec<usize>>();
+            let l1ints = aoc::ints::<usize>(&l3[1]).collect::<Vec<usize>>();
+            let l2ints = aoc::ints::<usize>(&l3[2]).collect::<Vec<usize>>();
             let tn: Vec<usize> = vec![0, 1, 2];
             tn.into_iter()
                 .filter(|n| {
@@ -52,9 +52,9 @@ fn part2(lines: &Vec<&str>) -> usize {
 fn part2_works() {
     assert_eq!(
         part2(&vec![
-            "   39  703  839",
-            "  229  871    3",
-            "  237  956  841",
+            "   39  703  839".to_string(),
+            "  229  871    3".to_string(),
+            "  237  956  841".to_string(),
         ]),
         3,
         "part 2 sample"
@@ -62,8 +62,7 @@ fn part2_works() {
 }
 
 fn main() {
-    let input_lines = aoc::vec_input_lines();
-    let lines: Vec<&str> = input_lines.iter().map(|x| &**x).collect();
+    let lines = aoc::input_lines();
     println!("Part 1: {}", part1(&lines));
     println!("Part 2: {}", part2(&lines));
 }

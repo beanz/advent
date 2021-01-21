@@ -18,7 +18,7 @@ impl Seats {
         *self.people.entry(person.to_string()).or_insert(next)
     }
     fn happiness(&self, a: u16, b: u16) -> i32 {
-        return *self.happiness.get(&(a, b)).unwrap();
+        *self.happiness.get(&(a, b)).unwrap()
     }
     fn add(&mut self, s: &str) {
         let mut words = s.split(' ');
@@ -38,7 +38,10 @@ impl Seats {
             .permutations(self.people.len())
             .map(|x| {
                 x.windows(2)
-                    .map(|pair| self.happiness(pair[0], pair[1]) + self.happiness(pair[1], pair[0]))
+                    .map(|pair| {
+                        self.happiness(pair[0], pair[1])
+                            + self.happiness(pair[1], pair[0])
+                    })
                     .sum::<i32>()
                     + self.happiness(x[0], x[x.len() - 1])
                     + self.happiness(x[x.len() - 1], x[0])
@@ -61,10 +64,9 @@ impl Seats {
 }
 
 fn main() {
-    let inp = aoc::read_input_lines();
     let mut seats = Seats::new();
-    for l in inp {
-        seats.add(&l.unwrap());
+    for l in aoc::input_lines() {
+        seats.add(&l);
     }
     println!("Part 1: {}", seats.part1());
     println!("Part 2: {}", seats.part2());

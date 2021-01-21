@@ -1,8 +1,8 @@
 pub fn calc(v: Vec<i32>) -> (i32, i32) {
-    return (
+    (
         3 * (v[0] * v[1]) + 2 * (v[1] * v[2] + v[0] * v[2]),
         2 * (v[0] + v[1]) + v.iter().product::<i32>(),
-    );
+    )
 }
 
 pub fn parse_line(l: &str) -> Vec<i32> {
@@ -15,9 +15,9 @@ pub fn parse_line(l: &str) -> Vec<i32> {
 }
 
 fn main() {
-    let inp = aoc::read_input_lines().map(|l| parse_line(&l.unwrap()));
-    let (p1, p2) = inp
-        .map(calc)
+    let (p1, p2) = aoc::input_lines()
+        .iter()
+        .map(|l| calc(parse_line(l)))
         .fold((0, 0), |(a1, a2), (b1, b2)| (a1 + b1, a2 + b2));
     println!("Part 1: {}", p1);
     println!("Part 2: {}", p2);
@@ -25,7 +25,8 @@ fn main() {
 
 #[test]
 fn parse_line_works() {
-    for &(inp, exp) in [("2x4x3", "[2, 3, 4]"), ("1x10x1", "[1, 1, 10]")].iter() {
+    for &(inp, exp) in [("2x4x3", "[2, 3, 4]"), ("1x10x1", "[1, 1, 10]")].iter()
+    {
         assert_eq!(
             format!("{:?}", parse_line(&inp.to_string())),
             exp,

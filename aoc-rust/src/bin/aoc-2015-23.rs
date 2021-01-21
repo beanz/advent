@@ -78,7 +78,7 @@ struct Comp {
 }
 
 impl Comp {
-    fn new(inp: &[&str]) -> Comp {
+    fn new(inp: Vec<String>) -> Comp {
         Comp {
             inst: inp.iter().map(|l| Inst::new(l)).collect(),
         }
@@ -104,9 +104,8 @@ impl Comp {
 }
 
 fn main() {
-    let input_lines = aoc::vec_input_lines();
-    let lines: Vec<&str> = input_lines.iter().map(|x| &**x).collect();
-    let comp = Comp::new(&lines);
+    let lines = aoc::input_lines();
+    let comp = Comp::new(lines);
     println!("Part 1: {}", comp.part1());
     println!("Part 2: {}", comp.part2());
 }
@@ -141,12 +140,22 @@ fn inst_new_works() {
 
 #[test]
 fn part1_works() {
-    let comp = Comp::new(&["inc a", "jio a, +2", "tpl a", "inc a"]);
+    let comp = Comp::new(vec![
+        "inc a".to_string(),
+        "jio a, +2".to_string(),
+        "tpl a".to_string(),
+        "inc a".to_string(),
+    ]);
     assert_eq!(comp.run(0), (2, 0), "part 1 test input");
 }
 
 #[test]
 fn part2_works() {
-    let comp = Comp::new(&["inc a", "jio a, +2", "tpl a", "inc a"]);
+    let comp = Comp::new(vec![
+        "inc a".to_string(),
+        "jio a, +2".to_string(),
+        "tpl a".to_string(),
+        "inc a".to_string(),
+    ]);
     assert_eq!(comp.run(1), (7, 0), "part 1 test input");
 }

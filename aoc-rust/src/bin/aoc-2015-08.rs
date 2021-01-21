@@ -28,8 +28,8 @@ pub fn calc(s: &str) -> (i32, i32) {
 }
 
 fn main() {
-    let inp = aoc::read_input_lines().map(|l| l.unwrap());
-    let (p1, p2) = inp
+    let (p1, p2) = aoc::input_lines()
+        .iter()
         .map(|x| calc(&x))
         .fold((0, 0), |(a1, a2), (b1, b2)| (a1 + b1, a2 + b2));
     println!("Part 1: {}", p1);

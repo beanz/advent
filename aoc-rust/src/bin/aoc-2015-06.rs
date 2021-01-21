@@ -1,7 +1,7 @@
-pub fn calc(lines: std::io::Lines<std::io::BufReader<std::fs::File>>) -> (usize, usize) {
+pub fn calc(lines: Vec<String>) -> (usize, usize) {
     let mut p1 = [false; 1000000];
     let mut p2: [i32; 1000000] = [0; 1000000];
-    for l in lines.map(|x| x.unwrap()) {
+    for l in lines.iter() {
         let mut ss = l.rsplit(' ');
         let max = ss
             .next()
@@ -45,15 +45,14 @@ pub fn calc(lines: std::io::Lines<std::io::BufReader<std::fs::File>>) -> (usize,
             }
         }
     }
-    return (
+    (
         p1.iter().filter(|&&i| i).count(),
         p2.iter().map(|x| x.abs() as usize).sum(),
-    );
+    )
 }
 
 fn main() {
-    let inp = aoc::read_input_lines();
-    let (p1, p2) = calc(inp);
+    let (p1, p2) = calc(aoc::input_lines());
     println!("Part 1: {}", p1);
     println!("Part 2: {}", p2);
 }

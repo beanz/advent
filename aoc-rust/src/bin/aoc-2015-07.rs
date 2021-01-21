@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 
-pub fn calc(m: &HashMap<String, String>, cache: &mut HashMap<String, u16>, s: &str) -> u16 {
+pub fn calc(
+    m: &HashMap<String, String>, cache: &mut HashMap<String, u16>, s: &str,
+) -> u16 {
     if cache.contains_key(&s.to_string()) {
         return *cache.get(&s.to_string()).unwrap();
     }
@@ -48,9 +50,8 @@ pub fn calc(m: &HashMap<String, String>, cache: &mut HashMap<String, u16>, s: &s
 }
 
 fn main() {
-    let mut m = aoc::read_input_lines().fold(HashMap::new(), |mut m, l| {
-        let s = l.unwrap();
-        let v = s.split(" -> ").collect::<Vec<&str>>();
+    let mut m = aoc::input_lines().iter().fold(HashMap::new(), |mut m, l| {
+        let v = l.split(" -> ").collect::<Vec<&str>>();
         let k = v[1].to_owned();
         m.insert(k, v[0].to_owned());
         m

@@ -1,6 +1,6 @@
 use itertools::Itertools;
 
-fn room_record(room: &String) -> (&str, usize, &str) {
+fn room_record(room: &str) -> (&str, usize, &str) {
     let mut sp = room.rsplitn(2, '[');
     let mut check = sp.next().unwrap();
     check = &check[0..check.len() - 1];
@@ -19,7 +19,7 @@ fn room_record_works() {
     assert_eq!(check, "sixve", "room record checksum");
 }
 
-fn valid(room: &String) -> usize {
+fn valid(room: &str) -> usize {
     let (name, sector_id, check) = room_record(room);
     let mut occurs: Vec<(usize, char)> = name
         .chars()
@@ -43,14 +43,14 @@ fn valid(room: &String) -> usize {
 
 #[test]
 fn valid_works() {
-    let valid_room = "rsvxltspi-sfnigx-wxsveki-984[sixve]".to_string();
+    let valid_room = "rsvxltspi-sfnigx-wxsveki-984[sixve]";
     assert_eq!(valid(&valid_room), 984, "valid room");
-    let invalid_room = "totally-real-room-200[decoy]".to_string();
+    let invalid_room = "totally-real-room-200[decoy]";
     assert_eq!(valid(&invalid_room), 0, "invalid room");
 }
 
-fn part1(inp: &Vec<String>) -> usize {
-    inp.iter().map(valid).sum()
+fn part1(inp: &[String]) -> usize {
+    inp.iter().map(|x| valid(&x)).sum()
 }
 
 #[test]
@@ -86,7 +86,7 @@ fn rotate_works() {
     );
 }
 
-fn decrypt(room: &String) -> (String, usize) {
+fn decrypt(room: &str) -> (String, usize) {
     let (name, sector_id, _) = room_record(room);
     (rotate(name.to_string(), sector_id), sector_id)
 }
@@ -101,11 +101,10 @@ fn decrypt_works() {
     );
 }
 
-fn part2(inp: &Vec<String>) -> usize {
+fn part2(inp: &[String]) -> usize {
     inp.iter()
-        .map(decrypt)
-        .filter(|(name, _)| name.contains("north"))
-        .next()
+        .map(|x| decrypt(&x))
+        .find(|(name, _)| name.contains("north"))
         .expect("Failed to find decrypted room")
         .1
 }

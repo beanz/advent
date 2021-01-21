@@ -76,8 +76,9 @@ fn variations(k: usize, n: usize) -> Vec<Vec<usize>> {
 }
 
 fn main() {
-    let ingredients: Vec<Ingredient> = aoc::read_input_lines()
-        .map(|l| Ingredient::new(&l.unwrap()))
+    let ingredients: Vec<Ingredient> = aoc::input_lines()
+        .iter()
+        .map(|l| Ingredient::new(l))
         .collect();
     let (p1, p2) = best_recipe(&ingredients);
     println!("Part 1: {}", p1);
@@ -89,8 +90,9 @@ fn works() {
     let butterscotch = Ingredient::new(
         "Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8",
     );
-    let cinnamon =
-        Ingredient::new("Cinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3");
+    let cinnamon = Ingredient::new(
+        "Cinnamon: capacity 2, durability 3, flavor -2, texture -1, calories 3",
+    );
     let ing: Vec<Ingredient> = vec![butterscotch, cinnamon];
     assert_eq!(score(&ing, &vec![44usize, 56]), (62842880, 520), "score");
     assert_eq!(best_recipe(&ing), (62842880, 57600000), "best");

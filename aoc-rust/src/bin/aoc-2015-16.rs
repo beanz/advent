@@ -11,7 +11,10 @@ impl Sue {
         props.insert("num".to_string(), nums.next().unwrap());
         let sp = s.split(' ');
         for name in sp.step_by(2).skip(1) {
-            props.insert(name.trim_matches(':').to_string(), nums.next().unwrap());
+            props.insert(
+                name.trim_matches(':').to_string(),
+                nums.next().unwrap(),
+            );
         }
         Sue { props }
     }
@@ -59,9 +62,8 @@ fn find_sue2(sues: &[Sue], tape: &[(&str, usize)]) -> usize {
 }
 
 fn main() {
-    let sues: Vec<Sue> = aoc::read_input_lines()
-        .map(|l| Sue::new(&l.unwrap()))
-        .collect();
+    let sues: Vec<Sue> =
+        aoc::input_lines().iter().map(|l| Sue::new(l)).collect();
     let tape = [
         ("children", 3usize),
         ("cats", 7),

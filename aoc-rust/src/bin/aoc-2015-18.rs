@@ -8,7 +8,7 @@ struct Grid {
 }
 
 impl Grid {
-    fn new(inp: &[&str]) -> Grid {
+    fn new(inp: Vec<String>) -> Grid {
         let mut lights: Vec<bool> = Vec::new();
         let mut w = 0;
         let mut h = 0;
@@ -97,21 +97,34 @@ impl Grid {
 }
 
 fn main() {
-    let input_lines = aoc::vec_input_lines();
-    let lines: Vec<&str> = input_lines.iter().map(|x| &**x).collect();
-    let g = Grid::new(&lines);
+    let lines = aoc::input_lines();
+    let g = Grid::new(lines);
     println!("Part 1: {}", g.part1());
     println!("Part 2: {}", g.part2());
 }
 
 #[test]
 fn part1_iter_works() {
-    let g = Grid::new(&[".#.#.#", "...##.", "#....#", "..#...", "#.#..#", "####.."]);
+    let g = Grid::new(vec![
+        ".#.#.#".to_string(),
+        "...##.".to_string(),
+        "#....#".to_string(),
+        "..#...".to_string(),
+        "#.#..#".to_string(),
+        "####..".to_string(),
+    ]);
     assert_eq!(g.iter(4, false), 4, "part 1 of test input");
 }
 
 #[test]
 fn part2_iter_works() {
-    let g = Grid::new(&["##.#.#", "...##.", "#....#", "..#...", "#.#..#", "####.#"]);
+    let g = Grid::new(vec![
+        "##.#.#".to_string(),
+        "...##.".to_string(),
+        "#....#".to_string(),
+        "..#...".to_string(),
+        "#.#..#".to_string(),
+        "####.#".to_string(),
+    ]);
     assert_eq!(g.iter(5, true), 17, "part 2 of test input");
 }
