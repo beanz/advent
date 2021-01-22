@@ -21,3 +21,8 @@ func TestPart1(t *testing.T) {
 	}, FIRST, false}
 	assert.Equal(t, 11, g.Part1())
 }
+
+func TestPart1Full(t *testing.T) {
+	g := readGame()
+	assert.Equal(t, 31, g.Part1())
+}

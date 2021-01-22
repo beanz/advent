@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"sort"
-	"strings"
 )
 
 type Floor int
@@ -98,10 +96,11 @@ type Game struct {
 }
 
 func (g *Game) Copy() *Game {
-	ng := &Game{[]*Item{}, g.lift, g.debug}
-	for _, item := range g.items {
+	ni := make([]*Item, len(g.items))
+	ng := &Game{ni, g.lift, g.debug}
+	for i, item := range g.items {
 		newItem := *item
-		ng.items = append(ng.items, &newItem)
+		ng.items[i] = &newItem
 	}
 	return ng
 }
@@ -222,14 +221,15 @@ func (s Search) String() string {
 	return fmt.Sprintf("Moves %d\n%s\n", s.moves, s.game)
 }
 
-func SortString(w string) string {
-	s := strings.Split(w, "")
-	sort.Strings(s)
-	return strings.Join(s, "")
-}
+type RuneSlice []rune
+
+func (p RuneSlice) Len() int           { return len(p) }
+func (p RuneSlice) Less(i, j int) bool { return p[i] < p[j] }
+func (p RuneSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 
 func (g *Game) VisitKey() string {
-	s := fmt.Sprintf("%d!", g.lift)
+	s := make(RuneSlice, 0, len(g.items)*2)
+	s = append(s, rune(byte(g.lift)+byte('0')), '!')
 	genFloor := map[Element]Floor{}
 	chipFloor := map[Element]Floor{}
 	for _, item := range g.items {
@@ -239,15 +239,17 @@ func (g *Game) VisitKey() string {
 			genFloor[item.element] = item.floor
 		}
 	}
-	r := ""
+	r := make(RuneSlice, 0, len(g.items))
 	for _, item := range g.items {
 		if genFloor[item.element] == chipFloor[item.element] {
-			r += fmt.Sprintf("%d", item.floor)
+			r = append(r, rune(byte(item.floor)+byte('0')))
 		} else {
-			s += fmt.Sprintf("%d,", item.floor)
+			s = append(s, rune(byte(item.floor)+byte('0')), ',')
 		}
 	}
-	return s + SortString(r)
+	sort.Sort(RuneSlice(r))
+	s = append(s, r...)
+	return string(s)
 }
 
 func (g *Game) Part1() int {
@@ -255,7 +257,7 @@ func (g *Game) Part1() int {
 	best := 1000000
 	visited := map[string]bool{}
 	for len(todo) > 0 {
-		fmt.Fprintf(os.Stderr, "%d\r", len(todo))
+		//fmt.Fprintf(os.Stderr, "%d\r", len(todo))
 		cur := todo[0]
 		key := cur.game.VisitKey()
 		todo = todo[1:]
