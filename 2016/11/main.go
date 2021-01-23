@@ -242,11 +242,14 @@ func (g *Game) VisitKey() string {
 	r := make(RuneSlice, 0, len(g.items))
 	for _, item := range g.items {
 		if genFloor[item.element] == chipFloor[item.element] {
-			r = append(r, rune(byte(item.floor)+byte('0')))
+			if item.kind == CHIP {
+				r = append(r, rune(byte(item.floor)+byte('0')))
+			}
 		} else {
 			s = append(s, rune(byte(item.floor)+byte('0')), ',')
 		}
 	}
+	s[len(s)-1] = '!'
 	sort.Sort(RuneSlice(r))
 	s = append(s, r...)
 	return string(s)

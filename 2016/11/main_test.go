@@ -12,6 +12,23 @@ func TestNextFloors(t *testing.T) {
 	assert.ElementsMatch(t, []Floor{THIRD}, NextFloors(FOURTH))
 }
 
+func TestVisitKey(t *testing.T) {
+	g := &Game{[]*Item{
+		&Item{HYDROGEN, GENERATOR, SECOND},
+		&Item{HYDROGEN, CHIP, FIRST},
+		&Item{LITHIUM, GENERATOR, THIRD},
+		&Item{LITHIUM, CHIP, FIRST},
+	}, FIRST, false}
+	assert.Equal(t, "1!2,1,3,1!", g.VisitKey())
+	g = &Game{[]*Item{
+		&Item{HYDROGEN, GENERATOR, SECOND},
+		&Item{HYDROGEN, CHIP, FIRST},
+		&Item{LITHIUM, GENERATOR, THIRD},
+		&Item{LITHIUM, CHIP, THIRD},
+	}, FIRST, false}
+	assert.Equal(t, "1!2,1!3", g.VisitKey())
+}
+
 func TestPart1(t *testing.T) {
 	g := &Game{[]*Item{
 		&Item{HYDROGEN, GENERATOR, SECOND},
