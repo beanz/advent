@@ -1,7 +1,5 @@
 use crypto::digest::Digest;
 use crypto::md5::Md5;
-extern crate peek_nth;
-use peek_nth::IteratorExt;
 
 struct Md5er {
     ns: aoc::NumStr,
@@ -66,8 +64,7 @@ fn md5er_works() {
 fn main() {
     let md5er = Md5er::new(&"abc".to_string());
     let mut c = 0;
-    let mut peekiter = md5er.enumerate().peekable_nth();
-    for (i, md5) in peekiter.filter(|(_, md5)| {
+    for (i, md5) in md5er.enumerate().filter(|(_, md5)| {
         md5.string()
             .bytes()
             .collect::<Vec<u8>>()
@@ -75,10 +72,6 @@ fn main() {
             .any(|c| c[0] == c[1] && c[1] == c[2])
     }) {
         println!("{:02}: {}", i, md5.string());
-        for n in 0..2 {
-            let (ni, nmd5) = peekiter.peek_nth(n).unwrap();
-            println!("{:02}: {}", ni, nmd5.string());
-        }
         c += 1;
         if c > 10 {
             break;
