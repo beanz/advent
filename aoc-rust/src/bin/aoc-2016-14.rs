@@ -1,14 +1,4 @@
-use crypto::digest::Digest;
-use crypto::md5::Md5;
 use itertools::Itertools;
-
-fn md5sum(b: &[u8]) -> Box<[u8; 16]> {
-    let mut md5 = Md5::new();
-    md5.input(b);
-    let mut cs = [0; 16];
-    md5.result(&mut cs);
-    Box::new(cs)
-}
 
 struct Md5erResult {
     cs: Box<[u8; 16]>,
@@ -42,7 +32,7 @@ impl Iterator for Md5er {
     type Item = Md5erResult;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let cs = md5sum(self.ns.bytes());
+        let cs = aoc::md5sum(self.ns.bytes());
         self.ns.inc();
         Some(Md5erResult::new(cs))
     }
@@ -73,9 +63,9 @@ impl Iterator for StretchedMd5er {
     type Item = Md5erResult;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let mut cs = md5sum(self.ns.bytes());
+        let mut cs = aoc::md5sum(self.ns.bytes());
         for _n in 1..2017 {
-            cs = md5sum(
+            cs = aoc::md5sum(
                 &cs.iter()
                     .map(|x| format!("{:02x}", x))
                     .collect::<String>()
