@@ -59,6 +59,7 @@ func (g Game) Part1() int {
 
 func (g Game) Part2() int {
 	empty := Point{-1, -1}
+	full := 0
 	for y := 0; y < g.h; y++ {
 		for x := 0; x < g.w; x++ {
 			if x == 0 && y == 0 {
@@ -77,6 +78,7 @@ func (g Game) Part2() int {
 				continue
 			}
 			if used > 150 {
+				full++
 				fmt.Print("#")
 				continue
 			}
@@ -89,7 +91,10 @@ func (g Game) Part2() int {
 	}
 	fmt.Printf("Empty point: %s\n", empty)
 	fmt.Printf("Width: %d\n", g.w)
-	return empty.X + empty.Y + (g.w - 1) + (g.w-2)*5
+	// steps to go around the full spaces
+	n := 1 + full - (g.w - empty.X) + full
+	// plus height plus steps to move across
+	return n + empty.Y + (g.w-2)*5
 }
 
 func main() {
