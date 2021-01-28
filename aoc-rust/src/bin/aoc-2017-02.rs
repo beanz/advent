@@ -36,12 +36,8 @@ fn part2_works() {
     assert_eq!(part2(&"3 8 6 5".to_string()), 2);
 }
 
-fn sum_lines(lines: &[String], line_fn: fn(l: &str) -> usize) -> usize {
-    lines.iter().map(|x| line_fn(&x)).sum()
-}
-
 fn main() {
     let inp = aoc::input_lines();
-    println!("Part 1: {}", sum_lines(&inp, part1));
-    println!("Part 2: {}", sum_lines(&inp, part2));
+    println!("Part 1: {}", aoc::sum_lines(&inp, part1));
+    println!("Part 2: {}", aoc::sum_lines(&inp, part2));
 }

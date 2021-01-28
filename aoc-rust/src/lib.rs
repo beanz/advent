@@ -78,6 +78,10 @@ where
         .map(|x| x.parse::<T>().unwrap());
 }
 
+pub fn sum_lines(lines: &[String], line_fn: fn(l: &str) -> usize) -> usize {
+    lines.iter().map(|x| line_fn(&x)).sum()
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 pub struct Point {
     x: isize,

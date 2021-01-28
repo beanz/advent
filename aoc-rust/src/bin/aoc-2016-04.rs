@@ -50,7 +50,7 @@ fn valid_works() {
 }
 
 fn part1(inp: &[String]) -> usize {
-    inp.iter().map(|x| valid(&x)).sum()
+    aoc::sum_lines(inp, valid)
 }
 
 #[test]
