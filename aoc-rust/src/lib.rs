@@ -82,6 +82,15 @@ pub fn sum_lines(lines: &[String], line_fn: fn(l: &str) -> usize) -> usize {
     lines.iter().map(|x| line_fn(&x)).sum()
 }
 
+pub fn sum_valid_lines(
+    lines: &[String], valid_line_fn: fn(l: &str) -> bool,
+) -> usize {
+    lines
+        .iter()
+        .map(|x| if valid_line_fn(&x) { 1 } else { 0 })
+        .sum()
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 pub struct Point {
     x: isize,
