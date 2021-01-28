@@ -104,6 +104,68 @@ impl Point {
             _ => panic!("Tried to move point with invalid char: {}", ch),
         }
     }
+    pub fn four_neighbours(&self) -> Vec<Point> {
+        vec![
+            Point {
+                x: self.x,
+                y: self.y - 1,
+            },
+            Point {
+                x: self.x + 1,
+                y: self.y,
+            },
+            Point {
+                x: self.x,
+                y: self.y + 1,
+            },
+            Point {
+                x: self.x - 1,
+                y: self.y,
+            },
+        ]
+    }
+    pub fn eight_neighbours(&self) -> Vec<Point> {
+        vec![
+            Point {
+                x: self.x - 1,
+                y: self.y - 1,
+            },
+            Point {
+                x: self.x,
+                y: self.y - 1,
+            },
+            Point {
+                x: self.x + 1,
+                y: self.y - 1,
+            },
+            Point {
+                x: self.x - 1,
+                y: self.y,
+            },
+            Point {
+                x: self.x + 1,
+                y: self.y,
+            },
+            Point {
+                x: self.x - 1,
+                y: self.y + 1,
+            },
+            Point {
+                x: self.x,
+                y: self.y + 1,
+            },
+            Point {
+                x: self.x + 1,
+                y: self.y + 1,
+            },
+        ]
+    }
+    pub fn mov_x(&mut self, ox: isize) {
+        self.x += ox;
+    }
+    pub fn mov_y(&mut self, oy: isize) {
+        self.y += oy;
+    }
     pub fn cw(&mut self) {
         let tmp = self.x;
         self.x = -self.y;
