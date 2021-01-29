@@ -277,3 +277,86 @@ pub fn md5sum(b: &[u8]) -> Box<[u8; 16]> {
     md5.result(&mut cs);
     Box::new(cs)
 }
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
+pub struct HexFlatTop {
+    q: isize,
+    r: isize,
+}
+
+impl HexFlatTop {
+    pub const fn new(q: isize, r: isize) -> HexFlatTop {
+        HexFlatTop { q, r }
+    }
+    pub const fn origin() -> HexFlatTop {
+        HexFlatTop { q: 0, r: 0 }
+    }
+    pub fn new_from_dir(dir: &str) -> HexFlatTop {
+        let mut hft = HexFlatTop { q: 0, r: 0 };
+        hft.mov(dir);
+        hft
+    }
+    pub fn q(&self) -> isize {
+        self.q
+    }
+    pub fn r(&self) -> isize {
+        self.r
+    }
+    pub fn distance(&self, o: &HexFlatTop) -> usize {
+        ((self.q - o.q).abs()
+            + (self.q + self.r - o.q - o.r).abs()
+            + (self.r - o.r).abs()) as usize
+            / 2
+    }
+    pub fn mov(&mut self, dir: &str) {
+        match dir {
+            "n" => self.r -= 1,
+            "s" => self.r += 1,
+            "nw" => self.q -= 1,
+            "se" => self.q += 1,
+            "ne" => {
+                self.q += 1;
+                self.r -= 1
+            }
+            "sw" => {
+                self.q -= 1;
+                self.r += 1
+            }
+            _ => panic!("Tried to move HexFlatTop with invalid move: {}", dir),
+        }
+    }
+    pub fn neighbours(&self) -> Vec<HexFlatTop> {
+        vec![
+            HexFlatTop {
+                q: self.q + 1,
+                r: self.r + 0,
+            },
+            HexFlatTop {
+                q: self.q + 1,
+                r: self.r - 1,
+            },
+            HexFlatTop {
+                q: self.q + 0,
+                r: self.r - 1,
+            },
+            HexFlatTop {
+                q: self.q - 1,
+                r: self.r + 0,
+            },
+            HexFlatTop {
+                q: self.q - 1,
+                r: self.r + 1,
+            },
+            HexFlatTop {
+                q: self.q - 0,
+                r: self.r + 1,
+            },
+        ]
+    }
+}
+
+impl fmt::Display for HexFlatTop {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "<{},{}>", self.q, self.r)
+    }
+}
