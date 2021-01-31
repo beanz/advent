@@ -25,7 +25,7 @@ for my $f (@logs) {
   }
 }
 
-my @lang = sort keys %l;
+my @lang = @ARGV ? @ARGV : sort keys %l;
 print "Day,", (join ',', map { $_.'-t' , $_.'-rss', $_.'-rc'
                              }  @lang), "\n";
 for my $d (sort keys %t) {
