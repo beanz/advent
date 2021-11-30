@@ -4,7 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"testing"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 func TestPlay(t *testing.T) {
@@ -13,7 +13,7 @@ func TestPlay(t *testing.T) {
 	assert.Equal(t, 654, NewGame([]int{1969}).Part1())
 	assert.Equal(t, 33583, NewGame([]int{100756}).Part1())
 	assert.Equal(t, 34241, NewGame([]int{12, 14, 1969, 100756}).Part1())
-	mass, _ := ReadInts(ReadLines("input.txt"))
+	mass := ReadInts(ReadLines("input.txt"))
 	assert.Equal(t, 3363033, NewGame(mass).Part1())
 
 	assert.Equal(t, 2, NewGame([]int{14}).Part2())

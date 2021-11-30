@@ -6,7 +6,7 @@ import (
 	"math"
 	"os"
 
-	. "github.com/beanz/advent-of-code-go"
+	aoc "github.com/beanz/advent/lib-go"
 )
 
 type IntCode struct {
@@ -174,7 +174,7 @@ func (ic *IntCode) TryDirection() *IntCode {
 }
 
 type SearchRecord struct {
-	pos   Point
+	pos   aoc.Point
 	steps int
 	ic    *IntCode
 }
@@ -182,18 +182,18 @@ type SearchRecord struct {
 type Search []SearchRecord
 
 type Ship struct {
-	wall  map[Point]bool
-	bb    *BoundingBox
-	os    *Point
+	wall  map[aoc.Point]bool
+	bb    *aoc.BoundingBox
+	os    *aoc.Point
 	osic  *IntCode
 	steps int
 }
 
 func NewShip() *Ship {
-	return &Ship{make(map[Point]bool), NewBoundingBox(), nil, nil, 0}
+	return &Ship{make(map[aoc.Point]bool), aoc.NewBoundingBox(), nil, nil, 0}
 }
 
-func CompassToInput(c Compass) int {
+func CompassToInput(c aoc.Compass) int {
 	switch c {
 	case "N":
 		return 1
@@ -217,7 +217,7 @@ func (s *Ship) String() string {
 				str += "S"
 			} else if s.os != nil && x == s.os.X && y == s.os.Y {
 				str += "E"
-			} else if v, ok := s.wall[Point{x, y}]; ok && v {
+			} else if v, ok := s.wall[aoc.Point{x, y}]; ok && v {
 				str += "#"
 			} else {
 				str += "."
@@ -231,13 +231,13 @@ func (s *Ship) String() string {
 func part1(p []int) *Ship {
 	search := Search{}
 	ship := NewShip()
-	start := &Point{0, 0}
-	for _, compass := range []Compass{"N", "S", "E", "W"} {
+	start := &aoc.Point{0, 0}
+	for _, compass := range []aoc.Compass{"N", "S", "E", "W"} {
 		np := start.In(compass.Direction())
 		search = append(search,
 			SearchRecord{np, 1, NewIntCode(p, CompassToInput(compass))})
 	}
-	visited := make(map[Point]bool)
+	visited := make(map[aoc.Point]bool)
 	visited[*start] = true
 	count := 0
 	for len(search) > 0 {
@@ -254,7 +254,7 @@ func part1(p []int) *Ship {
 		if res == 0 { // wall
 			ship.wall[cur.pos] = true
 		} else if res == 1 {
-			for _, compass := range []Compass{"N", "S", "E", "W"} {
+			for _, compass := range []aoc.Compass{"N", "S", "E", "W"} {
 				np := cur.pos.In(compass.Direction())
 				if _, ok := visited[np]; ok {
 					continue
@@ -277,14 +277,14 @@ func part1(p []int) *Ship {
 func part2(ship *Ship) int {
 	search := Search{}
 	start := ship.os
-	for _, compass := range []Compass{"N", "S", "E", "W"} {
+	for _, compass := range []aoc.Compass{"N", "S", "E", "W"} {
 		np := start.In(compass.Direction())
 		search = append(search,
 			SearchRecord{np, 1,
 				ship.osic.ForkWithInput(CompassToInput(compass))})
 	}
 	max := math.MinInt32
-	visited := make(map[Point]bool)
+	visited := make(map[aoc.Point]bool)
 	visited[*start] = true
 	count := 0
 	for len(search) > 0 {
@@ -304,7 +304,7 @@ func part2(ship *Ship) int {
 			if cur.steps > max {
 				max = cur.steps
 			}
-			for _, compass := range []Compass{"N", "S", "E", "W"} {
+			for _, compass := range []aoc.Compass{"N", "S", "E", "W"} {
 				np := cur.pos.In(compass.Direction())
 				if _, ok := visited[np]; ok {
 					continue
@@ -326,8 +326,8 @@ func main() {
 	if len(os.Args) < 2 {
 		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
 	}
-	lines := ReadLines(os.Args[1])
-	p := SimpleReadInts(lines[0])
+	lines := aoc.ReadLines(os.Args[1])
+	p := aoc.SimpleReadInts(lines[0])
 	s := part1(p)
 	fmt.Printf("Part 1: %d\n", s.steps)
 	fmt.Printf("Part 2: %d\n", part2(s))

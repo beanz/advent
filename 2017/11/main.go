@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 func Min(x, y int) int {

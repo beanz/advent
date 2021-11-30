@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 func Part1(changes []int) int {
@@ -33,8 +33,7 @@ func Part2(changes []int) int {
 
 func ReadInput(file string) []int {
 	lines := ReadLines(file)
-	changes, _ := ReadInts(lines)
-	return changes
+	return ReadInts(lines)
 }
 
 func main() {

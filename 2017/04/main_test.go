@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 func TestIsValid(t *testing.T) {

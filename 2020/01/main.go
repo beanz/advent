@@ -7,7 +7,7 @@ import (
 
 	"gonum.org/v1/gonum/stat/combin"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Report struct {
@@ -36,11 +36,7 @@ func (r *Report) Solve(t int, k int) int {
 }
 
 func NewReport(lines []string) *Report {
-	e, err := ReadInts(lines)
-	if err != nil {
-		panic(err)
-	}
-	return &Report{e, false}
+	return &Report{ReadInts(lines), false}
 }
 
 func (r *Report) Part1() int {

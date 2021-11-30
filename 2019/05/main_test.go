@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/beanz/advent-of-code-go"
+	aoc "github.com/beanz/advent/lib-go"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -80,8 +80,8 @@ func TestPlay(t *testing.T) {
 		g.Run(tc.in)
 		assert.Equal(t, tc.out, g.out[0])
 	}
-	prog := SimpleReadInts(ReadLines("input.txt")[0])
+	prog := aoc.SimpleReadInts(aoc.ReadLines("input.txt")[0])
 	assert.Equal(t, 16209841, NewGame(prog).Part1())
-	prog = SimpleReadInts(ReadLines("input.txt")[0])
+	prog = aoc.SimpleReadInts(aoc.ReadLines("input.txt")[0])
 	assert.Equal(t, 8834787, NewGame(prog).Part2())
 }

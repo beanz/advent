@@ -7,7 +7,7 @@ import (
 	"os"
 	"sort"
 
-	aoc "github.com/beanz/advent-of-code-go"
+	aoc "github.com/beanz/advent/lib-go"
 )
 
 func Part1(numbers []int) int {

@@ -5,42 +5,42 @@ import (
 	"log"
 	"os"
 
-	. "github.com/beanz/advent-of-code-go"
+	aoc "github.com/beanz/advent/lib-go"
 )
 
 type Game struct {
-	p     []int
-	ip    int
-	base  int
-	in    []int
-	out   []int
+	p     []int64
+	ip    int64
+	base  int64
+	in    []int64
+	out   []int64
 	done  bool
 	debug bool
 }
 
 func (g *Game) String() string {
 	l := g.ip + 10
-	if l >= len(g.p) {
-		l = len(g.p) - 1
+	if l >= int64(len(g.p)) {
+		l = int64(len(g.p)) - 1
 	}
 	s := fmt.Sprintf("ip=%d %v %d %v", g.ip, g.p[g.ip:l], g.base, g.done)
 	return s
 }
 
-func NewGame(p []int, input int) *Game {
-	prog := make([]int, len(p))
+func NewGame(p []int64, input int64) *Game {
+	prog := make([]int64, len(p))
 	copy(prog, p)
-	g := &Game{prog, 0, 0, []int{input}, []int{}, false, false}
+	g := &Game{prog, 0, 0, []int64{input}, []int64{}, false, false}
 	return g
 }
 
 type TestInst struct {
-	op    int
-	param []int
-	addr  []int
+	op    int64
+	param []int64
+	addr  []int64
 }
 
-func OpArity(op int) int {
+func OpArity(op int64) int {
 	if op == 99 {
 		return 0
 	}
@@ -51,8 +51,8 @@ func (g *Game) Done() bool {
 	return g.done
 }
 
-func (g *Game) sprog(i int) int {
-	for len(g.p) <= i {
+func (g *Game) sprog(i int64) int64 {
+	for int64(len(g.p)) <= i {
 		g.p = append(g.p, 0)
 	}
 	return g.p[i]
@@ -63,14 +63,14 @@ func (g *Game) ParseInst() (TestInst, error) {
 	g.ip++
 	op := rawOp % 100
 	arity := OpArity(op)
-	mode := []int{
+	mode := []int64{
 		(rawOp / 100) % 10,
 		(rawOp / 1000) % 10,
 		(rawOp / 10000) % 10,
 	}
 
-	var param []int
-	var addr []int
+	var param []int64
+	var addr []int64
 	for i := 0; i < arity; i++ {
 		switch mode[i] {
 		case 1:
@@ -157,29 +157,29 @@ func (g *Game) Run() int {
 }
 
 type Hull struct {
-	pos Point
-	dir Direction
-	m   map[Point]bool
-	bb  *BoundingBox
+	pos aoc.Point
+	dir aoc.Direction
+	m   map[aoc.Point]bool
+	bb  *aoc.BoundingBox
 }
 
 func NewHull() *Hull {
-	return &Hull{Point{0, 0}, Direction{0, -1},
-		make(map[Point]bool), NewBoundingBox()}
+	return &Hull{aoc.Point{0, 0}, aoc.Direction{0, -1},
+		make(map[aoc.Point]bool), aoc.NewBoundingBox()}
 }
 
-func (h *Hull) input() int {
+func (h *Hull) input() int64 {
 	if v, ok := h.m[h.pos]; !ok || !v {
 		return 0
 	}
 	return 1
 }
 
-func (h *Hull) output(val int) {
+func (h *Hull) output(val int64) {
 	h.m[h.pos] = val == 1
 }
 
-func (h *Hull) processOutput(col, turn int) {
+func (h *Hull) processOutput(col, turn int64) {
 	h.output(col)
 	if turn == 1 {
 		h.dir = h.dir.CW()
@@ -190,7 +190,7 @@ func (h *Hull) processOutput(col, turn int) {
 	h.bb.Add(h.pos)
 }
 
-func run(p []int, input int) *Hull {
+func run(p []int64, input int64) *Hull {
 	h := NewHull()
 	ic := NewGame(p, input)
 	for !ic.Done() {
@@ -204,17 +204,17 @@ func run(p []int, input int) *Hull {
 	return h
 }
 
-func part1(p []int) int {
+func part1(p []int64) int {
 	h := run(p, 0)
 	return len(h.m)
 }
 
-func part2(p []int) string {
+func part2(p []int64) string {
 	h := run(p, 1)
 	s := ""
 	for y := h.bb.Min.Y; y <= h.bb.Max.Y; y++ {
 		for x := h.bb.Min.X; x <= h.bb.Max.X; x++ {
-			if v, ok := h.m[Point{x, y}]; ok && v {
+			if v, ok := h.m[aoc.Point{x, y}]; ok && v {
 				s += "#"
 			} else {
 				s += "."
@@ -229,8 +229,8 @@ func main() {
 	if len(os.Args) < 2 {
 		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
 	}
-	lines := ReadLines(os.Args[1])
-	p := SimpleReadInts(lines[0])
+	lines := aoc.ReadLines(os.Args[1])
+	p := aoc.SimpleReadInt64s(lines[0])
 	fmt.Printf("Part 1: %d\n", part1(p))
 	fmt.Printf("Part 2:\n%s", part2(p))
 }

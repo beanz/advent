@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strconv"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Ent struct {

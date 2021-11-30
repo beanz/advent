@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	. "github.com/beanz/advent-of-code-go"
+	aoc "github.com/beanz/advent/lib-go"
 )
 
 type Game struct {
@@ -178,8 +178,8 @@ func main() {
 	if len(os.Args) < 2 {
 		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
 	}
-	lines := ReadLines(os.Args[1])
-	p := SimpleReadInts(lines[0])
+	lines := aoc.ReadLines(os.Args[1])
+	p := aoc.SimpleReadInts(lines[0])
 	fmt.Printf("Part 1: %s\n", part1(p))
 	fmt.Printf("Part 2: %s\n", part2(p))
 }

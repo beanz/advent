@@ -7,7 +7,7 @@ import (
 	"sort"
 	"strings"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Game struct {

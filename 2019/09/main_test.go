@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	. "github.com/beanz/advent-of-code-go"
+	aoc "github.com/beanz/advent/lib-go"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -60,7 +60,7 @@ func TestPlay(t *testing.T) {
 	assert.Equal(t, "1125899906842624",
 		part1([]int{104, 1125899906842624, 99}))
 
-	prog := SimpleReadInts(ReadLines("input.txt")[0])
+	prog := aoc.SimpleReadInts(aoc.ReadLines("input.txt")[0])
 	assert.Equal(t, "3100786347", part1(prog))
 	assert.Equal(t, "87023", part2(prog))
 }

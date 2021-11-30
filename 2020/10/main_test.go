@@ -5,7 +5,7 @@ import (
 	"sort"
 	"testing"
 
-	aoc "github.com/beanz/advent-of-code-go"
+	aoc "github.com/beanz/advent/lib-go"
 )
 
 type TestCase struct {

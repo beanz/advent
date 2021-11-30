@@ -9,7 +9,7 @@ import (
 
 	"github.com/mxschmitt/golang-combinations"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 func part1(prog []int) int {

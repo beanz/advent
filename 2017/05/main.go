@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Prog struct {
@@ -15,11 +15,7 @@ type Prog struct {
 }
 
 func NewProg(file string) *Prog {
-	nums, err := ReadInts(ReadLines(file))
-	if err != nil {
-		log.Fatalf("Failed to read ints from file: %s\n", err)
-	}
-	return &Prog{nums, 0, false}
+	return &Prog{ReadInts(ReadLines(file)), 0, false}
 }
 
 func (p *Prog) Part1() int {

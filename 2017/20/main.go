@@ -8,7 +8,7 @@ import (
 	"strings"
 	"unicode"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Particle struct {
@@ -37,7 +37,7 @@ func NewGame(lines []string) *Game {
 		f := func(c rune) bool {
 			return !(unicode.IsNumber(c) || c == '-')
 		}
-		values, _ := ReadInts(strings.FieldsFunc(line, f))
+		values := ReadInts(strings.FieldsFunc(line, f))
 		g.particles = append(g.particles,
 			&Particle{Point3D{values[0], values[1], values[2]},
 				Point3D{values[3], values[4], values[5]},

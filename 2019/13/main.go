@@ -6,7 +6,7 @@ import (
 	"os"
 	// "time"
 
-	. "github.com/beanz/advent-of-code-go"
+	aoc "github.com/beanz/advent/lib-go"
 )
 
 type IntCode struct {
@@ -214,9 +214,9 @@ func main() {
 	if len(os.Args) < 2 {
 		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
 	}
-	lines := ReadLines(os.Args[1])
-	p := SimpleReadInts(lines[0])
+	lines := aoc.ReadLines(os.Args[1])
+	p := aoc.SimpleReadInts(lines[0])
 	fmt.Printf("Part 1: %d\n", part1(p))
-	p = SimpleReadInts(lines[0])
+	p = aoc.SimpleReadInts(lines[0])
 	fmt.Printf("Part 2: %d\n", part2(p))
 }

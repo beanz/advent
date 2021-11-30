@@ -6,7 +6,7 @@ import (
 	"math"
 	"os"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 func SeatID(l string) int {

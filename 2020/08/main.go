@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	aoc "github.com/beanz/advent-of-code-go"
+	aoc "github.com/beanz/advent/lib-go"
 )
 
 type Inst struct {

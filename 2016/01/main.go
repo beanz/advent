@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	. "github.com/beanz/advent2016/lib"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Dir [2]int
@@ -20,7 +20,7 @@ func (d *Dir) R() {
 type Pos [2]int
 
 func (p *Pos) ManhattanDistance() int {
-	return IntAbs(p[0]) + IntAbs(p[1])
+	return Abs(p[0]) + Abs(p[1])
 }
 
 func Calc(in string) (int, int) {

@@ -6,7 +6,7 @@ import (
 	"math/big"
 	"os"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 func LoopSize(pub uint64) int64 {

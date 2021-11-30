@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	. "github.com/beanz/advent-of-code-go"
+	aoc "github.com/beanz/advent/lib-go"
 )
 
 type Reg map[byte]int
@@ -118,6 +118,6 @@ func main() {
 	if len(os.Args) < 2 {
 		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
 	}
-	lines := ReadLines(os.Args[1])
+	lines := aoc.ReadLines(os.Args[1])
 	fmt.Printf("Part 1: %d\n", NewGame(lines).Part1())
 }

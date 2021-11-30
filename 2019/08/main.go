@@ -7,7 +7,7 @@ import (
 	"os"
 	"strconv"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 func counts(s string) map[rune]int {

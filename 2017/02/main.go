@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Game struct {
@@ -16,12 +16,8 @@ type Game struct {
 
 func readGame(lines []string) *Game {
 	g := &Game{[][]int{}}
-	for i, l := range lines {
-		nums, err := ReadInts(strings.Split(l, "\t"))
-		if err != nil {
-			log.Fatalf("Invalid int in line %d: %s\n", i, err)
-		}
-		g.l = append(g.l, nums)
+	for _, l := range lines {
+		g.l = append(g.l, ReadInts(strings.Split(l, "\t")))
 	}
 	return g
 }

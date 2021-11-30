@@ -4,7 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"testing"
 
-	. "github.com/beanz/advent2016/lib"
+	. "github.com/beanz/advent/lib-go"
 )
 
 func TestLeftRight(t *testing.T) {

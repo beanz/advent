@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 func FindPosition(in int) Point {

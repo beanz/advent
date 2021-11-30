@@ -6,18 +6,18 @@ import (
 	"os"
 	"strings"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Game struct {
-	gen   int
+	gen   int64
 	init  string
 	rules map[string]bool
 	debug bool
 }
 
 func NewGame(lines []string) *Game {
-	gen := SimpleReadInts(lines[0])[0]
+	gen := SimpleReadInt64s(lines[0])[0]
 	state := lines[1][15:]
 	rules := map[string]bool{}
 	for _, line := range lines[2:] {
@@ -29,22 +29,22 @@ func NewGame(lines []string) *Game {
 	return &Game{gen, state, rules, false}
 }
 
-func potSum(state string, offset int) int {
-	s := 0
+func potSum(state string, offset int64) int64 {
+	s := int64(0)
 	for i := 0; i < len(state); i++ {
 		if state[i] == '#' {
-			s += i - offset
+			s += int64(i) - offset
 		}
 	}
 	return s
 }
 
-func (g *Game) Solve() int {
-	offset := 0
-	diff := 0
+func (g *Game) Solve() int64 {
+	offset := int64(0)
+	diff := int64(0)
 	state := g.init
 	sum := potSum(state, offset)
-	t := 1
+	t := int64(1)
 	//fmt.Printf("0 [%d]: %s %d\n", offset, state, sum)
 	for t <= g.gen {
 		state = "...." + state + "...."
@@ -60,7 +60,7 @@ func (g *Game) Solve() int {
 		}
 		firstPotIndex := strings.IndexByte(newState, '#')
 		newState = newState[firstPotIndex:]
-		offset -= firstPotIndex
+		offset -= int64(firstPotIndex)
 		lastPotIndex := strings.LastIndexByte(newState, '#')
 		newState = newState[:lastPotIndex+1]
 
@@ -82,12 +82,12 @@ func (g *Game) Solve() int {
 	return sum
 }
 
-func (g *Game) Part1() int {
+func (g *Game) Part1() int64 {
 	g.gen = 20
 	return g.Solve()
 }
 
-func (g *Game) Part2() int {
+func (g *Game) Part2() int64 {
 	return g.Solve()
 }
 

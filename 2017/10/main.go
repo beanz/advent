@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Rope struct {
@@ -31,10 +31,7 @@ func (r *Rope) String() string {
 
 func NewRope(file string, rlen int) *Rope {
 	line := ReadLines(file)[0]
-	nums, err := ReadInts(strings.Split(line, ","))
-	if err != nil {
-		log.Fatalf("Invalid int in line: %s\n", err)
-	}
+	nums := ReadInts(strings.Split(line, ","))
 	rope := []int{}
 	for i := 0; i < rlen; i++ {
 		rope = append(rope, i)

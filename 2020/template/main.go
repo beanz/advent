@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"regexp"
-	"strconv"
-	"strings"
+	_ "regexp"
+	_ "strconv"
+	_ "strings"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Matcher struct {

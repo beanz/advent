@@ -38,8 +38,25 @@ func NewIntCodeFromASCII(p []int, ascii string) *IntCode {
 	return NewIntCode(p, input)
 }
 
-func (ic *IntCode) Out() []int {
-	return ic.out
+func (ic *IntCode) Out(n int) []int {
+	res := []int{}
+	if len(ic.out) >= n {
+		for i := 0; i < n; i++ {
+			res = append(res, ic.out[i])
+		}
+		ic.out = ic.out[n:]
+	}
+	return res
+}
+
+func (ic *IntCode) In(inputs ...int) {
+	ic.in = append(ic.in, inputs...)
+}
+
+func (ic *IntCode) InStr(input string) {
+	for _, r := range input {
+		ic.in = append(ic.in, int(r))
+	}
 }
 
 type IntCodeInst struct {

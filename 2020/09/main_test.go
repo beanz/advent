@@ -4,7 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"testing"
 
-	aoc "github.com/beanz/advent-of-code-go"
+	aoc "github.com/beanz/advent/lib-go"
 )
 
 type TestCase struct {
@@ -19,8 +19,9 @@ func TestPart1(t *testing.T) {
 		{"input.txt", 25, 31161678},
 	}
 	for _, tc := range tests {
-		r := Part1(aoc.ReadIntsFromFile(tc.file), tc.p)
-		assert.Equal(t, tc.ans, r)
+		int64s, _ := aoc.ReadInt64s(aoc.ReadLines(tc.file))
+		r := Part1(int64s, int64(tc.p))
+		assert.Equal(t, int64(tc.ans), r)
 	}
 }
 
@@ -30,7 +31,8 @@ func TestPart2(t *testing.T) {
 		{"input.txt", 31161678, 5453868},
 	}
 	for _, tc := range tests {
-		r := Part2(aoc.ReadIntsFromFile(tc.file), tc.p)
-		assert.Equal(t, tc.ans, r)
+		int64s, _ := aoc.ReadInt64s(aoc.ReadLines(tc.file))
+		r := Part2(int64s, int64(tc.p))
+		assert.Equal(t, int64(tc.ans), r)
 	}
 }

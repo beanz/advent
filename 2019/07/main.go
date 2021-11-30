@@ -7,7 +7,7 @@ import (
 	"os"
 	//"strings"
 
-	. "github.com/beanz/advent-of-code-go"
+	aoc "github.com/beanz/advent/lib-go"
 )
 
 type Game struct {
@@ -182,7 +182,7 @@ func tryPhase(p []int, phase []int) int {
 }
 
 func run(p []int, minPhase int, maxPhase int) int {
-	perm := Permutations(minPhase, maxPhase)
+	perm := aoc.Permutations(minPhase, maxPhase)
 	max := math.MinInt64
 	for _, v := range perm {
 		thrust := tryPhase(p, v)
@@ -205,8 +205,8 @@ func main() {
 	if len(os.Args) < 2 {
 		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
 	}
-	lines := ReadLines(os.Args[1])
-	p := SimpleReadInts(lines[0])
+	lines := aoc.ReadLines(os.Args[1])
+	p := aoc.SimpleReadInts(lines[0])
 	fmt.Printf("Part 1: %d\n", part1(p))
 	fmt.Printf("Part 2: %d\n", part2(p))
 }

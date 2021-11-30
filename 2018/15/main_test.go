@@ -4,7 +4,7 @@ import (
 	//"fmt"
 	"testing"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 func moveTest(t *testing.T, lines []string, x, y, ex, ey int) {

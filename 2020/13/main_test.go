@@ -5,7 +5,7 @@ import (
 	"math/big"
 	"testing"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type TestCase1 struct {

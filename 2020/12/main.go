@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type NavInst struct {

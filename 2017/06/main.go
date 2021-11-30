@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	. "github.com/beanz/advent-of-code-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Mem struct {
@@ -16,11 +16,7 @@ type Mem struct {
 
 func NewMem(file string) *Mem {
 	line := ReadLines(file)[0]
-	nums, err := ReadInts(strings.Split(line, "\t"))
-	if err != nil {
-		log.Fatalf("Failed to read ints from file: %s\n", err)
-	}
-	return &Mem{nums, false}
+	return &Mem{ReadInts(strings.Split(line, "\t")), false}
 }
 
 func (m *Mem) State() string {
