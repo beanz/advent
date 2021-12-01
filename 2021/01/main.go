@@ -44,18 +44,10 @@ func Windows(in []int, n int) [][]int {
 	return res
 }
 
-func WindowSums(in []int, n int) []int {
-	res := make([]int, 0, len(in)-n+1)
-	for _, v := range Windows(in, n) {
-		res = append(res, Sum(v...))
-	}
-	return res
-}
-
 func (g *Game) Fun(n int) int {
 	res := 0
-	for _, sumPair := range Windows(WindowSums(g.in, n), 2) {
-		if sumPair[0] < sumPair[1] {
+	for _, w := range Windows(g.in, n+1) {
+		if w[0] < w[len(w)-1] {
 			res++
 		}
 	}

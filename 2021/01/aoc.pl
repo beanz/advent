@@ -47,7 +47,7 @@ print "Part 2: ", calc2($i2), "\n";
 sub testPart1 {
   my @test_cases =
     (
-     [ "test.txt", 7 ],
+     [ "test1.txt", 7 ],
      [ "input.txt", 1342 ],
     );
   for my $tc (@test_cases) {
@@ -59,7 +59,7 @@ sub testPart1 {
 sub testPart2 {
   my @test_cases =
     (
-     [ "test.txt", 5, ],
+     [ "test1.txt", 5, ],
      [ "input.txt", 1378 ],
     );
   for my $tc (@test_cases) {

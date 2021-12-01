@@ -16,15 +16,6 @@ func TestWindows(t *testing.T) {
 		Windows([]int{1, 2, 3, 4}, 3))
 }
 
-func TestWindowsSums(t *testing.T) {
-	assert.Equal(t, []int{1, 2, 3, 4},
-		WindowSums([]int{1, 2, 3, 4}, 1))
-	assert.Equal(t, []int{1 + 2, 2 + 3, 3 + 4},
-		WindowSums([]int{1, 2, 3, 4}, 2))
-	assert.Equal(t, []int{1 + 2 + 3, 2 + 3 + 4},
-		WindowSums([]int{1, 2, 3, 4}, 3))
-}
-
 func TestPart1(t *testing.T) {
 	tests := []struct {
 		file string
