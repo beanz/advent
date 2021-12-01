@@ -133,6 +133,12 @@ aoc-rust/target/release/%.log: aoc-rust/target/release/%
 	     tee $(notdir $<).log ) 2>&1 1>&3 | \
 	     tee $(notdir $<).err ) 3>&1 1>&2
 
+%/aoc-zig.log: %/aoc-zig
+	cd $(dir $@) && \
+	  ( ( ${TIME} ./$(notdir $<) | \
+	     tee $(notdir $<).log ) 2>&1 1>&3 | \
+	     tee $(notdir $<).err ) 3>&1 1>&2
+
 %/aoc.pl.log: %/aoc.pl
 	cd $(dir $@) && \
 	  ( ( ${TIME} perl aoc.pl input.txt | tee aoc.pl.log ) 2>&1 1>&3 | \
