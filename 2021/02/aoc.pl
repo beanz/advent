@@ -70,7 +70,7 @@ sub testPart2 {
   my @test_cases =
     (
      [ "test1.txt", 900, ],
-     [ "input.txt", 1378 ],
+     [ "input.txt", 1281977850 ],
     );
   for my $tc (@test_cases) {
     my $res = calc2($reader->($tc->[0]));
