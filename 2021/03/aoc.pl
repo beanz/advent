@@ -15,46 +15,53 @@ my $i2 = $reader->($file);
 
 sub calc {
   my ($in) = @_;
-  my $c = 0;
-  my @c;
-  my $lines = scalar @$in;
-  for my $l (@$in) {
-    my @b = split //, $l;
-    for my $i (0..$#b) {
-      $c[$i]++ if ($b[$i] == 1);
+  my $bits = (length $in->[0]);
+  my $total = scalar @$in;
+  $in = [map { oct("0b".$_) } @$in];
+  my $g = 0;
+  my $e;
+  for (my $bit = 2**($bits-1); $bit >= 1; $bit /= 2) {
+    my $c = 0;
+    for my $l (@$in) {
+      $c++ if ($l&$bit);
     }
-  }
-  my $g = "";
-  my $e = "";
-  for my $i (0..$#c) {
-    if ($c[$i] > ($lines/2)) {
-      $g .= "1";
-      $e .= "0";
+    if ($c > ($total/2)) {
+      $g += $bit;
     } else {
-      $g .= "0";
-      $e .= "1";
+      $e += $bit;
     }
   }
-  $g = oct("0b".$g);
-  $e = oct("0b".$e);
   return $g*$e;
 }
 
-sub most {
-  my ($in, $bit, $val) = @_;
+sub most_common {
+  my ($in, $bit) = @_;
   my $c = 0;
   my $lines = scalar @$in;
   for my $l (@$in) {
     my @b = split //, $l;
-    $c++ if ($b[$bit] == $val);
+    $c++ if ($b[$bit] == 1);
   }
+  return ($c >= ($lines/2)) ? 1 : 0;
+}
+
+sub o2 {
+  my ($in, $bit) = @_;
+  my $keep = most_common($in, $bit);
   my @r;
-  my $keep;
-  if ($val) {
-    $keep = ($c >= ($lines/2)) ? $val : (1-$val);
-  } else {
-    $keep = ($c <= ($lines/2)) ? $val : (1-$val);
+  for my $l (@$in) {
+    my @b = split //, $l;
+    if ($b[$bit] == $keep) {
+      push @r, $l;
+    }
   }
+  return \@r;
+}
+
+sub co2 {
+  my ($in, $bit) = @_;
+  my $keep = 1-most_common($in, $bit);
+  my @r;
   for my $l (@$in) {
     my @b = split //, $l;
     if ($b[$bit] == $keep) {
@@ -69,14 +76,14 @@ sub calc2 {
   my $bits = length $in->[0];
   my $o2 = $in;
   for my $bit (0..$bits) {
-    $o2 = most($o2, $bit, 1);
+    $o2 = o2($o2, $bit);
     if (1 == scalar @$o2) {
       last;
     }
   }
   my $co2 = $in;
   for my $bit (0..$bits) {
-    $co2 = most($co2, $bit, 0);
+    $co2 = co2($co2, $bit, 0);
     if (1 == scalar @$co2) {
       last;
     }
