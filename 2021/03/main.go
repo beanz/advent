@@ -21,7 +21,7 @@ func NewGame(in []string) *Game {
 
 func (g *Game) Part1() int {
 	half := len(g.in)/2
-	var gamma, epsilon int
+	var gamma int
 	for bit := (1<<g.bits); bit >= 1; bit /= 2 {
 		c := 0
 		for _, n := range g.in {
@@ -31,21 +31,19 @@ func (g *Game) Part1() int {
 		}
 		if c > half {
 			gamma += bit
-		} else {
-			epsilon += bit
 		}
 	}
-	return gamma*epsilon
+	return gamma*(2<<g.bits-1-gamma)
 }
 
 func (g *Game) Reduce(most bool) int {
-	o2mask := 0
-	o2val := 0
+	mask := 0
+	val := 0
 	for bit := (1<<g.bits); bit >= 1; bit /= 2 {
 		c := 0
 		total := 0
 		for _, n := range g.in {
-			if n&o2mask != o2val {
+			if n&mask != val {
 				continue
 			}
 			total++
@@ -54,14 +52,14 @@ func (g *Game) Reduce(most bool) int {
 			}
 		}
 		if total == 1 {
-			return g.Match(o2val, o2mask)
+			return g.Match(val, mask)
 		}
 		if c >= (total+1)/2 == most {
-			o2val += bit
+			val += bit
 		}
-		o2mask += bit
+		mask += bit
 	}
-	return o2val
+	return val
 }
 
 func (g *Game) Match(val, mask int) int {
