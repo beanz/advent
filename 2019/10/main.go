@@ -2,22 +2,20 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math"
-	"os"
 	"sort"
 
 	. "github.com/beanz/advent/lib-go"
 )
 
-type PointPair struct {
+type VisitKey struct {
 	a1, a2 Point
 }
 
 type Game struct {
 	a     map[Point]int
 	bb    *BoundingBox
-	vc    map[PointPair]bool
+	vc    map[VisitKey]bool
 	best  Point
 	debug bool
 }
@@ -56,12 +54,12 @@ func NewGame(lines []string) *Game {
 			}
 		}
 	}
-	g := &Game{a, bb, make(map[PointPair]bool), best, false}
+	g := &Game{a, bb, make(map[VisitKey]bool), best, false}
 	return g
 }
 
 func (g *Game) visible(a1, a2 Point) bool {
-	if v, ok := g.vc[PointPair{a1, a2}]; ok {
+	if v, ok := g.vc[VisitKey{a1, a2}]; ok {
 		return v
 	}
 	res := true
@@ -84,8 +82,8 @@ func (g *Game) visible(a1, a2 Point) bool {
 		}
 		p = Point{p.X + dx, p.Y + dy}
 	}
-	g.vc[PointPair{a1, a2}] = res
-	g.vc[PointPair{a2, a1}] = res
+	g.vc[VisitKey{a1, a2}] = res
+	g.vc[VisitKey{a2, a1}] = res
 	return res
 }
 
@@ -183,10 +181,7 @@ func (g *Game) Part2(num int) int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := ReadLines(os.Args[1])
+	lines := ReadInputLines()
 	g := NewGame(lines)
 	fmt.Printf("Part 1: %d\n", g.Part1())
 	fmt.Printf("Part 2: %d\n", g.Part2(200))

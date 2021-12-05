@@ -45,7 +45,7 @@ proc part1(prog: seq[int64]): int64 =
 
 proc part2(prog: seq[int64]): string =
   var h = run(prog, 2)
-  var s = newString(80*8)
+  var s = ""
   for y in countup(h.bb.mini.y, h.bb.maxi.y):
     for x in countup(h.bb.mini.x, h.bb.maxi.x):
       let p = Point(x: x, y: y)

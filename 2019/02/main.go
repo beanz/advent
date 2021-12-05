@@ -2,10 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	//"math"
-	"os"
-	//"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -70,10 +66,7 @@ func (g *Game) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := ReadLines(os.Args[1])
+	lines := ReadInputLines()
 	p := SimpleReadInts(lines[0])
 	p[1] = 12
 	p[2] = 2

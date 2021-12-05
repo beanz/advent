@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math"
-	"os"
 	"strconv"
 	"strings"
 
@@ -165,10 +163,7 @@ func (f *Factory) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := ReadLines(os.Args[1])
+	lines := ReadInputLines()
 	fmt.Printf("Part 1: %d\n", NewFactory(lines).Part1())
 	fmt.Printf("Part 2: %d\n", NewFactory(lines).Part2())
 }

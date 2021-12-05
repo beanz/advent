@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math"
-	"os"
 	"strconv"
 	"strings"
 
@@ -91,7 +89,7 @@ func part1(p []int) *Scaffold {
 		}
 		scaff.bb.Add(scaff.pos)
 	}
-	fmt.Printf("%s\n", scaff)
+	//fmt.Printf("%s\n", scaff)
 	return scaff
 }
 
@@ -194,10 +192,7 @@ func part2(p []int, scaff *Scaffold) int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := ReadLines(os.Args[1])
+	lines := ReadInputLines()
 	p := SimpleReadInts(lines[0])
 	scaff := part1(p)
 	fmt.Printf("Part 1: %d\n", scaff.AlignmentSum())

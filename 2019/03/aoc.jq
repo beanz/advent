@@ -65,4 +65,4 @@ exec jq -r --raw-input --slurp \
     {
        part1: min_by(.[3]) | .[3],
        part2: min_by(.[2]) | .[2],
-    } | "Part 1: \(.part1)\nPart 2: \(.part2)"'
+    } | "Part 1: \(.part1)\nPart 2: \(.part2)"' < ${1:-input.txt}

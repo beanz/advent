@@ -15,7 +15,7 @@ proc part1(inp: string): int64 =
   return res
 
 proc part2(inp: string): string =
-  var res = newString(26*6)
+  var res = ""
   for y in countup(0,5):
     for x in countup(0,24):
       var i = y*25+x

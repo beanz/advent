@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math/big"
-	"os"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
@@ -132,10 +130,7 @@ func (g *Game) Backward(card int64, rounds int64) int64 {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := ReadLines(os.Args[1])
+	lines := ReadInputLines()
 	g1 := NewGame(lines, 10007)
 	fmt.Printf("Part 1: %d\n", g1.Forward(2019))
 	g2 := NewGame(lines, 119315717514047)

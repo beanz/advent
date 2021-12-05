@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -113,10 +111,7 @@ func (b *Beam) part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := ReadLines(os.Args[1])
+	lines := ReadInputLines()
 	p := SimpleReadInts(lines[0])
 	beam := NewBeam(p)
 	fmt.Printf("Part 1: %d\n", beam.part1())

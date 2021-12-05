@@ -8,7 +8,8 @@ use IntCode;
 use Carp::Always qw/carp verbose/;
 use Algorithm::Combinatorics qw(combinations);
 
-my $i = parse_input(read_lines("input.txt"));
+my $file = shift // "input.txt";
+my $i = parse_input(read_lines($file));
 
 sub parse_input {
   my ($lines) = @_;

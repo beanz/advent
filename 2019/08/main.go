@@ -2,10 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math"
-	"os"
-	"strconv"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -55,27 +52,12 @@ func part2(line string, w, h int) string {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt> <w> <h>\n", os.Args[0])
-	}
-	line := ReadLines(os.Args[1])[0]
-	var w, h int
-	var err error
-	if len(os.Args) < 3 {
-		w = 25
-	} else {
-		w, err = strconv.Atoi(os.Args[2])
-		if err != nil {
-			panic(err)
-		}
-	}
-	if len(os.Args) < 4 {
-		h = 6
-	} else {
-		h, err = strconv.Atoi(os.Args[3])
-		if err != nil {
-			panic(err)
-		}
+	line := ReadInputLines()[0]
+	w := 25
+	h := 6
+	if InputFile() == "test1.txt" {
+		w = 3
+		h = 2
 	}
 	l := w * h
 	fmt.Printf("Part 1: %d\n", part1(line, l))

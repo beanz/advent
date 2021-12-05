@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
-	"os"
 	"strings"
 
 	"github.com/mxschmitt/golang-combinations"
@@ -103,9 +101,6 @@ func part1(prog []int) int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	prog := SimpleReadInts(ReadLines(os.Args[1])[0])
+	prog := SimpleReadInts(ReadInputLines()[0])
 	fmt.Printf("Part 1: %d\n", part1(prog))
 }

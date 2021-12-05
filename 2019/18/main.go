@@ -3,9 +3,7 @@ package main
 import (
 	"container/heap"
 	"fmt"
-	"log"
 	"math"
-	"os"
 	"sort"
 	"strings"
 
@@ -290,10 +288,7 @@ func (r *Rogue) part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := ReadLines(os.Args[1])
+	lines := ReadInputLines()
 	rogue := NewRogue(lines)
 	if rogue.debug {
 		fmt.Printf("%s\n", rogue)

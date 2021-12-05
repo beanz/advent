@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math"
-	"os"
 	//"strings"
 
 	aoc "github.com/beanz/advent/lib-go"
@@ -202,10 +200,7 @@ func part2(p []int) int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := aoc.ReadLines(os.Args[1])
+	lines := aoc.ReadInputLines()
 	p := aoc.SimpleReadInts(lines[0])
 	fmt.Printf("Part 1: %d\n", part1(p))
 	fmt.Printf("Part 2: %d\n", part2(p))

@@ -36,4 +36,4 @@ exec jq -r --raw-input --slurp \
     {
        p1: (nth(1) |= 12 | nth(2) |= 2 | run({ip: 0, prog: .})),
        p2: srun({input: 0, prog: .})
-    } | "Part 1: \(.p1)\nPart 2: \(.p2)"'
+    } | "Part 1: \(.p1)\nPart 2: \(.p2)"' < ${1:-input.txt}

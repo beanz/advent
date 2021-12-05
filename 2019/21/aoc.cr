@@ -9,7 +9,7 @@ def runscript(prog : Array(Int64), script)
     if ch > 127
       return ch
     end
-    print ch.unsafe_chr, "\n"
+    #print ch.unsafe_chr, "\n"
     s += ch.unsafe_chr
   end
   print s

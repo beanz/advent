@@ -8,8 +8,8 @@ use Carp::Always qw/carp verbose/;
 use Math::BigInt lib => 'GMP';
 use List::MoreUtils qw/first_index/;
 
-my @lines = <>;
-chomp @lines;
+my $file = shift // "input.txt";
+my @i = @{read_lines($file)};
 
 sub shuffle {
   my ($lines, $n) = @_;
@@ -55,7 +55,7 @@ if (TEST) {
              (join ',',@$res), (join ',',@{$tc->[2]}));
   }
 }
-my $part1 = part1(\@lines, 10007, 2019);
+my $part1 = part1(\@i, 10007, 2019);
 print "Part 1: ", $part1, "\n";
 
 sub calc2 {
@@ -93,9 +93,9 @@ sub calc2 {
 
 
 if (TEST) {
-  my $validate = calc2(\@lines, 10007, $part1, 1);
+  my $validate = calc2(\@i, 10007, $part1, 1);
   assertEq("Reverse Part 1: ", $validate, 2019);
 }
 
 my $pos = 2020;
-print "Part 2: ", calc2(\@lines, 119315717514047, $pos, 101741582076661), "\n";
+print "Part 2: ", calc2(\@i, 119315717514047, $pos, 101741582076661), "\n";

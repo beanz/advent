@@ -25,4 +25,4 @@ exec jq -r --raw-input --slurp \
     {
        p1: [part1(.)] | length,
        p2: [part2(.)] | length
-    } | "Part 1: \(.p1)\nPart 2: \(.p2)"'
+    } | "Part 1: \(.p1)\nPart 2: \(.p2)"' < ${1:-input.txt}

@@ -33,15 +33,17 @@ ALL += aoc-nim
 CLEAN += aoc-nim
 HYPERFINE += aoc-nim-rel
 endif
-ifneq (,$(wildcard cpp/aoc.cpp))
-ALL += aoc-cpp
-CLEAN += aoc-cpp
-HYPERFINE += aoc-cpp
-endif
-RS_SRC=../../aoc-rust/src/bin/aoc-$(YEAR)-$(DAY).rs
-RS_BIN=$(subst src/bin,target/release,${RS_SRC:.rs=})
-RS_REL=$(subst src/bin,target/debug,${RS_SRC:.rs=})
+# TODO: fix cpp builds
+#ifneq (,$(wildcard cpp/aoc.cpp))
+#ALL += aoc-cpp
+#CLEAN += aoc-cpp
+#HYPERFINE += aoc-cpp
+#endif
 
+# TODO: fix rust builds
+#RS_SRC=../../aoc-rust/src/bin/aoc-$(YEAR)-$(DAY).rs
+#RS_BIN=$(subst src/bin,target/release,${RS_SRC:.rs=})
+#RS_REL=$(subst src/bin,target/debug,${RS_SRC:.rs=})
 #ifneq (,$(wildcard $(RS_SRC)))
 #ALL += aoc-rs
 #CLEAN += aoc-rs
@@ -160,8 +162,8 @@ check: ${ALL}
 	for f in $^ ; do \
 	  echo -n "$$f "; \
 	  ./$$f >$$TT/$$f.log \
-	    && diff -udBbw $$GOLD $$TT/$$f.log \
-	    || ( echo ; echo $$f output differs ); \
+	    && diff -audBbw $$GOLD $$TT/$$f.log >$$TT/$$f.diff \
+	    || ( echo ; echo $$f output differs ; cat $$TT/$$f.diff); \
 	done && \
 	  rm -rf $$TT ; \
 	echo

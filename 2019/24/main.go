@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math"
-	"os"
 	"sort"
 	"strings"
 
@@ -246,10 +244,7 @@ func (g Game2) Part2(min int) int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := ReadLines(os.Args[1])
+	lines := ReadInputLines()
 	fmt.Printf("Part 1: %d\n", NewGame1(lines).Part1())
 	fmt.Printf("Part 2: %d\n", NewGame2(lines).Part2(200))
 }

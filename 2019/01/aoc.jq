@@ -7,4 +7,4 @@ exec jq -r --raw-input --slurp \
     {
       p1: [fuel(.[])] | add,
       p2: [fuelr(.[])] | add
-    } | "Part 1: \(.p1)\nPart 2: \(.p2)"'
+    } | "Part 1: \(.p1)\nPart 2: \(.p2)"' < ${1:-input.txt}
