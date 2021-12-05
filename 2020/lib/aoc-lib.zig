@@ -29,7 +29,7 @@ pub fn usizeGreaterThan(c: void, a: usize, b: usize) bool {
 }
 
 // io
-pub const out = &std.io.getStdOut().outStream();
+pub const out = &std.io.getStdOut().writer();
 pub const print = out.print;
 pub const debug = std.debug;
 pub const warn = debug.warn;
@@ -73,7 +73,6 @@ pub const ArrayList = std.ArrayList;
 pub const StringHashMap = std.StringHashMap;
 pub const AutoHashMap = std.AutoHashMap;
 pub const Stack = std.atomic.Stack;
-pub const SegmentedList = std.SegmentedList;
 
 // test
 pub const assert = std.testing.expect;

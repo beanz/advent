@@ -33,7 +33,7 @@ pub fn RPN(exp: []Token) usize {
             },
         }
     }
-    assertEq(@as(usize, 1), stack.items.len);
+    assertEq(@as(usize, 1), stack.items.len) catch unreachable;
     return stack.items[stack.items.len - 1];
 }
 

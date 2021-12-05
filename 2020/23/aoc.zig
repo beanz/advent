@@ -218,6 +218,6 @@ test "part2" {
 pub fn main() anyerror!void {
     const lines = readLines(input());
     var g = Game.init(lines);
-    try print("Part1: {}\n", .{g.part1(100)});
+    try print("Part1: {s}\n", .{g.part1(100)});
     try print("Part2: {}\n", .{g.part2(10000000, 1000000)});
 }

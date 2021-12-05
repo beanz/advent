@@ -44,8 +44,8 @@ fn part2(inp: anytype) usize {
     }
     var it = plan.iterator();
     while (it.next()) |e| {
-        if (plan.contains(e.key - 2) and !plan.contains(e.key - 1)) {
-            return e.key - 1;
+        if (plan.contains(e.key_ptr.* - 2) and !plan.contains(e.key_ptr.* - 1)) {
+            return e.key_ptr.* - 1;
         }
     }
     return 0;

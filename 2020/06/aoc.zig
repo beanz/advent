@@ -47,7 +47,7 @@ fn part2(inp: anytype) usize {
         var gc: usize = 0;
         var mit = m.iterator();
         while (mit.next()) |ch| {
-            if (ch.value == people) {
+            if (ch.value_ptr.* == people) {
                 gc += 1;
             }
         }

@@ -33,7 +33,7 @@ fn part1(in: [][]const u8) usize {
     var sum: usize = 0;
     var it = mem.iterator();
     while (it.next()) |entry| {
-        sum += entry.value;
+        sum += entry.value_ptr.*;
     }
     return sum;
 }
@@ -85,7 +85,7 @@ fn part2(in: [][]const u8) usize {
     var sum: usize = 0;
     var it = mem.iterator();
     while (it.next()) |entry| {
-        sum += entry.value;
+        sum += entry.value_ptr.*;
     }
     return sum;
 }

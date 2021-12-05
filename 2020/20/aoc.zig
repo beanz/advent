@@ -125,7 +125,7 @@ const Water = struct {
             for ([_]u10{ tile.top, tile.right, tile.bottom, tile.left }) |e| {
                 const ce = CanonicalEdge(e);
                 var kv = try s.edges.getOrPutValue(ce, ArrayList(usize).init(alloc));
-                try kv.value.append(tile.num);
+                try kv.value_ptr.append(tile.num);
             }
         }
         s.width = isqrt(s.tiles.count());
@@ -145,7 +145,7 @@ const Water = struct {
         var p: usize = 1;
         var it = s.tiles.iterator();
         while (it.next()) |kv| {
-            var tile = kv.value;
+            var tile = kv.value_ptr.*;
             var c: usize = 0;
             for ([_]u10{ tile.top, tile.right, tile.bottom, tile.left }) |e| {
                 if (s.EdgeTileCount(e) > 1) {
@@ -316,7 +316,7 @@ const Water = struct {
         var image = s.Image();
         if (s.debug) {
             for (image) |l| {
-                warn("{}\n", .{l});
+                warn("{s}\n", .{l});
             }
             warn("\n", .{});
         }

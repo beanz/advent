@@ -149,7 +149,7 @@ const HexLife = struct {
         var cur_bb = BB.init(alloc) catch unreachable;
         var it = s.init.iterator();
         while (it.next()) |e| {
-            var ht = e.key;
+            var ht = e.key_ptr.*;
             cur.put(ht, .black) catch unreachable;
             cur_bb.Update(Q(ht), R(ht));
         }

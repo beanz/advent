@@ -200,14 +200,14 @@ const Nav = struct {
 
     pub fn Print(self: *Nav) void {
         if (self.ship.x >= 0) {
-            print("{} {}", .{ "east", absCast(self.ship.x) }) catch unreachable;
+            print("{s} {}", .{ "east", absCast(self.ship.x) }) catch unreachable;
         } else {
-            print("{} {}", .{ "west", absCast(self.ship.x) }) catch unreachable;
+            print("{s} {}", .{ "west", absCast(self.ship.x) }) catch unreachable;
         }
         if (self.ship.y <= 0) {
-            print(" {} {}", .{ "north", absCast(self.ship.y) }) catch unreachable;
+            print(" {s} {}", .{ "north", absCast(self.ship.y) }) catch unreachable;
         } else {
-            print(" {} {}", .{ "south", absCast(self.ship.y) }) catch unreachable;
+            print(" {s} {}", .{ "south", absCast(self.ship.y) }) catch unreachable;
         }
         print(" [{},{}]\n", .{ self.dir.dx, self.dir.dy }) catch unreachable;
     }

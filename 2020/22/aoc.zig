@@ -1,5 +1,7 @@
 usingnamespace @import("aoc-lib.zig");
 
+const fmtSliceHexLower = std.fmt.fmtSliceHexLower;
+
 const Game = struct {
     d1: []u8,
     d2: []u8,
@@ -96,7 +98,7 @@ const Game = struct {
         var first = true;
         while (d[0].len > 0 and d[1].len > 0) {
             if (g.debug) {
-                warn("{}: d1={x} d2={x}\n", .{ round, d[0], d[1] });
+                warn("{}: d1={x} d2={x}\n", .{ round, fmtSliceHexLower(d[0]), fmtSliceHexLower(d[1]) });
             }
             const k = key(arena, d[0], d[1]);
             if (seen.contains(k)) {

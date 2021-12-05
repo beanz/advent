@@ -80,7 +80,7 @@ const Mess = struct {
                 var validField = false;
                 var fit = m.fields.iterator();
                 while (fit.next()) |entry| {
-                    if (entry.value.inRange(v)) {
+                    if (entry.value_ptr.*.inRange(v)) {
                         validField = true;
                         break;
                     }
@@ -103,7 +103,7 @@ const Mess = struct {
         var possible = StringHashMap(i64).init(alloc);
         var cfit = self.fields.iterator();
         while (cfit.next()) |entry| {
-            try possible.put(entry.key, 0);
+            try possible.put(entry.key_ptr.*, 0);
         }
         const target = self.tickets.items.len;
         var col: usize = 0;
@@ -111,8 +111,8 @@ const Mess = struct {
             var fit = self.fields.iterator();
             while (fit.next()) |entry| {
                 var valid: usize = 0;
-                const name = entry.key;
-                const field = entry.value;
+                const name = entry.key_ptr.*;
+                const field = entry.value_ptr.*;
                 for (self.tickets.items) |ticket| {
                     if (field.inRange(ticket[col])) {
                         valid += 1;
@@ -120,7 +120,7 @@ const Mess = struct {
                 }
                 if (valid == target) {
                     if (self.debug) {
-                        warn("found {} at {} ({})\n", .{ name, col, col });
+                        warn("found {s} at {} ({})\n", .{ name, col, col });
                     }
                     var bm = possible.get(name).?;
                     bm |= bit(@intCast(i64, col));
@@ -135,14 +135,14 @@ const Mess = struct {
             var progress = false;
             var possIt = possible.iterator();
             while (possIt.next()) |possRec| {
-                var name = possRec.key;
-                var cols = possRec.value;
+                var name = possRec.key_ptr.*;
+                var cols = possRec.value_ptr.*;
                 if (cols != 0 and count1s(cols) == 1) {
                     progress = true;
                     var c: i64 = find1bit(cols);
                     var ourVal = self.our[absCast(c)];
                     if (self.debug) {
-                        warn("definite {} is {} ({})\n", .{ name, c, ourVal });
+                        warn("definite {s} is {} ({})\n", .{ name, c, ourVal });
                     }
                     if (name[0] == 'd' and name[1] == 'e' or !self.onlyDepart) {
                         p *= ourVal;
@@ -150,8 +150,8 @@ const Mess = struct {
                     _ = possible.remove(name);
                     var possIt2 = possible.iterator();
                     while (possIt2.next()) |possRec2| {
-                        possRec2.value &= (bit(c) ^ 0xffffffff);
-                        try possible.put(possRec2.key, possRec2.value);
+                        possRec2.value_ptr.* &= (bit(c) ^ 0xffffffff);
+                        try possible.put(possRec2.key_ptr.*, possRec2.value_ptr.*);
                     }
                     if (possible.count() == 0) {
                         return p;

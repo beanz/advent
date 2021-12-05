@@ -46,7 +46,7 @@ fn part1(inp: anytype) usize {
             innerBag[b1.len] = ' ';
             copy(u8, innerBag[b1.len + 1 ..], b2);
             const kv = map.getOrPutValue(innerBag, ArrayList([]const u8).init(alloc)) catch unreachable;
-            kv.value.append(bag) catch unreachable;
+            kv.value_ptr.append(bag) catch unreachable;
         }
     }
     var seen = StringHashMap(bool).init(alloc);
@@ -92,7 +92,7 @@ fn part2(inp: anytype) usize {
             copy(u8, innerBag[b1.len + 1 ..], b2);
             const kv = map.getOrPutValue(bag, ArrayList(BS).init(alloc)) catch unreachable;
             var b = BS{ .bag = innerBag, .n = n };
-            kv.value.append(b) catch unreachable;
+            kv.value_ptr.append(b) catch unreachable;
         }
     }
     return traverse2(map, "shiny gold") - 1;

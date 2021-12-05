@@ -1,4 +1,5 @@
 usingnamespace @import("aoc-lib.zig");
+usingnamespace @import("segmented_list.zig");
 
 const Matcher = struct {
     const Rule = union(enum) {
@@ -133,15 +134,15 @@ test "examples" {
     const inp = readChunks(inputfile);
 
     var m = try Matcher.init(test0);
-    assertEq(@as(usize, 1), m.Part1());
+    try assertEq(@as(usize, 1), m.Part1());
     m = try Matcher.init(test1);
-    assertEq(@as(usize, 1), m.Part1());
+    try assertEq(@as(usize, 1), m.Part1());
     m = try Matcher.init(test2);
-    assertEq(@as(usize, 2), m.Part1());
+    try assertEq(@as(usize, 2), m.Part1());
     m = try Matcher.init(inp);
-    assertEq(@as(usize, 285), m.Part1());
+    try assertEq(@as(usize, 285), m.Part1());
     m = try Matcher.init(inp);
-    assertEq(@as(usize, 412), m.Part2());
+    try assertEq(@as(usize, 412), m.Part2());
 }
 
 pub fn main() anyerror!void {
