@@ -2,12 +2,12 @@ usingnamespace @import("aoc-lib.zig");
 
 test "examples" {
     const test1 = readChunks(test1file);
-    assertEq(@as(usize, 11), part1(test1));
-    assertEq(@as(usize, 6), part2(test1));
+    try assertEq(@as(usize, 11), part1(test1));
+    try assertEq(@as(usize, 6), part2(test1));
 
     const inp = readChunks(inputfile);
-    assertEq(@as(usize, 6506), part1(inp));
-    assertEq(@as(usize, 3243), part2(inp));
+    try assertEq(@as(usize, 6506), part1(inp));
+    try assertEq(@as(usize, 3243), part2(inp));
 }
 
 fn part1(inp: anytype) usize {

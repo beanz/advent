@@ -3,12 +3,12 @@ usingnamespace @import("aoc-lib.zig");
 test "examples" {
     const map = readLines(test1file);
     defer free(map);
-    assertEq(@as(usize, 7), part1(map));
-    assertEq(@as(usize, 336), part2(map));
+    try assertEq(@as(usize, 7), part1(map));
+    try assertEq(@as(usize, 336), part2(map));
     const map2 = readLines(inputfile);
     defer free(map2);
-    assertEq(@as(usize, 169), part1(map2));
-    assertEq(@as(usize, 7560370818), part2(map2));
+    try assertEq(@as(usize, 169), part1(map2));
+    try assertEq(@as(usize, 7560370818), part2(map2));
 }
 
 fn isTree(map: [][]const u8, x: usize, y: usize) bool {

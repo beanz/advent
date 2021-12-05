@@ -111,11 +111,11 @@ test "examples" {
     const inp = readLines(inputfile);
 
     var t = Diag.fromInput(test1, alloc) catch unreachable;
-    assertEq(@as(usize, 5), t.part1());
-    assertEq(@as(usize, 12), t.part2());
+    try assertEq(@as(usize, 5), t.part1());
+    try assertEq(@as(usize, 12), t.part2());
     var ti = Diag.fromInput(inp, alloc) catch unreachable;
-    assertEq(@as(usize, 6005), ti.part1());
-    assertEq(@as(usize, 23864), ti.part2());
+    try assertEq(@as(usize, 6005), ti.part1());
+    try assertEq(@as(usize, 23864), ti.part2());
 }
 
 pub fn main() anyerror!void {

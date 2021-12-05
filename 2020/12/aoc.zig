@@ -13,8 +13,8 @@ test "direction" {
 
     for (tests) |tc| {
         var dir = Direction.newFromCompass(tc.c) catch unreachable;
-        assertEq(dir.dx, tc.dx);
-        assertEq(dir.dy, tc.dy);
+        try assertEq(dir.dx, tc.dx);
+        try assertEq(dir.dy, tc.dy);
     }
 }
 
@@ -227,11 +227,11 @@ test "examples" {
     const test1 = readLines(test1file);
     const inp = readLines(inputfile);
 
-    assertEq(@as(usize, 25), part1(test1));
-    assertEq(@as(usize, 286), part2(test1));
+    try assertEq(@as(usize, 25), part1(test1));
+    try assertEq(@as(usize, 286), part2(test1));
 
-    assertEq(@as(usize, 759), part1(inp));
-    assertEq(@as(usize, 45763), part2(inp));
+    try assertEq(@as(usize, 759), part1(inp));
+    try assertEq(@as(usize, 45763), part2(inp));
 }
 
 pub fn main() anyerror!void {

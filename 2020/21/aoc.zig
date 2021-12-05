@@ -110,14 +110,14 @@ test "examples" {
     const inp = readLines(inputfile);
 
     var mt = Menu.init(test1) catch unreachable;
-    assertEq(@as(usize, 5), mt.Part1());
+    try assertEq(@as(usize, 5), mt.Part1());
     var rt = "mxmxvkd,sqjhc,fvjkl";
-    assert(std.mem.eql(u8, rt, mt.Part2()));
+    try assert(std.mem.eql(u8, rt, mt.Part2()));
 
     var m = Menu.init(inp) catch unreachable;
-    assertEq(@as(usize, 2874), m.Part1());
+    try assertEq(@as(usize, 2874), m.Part1());
     var r = "gfvrr,ndkkq,jxcxh,bthjz,sgzr,mbkbn,pkkg,mjbtz";
-    assert(std.mem.eql(u8, r, m.Part2()));
+    try assert(std.mem.eql(u8, r, m.Part2()));
 }
 
 pub fn main() anyerror!void {

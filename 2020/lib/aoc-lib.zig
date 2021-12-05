@@ -77,11 +77,11 @@ pub const Stack = std.atomic.Stack;
 // test
 pub const assert = std.testing.expect;
 pub const assertEq = std.testing.expectEqual;
-pub fn assertStrEq(exp: []const u8, act: []const u8) void {
+pub fn assertStrEq(exp: []const u8, act: []const u8) anyerror!void {
     if (!std.mem.eql(u8, exp, act)) {
-        warn("expected, '{}' but was '{}'\n", .{ exp, act });
+        warn("expected, '{s}' but was '{s}'\n", .{ exp, act });
     }
-    assert(std.mem.eql(u8, exp, act));
+    try assert(std.mem.eql(u8, exp, act));
 }
 
 pub fn DEBUG() i32 {

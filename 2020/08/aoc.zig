@@ -94,11 +94,11 @@ test "examples" {
     const test1 = readLines(test1file);
     const inp = readLines(inputfile);
 
-    assertEq(@as(i64, 5), part1(test1));
-    assertEq(@as(i64, 8), part2(test1));
+    try assertEq(@as(i64, 5), part1(test1));
+    try assertEq(@as(i64, 8), part2(test1));
 
-    assertEq(@as(i64, 1614), part1(inp));
-    assertEq(@as(i64, 1260), part2(inp));
+    try assertEq(@as(i64, 1614), part1(inp));
+    try assertEq(@as(i64, 1260), part2(inp));
 }
 
 fn part1(inp: anytype) i64 {

@@ -82,12 +82,12 @@ test "examples" {
     const inp = readLines(inputfile);
 
     var t = Sub.fromInput(test1, alloc) catch unreachable;
-    assertEq(@as(i64, 150), t.part1());
-    assertEq(@as(i64, 900), t.part2());
+    try assertEq(@as(i64, 150), t.part1());
+    try assertEq(@as(i64, 900), t.part2());
 
     var ti = Sub.fromInput(inp, alloc) catch unreachable;
-    assertEq(@as(i64, 1714950), ti.part1());
-    assertEq(@as(i64, 1281977850), ti.part2());
+    try assertEq(@as(i64, 1714950), ti.part1());
+    try assertEq(@as(i64, 1281977850), ti.part2());
 }
 
 pub fn main() anyerror!void {

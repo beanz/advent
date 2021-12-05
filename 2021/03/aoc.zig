@@ -82,10 +82,10 @@ test "examples" {
 
     var t = Diag.fromInput(test1, alloc) catch unreachable;
     var ti = Diag.fromInput(inp, alloc) catch unreachable;
-    assertEq(@as(usize, 198), t.part1());
-    assertEq(@as(usize, 749376), ti.part1());
-    assertEq(@as(usize, 230), t.part2());
-    assertEq(@as(usize, 2372923), ti.part2());
+    try assertEq(@as(usize, 198), t.part1());
+    try assertEq(@as(usize, 749376), ti.part1());
+    try assertEq(@as(usize, 230), t.part2());
+    try assertEq(@as(usize, 2372923), ti.part2());
 }
 
 pub fn main() anyerror!void {

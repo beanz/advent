@@ -3,12 +3,12 @@ usingnamespace @import("aoc-lib.zig");
 test "examples" {
     var scan = readInts(test1file, i64);
     defer free(scan);
-    assertEq(@as(usize, 7), part1(scan));
-    assertEq(@as(usize, 5), part2(scan));
+    try assertEq(@as(usize, 7), part1(scan));
+    try assertEq(@as(usize, 5), part2(scan));
     var scan2 = readInts(inputfile, i64);
     defer free(scan2);
-    assertEq(@as(usize, 1342), part1(scan2));
-    assertEq(@as(usize, 1378), part2(scan2));
+    try assertEq(@as(usize, 1342), part1(scan2));
+    try assertEq(@as(usize, 1378), part2(scan2));
 }
 
 fn calc(exp: []const i64, n: usize) usize {

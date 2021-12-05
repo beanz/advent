@@ -13,10 +13,10 @@ fn loopSize(t: u64) u64 {
 }
 
 test "loop size" {
-    assertEq(@as(u64, 8), loopSize(5764801));
-    assertEq(@as(u64, 11), loopSize(17807724));
-    assertEq(@as(u64, 13467729), loopSize(9033205));
-    assertEq(@as(u64, 3020524), loopSize(9281649));
+    try assertEq(@as(u64, 8), loopSize(5764801));
+    try assertEq(@as(u64, 11), loopSize(17807724));
+    try assertEq(@as(u64, 13467729), loopSize(9033205));
+    try assertEq(@as(u64, 3020524), loopSize(9281649));
 }
 
 fn expMod(ia: u64, ib: u64, m: u64) u64 {
@@ -46,9 +46,9 @@ test "part1" {
     const inp = readLines(inputfile);
 
     const rt = try Part1(test1);
-    assertEq(@as(usize, 14897079), rt);
+    try assertEq(@as(usize, 14897079), rt);
     const r = try Part1(inp);
-    assertEq(@as(usize, 9714832), r);
+    try assertEq(@as(usize, 9714832), r);
 }
 
 pub fn main() anyerror!void {

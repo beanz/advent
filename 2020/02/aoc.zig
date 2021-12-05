@@ -1,10 +1,10 @@
 usingnamespace @import("aoc-lib.zig");
 
 test "examples" {
-    assertEq(@as(usize, 2), part1(test1file));
-    assertEq(@as(usize, 1), part2(test1file));
-    assertEq(@as(usize, 454), part1(inputfile));
-    assertEq(@as(usize, 649), part2(inputfile));
+    try assertEq(@as(usize, 2), part1(test1file));
+    try assertEq(@as(usize, 1), part2(test1file));
+    try assertEq(@as(usize, 454), part1(inputfile));
+    try assertEq(@as(usize, 649), part2(inputfile));
 }
 
 fn part1(inp: anytype) usize {

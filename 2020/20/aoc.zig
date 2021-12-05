@@ -65,31 +65,31 @@ const Tile = struct {
 
 test "tile" {
     var t = try Tile.init("Tile 1951:\n.#.\n.##\n#.#", alloc);
-    assertEq(@as(usize, 1951), t.num);
-    assertEq(@as(u10, 2), t.top);
-    assertEq(@as(u10, 3), t.right);
-    assertEq(@as(u10, 5), t.bottom);
-    assertEq(@as(u10, 1), t.left);
+    try assertEq(@as(usize, 1951), t.num);
+    try assertEq(@as(u10, 2), t.top);
+    try assertEq(@as(u10, 3), t.right);
+    try assertEq(@as(u10, 5), t.bottom);
+    try assertEq(@as(u10, 1), t.left);
     t.flip();
-    assertEq(@as(u10, 5), t.top);
-    assertEq(@as(u10, 6), t.right);
-    assertEq(@as(u10, 2), t.bottom);
-    assertEq(@as(u10, 4), t.left);
+    try assertEq(@as(u10, 5), t.top);
+    try assertEq(@as(u10, 6), t.right);
+    try assertEq(@as(u10, 2), t.bottom);
+    try assertEq(@as(u10, 4), t.left);
     t.flip();
-    assertEq(@as(u10, 2), t.top);
-    assertEq(@as(u10, 3), t.right);
-    assertEq(@as(u10, 5), t.bottom);
-    assertEq(@as(u10, 1), t.left);
+    try assertEq(@as(u10, 2), t.top);
+    try assertEq(@as(u10, 3), t.right);
+    try assertEq(@as(u10, 5), t.bottom);
+    try assertEq(@as(u10, 1), t.left);
     t.rotate();
-    assertEq(@as(u10, 4), t.top);
-    assertEq(@as(u10, 2), t.right);
-    assertEq(@as(u10, 6), t.bottom);
-    assertEq(@as(u10, 5), t.left);
+    try assertEq(@as(u10, 4), t.top);
+    try assertEq(@as(u10, 2), t.right);
+    try assertEq(@as(u10, 6), t.bottom);
+    try assertEq(@as(u10, 5), t.left);
     t.rotate();
-    assertEq(@as(u10, 5), t.top);
-    assertEq(@as(u10, 4), t.right);
-    assertEq(@as(u10, 2), t.bottom);
-    assertEq(@as(u10, 6), t.left);
+    try assertEq(@as(u10, 5), t.top);
+    try assertEq(@as(u10, 4), t.right);
+    try assertEq(@as(u10, 2), t.bottom);
+    try assertEq(@as(u10, 6), t.left);
 }
 
 fn CanonicalEdge(e: u10) u10 {
@@ -102,8 +102,8 @@ fn CanonicalEdge(e: u10) u10 {
 }
 
 test "canonical" {
-    assertEq(@as(u10, 210), CanonicalEdge(@as(u10, 300)));
-    assertEq(@as(u10, 791), CanonicalEdge(@as(u10, 931)));
+    try assertEq(@as(u10, 210), CanonicalEdge(@as(u10, 300)));
+    try assertEq(@as(u10, 791), CanonicalEdge(@as(u10, 931)));
 }
 
 const Water = struct {
@@ -374,20 +374,20 @@ test "part1" {
     const inp = readChunks(inputfile);
 
     var wt = try Water.init(test1, alloc);
-    assertEq(@as(usize, 20899048083289), wt.Part1());
+    try assertEq(@as(usize, 20899048083289), wt.Part1());
 
     var w = try Water.init(inp, alloc);
-    assertEq(@as(usize, 17712468069479), w.Part1());
+    try assertEq(@as(usize, 17712468069479), w.Part1());
 }
 
 test "part2" {
     const test1 = readChunks(test1file);
     const inp = readChunks(inputfile);
     var wt = try Water.init(test1, alloc);
-    assertEq(@as(usize, 273), wt.Part2());
+    try assertEq(@as(usize, 273), wt.Part2());
 
     var w = try Water.init(inp, alloc);
-    assertEq(@as(usize, 2173), w.Part2());
+    try assertEq(@as(usize, 2173), w.Part2());
 }
 
 pub fn main() anyerror!void {

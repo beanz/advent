@@ -5,13 +5,13 @@ test "examples" {
     const test2 = readLines(test2file);
     const inp = readLines(inputfile);
 
-    assertEq(@as(usize, 4), part1(test1));
-    assertEq(@as(usize, 0), part1(test2));
-    assertEq(@as(usize, 112), part1(inp));
+    try assertEq(@as(usize, 4), part1(test1));
+    try assertEq(@as(usize, 0), part1(test2));
+    try assertEq(@as(usize, 112), part1(inp));
 
-    assertEq(@as(usize, 32), part2(test1));
-    assertEq(@as(usize, 126), part2(test2));
-    assertEq(@as(usize, 6260), part2(inp));
+    try assertEq(@as(usize, 32), part2(test1));
+    try assertEq(@as(usize, 126), part2(test2));
+    try assertEq(@as(usize, 6260), part2(inp));
 }
 
 fn traverse1(m: StringHashMap(ArrayList([]const u8)), bag: []const u8, seen: *StringHashMap(bool)) void {

@@ -1,44 +1,44 @@
 usingnamespace @import("aoc-lib.zig");
 
 test "validate year" {
-    assert(validYear("2002", 1920, 2002));
-    assert(!validYear("2003", 1920, 2002));
+    try assert(validYear("2002", 1920, 2002));
+    try assert(!validYear("2003", 1920, 2002));
 }
 
 test "validate height" {
-    assert(validHeight("60in"));
-    assert(validHeight("190cm"));
-    assert(!validHeight("190in"));
-    assert(!validHeight("190"));
+    try assert(validHeight("60in"));
+    try assert(validHeight("190cm"));
+    try assert(!validHeight("190in"));
+    try assert(!validHeight("190"));
 }
 
 test "validate hair color" {
-    assert(validHairColor("#123abc"));
-    assert(!validHairColor("#123abz"));
-    assert(!validHairColor("123abc"));
+    try assert(validHairColor("#123abc"));
+    try assert(!validHairColor("#123abz"));
+    try assert(!validHairColor("123abc"));
 }
 
 test "validate eye color" {
-    assert(validEyeColor("brn"));
-    assert(!validEyeColor("wat"));
+    try assert(validEyeColor("brn"));
+    try assert(!validEyeColor("wat"));
 }
 
 test "examples" {
     const test1 = readChunkyObjects(test1file, "\n\n", "\n ", ":");
-    assertEq(@as(usize, 2), part1(test1));
-    assertEq(@as(usize, 2), part2(test1));
+    try assertEq(@as(usize, 2), part1(test1));
+    try assertEq(@as(usize, 2), part2(test1));
 
     const test2 = readChunkyObjects(test2file, "\n\n", "\n ", ":");
-    assertEq(@as(usize, 4), part1(test2));
-    assertEq(@as(usize, 0), part2(test2));
+    try assertEq(@as(usize, 4), part1(test2));
+    try assertEq(@as(usize, 0), part2(test2));
 
     const test3 = readChunkyObjects(test3file, "\n\n", "\n ", ":");
-    assertEq(@as(usize, 4), part1(test3));
-    assertEq(@as(usize, 4), part2(test3));
+    try assertEq(@as(usize, 4), part1(test3));
+    try assertEq(@as(usize, 4), part2(test3));
 
     const inp = readChunkyObjects(inputfile, "\n\n", "\n ", ":");
-    assertEq(@as(usize, 213), part1(inp));
-    assertEq(@as(usize, 147), part2(inp));
+    try assertEq(@as(usize, 213), part1(inp));
+    try assertEq(@as(usize, 147), part2(inp));
 }
 
 const fields = [_][]const u8{

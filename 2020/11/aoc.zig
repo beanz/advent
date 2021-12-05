@@ -6,21 +6,21 @@ test "examples" {
     const inp = readLines(inputfile);
 
     var map = Map.fromInput(test1, alloc) catch unreachable;
-    assertEq(@as(usize, 71), map.RunOnce(4, false));
-    assertEq(@as(usize, 20), map.RunOnce(4, false));
+    try assertEq(@as(usize, 71), map.RunOnce(4, false));
+    try assertEq(@as(usize, 20), map.RunOnce(4, false));
 
     map = Map.fromInput(test2, alloc) catch unreachable;
-    assertEq(@as(usize, 29), map.RunOnce(4, false));
+    try assertEq(@as(usize, 29), map.RunOnce(4, false));
 
     map = Map.fromInput(inp, alloc) catch unreachable;
-    assertEq(@as(usize, 7906), map.RunOnce(4, false));
-    assertEq(@as(usize, 148), map.RunOnce(4, false));
+    try assertEq(@as(usize, 7906), map.RunOnce(4, false));
+    try assertEq(@as(usize, 148), map.RunOnce(4, false));
 
-    assertEq(@as(usize, 37), part1(test1));
-    assertEq(@as(usize, 26), part2(test1));
+    try assertEq(@as(usize, 37), part1(test1));
+    try assertEq(@as(usize, 26), part2(test1));
 
-    assertEq(@as(usize, 2481), part1(inp));
-    assertEq(@as(usize, 2227), part2(inp));
+    try assertEq(@as(usize, 2481), part1(inp));
+    try assertEq(@as(usize, 2227), part2(inp));
 }
 
 const Map = struct {

@@ -172,26 +172,26 @@ test "seen" {
     var g1 = Game.init(test1);
     var k1 = Game.key(alloc, g1.d1, g1.d2);
     var k2 = Game.key(alloc, g1.d2, g1.d1);
-    assertEq(false, seen.contains(k1));
-    assertEq(false, seen.contains(k2));
+    try assertEq(false, seen.contains(k1));
+    try assertEq(false, seen.contains(k2));
     try seen.put(k1, true);
-    assertEq(true, seen.contains(k1));
-    assertEq(false, seen.contains(k2));
+    try assertEq(true, seen.contains(k1));
+    try assertEq(false, seen.contains(k2));
     try seen.put(k2, true);
-    assertEq(true, seen.contains(k1));
-    assertEq(true, seen.contains(k2));
+    try assertEq(true, seen.contains(k1));
+    try assertEq(true, seen.contains(k2));
 
     var g = Game.init(inp);
     k1 = Game.key(alloc, g.d1, g.d2);
     k2 = Game.key(alloc, g.d2, g.d1);
-    assertEq(false, seen.contains(k1));
-    assertEq(false, seen.contains(k2));
+    try assertEq(false, seen.contains(k1));
+    try assertEq(false, seen.contains(k2));
     try seen.put(k1, true);
-    assertEq(true, seen.contains(k1));
-    assertEq(false, seen.contains(k2));
+    try assertEq(true, seen.contains(k1));
+    try assertEq(false, seen.contains(k2));
     try seen.put(k2, true);
-    assertEq(true, seen.contains(k1));
-    assertEq(true, seen.contains(k2));
+    try assertEq(true, seen.contains(k1));
+    try assertEq(true, seen.contains(k2));
 }
 
 test "examples" {
@@ -199,11 +199,11 @@ test "examples" {
     const inp = readChunks(inputfile);
 
     var g1 = Game.init(test1);
-    assertEq(@as(usize, 306), g1.Part1());
-    assertEq(@as(usize, 291), g1.Part2());
+    try assertEq(@as(usize, 306), g1.Part1());
+    try assertEq(@as(usize, 291), g1.Part2());
     var g2 = Game.init(inp);
-    assertEq(@as(usize, 32856), g2.Part1());
-    assertEq(@as(usize, 33805), g2.Part2());
+    try assertEq(@as(usize, 32856), g2.Part1());
+    try assertEq(@as(usize, 33805), g2.Part2());
 }
 
 pub fn main() anyerror!void {

@@ -128,13 +128,13 @@ pub fn Part2(s: [][]const u8) usize {
 
 test "RPN" {
     var exp = [1]Token{Token{ .operand = 2 }};
-    assertEq(@as(usize, 2), RPN(exp[0..]));
+    try assertEq(@as(usize, 2), RPN(exp[0..]));
     var exp3 = [3]Token{
         Token{ .operand = 2 },
         Token{ .operand = 3 },
         Token{ .operator = .plus },
     };
-    assertEq(@as(usize, 5), RPN(exp3[0..]));
+    try assertEq(@as(usize, 5), RPN(exp3[0..]));
     var exp5 = [5]Token{
         Token{ .operand = 3 },
         Token{ .operand = 4 },
@@ -142,49 +142,49 @@ test "RPN" {
         Token{ .operator = .times },
         Token{ .operator = .plus },
     };
-    assertEq(@as(usize, 23), RPN(exp5[0..]));
+    try assertEq(@as(usize, 23), RPN(exp5[0..]));
 }
 
 test "ShuntingYard" {
     var exp = [1]Token{Token{ .operand = 2 }};
-    assertEq(@as(usize, 3), ShuntingYard("2 + 3", false).len);
-    assertEq(@as(usize, 5), RPN(ShuntingYard("2 + 3", false)));
+    try assertEq(@as(usize, 3), ShuntingYard("2 + 3", false).len);
+    try assertEq(@as(usize, 5), RPN(ShuntingYard("2 + 3", false)));
 }
 
 test "Calc" {
-    assertEq(@as(usize, 9), Calc("9", false));
-    assertEq(@as(usize, 5), Calc("2 + 3", false));
-    assertEq(@as(usize, 6), Calc("2 * 3", false));
-    assertEq(@as(usize, 9), Calc("1 + 2 * 3", false));
-    assertEq(@as(usize, 6), Calc("(2 * 3)", false));
-    assertEq(@as(usize, 9), Calc("(1 + 2) * 3", false));
-    assertEq(@as(usize, 7), Calc("1 + (2 * 3)", false));
-    assertEq(@as(usize, 71), Calc("1 + 2 * 3 + 4 * 5 + 6", false));
-    assertEq(@as(usize, 51), Calc("1 + (2 * 3) + (4 * (5 + 6))", false));
-    assertEq(@as(usize, 26), Calc("2 * 3 + (4 * 5)", false));
-    assertEq(@as(usize, 437), Calc("5 + (8 * 3 + 9 + 3 * 4 * 3)", false));
-    assertEq(@as(usize, 12240), Calc("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))", false));
-    assertEq(@as(usize, 13632), Calc("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", false));
+    try assertEq(@as(usize, 9), Calc("9", false));
+    try assertEq(@as(usize, 5), Calc("2 + 3", false));
+    try assertEq(@as(usize, 6), Calc("2 * 3", false));
+    try assertEq(@as(usize, 9), Calc("1 + 2 * 3", false));
+    try assertEq(@as(usize, 6), Calc("(2 * 3)", false));
+    try assertEq(@as(usize, 9), Calc("(1 + 2) * 3", false));
+    try assertEq(@as(usize, 7), Calc("1 + (2 * 3)", false));
+    try assertEq(@as(usize, 71), Calc("1 + 2 * 3 + 4 * 5 + 6", false));
+    try assertEq(@as(usize, 51), Calc("1 + (2 * 3) + (4 * (5 + 6))", false));
+    try assertEq(@as(usize, 26), Calc("2 * 3 + (4 * 5)", false));
+    try assertEq(@as(usize, 437), Calc("5 + (8 * 3 + 9 + 3 * 4 * 3)", false));
+    try assertEq(@as(usize, 12240), Calc("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))", false));
+    try assertEq(@as(usize, 13632), Calc("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", false));
 }
 
 test "Calc2" {
-    assertEq(@as(usize, 231), Calc("1 + 2 * 3 + 4 * 5 + 6", true));
-    assertEq(@as(usize, 51), Calc("1 + (2 * 3) + (4 * (5 + 6))", true));
-    assertEq(@as(usize, 46), Calc("2 * 3 + (4 * 5)", true));
-    assertEq(@as(usize, 1440), Calc("8 * 3 + 9 + 3 * 4 * 3", true));
-    assertEq(@as(usize, 1445), Calc("5 + (8 * 3 + 9 + 3 * 4 * 3)", true));
-    assertEq(@as(usize, 669060), Calc("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))", true));
-    assertEq(@as(usize, 23340), Calc("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", true));
+    try assertEq(@as(usize, 231), Calc("1 + 2 * 3 + 4 * 5 + 6", true));
+    try assertEq(@as(usize, 51), Calc("1 + (2 * 3) + (4 * (5 + 6))", true));
+    try assertEq(@as(usize, 46), Calc("2 * 3 + (4 * 5)", true));
+    try assertEq(@as(usize, 1440), Calc("8 * 3 + 9 + 3 * 4 * 3", true));
+    try assertEq(@as(usize, 1445), Calc("5 + (8 * 3 + 9 + 3 * 4 * 3)", true));
+    try assertEq(@as(usize, 669060), Calc("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))", true));
+    try assertEq(@as(usize, 23340), Calc("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", true));
 }
 
 test "examples" {
     const test1 = readLines(test1file);
     const inp = readLines(inputfile);
 
-    assertEq(@as(usize, 26457), Part1(test1));
-    assertEq(@as(usize, 694173), Part2(test1));
-    assertEq(@as(usize, 510009915468), Part1(inp));
-    assertEq(@as(usize, 321176691637769), Part2(inp));
+    try assertEq(@as(usize, 26457), Part1(test1));
+    try assertEq(@as(usize, 694173), Part2(test1));
+    try assertEq(@as(usize, 510009915468), Part1(inp));
+    try assertEq(@as(usize, 321176691637769), Part2(inp));
 }
 
 pub fn main() anyerror!void {

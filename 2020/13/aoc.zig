@@ -86,21 +86,21 @@ test "examples" {
     const test6 = readLines(test6file);
     const inp = readLines(inputfile);
 
-    assertEq(@as(u64, 295), part1(test1));
-    assertEq(@as(u64, 130), part1(test2));
-    assertEq(@as(u64, 295), part1(test3));
-    assertEq(@as(u64, 295), part1(test4));
-    assertEq(@as(u64, 295), part1(test5));
-    assertEq(@as(u64, 47), part1(test6));
-    assertEq(@as(u64, 3035), part1(inp));
+    try assertEq(@as(u64, 295), part1(test1));
+    try assertEq(@as(u64, 130), part1(test2));
+    try assertEq(@as(u64, 295), part1(test3));
+    try assertEq(@as(u64, 295), part1(test4));
+    try assertEq(@as(u64, 295), part1(test5));
+    try assertEq(@as(u64, 47), part1(test6));
+    try assertEq(@as(u64, 3035), part1(inp));
 
-    assertEq(@as(i64, 1068781), part2(test1));
-    assertEq(@as(i64, 3417), part2(test2));
-    assertEq(@as(i64, 754018), part2(test3));
-    assertEq(@as(i64, 779210), part2(test4));
-    assertEq(@as(i64, 1261476), part2(test5));
-    assertEq(@as(i64, 1202161486), part2(test6));
-    assertEq(@as(i64, 725169163285238), part2(inp));
+    try assertEq(@as(i64, 1068781), part2(test1));
+    try assertEq(@as(i64, 3417), part2(test2));
+    try assertEq(@as(i64, 754018), part2(test3));
+    try assertEq(@as(i64, 779210), part2(test4));
+    try assertEq(@as(i64, 1261476), part2(test5));
+    try assertEq(@as(i64, 1202161486), part2(test6));
+    try assertEq(@as(i64, 725169163285238), part2(inp));
 }
 
 pub fn main() anyerror!void {

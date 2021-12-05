@@ -167,9 +167,9 @@ const Mess = struct {
 };
 
 test "count1s" {
-    assertEq(@as(i64, 1), Mess.count1s(@as(i64, 1)));
-    assertEq(@as(i64, 2), Mess.count1s(@as(i64, 3)));
-    assertEq(@as(i64, 2), Mess.count1s(@as(i64, 6)));
+    try assertEq(@as(i64, 1), Mess.count1s(@as(i64, 1)));
+    try assertEq(@as(i64, 2), Mess.count1s(@as(i64, 3)));
+    try assertEq(@as(i64, 2), Mess.count1s(@as(i64, 6)));
 }
 
 test "examples" {
@@ -178,16 +178,16 @@ test "examples" {
     const inp = readChunks(inputfile);
 
     var t1m = Mess.fromInput(test1, alloc) catch unreachable;
-    assertEq(@as(i64, 71), t1m.err);
+    try assertEq(@as(i64, 71), t1m.err);
     var inpm = Mess.fromInput(inp, alloc) catch unreachable;
-    assertEq(@as(i64, 21980), inpm.err);
+    try assertEq(@as(i64, 21980), inpm.err);
 
     var t2m = Mess.fromInput(test2, alloc) catch unreachable;
     t2m.onlyDepart = false;
     const t2a = t2m.Solve() catch unreachable;
-    assertEq(@as(i64, 1716), t2a);
+    try assertEq(@as(i64, 1716), t2a);
     const impa = inpm.Solve() catch unreachable;
-    assertEq(@as(i64, 1439429522627), impa);
+    try assertEq(@as(i64, 1439429522627), impa);
 }
 
 pub fn main() anyerror!void {

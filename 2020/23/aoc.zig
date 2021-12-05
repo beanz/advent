@@ -79,27 +79,27 @@ test "cup" {
     var arena = &arenaAllocator.allocator;
 
     var c1 = Cup.init(arena, 1);
-    assertEq(@as(usize, 1), c1.val);
-    assertEq(c1, c1.cw);
-    assertEq(c1, c1.ccw);
+    try assertEq(@as(usize, 1), c1.val);
+    try assertEq(c1, c1.cw);
+    try assertEq(c1, c1.ccw);
     var c2 = Cup.init(arena, 2);
-    assertEq(@as(usize, 2), c2.val);
-    assertEq(c2, c2.cw);
-    assertEq(c2, c2.ccw);
+    try assertEq(@as(usize, 2), c2.val);
+    try assertEq(c2, c2.cw);
+    try assertEq(c2, c2.ccw);
     c1.insertAfter(c2);
-    assertEq(c2, c1.cw);
-    assertEq(c2, c1.ccw);
-    assertEq(c1, c2.cw);
-    assertEq(c1, c2.ccw);
+    try assertEq(c2, c1.cw);
+    try assertEq(c2, c1.ccw);
+    try assertEq(c1, c2.cw);
+    try assertEq(c1, c2.ccw);
     var i: usize = 3;
     var c = c2;
     while (i < 10) : (i += 1) {
         c.insertAfter(Cup.init(arena, i));
         c = c.cw;
     }
-    assertStrEq("123456789", c1.string());
-    assertStrEq("23456789", c1.part1string());
-    assertStrEq("67891234", c2.cw.cw.cw.part1string());
+    try assertStrEq("123456789", c1.string());
+    try assertStrEq("23456789", c1.part1string());
+    try assertStrEq("67891234", c2.cw.cw.cw.part1string());
 }
 
 const Game = struct {
@@ -185,14 +185,14 @@ test "part1" {
     const inp = readLines(inputfile);
 
     var gt = Game.init(test1);
-    assertStrEq("25467389", gt.part1(0));
-    assertStrEq("54673289", gt.part1(1));
-    assertStrEq("92658374", gt.part1(10));
-    assertStrEq("67384529", gt.part1(100));
+    try assertStrEq("25467389", gt.part1(0));
+    try assertStrEq("54673289", gt.part1(1));
+    try assertStrEq("92658374", gt.part1(10));
+    try assertStrEq("67384529", gt.part1(100));
     var g = Game.init(inp);
-    assertStrEq("92736584", g.part1(10));
-    assertStrEq("63598274", g.part1(50));
-    assertStrEq("46978532", g.part1(100));
+    try assertStrEq("92736584", g.part1(10));
+    try assertStrEq("63598274", g.part1(50));
+    try assertStrEq("46978532", g.part1(100));
 }
 
 test "part2" {
@@ -200,19 +200,19 @@ test "part2" {
     const inp = readLines(inputfile);
 
     var gt = Game.init(test1);
-    assertEq(@as(usize, 136), gt.part2(30, 20));
-    assertEq(@as(usize, 54), gt.part2(100, 20));
-    assertEq(@as(usize, 42), gt.part2(1000, 20));
-    assertEq(@as(usize, 285), gt.part2(10000, 20));
-    assertEq(@as(usize, 285), gt.part2(10001, 20));
-    assertEq(@as(usize, 12), gt.part2(10, 1000000));
-    assertEq(@as(usize, 12), gt.part2(100, 1000000));
-    assertEq(@as(usize, 126), gt.part2(1000000, 1000000));
-    assertEq(@as(usize, 32999175), gt.part2(2000000, 1000000));
-    assertEq(@as(usize, 149245887792), gt.part2(10000000, 1000000));
+    try assertEq(@as(usize, 136), gt.part2(30, 20));
+    try assertEq(@as(usize, 54), gt.part2(100, 20));
+    try assertEq(@as(usize, 42), gt.part2(1000, 20));
+    try assertEq(@as(usize, 285), gt.part2(10000, 20));
+    try assertEq(@as(usize, 285), gt.part2(10001, 20));
+    try assertEq(@as(usize, 12), gt.part2(10, 1000000));
+    try assertEq(@as(usize, 12), gt.part2(100, 1000000));
+    try assertEq(@as(usize, 126), gt.part2(1000000, 1000000));
+    try assertEq(@as(usize, 32999175), gt.part2(2000000, 1000000));
+    try assertEq(@as(usize, 149245887792), gt.part2(10000000, 1000000));
 
     var g = Game.init(inp);
-    assertEq(@as(usize, 163035127721), g.part2(10000000, 1000000));
+    try assertEq(@as(usize, 163035127721), g.part2(10000000, 1000000));
 }
 
 pub fn main() anyerror!void {

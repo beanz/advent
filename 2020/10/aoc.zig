@@ -6,17 +6,17 @@ test "examples" {
     const test2 = readInts(test2file, i64);
     const inp = readInts(inputfile, i64);
 
-    assertEq(@as(i64, 8), part1(test0));
-    assertEq(@as(i64, 4), part2(test0));
+    try assertEq(@as(i64, 8), part1(test0));
+    try assertEq(@as(i64, 4), part2(test0));
 
-    assertEq(@as(i64, 35), part1(test1));
-    assertEq(@as(i64, 8), part2(test1));
+    try assertEq(@as(i64, 35), part1(test1));
+    try assertEq(@as(i64, 8), part2(test1));
 
-    assertEq(@as(i64, 220), part1(test2));
-    assertEq(@as(i64, 19208), part2(test2));
+    try assertEq(@as(i64, 220), part1(test2));
+    try assertEq(@as(i64, 19208), part2(test2));
 
-    assertEq(@as(i64, 1920), part1(inp));
-    assertEq(@as(i64, 1511207993344), part2(inp));
+    try assertEq(@as(i64, 1920), part1(inp));
+    try assertEq(@as(i64, 1511207993344), part2(inp));
 }
 
 fn part1(in: []const i64) i64 {

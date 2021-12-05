@@ -181,16 +181,16 @@ test "part1" {
     const inp = readLines(inputfile);
 
     var t1m = Map.fromInput(test1, alloc) catch unreachable;
-    assertEq(@as(usize, 112), try t1m.Part1());
+    try assertEq(@as(usize, 112), try t1m.Part1());
 
     t1m = Map.fromInput(test1, alloc) catch unreachable;
-    assertEq(@as(usize, 848), try t1m.Part2());
+    try assertEq(@as(usize, 848), try t1m.Part2());
 
     var m = Map.fromInput(inp, alloc) catch unreachable;
-    assertEq(@as(usize, 209), try m.Part1());
+    try assertEq(@as(usize, 209), try m.Part1());
 
     m = Map.fromInput(inp, alloc) catch unreachable;
-    assertEq(@as(usize, 1492), try m.Part2());
+    try assertEq(@as(usize, 1492), try m.Part2());
 }
 
 pub fn main() anyerror!void {

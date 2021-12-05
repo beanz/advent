@@ -1,10 +1,10 @@
 usingnamespace @import("aoc-lib.zig");
 
 test "examples" {
-    assertEq(@as(usize, 820), part1(readLines(test1file)));
-    assertEq(@as(usize, 0), part2(readLines(test1file)));
-    assertEq(@as(usize, 947), part1(readLines(inputfile)));
-    assertEq(@as(usize, 636), part2(readLines(inputfile)));
+    try assertEq(@as(usize, 820), part1(readLines(test1file)));
+    try assertEq(@as(usize, 0), part2(readLines(test1file)));
+    try assertEq(@as(usize, 947), part1(readLines(inputfile)));
+    try assertEq(@as(usize, 636), part2(readLines(inputfile)));
 }
 
 fn seat(dir: []const u8) usize {

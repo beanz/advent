@@ -95,12 +95,12 @@ test "examples" {
     const test2 = readLines(test2file);
     const inp = readLines(inputfile);
 
-    assertEq(@as(usize, 165), part1(test1));
-    assertEq(@as(usize, 51), part1(test2));
-    assertEq(@as(usize, 4297467072083), part1(inp));
+    try assertEq(@as(usize, 165), part1(test1));
+    try assertEq(@as(usize, 51), part1(test2));
+    try assertEq(@as(usize, 4297467072083), part1(inp));
 
-    assertEq(@as(usize, 208), part2(test2));
-    assertEq(@as(usize, 5030603328768), part2(inp));
+    try assertEq(@as(usize, 208), part2(test2));
+    try assertEq(@as(usize, 5030603328768), part2(inp));
 }
 
 pub fn main() anyerror!void {

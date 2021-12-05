@@ -64,26 +64,26 @@ pub fn HexTileFromString(m: []const u8) usize {
 
 test "hex tile" {
     var ht = HexTileFromString("sesenwnenenewseeswwswswwnenewsewsw");
-    assertEq(@as(i8, -3), Q(ht));
-    assertEq(@as(i8, -2), R(ht));
+    try assertEq(@as(i8, -3), Q(ht));
+    try assertEq(@as(i8, -2), R(ht));
     var n = HexTileNeighbours(ht);
-    assertEq(@as(i8, -2), Q(n[0]));
-    assertEq(@as(i8, -2), R(n[0]));
+    try assertEq(@as(i8, -2), Q(n[0]));
+    try assertEq(@as(i8, -2), R(n[0]));
 
-    assertEq(@as(i8, -3), Q(n[1]));
-    assertEq(@as(i8, -3), R(n[1]));
+    try assertEq(@as(i8, -3), Q(n[1]));
+    try assertEq(@as(i8, -3), R(n[1]));
 
-    assertEq(@as(i8, -4), Q(n[2]));
-    assertEq(@as(i8, -3), R(n[2]));
+    try assertEq(@as(i8, -4), Q(n[2]));
+    try assertEq(@as(i8, -3), R(n[2]));
 
-    assertEq(@as(i8, -4), Q(n[3]));
-    assertEq(@as(i8, -2), R(n[3]));
+    try assertEq(@as(i8, -4), Q(n[3]));
+    try assertEq(@as(i8, -2), R(n[3]));
 
-    assertEq(@as(i8, -3), Q(n[4]));
-    assertEq(@as(i8, -1), R(n[4]));
+    try assertEq(@as(i8, -3), Q(n[4]));
+    try assertEq(@as(i8, -1), R(n[4]));
 
-    assertEq(@as(i8, -2), Q(n[5]));
-    assertEq(@as(i8, -1), R(n[5]));
+    try assertEq(@as(i8, -2), Q(n[5]));
+    try assertEq(@as(i8, -1), R(n[5]));
 }
 
 const HexLife = struct {
@@ -208,9 +208,9 @@ test "hex life part1" {
     const inp = readLines(inputfile);
 
     var gt = try HexLife.init(test1, alloc);
-    assertEq(@as(usize, 10), gt.Part1());
+    try assertEq(@as(usize, 10), gt.Part1());
     var g = try HexLife.init(inp, alloc);
-    assertEq(@as(usize, 307), g.Part1());
+    try assertEq(@as(usize, 307), g.Part1());
 }
 
 test "hex life part2" {
@@ -220,11 +220,11 @@ test "hex life part2" {
     var gt = try HexLife.init(test1, alloc);
     var g = try HexLife.init(inp, alloc);
 
-    assertEq(@as(usize, 15), gt.Part2(1));
-    assertEq(@as(usize, 12), gt.Part2(2));
-    assertEq(@as(usize, 37), gt.Part2(10));
-    assertEq(@as(usize, 2208), gt.Part2(100));
-    assertEq(@as(usize, 3787), g.Part2(100));
+    try assertEq(@as(usize, 15), gt.Part2(1));
+    try assertEq(@as(usize, 12), gt.Part2(2));
+    try assertEq(@as(usize, 37), gt.Part2(10));
+    try assertEq(@as(usize, 2208), gt.Part2(100));
+    try assertEq(@as(usize, 3787), g.Part2(100));
 }
 
 pub fn main() anyerror!void {

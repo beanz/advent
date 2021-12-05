@@ -43,23 +43,23 @@ test "examples" {
     const test7 = readInts(test7file, usize);
     const inp = readInts(inputfile, usize);
 
-    assertEq(@as(usize, 436), part1(test1));
-    assertEq(@as(usize, 1), part1(test2));
-    assertEq(@as(usize, 10), part1(test3));
-    assertEq(@as(usize, 27), part1(test4));
-    assertEq(@as(usize, 78), part1(test5));
-    assertEq(@as(usize, 438), part1(test6));
-    assertEq(@as(usize, 1836), part1(test7));
-    assertEq(@as(usize, 260), part1(inp));
+    try assertEq(@as(usize, 436), part1(test1));
+    try assertEq(@as(usize, 1), part1(test2));
+    try assertEq(@as(usize, 10), part1(test3));
+    try assertEq(@as(usize, 27), part1(test4));
+    try assertEq(@as(usize, 78), part1(test5));
+    try assertEq(@as(usize, 438), part1(test6));
+    try assertEq(@as(usize, 1836), part1(test7));
+    try assertEq(@as(usize, 260), part1(inp));
 
-    assertEq(@as(usize, 175594), part2(test1));
-    assertEq(@as(usize, 2578), part2(test2));
-    assertEq(@as(usize, 3544142), part2(test3));
-    assertEq(@as(usize, 261214), part2(test4));
-    assertEq(@as(usize, 6895259), part2(test5));
-    assertEq(@as(usize, 18), part2(test6));
-    assertEq(@as(usize, 362), part2(test7));
-    assertEq(@as(usize, 950), part2(inp));
+    try assertEq(@as(usize, 175594), part2(test1));
+    try assertEq(@as(usize, 2578), part2(test2));
+    try assertEq(@as(usize, 3544142), part2(test3));
+    try assertEq(@as(usize, 261214), part2(test4));
+    try assertEq(@as(usize, 6895259), part2(test5));
+    try assertEq(@as(usize, 18), part2(test6));
+    try assertEq(@as(usize, 362), part2(test7));
+    try assertEq(@as(usize, 950), part2(inp));
 }
 
 pub fn main() anyerror!void {
