@@ -175,3 +175,9 @@ aoc-rs: $(RS_SRC)
 aoc-rs-rel: $(RS_SRC)
 	cd ../../aoc-rust && cargo build --release --bin "$(notdir $@)" && \
 	  mv $(RS_REL) $@
+
+template:
+	@if [ ! -e Makefile ]; then ln -s ../../template/Makefile . ; fi ; \
+	for f in aoc.pl main.go main_test.go ; do \
+	  if [ ! -e $$f ]; then cp -p ../../template/$$f . ; fi \
+	done
