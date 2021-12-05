@@ -12,7 +12,7 @@ import (
 
 func InputFile() string {
 	if len(os.Args) < 2 {
-		panic(fmt.Sprintf("Usage: %s <input.txt>\n", os.Args[0]))
+		return "input.txt"
 	}
 	return os.Args[1]
 }
@@ -43,7 +43,7 @@ func ReadFileChunks(file string) []string {
 }
 
 func ReadInputChunks() []string {
-	return ReadFileChunks(InputFile())
+	return ReadChunks(InputFile())
 }
 
 // ReadLines slurps input from a file into a list of lines (strings)

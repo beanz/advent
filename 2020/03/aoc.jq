@@ -15,4 +15,4 @@ def trees(m;x;y;sx;sy;a):
    $p1,
    ([[1,1], [5,1], [7,1], [1,2]] |
     reduce .[] as $s ($p1; . * trees($m;0;0;$s[0];$s[1];0)))
-  ] | "Part 1: \(.[0])\nPart 2: \(.[1])"'
+  ] | "Part 1: \(.[0])\nPart 2: \(.[1])"' < ${1:-input.txt}

@@ -2,9 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
-
 	"gonum.org/v1/gonum/stat/combin"
 
 	. "github.com/beanz/advent/lib-go"
@@ -48,10 +45,7 @@ func (r *Report) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := ReadLines(os.Args[1])
+	lines := ReadInputLines()
 	report := NewReport(lines)
 	//fmt.Print("%s\n", report)
 	fmt.Printf("Part 1: %d\n", report.Solve(2020, 2))

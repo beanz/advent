@@ -10,4 +10,4 @@ exec jq -r --slurp --raw-input '
       | (. | min) as $min
       | (($min+$max)*(1+$max-$min)/2) as $expected_sum
       | (. | reduce .[] as $e ($expected_sum; . - $e))
-    ] | "Part 1: \(.[0])\nPart 2: \(.[1])"'
+    ] | "Part 1: \(.[0])\nPart 2: \(.[1])"' < ${1:-input.txt}

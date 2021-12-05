@@ -22,4 +22,4 @@ def vpid(v): v | match("^\\d{9}$");
                     vhcl(.hcl) and
                     vecl(.ecl) and
                     vpid(.pid))]| length)
-    ] | "Part 1: \(.[0])\nPart 2: \(.[1])"'
+    ] | "Part 1: \(.[0])\nPart 2: \(.[1])"' < ${1:-input.txt}

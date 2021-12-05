@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -53,7 +51,7 @@ func NewHexTileFromString(moves string) HexTile {
 			q++
 			r++
 		default:
-			log.Fatalf("invalid hex tile moves: %s\n", s)
+			panic(fmt.Sprintf("invalid hex tile moves: %s\n", s))
 		}
 	}
 	return NewHexTile(q, r)
@@ -149,11 +147,7 @@ func (g *Game) Part2(days int) int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-
-	lines := ReadLines(os.Args[1])
+	lines := ReadInputLines()
 	g := NewGame(lines)
 	//HexTileNeighbourOffsets()
 	fmt.Printf("Part 1: %d\n", g.Part1())

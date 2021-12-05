@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
@@ -167,7 +165,8 @@ func (w *Water) FindRightTile(t *Tile) *Tile {
 			tn = tn.Rotate()
 		}
 	}
-	log.Fatalf("Failed to find next tile orientation\n%s\n\n%s\n", t, tn)
+	panic(fmt.Sprintf("Failed to find next tile orientation\n%s\n\n%s\n",
+		t, tn))
 	return nil
 }
 
@@ -195,8 +194,8 @@ func (w *Water) FindBottomTile(t *Tile) *Tile {
 			tn = tn.Rotate()
 		}
 	}
-	log.Fatalf("Failed to find next tile orientation %d <-> %d\n",
-		t.Num(), tn.Num())
+	panic(fmt.Sprintf("Failed to find next tile orientation %d <-> %d\n",
+		t.Num(), tn.Num()))
 	return nil
 }
 
@@ -327,10 +326,7 @@ func (w *Water) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	chunks := ReadChunks(os.Args[1])
+	chunks := ReadInputChunks()
 	fmt.Printf("Part 1: %d\n", NewWater(chunks).Part1())
 	fmt.Printf("Part 2: %d\n", NewWater(chunks).Part2())
 }

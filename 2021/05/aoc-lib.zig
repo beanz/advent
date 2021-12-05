@@ -1,1 +1,1 @@
-../../2020/lib/aoc-lib.zig
+../../lib-zig/aoc-lib.zig

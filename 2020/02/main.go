@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"regexp"
 	"strconv"
 
@@ -71,10 +69,7 @@ func (db *DB) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := ReadLines(os.Args[1])
+	lines := ReadInputLines()
 	db := NewDB(lines)
 	fmt.Printf("Part 1: %d\n", db.Part1())
 	fmt.Printf("Part 2: %d\n", db.Part2())

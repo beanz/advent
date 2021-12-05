@@ -13,4 +13,4 @@ exec jq -r --slurp --raw-input '
         | reduce $l[] as $ch ([]; . + [($a | map(.|select(. == $ch))|length)|select(. == $n)])|length
         )|add
      )
-    ] | "Part 1: \(.[0])\nPart 2: \(.[1])"'
+    ] | "Part 1: \(.[0])\nPart 2: \(.[1])"' < ${1:-input.txt}

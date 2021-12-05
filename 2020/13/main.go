@@ -2,32 +2,23 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math"
 	"math/big"
-	"os"
-	"strconv"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
 
 func Part1(lines []string) int {
-	dt, err := strconv.Atoi(lines[0])
-	if err != nil {
-		log.Fatalf("invalid departure time %s\n", lines[0])
-	}
+	dt := MustParseInt(lines[0])
 	min := math.MaxInt32
 	minBus := -1
 	for _, ts := range strings.Split(lines[1], ",") {
 		if ts == "x" {
 			continue
 		}
-		t, err := strconv.Atoi(ts)
+		t := MustParseInt(ts)
 		//fmt.Printf("%d\n", t)
-		if err != nil {
-			log.Fatalf("invalid bus time %s\n", ts)
-		}
 		mt := t - (dt % t)
 		//fmt.Printf("%d\n", mt)
 		if mt < min {
@@ -50,7 +41,7 @@ func crt(a, n []*big.Int) *big.Int {
 		q.Div(p, n1)
 		z.GCD(nil, &s, n1, &q)
 		if z.Cmp(one) != 0 {
-			log.Fatalf("%d not coprime\n", n1)
+			panic(fmt.Sprintf("%d not coprime\n", n1))
 		}
 		x.Add(&x, s.Mul(a[i], s.Mul(&s, &q)))
 		x.Mod(&x, p)
@@ -66,10 +57,7 @@ func Part2(lines []string) *big.Int {
 		if ts == "x" {
 			continue
 		}
-		t, err := strconv.Atoi(ts)
-		if err != nil {
-			log.Fatalf("invalid bus time %s\n", ts)
-		}
+		t := MustParseInt(ts)
 		a = append(a, big.NewInt(int64(t-i)))
 		n = append(n, big.NewInt(int64(t)))
 	}
@@ -77,10 +65,7 @@ func Part2(lines []string) *big.Int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := ReadLines(os.Args[1])
+	lines := ReadInputLines()
 	fmt.Printf("Part 1: %d\n", Part1(lines))
 	fmt.Printf("Part 2: %d\n", Part2(lines))
 }

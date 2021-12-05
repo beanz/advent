@@ -32,6 +32,5 @@ var inp = readInputInts()
 inp.sort()
 inp.add(inp[inp.len-1] + 3)
 
-echo inp.count(6)
 echo "Part 1: ", part1(inp)
 echo "Part 2: ", part2(inp)

@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"sort"
 	"strings"
 
@@ -125,10 +123,7 @@ func (m *Menu) Part2() string {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := ReadLines(os.Args[1])
+	lines := ReadInputLines()
 	fmt.Printf("Part 1: %d\n", NewMenu(lines).Part1())
 	fmt.Printf("Part 2: %s\n", NewMenu(lines).Part2())
 }

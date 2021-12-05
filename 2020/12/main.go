@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"strconv"
 	"time"
 
@@ -29,7 +27,7 @@ func NewNav(lines []string) *Nav {
 	for _, line := range lines {
 		n, err := strconv.Atoi(line[1:])
 		if err != nil {
-			log.Fatalf("Invalid line: %s\n", line)
+			panic(fmt.Sprintf("Invalid line: %s\n", line))
 		}
 		inst = append(inst, NavInst{act: line[0], val: n})
 	}
@@ -172,10 +170,7 @@ func (n *Nav) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := ReadLines(os.Args[1])
+	lines := ReadInputLines()
 	p1 := NewNav(lines).Part1()
 	p2 := NewNav(lines).Part2()
 	fmt.Printf("Part 1: %d\n", p1)

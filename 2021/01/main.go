@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -55,14 +53,10 @@ func (g *Game) Fun(n int) int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-
-	nums := ReadIntsFromFile(os.Args[1])
+	nums := ReadInputInts()
 	g := NewGame(nums)
 	fmt.Printf("Part 1: %d\n", g.Part1())
-	fmt.Printf("Part 1: %d\n", g.Fun(1))
 	fmt.Printf("Part 2: %d\n", g.Part2())
-	fmt.Printf("Part 2: %d\n", g.Fun(3))
+	//fmt.Printf("Part 1: %d\n", g.Fun(1))
+	//fmt.Printf("Part 2: %d\n", g.Fun(3))
 }

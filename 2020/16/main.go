@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
@@ -138,13 +136,10 @@ func (m *Mess) Solve() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := ReadLines(os.Args[1])
+	lines := ReadInputLines()
 	m := NewMess(lines)
 	fmt.Printf("Part 1: %d\n", m.error)
-	if os.Args[1] == "test2.txt" {
+	if InputFile() == "test2.txt" {
 		m.onlyDepart = false
 	}
 	fmt.Printf("Part 2: %d\n", m.Solve())

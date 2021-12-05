@@ -91,7 +91,7 @@ type Game struct {
 func NewGame(in []int) *Game {
 	return &Game{
 		enemy: Fighter{hp: in[0], damage: in[1], armor: in[2]},
-		shop:  NewShop(ReadFileChunks("shop.txt")),
+		shop:  NewShop(ReadChunks("shop.txt")),
 	}
 }
 

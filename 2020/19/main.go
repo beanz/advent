@@ -2,10 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"regexp"
-	"strconv"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
@@ -34,10 +31,7 @@ func NewMatcher(in []string) *Matcher {
 	r := make(map[int]Rule, len(rs))
 	for _, l := range rs {
 		s := strings.Split(l, ": ")
-		n, err := strconv.Atoi(s[0])
-		if err != nil {
-			log.Fatalf("invalid rule %s\n", l)
-		}
+		n := MustParseInt(s[0])
 		if s[1][0] == '"' {
 			r[n] = Rule{ch: string(s[1][1])}
 		} else {
@@ -126,10 +120,7 @@ func (m *Matcher) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	chunks := ReadChunks(os.Args[1])
+	chunks := ReadInputChunks()
 	fmt.Printf("Part 1: %d\n", NewMatcher(chunks).Part1())
 	fmt.Printf("Part 2: %d\n", NewMatcher(chunks).Part2())
 }

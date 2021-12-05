@@ -2,10 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"log"
 	"math"
-	"os"
 
 	aoc "github.com/beanz/advent/lib-go"
 )
@@ -54,13 +51,7 @@ func Part2(numbers []int64, part1 int64) int64 {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	b, err := ioutil.ReadFile(os.Args[1])
-	if err != nil {
-		log.Fatalf("Failed to read input, %s: %s\n", os.Args[1], err)
-	}
+	b := aoc.ReadInputBytes()
 	numbers := aoc.SimpleReadInt64s(string(b))
 	part1 := Part1(numbers, 25)
 	fmt.Printf("Part 1: %d\n", part1)

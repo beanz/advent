@@ -12,4 +12,4 @@ exec jq -L../../lib-jq -r --slurp --raw-input '
       [.[0], .[1]+$cmd[1], .[2], .[3]+$cmd[1]]
     end)) |
     { p1 : (.[0] * .[1]), p2 : (.[0] * .[2]) }
-    | "Part 1: \(.p1)\nPart 2: \(.p2)"'
+    | "Part 1: \(.p1)\nPart 2: \(.p2)"' < ${1:-input.txt}

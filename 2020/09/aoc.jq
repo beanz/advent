@@ -32,4 +32,4 @@ def part2(in): in[0] as $l | in[1] as $tgt | in[2] as $s | in[3] as $e |
   [ ., '$pre' ] |
   [.[0], part1(.)] |
   [.[1], part2([.[0], .[1], 0, 2, ((.[0])[0:2]|add)])] |
-  "Part 1: \(.[0])\nPart 2: \(.[1])"'
+  "Part 1: \(.[0])\nPart 2: \(.[1])"' < ${1:-input.txt}

@@ -30,7 +30,6 @@ method part1(s: Nav) : int {.base.} =
     of 'W':
       pos.moveX(-1 * m.n)
     of 'L':
-      echo m.n
       for _ in countup(1, m.n div 90):
         dir.ccw()
     of 'R':
@@ -38,7 +37,6 @@ method part1(s: Nav) : int {.base.} =
         dir.cw()
     else:
       raise newException(ValueError, "invalid movement type: " & m.ch)
-    echo pos, " ", dir
   return pos.manhattan
 
 method part2(s: Nav) : int {.base.} =
@@ -57,7 +55,6 @@ method part2(s: Nav) : int {.base.} =
     of 'W':
       wp.moveX(-1 * m.n)
     of 'L':
-      echo m.n
       for _ in countup(1, m.n div 90):
         wp.ccw()
     of 'R':
@@ -65,7 +62,6 @@ method part2(s: Nav) : int {.base.} =
         wp.cw()
     else:
       raise newException(ValueError, "invalid movement type: " & m.ch)
-    echo pos, " ", wp
   return pos.manhattan
 
 var inp = readInputLines()

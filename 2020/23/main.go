@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -128,10 +126,7 @@ func (g *Game) Part2(moves uint, max uint) uint {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	line := ReadLines(os.Args[1])[0]
+	line := ReadInputLines()[0]
 	fmt.Printf("Part 1: %s\n", NewGame(line).Part1(100))
 	fmt.Printf("Part 2: %d\n", NewGame(line).Part2(10000000, 1000000))
 }

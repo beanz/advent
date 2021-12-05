@@ -50,4 +50,4 @@ def run2(code):
   | [
      run({code: ., acc: 0, ip: 0, seen: []})[0],
      run2(.)[0]
-    ] | "Part 1: \(.[0])\nPart 2: \(.[1])"'
+    ] | "Part 1: \(.[0])\nPart 2: \(.[1])"' < ${1:-input.txt}

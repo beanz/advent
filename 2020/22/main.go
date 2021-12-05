@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -126,10 +124,7 @@ func (g *Game) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	chunks := ReadChunks(os.Args[1])
+	chunks := ReadInputChunks()
 	g := NewGame(chunks)
 	fmt.Printf("Part 1: %d\n", g.Part1())
 	fmt.Printf("Part 2: %d\n", g.Part2())

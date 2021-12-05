@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -83,10 +81,7 @@ func (bs *BS) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := ReadLines(os.Args[1])
+	lines := ReadInputLines()
 	bs := NewBS(lines)
 	fmt.Printf("Part 1: %d\n", bs.Part1())
 	fmt.Printf("Part 2: %d\n", bs.Part2())

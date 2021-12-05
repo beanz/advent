@@ -2,9 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
-	"log"
-	"os"
 	"sort"
 
 	aoc "github.com/beanz/advent/lib-go"
@@ -50,14 +47,7 @@ func Part2(numbers []int) int64 {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	b, err := ioutil.ReadFile(os.Args[1])
-	if err != nil {
-		log.Fatalf("Failed to read input, %s: %s\n", os.Args[1], err)
-	}
-	numbers := aoc.SimpleReadInts(string(b))
+	numbers := aoc.ReadInputInts()
 	sort.Ints(numbers)
 
 	fmt.Printf("Part 1: %d\n", Part1(numbers))
