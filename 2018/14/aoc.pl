@@ -9,8 +9,8 @@ use constant {
   ORD0 => ord('0'),
 };
 
-my @i = <>;
-chomp @i;
+my $file = shift // "input.txt";
+my @i = @{read_lines($file)};
 
 my $r = $i[0];
 my $end = $i[1];

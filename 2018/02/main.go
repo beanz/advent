@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
@@ -54,10 +52,7 @@ func Part2(lines []string) string {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := ReadLines(os.Args[1])
+	lines := ReadInputLines()
 	fmt.Printf("Part 1: %d\n", Part1(lines))
 	fmt.Printf("Part 2: %s\n", Part2(lines))
 }

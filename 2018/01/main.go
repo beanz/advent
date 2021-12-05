@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -37,10 +35,7 @@ func ReadInput(file string) []int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	changes := ReadInput(os.Args[1])
+	changes := ReadInput(InputFile())
 	fmt.Printf("Part 1: %d\n", Part1(changes))
 	fmt.Printf("Part 2: %d\n", Part2(changes))
 }

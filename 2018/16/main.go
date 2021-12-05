@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
-	// "math"
-	"os"
+	"io/ioutil"
 	"regexp"
-	//"sort"
 	"strconv"
 	"strings"
+
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Op struct {
@@ -290,23 +289,16 @@ func play2(g *Game) int {
 			}
 		}
 	}
-	s := " "
+	s := ""
 	for i := 0; i < 16; i++ {
 		s += " " + solution[i]
-		if i == 7 {
-			s += "\n "
-		}
 	}
-	fmt.Printf("Solution:\n%s\n", s)
+	fmt.Printf("Part 1b:\n%s\n", s)
 	return run(g, solution)
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	input := os.Args[1]
-	game, err := readInput(input)
+	game, err := readInput(InputFile())
 	if err != nil {
 		log.Fatalf("error reading input: %s\n", err)
 	}

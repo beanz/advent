@@ -5,11 +5,12 @@ import (
 	"io/ioutil"
 	"log"
 	"math"
-	"os"
 	//"regexp"
 	//"sort"
 	"strconv"
 	"strings"
+
+	. "github.com/beanz/advent/lib-go"
 )
 
 type Star struct {
@@ -123,11 +124,7 @@ func (g *Game) Part1() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	input := os.Args[1]
-	game, err := readInput(input)
+	game, err := readInput(InputFile())
 	if err != nil {
 		log.Fatalf("error reading input: %s\n", err)
 	}

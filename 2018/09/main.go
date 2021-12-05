@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
-	"strconv"
+
+	. "github.com/beanz/advent/lib-go"
 )
 
 func playMarbles(players, marbles int) int {
@@ -73,10 +72,7 @@ func playMarblesFaster(players, marbles int) int {
 }
 
 func main() {
-	if len(os.Args) < 3 {
-		log.Fatalf("Usage: %s <players> <marbles>\n", os.Args[0])
-	}
-	players, _ := strconv.Atoi(os.Args[1])
-	marbles, _ := strconv.Atoi(os.Args[2])
+	ints := SimpleReadInts(ReadInputLines()[0])
+	players, marbles := ints[0], ints[1]
 	fmt.Printf("%d", playMarblesFaster(players, marbles))
 }

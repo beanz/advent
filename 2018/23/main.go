@@ -5,11 +5,12 @@ import (
 	"io/ioutil"
 	"log"
 	"math"
-	"os"
 	"regexp"
 	//"sort"
 	"strconv"
 	"strings"
+
+	aoc "github.com/beanz/advent/lib-go"
 )
 
 type Point struct {
@@ -121,7 +122,7 @@ func readGame(input string) *Game {
 		}
 
 	}
-	fmt.Printf("Parsed %d bots\n", len(bots))
+	//fmt.Printf("Parsed %d bots\n", len(bots))
 	return &Game{bots, bb, botMax}
 }
 
@@ -195,7 +196,7 @@ func best(sg *Game, bb BoundingBox) []Point {
 	best := []Point{}
 	min := len(sg.bots) - 1
 	for z := bb.min.z; z <= bb.max.z; z++ {
-		fmt.Printf("z=%d   \r", z)
+		//fmt.Printf("z=%d   \r", z)
 		for y := bb.min.y; y <= bb.max.y; y++ {
 			for x := bb.min.x; x <= bb.max.x; x++ {
 				cur := Point{x, y, z}
@@ -203,14 +204,14 @@ func best(sg *Game, bb BoundingBox) []Point {
 				if missingCount == min {
 					best = append(best, cur)
 				} else if missingCount < min {
-					fmt.Printf("New best %s, missing %d\n", cur, missingCount)
+					//fmt.Printf("New best %s, missing %d\n", cur, missingCount)
 					best = []Point{cur}
 					min = missingCount
 				}
 			}
 		}
 	}
-	fmt.Printf("\n")
+	//fmt.Printf("\n")
 	return best
 }
 
@@ -245,7 +246,7 @@ func newBoundingBox(best []Point) BoundingBox {
 
 func play2(g *Game) int {
 	scale := startingScale(g)
-	fmt.Printf("Starting scale: %d\n", scale)
+	//fmt.Printf("Starting scale: %d\n", scale)
 	scaled := scaleGame(g, scale)
 	bb := BoundingBox{
 		Point{scaled.bb.min.x, scaled.bb.min.y, scaled.bb.min.z},
@@ -253,7 +254,7 @@ func play2(g *Game) int {
 	}
 	var bestest []Point
 	for {
-		fmt.Printf("Scale: %d, Bounding box: %s\n", scale, bb)
+		//fmt.Printf("Scale: %d, Bounding box: %s\n", scale, bb)
 		bestest = best(scaled, bb)
 		if scale == 1 {
 			break
@@ -266,15 +267,11 @@ func play2(g *Game) int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	input := os.Args[1]
-	game, err := readInput(input)
+	game, err := readInput(aoc.InputFile())
 	if err != nil {
 		log.Fatalf("error reading input: %s\n", err)
 	}
-	fmt.Printf("%s\n", game)
+	//fmt.Printf("%s\n", game)
 
 	res := play1(game)
 	fmt.Printf("Part 1: %d\n", res)

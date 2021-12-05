@@ -7,8 +7,8 @@ use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
 use constant { VX => 2, VY => 3 };
 
-my @i = <>;
-chomp @i;
+my $file = shift // "input.txt";
+my @i = @{read_lines($file)};
 
 my @p;
 for (@i) {

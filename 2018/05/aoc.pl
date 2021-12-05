@@ -6,8 +6,8 @@ use lib "../../lib-perl";
 use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
 
-my @i = <>;
-chomp @i;
+my $file = shift // "input.txt";
+my @i = @{read_lines($file)};
 
 $_=$i[0];
 my $r = join "|", map{ $_.uc$_, (uc$_).$_ } 'a' .. 'z';

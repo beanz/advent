@@ -14,8 +14,8 @@ use constant
    POS => 0,
    BC => 1,
   };
-my @i = <>;
-chomp @i;
+my $file = shift // "input.txt";
+my @i = @{read_lines($file)};
 
 my $i = parse_input(\@i);
 #dd([$i],[qw/i/]);

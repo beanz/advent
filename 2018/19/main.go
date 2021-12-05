@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -33,11 +31,8 @@ func Part2(e *ElfProg2018) int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	e := NewElfProg2018(ReadLines(os.Args[1]))
+	e := NewElfProg2018(ReadInputLines())
 	fmt.Printf("Part 1: %d\n", Part1(e))
-	e = NewElfProg2018(ReadLines(os.Args[1]))
+	e = NewElfProg2018(ReadInputLines())
 	fmt.Printf("Part 2: %d\n", Part2(e))
 }

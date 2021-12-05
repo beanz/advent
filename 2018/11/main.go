@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math"
-	"os"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -87,6 +85,27 @@ func (sq Square) String() string {
 	return fmt.Sprintf("%d,%d,%d", sq.p.X, sq.p.Y, sq.size)
 }
 
+func (g *Game) Part1() string {
+	var maxSq Square
+	max := math.MinInt64
+	size := 3
+	for x := g.gridMin.X; x <= g.gridMax.X-size+1; x++ {
+		if g.debug {
+			fmt.Printf("%3d %3d\r", size, x)
+		}
+		for y := g.gridMin.Y; y <= g.gridMax.Y-size+1; y++ {
+			sq := Square{Point{x, y}, size}
+			l := g.LevelSquare(sq)
+			if l > max {
+				max = l
+				maxSq = sq
+			}
+		}
+	}
+
+	return fmt.Sprintf("%d,%d", maxSq.p.X, maxSq.p.Y)
+}
+
 func (g *Game) Solve() (Square, int) {
 	var maxSq Square
 	max := math.MinInt64
@@ -110,10 +129,9 @@ func (g *Game) Solve() (Square, int) {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	g := NewGame(ReadLines(os.Args[1]))
-	sq, level := g.Solve()
-	fmt.Printf("Result: %s (%d)\n", sq, level)
+	g := NewGame(ReadInputLines())
+	fmt.Printf("Part 1: %s\n", g.Part1())
+	g = NewGame(ReadInputLines())
+	sq, _ := g.Solve()
+	fmt.Printf("Part 2: %s\n", sq)
 }

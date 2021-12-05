@@ -9,8 +9,8 @@ use constant {
   P => 2,
 };
 
-my @i = <>;
-chomp @i;
+my $file = shift // "input.txt";
+my @i = @{read_lines($file)};
 
 sub k {
   sprintf '%03d:%03d', reverse @_;
@@ -375,7 +375,7 @@ EOF
 }
 
 my $res = calc(\@i);
-print "Part 1: $res == 220480\n";
+print "Part 1: $res\n";
 die "failed\n" unless ($res == 220480);
 
 sub calc2 {
@@ -399,5 +399,5 @@ if (TEST) {
   }
 }
 $res = calc2(\@i);
-print "Part 2: @$res == 53576 20\n";
+print "Part 2: $res->[0]\n";
 die "failed\n" unless ($res->[0] == 53576 && $res->[1] == 20);

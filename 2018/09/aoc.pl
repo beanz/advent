@@ -6,8 +6,8 @@ use lib "../../lib-perl";
 use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
 
-my @i = <>;
-chomp @i;
+my $file = shift // "input.txt";
+my @i = @{read_lines($file)};
 
 $i[0] =~ /(\d+) players; last marble is worth (\d+) points/;
 my ($players, $worth) = ($1, $2);

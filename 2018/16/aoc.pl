@@ -7,9 +7,11 @@ use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
 
 my $input;
+my $file = shift // "input.txt";
+open my $fh, '<', $file or die "Failed to open $file: $!\n";
 {
   local $/;
-  $input = <>;
+  $input = <$fh>;
 }
 
 sub parse_output_chunk {
