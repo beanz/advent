@@ -2,10 +2,7 @@ require "aoc-lib.cr"
 
 lines = readinputlines()
 bits = lines[0].size-1
-print bits, "\n"
 inp = lines.map do |x| x.to_i(2) end
-
-print inp, "\n"
 
 def part1(inp, bits)
   total = inp.size
@@ -55,7 +52,7 @@ def reduce(inp, bits, most)
     if total == 1
       return match(inp, val, mask)
     end
-    if (c*2 > total) == most
+    if (c*2 >= total) == most
       val += bit
     end
     mask += bit
