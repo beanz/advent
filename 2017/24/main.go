@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"sort"
 
 	. "github.com/beanz/advent/lib-go"
@@ -131,10 +129,7 @@ func (g *Game) Play() (int, int) {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := ReadLines(os.Args[1])
+	lines := ReadInputLines()
 	best, longest := NewGame(lines).Play()
 	fmt.Printf("Part 1: %d\n", best)
 	fmt.Printf("Part 2: %d\n", longest)

@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"sort"
 	"strings"
 
@@ -70,10 +68,6 @@ func Part2(lines []string) int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-
-	fmt.Printf("Part 1: %d\n", Part1(ReadLines(os.Args[1])))
-	fmt.Printf("Part 2: %d\n", Part2(ReadLines(os.Args[1])))
+	fmt.Printf("Part 1: %d\n", Part1(ReadInputLines()))
+	fmt.Printf("Part 2: %d\n", Part2(ReadInputLines()))
 }

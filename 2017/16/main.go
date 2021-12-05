@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -86,8 +85,8 @@ func (d *Dance) Part2() string {
 	for c := 1; c <= end; c++ {
 		if (c % 1000) == 0 {
 			now := time.Now()
-			elapsed := now.Sub(start)
-			fmt.Fprintf(os.Stderr, "%d %s\r", c, elapsed)
+			_ = now.Sub(start)
+			//fmt.Fprintf(os.Stderr, "%d %s\r", c, elapsed)
 			start = now
 		}
 		d.Part1()
@@ -107,11 +106,8 @@ func (d *Dance) Part2() string {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	dance := ReadDance("abcdefghijklmnop", ReadLines(os.Args[1])[0])
+	dance := ReadDance("abcdefghijklmnop", ReadLines(InputFile())[0])
 	fmt.Printf("Part 1: %s\n", dance.Part1())
-	dance = ReadDance("abcdefghijklmnop", ReadLines(os.Args[1])[0])
+	dance = ReadDance("abcdefghijklmnop", ReadLines(InputFile())[0])
 	fmt.Printf("Part 2: %s\n", dance.Part2())
 }

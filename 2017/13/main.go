@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -57,10 +55,7 @@ func (fw *Firewall) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	fw := NewFirewall(ReadLines(os.Args[1]))
+	fw := NewFirewall(ReadLines(InputFile()))
 	fmt.Printf("Part 1: %d\n", fw.Part1())
 	fmt.Printf("Part 2: %d\n", fw.Part2())
 }

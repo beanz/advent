@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math/bits"
-	"os"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
@@ -162,10 +160,7 @@ func Part2(m *Map) int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input>\n", os.Args[0])
-	}
-	ones, m := Part1(os.Args[1])
+	ones, m := Part1(InputFile())
 	fmt.Printf("Part 1: %d\n", ones)
 	fmt.Printf("Part 2: %d\n", Part2(m))
 }

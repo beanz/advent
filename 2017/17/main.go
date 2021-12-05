@@ -2,9 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
-	"strconv"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
@@ -81,13 +78,7 @@ func (g *Game) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input>\n", os.Args[0])
-	}
-	steps, err := strconv.Atoi(os.Args[1])
-	if err != nil {
-		log.Fatalf("Invalid integer input %s: %s", os.Args[1], err)
-	}
+	steps := ReadInputInts()[0]
 	fmt.Printf("Part 1: %d\n", NewGame(steps).Part1(2017))
 	fmt.Printf("Part 2: %d\n", NewGame(steps).Part2())
 }

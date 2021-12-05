@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
@@ -106,9 +104,6 @@ func (r *Rope) Part2() string {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	fmt.Printf("Part 1: %d\n", NewRope(os.Args[1], 256).Part1())
-	fmt.Printf("Part 2: %s\n", NewPart2Rope(os.Args[1], 256).Part2())
+	fmt.Printf("Part 1: %d\n", NewRope(InputFile(), 256).Part1())
+	fmt.Printf("Part 2: %s\n", NewPart2Rope(InputFile(), 256).Part2())
 }

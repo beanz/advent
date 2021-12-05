@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -122,11 +121,8 @@ func (t *Tower) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	tower := NewTower(os.Args[1])
+	tower := NewTower(InputFile())
 	fmt.Printf("Part 1: %s\n", tower.Part1())
-	tower = NewTower(os.Args[1])
+	tower = NewTower(InputFile())
 	fmt.Printf("Part 2: %d\n", tower.Part2())
 }

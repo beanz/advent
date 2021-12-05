@@ -2,9 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
-	"strconv"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -90,14 +87,7 @@ func Part2(in int) int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	input, err := strconv.Atoi(os.Args[1])
-	if err != nil {
-		log.Fatalf("Invalid integer input %s: %s\n", os.Args[1], err)
-	}
-
+	input := ReadInputInts()[0]
 	res := Part1(input)
 	fmt.Printf("Part 1: %d\n", res)
 

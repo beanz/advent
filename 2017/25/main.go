@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"os"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
@@ -137,9 +136,6 @@ func (g *Game) Part1() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	chunks := ReadChunks(os.Args[1])
+	chunks := ReadInputChunks()
 	fmt.Printf("Part 1: %d\n", NewGame(chunks).Part1())
 }

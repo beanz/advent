@@ -6,7 +6,11 @@ use lib "../../lib-perl";
 use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
 
-my $i = <>;
+my $file = shift // "input.txt";
+open my $fh, '<', $file or die "failed to open $file: $!\n";
+
+my $i = <$fh>;
+close $fh;
 chomp $i;
 
 $_ = $i;

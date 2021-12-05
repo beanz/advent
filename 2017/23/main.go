@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 
@@ -115,9 +114,6 @@ func (g *Game) Part1() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	lines := aoc.ReadLines(os.Args[1])
+	lines := aoc.ReadInputLines()
 	fmt.Printf("Part 1: %d\n", NewGame(lines).Part1())
 }

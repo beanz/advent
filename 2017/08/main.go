@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math"
-	"os"
+	"log"
 	"strconv"
 	"strings"
 
@@ -82,9 +81,6 @@ func (c *CPU) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	fmt.Printf("Part 1: %d\n", NewCPU(os.Args[1]).Part1())
-	fmt.Printf("Part 2: %d\n", NewCPU(os.Args[1]).Part2())
+	fmt.Printf("Part 1: %d\n", NewCPU(InputFile()).Part1())
+	fmt.Printf("Part 2: %d\n", NewCPU(InputFile()).Part2())
 }
