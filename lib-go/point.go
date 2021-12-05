@@ -63,6 +63,21 @@ func (p Point) Size() float64 {
 	return math.Sqrt(float64(p.X)*float64(p.X) + float64(p.Y)*float64(p.Y))
 }
 
+func (p *Point) Norm(o *Point) *Point {
+	r := Point{0,0}
+	if p.X > o.X {
+		r.X = -1
+	} else if p.X < o.X {
+		r.X = 1
+	}
+	if p.Y > o.Y {
+		r.Y = -1
+	} else if p.Y < o.Y {
+		r.Y = 1
+	}
+	return &r
+}
+
 type Point3D struct {
 	X, Y, Z int
 }
@@ -78,4 +93,33 @@ func (p Point3D) ManhattanDistance(o Point3D) int {
 func (p Point3D) Size() float64 {
 	return math.Sqrt(float64(p.X)*float64(p.X) +
 		float64(p.Y)*float64(p.Y) + float64(p.Z)*float64(p.Z))
+}
+
+type PointPair struct {
+	P1 *Point
+	P2 *Point
+}
+
+func (pp* PointPair) String() string {
+	return fmt.Sprintf("%s -> %s\n", pp.P1, pp.P2)
+}
+
+func (pp* PointPair) Norm() *Point {
+	return pp.P1.Norm(pp.P2)
+}
+
+func ReadFilePointPairs(file string) []*PointPair {
+	lints := ReadFileIntLines(file)
+	pp := make([]*PointPair, len(lints))
+	for i, ints := range lints {
+		pp[i] = &PointPair{
+			P1: &Point{X: ints[0], Y: ints[1]},
+			P2: &Point{X: ints[2], Y: ints[3]},
+		}
+	}
+	return pp
+}
+
+func ReadInputPointPairs() []*PointPair {
+	return ReadFilePointPairs(InputFile())
 }

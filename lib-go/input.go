@@ -73,6 +73,19 @@ func ReadIntsFromFile(file string) []int {
 	return SimpleReadInts(string(b))
 }
 
+func ReadFileIntLines(file string) [][]int {
+	inp := ReadFileLines(file)
+	lints := make([][]int, len(inp))
+	for i, l := range inp {
+		lints[i] = SimpleReadInts(l)
+	}
+	return lints
+}
+
+func ReadInputIntLines() [][]int {
+	return ReadFileIntLines(InputFile())
+}
+
 func ReadChunks(file string) []string {
 	b, err := ioutil.ReadFile(file)
 	if err != nil {
