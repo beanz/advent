@@ -11,7 +11,7 @@ NIM=$(HOME)/Tmp/nim-1.4.2/bin/nim
 
 ifneq (,$(wildcard main.go))
 ALL += aoc-go
-CLEAN += aoc-go
+CLEAN += aoc-go gocpu.out cover.out
 HYPERFINE += aoc-go
 endif
 ifneq (,$(wildcard aoc.pl))
@@ -20,12 +20,18 @@ HYPERFINE += aoc.pl
 endif
 ifneq (,$(wildcard aoc.zig))
 ALL += aoc-zig
-CLEAN += aoc-zig
+CLEAN += aoc-zig aoc-zig-rel aoc-lib.zig zig-cpu.svg
+CLEAN_DIR += zig-cache
 HYPERFINE += aoc-zig-rel
+endif
+ifneq (,$(wildcard aoc.d))
+ALL += aoc-d
+CLEAN += aoc-d aoc-d.o aoc-d-rel aoc-d-rel.o
+HYPERFINE += aoc-d-rel
 endif
 ifneq (,$(wildcard aoc.cr))
 ALL += aoc-cr
-CLEAN += aoc-cr
+CLEAN += aoc-cr aoc-cr-rel cr-cpu.svg
 HYPERFINE += aoc-cr-rel
 endif
 ifneq (,$(wildcard aoc.nim))
@@ -41,28 +47,28 @@ endif
 #endif
 
 # TODO: fix rust builds
-#RS_SRC=../../aoc-rust/src/bin/aoc-$(YEAR)-$(DAY).rs
-#RS_BIN=$(subst src/bin,target/release,${RS_SRC:.rs=})
-#RS_REL=$(subst src/bin,target/debug,${RS_SRC:.rs=})
-#ifneq (,$(wildcard $(RS_SRC)))
-#ALL += aoc-rs
-#CLEAN += aoc-rs
-#HYPERFINE += aoc-rs-rel
-#endif
+RS_SRC=../../aoc-rust/src/bin/aoc-$(YEAR)-$(DAY).rs
+RS_BIN=$(subst src/bin,target/debug,${RS_SRC:.rs=})
+RS_REL=$(subst src/bin,target/release,${RS_SRC:.rs=})
+ifneq (,$(wildcard $(RS_SRC)))
+ALL += aoc-rs
+CLEAN += aoc-rs
+HYPERFINE += aoc-rs-rel
+endif
+
 ifneq (,$(wildcard aoc.jq))
 ALL += aoc.jq
 endif
 TIMES=$(addsuffix -time,${ALL})
 
-EXTRA=aoc-gccgo aoc-zig-rel gocpu.out aoc-cr-rel cr-cpu.svg \
-  zig-cpu.svg perf.data perf.data.old
+EXTRA=aoc-gccgo out.perf-folded perf.data perf.data.old
 FG_HOME=$(HOME)/git/github/brendangregg/FlameGraph
 
 all: input.txt ${ALL}
 
 clean:
-	-rm -f ${CLEAN} $(notdir $(CURDIR)).test ${EXTRA}
-	-rm -rf aoc-lib.zig zig-cache nytprof nytprof.out _Inline
+	-rm -f ${CLEAN} $(notdir $(CURDIR)).test ${EXTRA} *.err *.log *.chk
+	-rm -rf ${CLEAN_DIR} nytprof nytprof.out _Inline
 	-find . -name '*~' -print0 |xargs -0 rm -f
 
 times: input.txt ${TIMES}
@@ -102,8 +108,14 @@ aoc-lib.zig: ../../lib-zig/aoc-lib.zig
 aoc-zig: aoc.zig aoc-lib.zig
 	zig build-exe --name $@ $<
 
-aoc-zig-rel: aoc.zig
+aoc-zig-rel: aoc.zig aoc-lib.zig
 	zig build-exe -O ReleaseSmall --name $@ $<
+
+aoc-d: aoc.d
+	dmd -J. -of=$@ $<
+
+aoc-d-rel: aoc.d
+	dmd -release -boundscheck=off -O -J. -of=$@ $<
 
 aoc-go: main.go
 	go build -o $@ $<
@@ -169,12 +181,15 @@ check: ${ALL}
 	echo
 
 aoc-rs: $(RS_SRC)
-	echo $(RS_SRC) && cd ../../aoc-rust && cargo build --bin "$(notdir $@)" && \
-	  mv $(RS_BIN) $@
+	( cd ../../aoc-rust && \
+	  cargo build --bin "$(basename $(notdir $<))" ) && \
+	mv $(RS_BIN) $@
 
 aoc-rs-rel: $(RS_SRC)
-	cd ../../aoc-rust && cargo build --release --bin "$(notdir $@)" && \
-	  mv $(RS_REL) $@
+	( cd ../../aoc-rust && \
+	  cargo build --release --bin "$(basename $(notdir $<))" ) && \
+	mv $(RS_BIN) $@
+
 
 template:
 	@if [ ! -e Makefile ]; then ln -s ../../template/Makefile . ; fi ; \
