@@ -78,41 +78,41 @@ func Sum64(ints ...int64) int64 {
 	return s
 }
 
-func MinInt(a int, b ...int) int {
-	min := a
-	for _, v := range b {
-		if v < a {
-			min = v
+func MinInt(a ...int) int {
+	min := a[0]
+	for i := 1; i < len(a); i++ {
+		if a[i] < min {
+			min = a[i]
 		}
 	}
 	return min
 }
 
-func MaxInt(a int, b ...int) int {
-	max := a
-	for _, v := range b {
-		if v > a {
-			max = v
+func MaxInt(a ...int) int {
+	max := a[0]
+	for i := 1; i < len(a); i++ {
+		if a[i] > max {
+			max = a[i]
 		}
 	}
 	return max
 }
 
-func MinInt64(a int64, b ...int64) int64 {
-	min := a
-	for _, v := range b {
-		if v < a {
-			min = v
+func MinInt64(a ...int64) int64 {
+	min := a[0]
+	for i := 1; i < len(a); i++ {
+		if a[i] < min {
+			min = a[i]
 		}
 	}
 	return min
 }
 
-func MaxInt64(a int64, b ...int64) int64 {
-	max := a
-	for _, v := range b {
-		if v > a {
-			max = v
+func MaxInt64(a ...int64) int64 {
+	max := a[0]
+	for i := 1; i < len(a); i++ {
+		if a[i] > max {
+			max = a[i]
 		}
 	}
 	return max
