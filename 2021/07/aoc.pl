@@ -11,18 +11,15 @@ $; = $" = ',';
 my $file = shift // "input.txt";
 my $reader = \&read_stuff;
 my $i = $reader->($file);
-my $i2 = $reader->($file);
 
 sub read_stuff {
   my $file = shift;
-  return [split/,/, read_lines($file)->[0] ];
+  return [sort { $a <=> $b } split/,/, read_lines($file)->[0] ];
 }
 
 sub fuel {
   my ($a, $b) = @_;
-  my $f = abs($a - $b);
-  #  print "$a to $b: $f\n";
-  return $f;
+  return abs($a - $b);
 }
 
 sub fuel2 {
@@ -31,19 +28,37 @@ sub fuel2 {
   return $f*($f+1)/2;
 }
 
-sub min_fuel {
-  my ($in, $fn) = @_;
-  return min(map {
-    my $v = $_; sum(map { $fn->($v, $_) } @$in)
-  } min(@$in)..max(@$in));
+sub calc {
+  my ($in) = @_;
+  return sum(map { fuel($in->[int(@$in/2)], $_) } @$in);
 }
 
-sub calc {
-  return min_fuel($_[0], \&fuel);
+sub min_fuel {
+  my ($in) = @_;
+  my ($min, $max) = ($in->[0], $in->[-1]);
+  my ($mean) = int(sum(@$in)/@$in);
+  my $res = sum(map { fuel2($mean, $_) } @$in);
+  for (my $p = $mean-1; $p >= $min; $p--) {
+    my $c = sum(map { fuel2($p, $_) } @$in);
+    if ($c < $res) {
+      $res = $c;
+    } else {
+      last;
+    }
+  }
+  for (my $p = $mean+1; $p <= $max; $p++) {
+    my $c = sum(map { fuel2($p, $_) } @$in);
+    if ($c < $res) {
+      $res = $c;
+    } else {
+      last;
+    }
+  }
+  return $res;
 }
 
 sub calc2 {
-  return min_fuel($_[0], \&fuel2);
+  return min_fuel($_[0]);
 }
 
 testPart1() if (TEST);
@@ -52,12 +67,13 @@ print "Part 1: ", calc($i), "\n";
 
 testPart2() if (TEST);
 
-print "Part 2: ", calc2($i2), "\n";
+print "Part 2: ", calc2($i), "\n";
 
 sub testPart1 {
   my @test_cases =
     (
      [ "test1.txt", 37 ],
+     [ "test2.txt", 251456 ],
      [ "input.txt", 336701 ],
     );
   for my $tc (@test_cases) {
@@ -80,6 +96,7 @@ sub testPart2 {
   my @test_cases =
     (
      [ "test1.txt", 168 ],
+     [ "test2.txt", 42005848 ],
      [ "input.txt", 95167302 ],
     );
   for my $tc (@test_cases) {
