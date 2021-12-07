@@ -37,31 +37,17 @@ func FuelSum2(p int, inp []int) int {
 }
 
 func MinFuel2(inp []int) int {
-	min := inp[0]
-	max := inp[len(inp)-1]
 	mean := inp[0]
 	for i := 1; i < len(inp); i++ {
 		mean += inp[i]
 	}
 	mean /= len(inp)
-	res := FuelSum2(mean, inp)
-	for p := mean - 1; p >= min; p-- {
-		c := FuelSum2(p, inp)
-		if res > c {
-			res = c
-		} else {
-			break
-		}
+	min := FuelSum2(mean, inp)
+	c := FuelSum2(mean+1, inp)
+	if min > c {
+		min = c
 	}
-	for p := mean + 1; p <= max; p++ {
-		c := FuelSum2(p, inp)
-		if res > c {
-			res = c
-		} else {
-			break
-		}
-	}
-	return res
+	return min
 }
 
 func Calc(inp []int) (int, int) {

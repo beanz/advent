@@ -35,26 +35,8 @@ sub calc {
 
 sub min_fuel {
   my ($in) = @_;
-  my ($min, $max) = ($in->[0], $in->[-1]);
   my ($mean) = int(sum(@$in)/@$in);
-  my $res = sum(map { fuel2($mean, $_) } @$in);
-  for (my $p = $mean-1; $p >= $min; $p--) {
-    my $c = sum(map { fuel2($p, $_) } @$in);
-    if ($c < $res) {
-      $res = $c;
-    } else {
-      last;
-    }
-  }
-  for (my $p = $mean+1; $p <= $max; $p++) {
-    my $c = sum(map { fuel2($p, $_) } @$in);
-    if ($c < $res) {
-      $res = $c;
-    } else {
-      last;
-    }
-  }
-  return $res;
+  return min(map { my $v = $mean+$_; sum(map { fuel2($v, $_) } @$in) } 0..1);
 }
 
 sub calc2 {

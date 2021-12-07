@@ -57,35 +57,18 @@ fn fuelsum2(p: usize, inp: []const usize) usize {
 }
 
 fn part2(inp: []usize) usize {
-    sort.sort(usize, inp, {}, usizeLessThan);
-    var min = inp[0];
-    var max = inp[inp.len - 1];
     var mean = inp[0];
     var i: usize = 1;
     while (i < inp.len) : (i += 1) {
         mean += inp[i];
     }
     mean /= inp.len;
-    var res = fuelsum2(mean, inp);
-    var p: usize = mean - 1;
-    while (p >= min) : (p -= 1) {
-        var c = fuelsum2(p, inp);
-        if (res > c) {
-            res = c;
-        } else {
-            break;
-        }
+    var min = fuelsum2(mean, inp);
+    var c = fuelsum2(mean + 1, inp);
+    if (min > c) {
+        min = c;
     }
-    p = mean + 1;
-    while (p <= max) : (p += 1) {
-        var c = fuelsum2(p, inp);
-        if (res > c) {
-            res = c;
-        } else {
-            break;
-        }
-    }
-    return res;
+    return min;
 }
 
 test "part2" {
