@@ -91,7 +91,7 @@ pub fn DEBUG() i32 {
     return i;
 }
 
-pub fn readInts(inp: anytype, T: type) []const T {
+pub fn readInts(inp: anytype, T: type) []T {
     var ints = ArrayList(T).init(alloc);
     var it = std.mem.tokenize(inp, ":, \n");
     while (it.next()) |is| {
@@ -106,8 +106,8 @@ pub fn readInts(inp: anytype, T: type) []const T {
     return ints.toOwnedSlice();
 }
 
-pub fn readLines(inp: anytype) [][]const u8 {
-    var lines = ArrayList([]const u8).init(alloc);
+pub fn readLines(inp: anytype) [][]u8 {
+    var lines = ArrayList([]u8).init(alloc);
     var lit = std.mem.split(inp, "\n");
     while (lit.next()) |line| {
         if (line.len == 0) {
@@ -118,8 +118,8 @@ pub fn readLines(inp: anytype) [][]const u8 {
     return lines.toOwnedSlice();
 }
 
-pub fn readChunks(inp: anytype) [][]const u8 {
-    var chunks = ArrayList([]const u8).init(alloc);
+pub fn readChunks(inp: anytype) [][]u8 {
+    var chunks = ArrayList([]u8).init(alloc);
     var cit = std.mem.split(inp, "\n\n");
     while (cit.next()) |chunk| {
         if (chunk.len == 0) {
