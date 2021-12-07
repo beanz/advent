@@ -1,27 +1,49 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	. "github.com/beanz/advent/lib-go"
 )
 
 type TestCase struct {
 	file string
-	fn   func(int, int) int
-	ans  int
+	p1   int
+	p2   int
 }
 
-func TestMinFuel(t *testing.T) {
+func TestCalc(t *testing.T) {
 	tests := []TestCase{
-		{"test1.txt", Fuel, 37},
-		{"input.txt", Fuel, 336701},
-		{"test1.txt", Fuel2, 168},
-		{"input.txt", Fuel2, 95167302},
+		{"test1.txt", 37, 168},
+		{"test2.txt", 251456, 42005848},
+		{"input.txt", 336701, 95167302},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.ans,
-			MinFuel(ReadIntsFromFile(tc.file), tc.fn), tc.file)
+		p1, p2 := Calc(ReadIntsFromFile(tc.file))
+		assert.Equal(t, tc.p1, p1, tc.file+" part 1")
+		assert.Equal(t, tc.p2, p2, tc.file+" part 2")
 	}
+}
+
+var res int
+
+func BenchmarkCalc(b *testing.B) {
+	inp := ReadIntsFromFile("input.txt")
+	r := 0
+	for n := 0; n < b.N; n++ {
+		p1, p2 := Calc(inp)
+		r += p1 + p2
+	}
+	res = r
+}
+func BenchmarkCalcRandom(b *testing.B) {
+	inp := ReadIntsFromFile("test2.txt")
+	r := 0
+	for n := 0; n < b.N; n++ {
+		p1, p2 := Calc(inp)
+		r += p1 + p2
+	}
+	res = r
 }
