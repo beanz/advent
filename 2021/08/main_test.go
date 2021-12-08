@@ -12,17 +12,18 @@ type TestCase struct {
 	ans  int
 }
 
-func TestStringPerm(t *testing.T) {
+func TestSegments(t *testing.T) {
 	tests := []struct {
-		perm string
-		ans  string
+		s   string
+		ans int
 	}{
-		{perm: "abcdefg", ans: "abcdefgabc"},
-		{perm: "bcdefga", ans: "bcdefgabcd"},
+		{s: "a", ans: 1},
+		{s: "b", ans: 2},
+		{s: "c", ans: 4},
+		{s: "abcdefg", ans: 127},
 	}
 	for _, tc := range tests {
-		p := StringPerm{tc.perm}
-		assert.Equal(t, tc.ans, p.Permute("abcdefgabc"))
+		assert.Equal(t, tc.ans, int(NewSegments(tc.s)))
 	}
 }
 
@@ -46,32 +47,7 @@ func TestDigit(t *testing.T) {
 		{s: "gedca", ans: 2},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.ans, Digit(tc.s))
-	}
-}
-
-func TestStringPerms(t *testing.T) {
-	tests := []struct {
-		s   string
-		len int
-		ans []StringPerm
-	}{
-		{
-			s: "ab", len: 2,
-			ans: []StringPerm{StringPerm{"ba"}, StringPerm{"ab"}},
-		},
-		{
-			s: "abc", len: 6,
-			ans: []StringPerm{StringPerm{s: "cba"}, StringPerm{s: "bca"}, StringPerm{s: "bac"}, StringPerm{s: "cab"}, StringPerm{s: "acb"}, StringPerm{s: "abc"}},
-		},
-		{s: "abcdefg", len: 5040},
-	}
-	for _, tc := range tests {
-		sp := StringPerms(tc.s)
-		assert.Equal(t, tc.len, len(sp))
-		if tc.len < 100 {
-			assert.Equal(t, tc.ans, sp)
-		}
+		assert.Equal(t, tc.ans, NewSegments(tc.s).Digit())
 	}
 }
 

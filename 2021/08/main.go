@@ -2,75 +2,32 @@ package main
 
 import (
 	"fmt"
-	"sort"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
 
-type StringPerm struct {
-	s string
-}
+type Segments int
 
-func (sp *StringPerm) Permute(s string) string {
-	r := ""
+func NewSegments(s string) (res Segments) {
 	for _, ch := range s {
-		r += string(sp.s[byte(ch)-byte('a')])
+		res |= (1 << (byte(ch) - byte('a')))
 	}
-	return r
-}
-func Factorial(n int) int {
-	res := 1
-	for i := 2; i <= n; i++ {
-		res *= i
-	}
-	return res
+	return
 }
 
-func join(pre []byte, c byte) []StringPerm {
-	res := []StringPerm{}
-	for i := 0; i <= len(pre); i++ {
-		res = append(res,
-			StringPerm{string(pre[:i]) + string(c) + string(pre[i:])})
-	}
-	return res
-}
-
-func StringPerms(s string) []StringPerm {
-	// TODO fix this
-	// res := make([]StringPerm, 0, Factorial(len(s)))
-	// perms := NewPerms(len(s))
-	// for perm := perms.Get(); !perms.Done(); perm = perms.Next() {
-	// 	s := ""
-	// 	for _, v := range perm {
-	// 		s += string('a' + byte(v))
-	// 	}
-	// 	fmt.Println(s)
-	// 	res = append(res, StringPerm{s})
-	// }
-	var aux func([]byte, []StringPerm) []StringPerm
-	aux = func(s []byte, p []StringPerm) []StringPerm {
-		if len(s) == 0 {
-			return p
+func (s Segments) String() string {
+	var sb strings.Builder
+	for i, bit := 0, 1; i < 7; i, bit = i+1, bit<<1 {
+		if (int(s) & bit) != 0 {
+			sb.WriteByte(byte('a') + byte(i))
 		}
-		res := []StringPerm{}
-		for _, v := range p {
-			res = append(res, join([]byte(v.s), s[0])...)
-		}
-		return aux(s[1:], res)
 	}
-	res := []byte(s)
-	return aux(res[1:], []StringPerm{StringPerm{string(s[0])}})
+	return sb.String()
 }
 
-func CanonicalDigit(w string) string {
-	s := strings.Split(w, "")
-	sort.Strings(s)
-	return strings.Join(s, "")
-}
-
-func Digit(w string) int {
-	switch CanonicalDigit(w) {
+func (s Segments) Digit() int {
+	switch s.String() {
 	case "abcefg":
 		return 0
 	case "cf":
@@ -97,8 +54,12 @@ func Digit(w string) int {
 }
 
 type Entry struct {
-	pattern []string
-	output  []string
+	pattern      []Segments
+	output       []Segments
+	patternOfLen map[int][]Segments
+	outputOfLen  map[int][]Segments
+	line         string
+	no           int
 }
 
 type Notes struct {
@@ -108,11 +69,31 @@ type Notes struct {
 
 func NewNotes(in []string) *Notes {
 	entries := make([]Entry, 0, len(in))
-	for _, l := range in {
+	for i, l := range in {
 		s := strings.Split(l, " | ")
 		p := strings.Split(s[0], " ")
 		o := strings.Split(s[1], " ")
-		entries = append(entries, Entry{pattern: p, output: o})
+		pl := make(map[int][]Segments)
+		ps := make([]Segments, len(p))
+		for i := range p {
+			ps[i] = NewSegments(p[i])
+			pl[len(p[i])] = append(pl[len(p[i])], ps[i])
+		}
+		ol := make(map[int][]Segments)
+		os := make([]Segments, len(o))
+		for i := range o {
+			os[i] = NewSegments(o[i])
+			ol[len(o[i])] = append(ol[len(o[i])], os[i])
+		}
+		entries = append(entries,
+			Entry{
+				pattern:      ps,
+				patternOfLen: pl,
+				output:       os,
+				outputOfLen:  ol,
+				line:         l,
+				no:           i,
+			})
 	}
 	return &Notes{entries, false}
 }
@@ -120,38 +101,74 @@ func NewNotes(in []string) *Notes {
 func (n *Notes) Part1() int {
 	c := 0
 	for _, e := range n.entries {
-		for _, o := range e.output {
-			if len(o) == 2 || len(o) == 3 || len(o) == 4 || len(o) == 7 {
-				c++
+		for l, v := range e.outputOfLen {
+			if l == 2 || l == 3 || l == 4 || l == 7 {
+				c += len(v)
 			}
 		}
 	}
 	return c
 }
 
-func (n *Notes) Part2() int {
-	perms := StringPerms("abcdefg")
-	c := 0
-ENTRY:
-	for _, e := range n.entries {
-	PERM:
-		for _, p := range perms {
-			for _, w := range e.pattern {
-				if Digit(p.Permute(w)) == -1 {
-					continue PERM
-				}
-			}
-			n := 0
-			for _, w := range e.output {
-				d := Digit(p.Permute(w))
-				if d == -1 {
-					panic(p.s + ": " + w)
-				}
-				n = n*10 + d
-			}
-			c += n
-			continue ENTRY
+type SegmentPerm []Segments
+
+func NewPerm(entry Entry) SegmentPerm {
+	pl := entry.patternOfLen
+	cf := pl[2][0]      // 1
+	acf := pl[3][0]     // 7
+	bcdf := pl[4][0]    // 4
+	abcdefg := pl[7][0] // 8
+	a := acf ^ cf
+	abfg := pl[6][0] ^ pl[6][1] ^ pl[6][2]
+	cde := abcdefg ^ abfg
+	c := cde & cf
+	f := cf ^ c
+	bg := abfg ^ (f | a)
+	b := bcdf & bg
+	g := b ^ bg
+	de := cde ^ c
+	d := bcdf & de
+	e := de ^ d
+	return SegmentPerm([]Segments{a, b, c, d, e, f, g})
+}
+
+func (sp SegmentPerm) Permute(s Segments) Segments {
+	res := 0
+	for i, v := range sp {
+		if (s & v) != 0 {
+			res |= 1 << i
 		}
+	}
+	return Segments(res)
+}
+
+func (sp SegmentPerm) String() string {
+	var sb strings.Builder
+	for i := 0; i < 7; i++ {
+		sb.WriteString(sp[i].String())
+		sb.WriteRune('>')
+		sb.WriteByte(byte('a') + byte(i))
+		if i == 6 {
+			break
+		}
+		sb.WriteRune(' ')
+	}
+	return sb.String()
+}
+
+func (n *Notes) Part2() int {
+	c := 0
+	for _, e := range n.entries {
+		sp := NewPerm(e)
+		n := 0
+		for _, w := range e.output {
+			d := sp.Permute(w).Digit()
+			if d == -1 {
+				panic(fmt.Sprintf("%d %s: invalid digit %s", e.no, e.line, w))
+			}
+			n = n*10 + d
+		}
+		c += n
 	}
 	return c
 }
