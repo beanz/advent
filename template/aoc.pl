@@ -5,7 +5,8 @@ use v5.10;
 use lib "../../lib-perl";
 no warnings 'portable';
 use AoC::Helpers qw/:all/;
-use Carp::Always qw/carp verbose/;
+#use Carp::Always qw/carp verbose/;
+#use Algorithm::Combinatorics qw/permutations combinations/;
 $; = $" = ',';
 
 my $file = shift // "input.txt";
