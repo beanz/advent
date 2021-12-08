@@ -26,7 +26,7 @@ use constant
 
 use Data::Dumper;
 use Storable qw/dclone/;
-use List::Util qw/min max minstr maxstr sum product pairs all any/;
+use List::Util qw/min max minstr maxstr sum product pairs all any reduce/;
 use List::MoreUtils qw/zip pairwise minmax/;
 use POSIX qw/ceil floor round/;
 
@@ -42,7 +42,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
 
                                     dclone
                                     min max minstr maxstr sum product pairs
-                                    all any
+                                    all any reduce
                                     zip pairwise
                                     minmax
                                     minmax_xy
