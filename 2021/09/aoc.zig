@@ -60,14 +60,18 @@ fn lava(in: []const u8) anyerror!P1P2 {
     var ch: u8 = '0';
     var sizes = std.ArrayList(usize).init(alloc);
     defer sizes.deinit();
+    //print("\n", .{}) catch unreachable;
+    var min: usize = 0;
     while (ch < '9') : (ch += 1) {
-        var i: usize = 0;
-        while (indexOf(l, ch, i)) |p| {
+        var p: usize = 0;
+        while (p < l.len - 1) : (p += 1) {
+            if (l[p] != ch) {
+                continue;
+            }
             p1 += 1 + ch - '0';
             var size: usize = try flood(l, p, w, h);
             //print("{},{} s={}\n", .{ p % w, p / w, size }) catch unreachable;
             try sizes.append(size);
-            i = p + 1;
         }
     }
     std.sort.sort(usize, sizes.items, {}, usizeLessThan);
