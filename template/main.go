@@ -1,15 +1,19 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Game struct {
 	i int
 }
 
-func NewGame(in []string) *Game {
+func NewGame(in []byte) *Game {
 	return &Game{1}
 }
 
@@ -22,8 +26,9 @@ func (g *Game) Part2() int {
 }
 
 func main() {
-	inp := ReadInputLines()
-	g := NewGame(inp)
+	g := NewGame(InputBytes(input))
 	fmt.Printf("Part 1: %d\n", g.Part1())
 	fmt.Printf("Part 2: %d\n", g.Part2())
 }
+
+var benchmark = false
