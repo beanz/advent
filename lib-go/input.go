@@ -10,6 +10,20 @@ import (
 	"unicode"
 )
 
+func InputString(embedded string) string {
+	if len(os.Args) < 2 || os.Args[1][0] == '-' {
+		return embedded
+	}
+	return string(ReadFileBytes(os.Args[1]))
+}
+
+func InputBytes(embedded []byte) []byte {
+	if len(os.Args) < 2 || os.Args[1][0] == '-' {
+		return embedded
+	}
+	return ReadFileBytes(os.Args[1])
+}
+
 func InputFile() string {
 	if len(os.Args) < 2 {
 		return "input.txt"

@@ -1,31 +1,36 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"sort"
+	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
 
+//go:embed input.txt
+var input []byte
+
 type LavaTubes struct {
-	m    *IntMap
+	m    *ByteMap
 	lows []int
 }
 
-func NewLavaTubes(in []string) *LavaTubes {
-	return &LavaTubes{NewIntMap(in), []int{}}
+func NewLavaTubes(in []byte) *LavaTubes {
+	return &LavaTubes{NewByteMap(in), []int{}}
 }
 
 func (l *LavaTubes) Part1() int {
 	risk := 0
-	l.m.Visit(func(i, v int) {
+	l.m.Visit(func(i int, v byte) {
 		for _, nb := range l.m.Neighbours(i) {
 			if l.m.Get(nb) <= v {
 				return
 			}
 		}
 		l.lows = append(l.lows, i)
-		risk += v + 1
+		risk += int(v-byte('0')) + 1
 	})
 	return risk
 }
@@ -33,21 +38,18 @@ func (l *LavaTubes) Part1() int {
 func (l *LavaTubes) Part2() int {
 	sizes := make([]int, 0, len(l.lows))
 	for _, li := range l.lows {
-		visited := make(map[int]bool, 100)
 		size := 0
 		todo := []int{li}
 		for len(todo) > 0 {
 			i := todo[0]
 			todo = todo[1:]
-			if _, ok := visited[i]; ok {
+			if l.m.Get(i) >= '9' {
 				continue
 			}
-			visited[i] = true
+			l.m.Set(i, '9')
 			size++
 			for _, nb := range l.m.Neighbours(i) {
-				if l.m.Get(nb) < 9 {
-					todo = append(todo, nb)
-				}
+				todo = append(todo, nb)
 			}
 		}
 		sizes = append(sizes, size)
@@ -57,50 +59,63 @@ func (l *LavaTubes) Part2() int {
 }
 
 func main() {
-	inp := ReadInputLines()
-	g := NewLavaTubes(inp)
-	fmt.Printf("Part 1: %d\n", g.Part1())
-	fmt.Printf("Part 2: %d\n", g.Part2())
+	g := NewLavaTubes(InputBytes(input))
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", g.Part1())
+		fmt.Printf("Part 2: %d\n", g.Part2())
+	}
 }
 
-type IntMap struct {
-	d    []int
+type ByteMap struct {
+	d    []byte
 	w, h int
 }
 
-func NewIntMap(in []string) (i *IntMap) {
-	h := len(in)
-	w := len(in[0])
-	m := IntMap{make([]int, 0, h*w), w, h}
-	for _, l := range in {
-		for _, ch := range l {
-			m.d = append(m.d, int(byte(ch)-byte('0')))
+func NewByteMap(in []byte) (i *ByteMap) {
+	var w int
+	for i, ch := range in {
+		if ch == '\n' {
+			w = i + 1 // +1 since we are keeping the newlines
+			break
 		}
 	}
-	return &m
+	h := len(in) / w
+	return &ByteMap{in, w, h}
 }
 
-func (m *IntMap) IndexToXY(i int) (int, int) {
+func (m *ByteMap) String() string {
+	var sb strings.Builder
+	for y := 0; y < m.h; y++ {
+		sb.WriteString(string(m.d[y*m.w : (1+y)*m.w]))
+	}
+	sb.WriteString(fmt.Sprintf("%d x %d\n", m.w, m.h))
+	return sb.String()
+}
+
+func (m *ByteMap) IndexToXY(i int) (int, int) {
 	x := i % m.w
 	return x, (i - x) / m.w
 }
 
-func (m *IntMap) Contains(i int) bool {
-	x, y := m.IndexToXY(i)
-	return x >= 0 && x < m.w && y >= 0 && y < m.h
+func (m *ByteMap) Contains(i int) bool {
+	return i >= 0 && (i%m.w) < m.w-1 && i/m.w < m.h
 }
 
-func (m *IntMap) Get(i int) int {
+func (m *ByteMap) Get(i int) byte {
 	return m.d[i]
 }
 
-func (m *IntMap) Neighbours(i int) []int {
+func (m *ByteMap) Set(i int, v byte) {
+	m.d[i] = v
+}
+
+func (m *ByteMap) Neighbours(i int) []int {
 	x, y := m.IndexToXY(i)
 	res := make([]int, 0, 4)
 	if x > 0 {
 		res = append(res, i-1)
 	}
-	if x < m.w-1 {
+	if x < m.w-2 { // because we've still got newlines!
 		res = append(res, i+1)
 	}
 	if y > 0 {
@@ -112,8 +127,13 @@ func (m *IntMap) Neighbours(i int) []int {
 	return res
 }
 
-func (m *IntMap) Visit(fn func(i, v int)) {
-	for i := 0; i < m.w*m.h; i++ {
-		fn(i, m.d[i])
+func (m *ByteMap) Visit(fn func(i int, v byte)) {
+	for y := 0; y < m.h; y++ {
+		for x := 0; x < m.w-1; x++ { // -1 due to newlines
+			i := x + y*m.w
+			fn(i, m.d[i])
+		}
 	}
 }
+
+var benchmark = false
