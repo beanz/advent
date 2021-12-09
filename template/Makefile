@@ -130,6 +130,11 @@ gocpu.out: main.go
 go-prof: gocpu.out
 	go tool pprof -http=":9999" $<
 
+go-cover: main.go main_test.go
+	go test -coverprofile cover.out
+	go tool cover -html=cover.out
+	rm cover.out
+
 cr-cpu.svg: aoc-cr-rel
 	perf record -F 99 --call-graph dwarf ./$<
 	perf script | $(FG_HOME)/stackcollapse-perf.pl >out.perf-folded
