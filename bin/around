@@ -1,0 +1,27 @@
+#!/usr/bin/perl
+use warnings FATAL => 'all';
+use strict;
+use v5.10;
+use FindBin qw($Bin);
+use lib "$Bin/../lib-perl";
+no warnings 'portable';
+use AoC::Helpers qw/:all/;
+
+my $xp = shift || die "Usage: $0 x y <input.txt\n";
+my $yp = shift || die "Usage: $0 x y <input.txt\n";
+
+my @in = <>;
+@in = map { chomp; [split//] } @in;
+my $w = @{$in[0]};
+my $h = @in;
+
+for my $y (max(0, $yp-5) .. min($h-1, $yp+5)) {
+  for my $x (max(0, $xp-5) .. min($w-1, $xp+5)) {
+    my $v = $in[$y]->[$x];
+    if ($x == $xp && $y == $yp) {
+      $v = bold($v);
+    }
+    print $v;
+  }
+  print "\n";
+}
