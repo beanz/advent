@@ -7,8 +7,8 @@ use lib "$Bin/../lib-perl";
 no warnings 'portable';
 use AoC::Helpers qw/:all/;
 
-my $xp = shift || die "Usage: $0 x y <input.txt\n";
-my $yp = shift || die "Usage: $0 x y <input.txt\n";
+my $xp = shift // die "Usage: $0 x y <input.txt\n";
+my $yp = shift // die "Usage: $0 x y <input.txt\n";
 
 my @in = <>;
 @in = map { chomp; [split//] } @in;
