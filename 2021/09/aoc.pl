@@ -14,17 +14,6 @@ my $reader = \&read_dense_map;
 my $i = $reader->($file);
 my $i2 = $reader->($file);
 
-sub read_stuff {
-  my $file = shift;
-  my $in = read_lines($file);
-  my %m = ( lines => $in );
-  for my $i (0..(@$in-1)) {
-    my $l = $in->[0];
-    print "$i: $l\n";
-  }
-  return \%m;
-}
-
 use constant
   {
    RISK => 4,
@@ -72,7 +61,6 @@ sub calc2 {
     my $todo = [$r];
     while (@$todo) {
       my ($x, $y, $p) = @{shift @$todo};
-      print STDERR "$x, $y, $p\n" if DEBUG;
       next if ($vc->($x,$y));
       $c += 1;
       if ($y > 0) {
@@ -92,7 +80,7 @@ sub calc2 {
         push @$todo, [$x+1, $y, $v] if ($v < 9);
       }
     }
-    print "$c\n" if DEBUG;
+    print STDERR "$r->[0],$r->[1] s=$c\n" if DEBUG;
     push @s, $c;
   }
   @s = sort {$a <=> $b} @s;
