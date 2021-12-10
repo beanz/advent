@@ -27,8 +27,10 @@ func (g *Game) Part2() int {
 
 func main() {
 	g := NewGame(InputBytes(input))
-	fmt.Printf("Part 1: %d\n", g.Part1())
-	fmt.Printf("Part 2: %d\n", g.Part2())
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", g.Part1())
+		fmt.Printf("Part 2: %d\n", g.Part2())
+	}
 }
 
 var benchmark = false
