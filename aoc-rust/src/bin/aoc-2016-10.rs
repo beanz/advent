@@ -103,7 +103,7 @@ impl Factory {
                 };
             }
         }
-        dbg!(&out_nums);
+        //dbg!(&out_nums);
         for n in out_nums {
             f.out(n);
         }
@@ -154,7 +154,7 @@ impl Factory {
                     continue;
                 }
                 let (min, max) = self.pop(num);
-                dbg!(num, min, max);
+                //dbg!(num, min, max);
                 if self.targets == (min, max) {
                     p1 = num;
                 }

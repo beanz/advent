@@ -1,14 +1,18 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
+	aoc "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input string
 
 type Inst struct {
 	kind string
@@ -33,14 +37,6 @@ func (g *Game) String() string {
 	}
 	s += fmt.Sprintf("%d: %s", g.ip, g.inst[g.ip])
 	return s
-}
-
-func readInput(file string) *Game {
-	b, err := ioutil.ReadFile(file)
-	if err != nil {
-		log.Fatalf("File read %s failed: %s\n", file, err)
-	}
-	return readGame(string(b))
 }
 
 func readGame(input string) *Game {
@@ -133,10 +129,6 @@ func (g *Game) Part1() int {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalf("Usage: %s <input.txt>\n", os.Args[0])
-	}
-	input := os.Args[1]
-	game := readInput(input)
+	game := readGame(aoc.InputString(input))
 	fmt.Printf("Part 1: %d\n", game.Part1())
 }

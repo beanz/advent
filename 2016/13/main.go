@@ -2,11 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math/bits"
-	"os"
-	"strconv"
-	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -91,21 +87,10 @@ func (g Game) Part2() int {
 }
 
 func main() {
-	if len(os.Args) < 3 {
-		log.Fatalf("Usage: %s <input> targetx,targety\n", os.Args[0])
-	}
-	input, err := strconv.Atoi(os.Args[1])
-	if err != nil {
-		log.Fatalf("error parsing argument: %s\n", err)
-	}
-	xy := strings.Split(os.Args[2], ",")
-	x, err := strconv.Atoi(xy[0])
-	if err != nil {
-		log.Fatalf("error parsing argument: %s\n", err)
-	}
-	y, err := strconv.Atoi(xy[1])
-	if err != nil {
-		log.Fatalf("error parsing argument: %s\n", err)
+	input := ReadInputInts()[0]
+	x, y := 31, 39
+	if input == 10 {
+		x, y = 7, 4
 	}
 	game := Game{input, Point{x, y}}
 	res := game.Part1()

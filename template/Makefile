@@ -12,16 +12,19 @@ NIM=$(HOME)/Tmp/nim-1.4.2/bin/nim
 ifneq (,$(wildcard main.go))
 ALL += aoc-go
 CLEAN += aoc-go gocpu.out cover.out
+TEST += test-go
 HYPERFINE += aoc-go
 endif
 ifneq (,$(wildcard aoc.pl))
 ALL += aoc.pl
 HYPERFINE += aoc.pl
+TEST += test-pl
 endif
 ifneq (,$(wildcard aoc.zig))
 ALL += aoc-zig
 CLEAN += aoc-zig aoc-zig-rel aoc-lib.zig zig-cpu.svg
 CLEAN_DIR += zig-cache
+TEST += test-zig
 HYPERFINE += aoc-zig-rel
 endif
 ifneq (,$(wildcard aoc.d))
@@ -153,10 +156,7 @@ zig-cpu.svg: aoc-zig
 zig-prof: zig-cpu.svg
 	google-chrome $<
 
-test: ${ALL}
-	zig test aoc.zig
-	go test -v
-	AoC_TEST=2 perl aoc.pl input.txt
+test: ${TEST}
 
 test-zig: aoc-zig
 	zig test aoc.zig
@@ -193,7 +193,7 @@ aoc-rs: $(RS_SRC)
 aoc-rs-rel: $(RS_SRC)
 	( cd ../../aoc-rust && \
 	  cargo build --release --bin "$(basename $(notdir $<))" ) && \
-	mv $(RS_BIN) $@
+	mv $(RS_REL) $@
 
 
 template:

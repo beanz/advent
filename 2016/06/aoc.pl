@@ -6,10 +6,11 @@ use lib "../../lib-perl";
 use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
 
+my @i = @{read_lines(shift//"input.txt")};
+
 my %c;
 my @max;
-while (<>) {
-  chomp;
+for (@i) {
   my $i = 0;
   for my $c (split//) {
     my $count = $c{$i}->{$c}++;

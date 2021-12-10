@@ -7,8 +7,7 @@ use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
 use Digest::MD5 qw/md5_hex/;
 
-my $input = <>;
-chomp($input);
+my $input = read_lines(shift//"input.txt")->[0];
 
 my $iter = iter($input);
 my $s = "";

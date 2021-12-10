@@ -6,10 +6,10 @@ use lib "../../lib-perl";
 use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
 
+my @i = @{read_lines(shift//"input.txt")};
 my $c1 = 0;
 my $c2 = 0;
-while (<>) {
-  chomp;
+for (@i) {
   my $inside = "";
   while (s/\[([^\]]*)\]/:/) { $inside .= ":".$1 }
   $c1++ if (abba($_) && !abba($inside));

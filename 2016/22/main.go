@@ -63,34 +63,34 @@ func (g Game) Part2() int {
 	for y := 0; y < g.h; y++ {
 		for x := 0; x < g.w; x++ {
 			if x == 0 && y == 0 {
-				fmt.Print("G")
+				//fmt.Print("G")
 				continue
 			}
 			if x == g.w-1 && y == 0 {
-				fmt.Print("T")
+				//fmt.Print("T")
 				continue
 			}
 			p := Point{x, y}
 			used := g.nodes[p].used
 			if used == 0 {
 				empty = p
-				fmt.Print("_")
+				//fmt.Print("_")
 				continue
 			}
 			if used > 150 {
 				full++
-				fmt.Print("#")
+				//fmt.Print("#")
 				continue
 			}
-			fmt.Print(".")
+			//fmt.Print(".")
 		}
-		fmt.Println()
+		//fmt.Println()
 		if empty.X != -1 {
 			break
 		}
 	}
-	fmt.Printf("Empty point: %s\n", empty)
-	fmt.Printf("Width: %d\n", g.w)
+	//fmt.Printf("Empty point: %s\n", empty)
+	//fmt.Printf("Width: %d\n", g.w)
 	// steps to go around the full spaces
 	n := 1 + full - (g.w - empty.X) + full
 	// plus height plus steps to move across

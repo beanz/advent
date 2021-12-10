@@ -21,8 +21,7 @@ for my $tc (@tests) {
   die "$in => $out not $act\n" if ($out ne $act);
 }
 
-my @i = <>;
-chomp @i;
+my @i = @{read_lines(shift//"input.txt")};
 
 print "Part 1: ", length(decompress1($i[0])), "\n";
 

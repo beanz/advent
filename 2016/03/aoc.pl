@@ -6,8 +6,7 @@ use lib "../../lib-perl";
 use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
 
-my @i = <>;
-chomp @i;
+my @i = @{read_lines(shift//"input.txt")};
 
 my $i = parse_input(\@i);
 #dd([$i],[qw/i/]);

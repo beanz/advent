@@ -6,16 +6,17 @@ use lib "../../lib-perl";
 use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
 
+my $file = shift // "input.txt";
+my @i = @{read_lines($file)};
 my $w = 50;
 my $h = 6;
-if (@ARGV && $ARGV[0] =~ /test/) {
+if ($file =~ /^test/) {
   $w = 7;
   $h = 3;
 }
 
 my %s;
-while (<>) {
-  chomp;
+for (@i) {
   print $_, "\n" if DEBUG;
   if (/rect (\d+)x(\d+)/) {
     my ($rw, $rh) = ($1, $2);

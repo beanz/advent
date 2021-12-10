@@ -189,5 +189,5 @@ fn main() {
     let inp = aoc::input_lines();
     let ops = inp.iter().map(|l| Op::new(l)).collect::<Vec<Op>>();
     println!("Part 1: {}", part1(&ops, "abcdefgh"));
-    println!("Part 1: {}", part2(&ops, "fbgdceah"));
+    println!("Part 2: {}", part2(&ops, "fbgdceah"));
 }

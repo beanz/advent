@@ -269,7 +269,7 @@ func (g *Game) Part1() int {
 		}
 		visited[key] = true
 		if cur.game.Finished() {
-			fmt.Printf("Finished in %d moves\n", cur.moves)
+			//fmt.Printf("Finished in %d moves\n", cur.moves)
 			if cur.moves < best {
 				best = cur.moves
 				continue
@@ -305,14 +305,9 @@ func (g *Game) Part2() int {
 
 func main() {
 	game := readGame()
-	fmt.Printf("%s\n", game)
-
 	res := game.Part1()
 	fmt.Printf("Part 1: %d\n", res)
-	//fmt.Printf("%s\n", game)
-
 	game = readGame()
-	fmt.Printf("%s\n", game)
 	res = game.Part2()
 	fmt.Printf("Part 2: %d\n", res)
 }
