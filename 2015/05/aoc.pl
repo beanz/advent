@@ -61,8 +61,7 @@ if (TEST) {
   }
 }
 
-my @i = <>;
-chomp @i;
+my @i = @{read_lines(shift//"input.txt")};
 my $sum = sum(map { nice($_) } @i);
 print "Part 1: ", $sum, "\n";
 $sum = sum(map { nice2($_) } @i);

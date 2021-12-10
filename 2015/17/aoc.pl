@@ -10,8 +10,7 @@ use constant {
   PICKED => 1,
 };
 
-my @i = <>;
-chomp @i;
+my @i = @{read_lines(shift//"input.txt")};
 
 sub pp {
   my ($array_of_arrays) = @_;

@@ -7,8 +7,7 @@ use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
 use Algorithm::Combinatorics qw(permutations);
 
-my @i = <>;
-chomp @i;
+my @i = @{read_lines(shift//"input.txt")};
 
 sub calc {
   my ($i, $me) = @_;

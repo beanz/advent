@@ -7,8 +7,7 @@ use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
 use constant { A => 0, B => 1 };
 
-my @i = <>;
-chomp @i;
+my @i = @{read_lines(shift//"input.txt")};
 
 my $i = parse_input(\@i);
 

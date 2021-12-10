@@ -36,7 +36,7 @@ if (TEST) {
   assertEq("ribbon('1x1x10')", ribbon("1x1x10"), 14);
 }
 
-my @i = <>;
+my @i = @{read_lines(shift//"input.txt")};
 my $area = 0;
 my $ribbon = 0;
 for my $d (@i) {

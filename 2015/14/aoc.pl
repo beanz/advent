@@ -9,8 +9,7 @@ use Carp::Always qw/carp verbose/;
 my $endTime = 2503;
 $endTime = 1000 if (@ARGV && $ARGV[0] eq 'test1.txt');
 
-my @i = <>;
-chomp @i;
+my @i = @{read_lines(shift//"input.txt")};
 
 sub calc_aux {
   my ($i, $end) = @_;

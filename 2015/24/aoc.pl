@@ -14,8 +14,7 @@ use constant
    PROD => 2
   };
 
-my @i = <>;
-chomp @i;
+my @i = @{read_lines(shift//"input.txt")};
 
 my $i = parse_input(\@i);
 

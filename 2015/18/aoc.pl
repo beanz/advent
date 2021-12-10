@@ -13,8 +13,7 @@ use constant
    P2 => 3,
   };
 
-my @i = <>;
-chomp @i;
+my @i = @{read_lines(shift//"input.txt")};
 
 sub pp {
   my ($l, $m) = @_;

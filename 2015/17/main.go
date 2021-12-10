@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"math"
-	"os"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -32,9 +31,10 @@ func calc(in []int, target int) (int, int) {
 }
 
 func main() {
-	in := ReadInputInts()
+	file := InputFile()
+	in := ReadFileInts(file)
 	target := 150
-	if os.Args[1] != "input.txt" {
+	if file != "input.txt" {
 		target = 25
 	}
 	p1, p2 := calc(in, target)

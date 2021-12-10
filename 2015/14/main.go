@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"math"
-	"os"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
@@ -84,9 +83,10 @@ func Part2(in []string, endTime int) int {
 }
 
 func main() {
-	in := ReadInputLines()
+	file := InputFile()
+	in := ReadFileLines(file)
 	endTime := 1000
-	if os.Args[1] == "input.txt" {
+	if file == "input.txt" {
 		endTime = 2503
 	}
 	fmt.Printf("Part 1: %d\n", Part1(in, endTime))

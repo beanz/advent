@@ -8,8 +8,7 @@ use Carp::Always qw/carp verbose/;
 use Math::Prime::Util qw/factor/;
 use Algorithm::Combinatorics qw/combinations/;
 
-my $i = <>;
-chomp $i;
+my $i = read_lines(shift//"input.txt")->[0];
 
 sub num_presents {
   my ($house, $partB) = @_;

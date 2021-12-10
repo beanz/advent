@@ -7,8 +7,7 @@ use AoC::Helpers qw/:all/;
 use Carp::Always qw/carp verbose/;
 use Algorithm::Combinatorics qw/combinations_with_repetition/;
 
-my @i = <>;
-chomp @i;
+my @i = @{read_lines(shift//"input.txt")};
 
 my $line_re =
   qr/(.*): capacity (-?\d+), durability (-?\d+), flavor (-?\d+), texture (-?\d+), calories (-?\d+)/;

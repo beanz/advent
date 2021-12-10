@@ -60,8 +60,7 @@ if (TEST) {
 }
 
 my %l = ();
-my @i = <>;
-chomp @i;
+my @i = @{read_lines(shift//"input.txt")};
 for my $i (@i) {
   apply(\%l, $i);
 }

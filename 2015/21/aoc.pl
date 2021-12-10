@@ -14,17 +14,12 @@ use constant
    NAME => 3,
   };
 
-my $i;
-{
-  undef $/;
-  $i = <>;
-  chomp $i;
-}
+my $i = read_lines(shift//"input.txt");
 
 sub parse_input {
-  my ($i) = @_;
+  my ($in) = @_;
   my %r;
-  for my $l (split /\n/, $i) {
+  for my $l (@$in) {
     my ($n, $v) = split /: /, $l;
     $n =~ s/[^A-Z]//g;
     $r{$n} = $v;

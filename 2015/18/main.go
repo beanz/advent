@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
-
 	. "github.com/beanz/advent/lib-go"
 )
 
@@ -128,9 +126,10 @@ func (l *Life) Part2(rounds int) int {
 }
 
 func main() {
-	s := ReadInputLines()
+	file := InputFile()
+	s := ReadFileLines(file)
 	rounds := 100
-	if os.Args[1] != "input.txt" {
+	if file != "input.txt" {
 		rounds = 4
 	}
 	l := NewLife(s)

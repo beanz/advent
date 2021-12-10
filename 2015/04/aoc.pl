@@ -27,7 +27,6 @@ if (TEST) {
   assertEq("adventcoin('pqrstuv')", adventcoin('pqrstuv'), 1048970);
 }
 
-my $i = <>;
-chomp $i;
+my $i = read_lines(shift//"input.txt")->[0];
 print "Part 1: ", adventcoin($i), "\n";
 print "Part 2: ", adventcoin($i, 6), "\n";

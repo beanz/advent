@@ -54,7 +54,6 @@ if (TEST) {
   }
 }
 
-my $i = <>;
-chomp $i;
+my $i = read_lines(shift//"input.txt")->[0];
 print "Part 1: ", lfloor($i), "\n";
 print "Part 2: ", basement($i), "\n";

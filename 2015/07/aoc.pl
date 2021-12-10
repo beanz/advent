@@ -9,8 +9,7 @@ use constant {
   PART => { map { $_ => 1 } split //, ($ENV{AoC_PART} // '12') },
 };
 
-my @i = <>;
-chomp @i;
+my @i = @{read_lines(shift//"input.txt")};
 
 my %v;
 sub cw {
