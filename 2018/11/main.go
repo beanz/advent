@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Game struct {
 	serial  int
@@ -129,9 +133,16 @@ func (g *Game) Solve() (Square, int) {
 }
 
 func main() {
-	g := NewGame(ReadInputLines())
-	fmt.Printf("Part 1: %s\n", g.Part1())
-	g = NewGame(ReadInputLines())
+	g := NewGame(InputLines(input))
+	p1 := g.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %s\n", p1)
+	}
+	g = NewGame(InputLines(input))
 	sq, _ := g.Solve()
-	fmt.Printf("Part 2: %s\n", sq)
+	if !benchmark {
+		fmt.Printf("Part 2: %s\n", sq)
+	}
 }
+
+var benchmark = false

@@ -1,10 +1,9 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
-	"io/ioutil"
 	"log"
-	//"math"
 	"regexp"
 	"sort"
 	"strconv"
@@ -12,6 +11,9 @@ import (
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Units int
 
@@ -162,14 +164,6 @@ func (g *Game) String() string {
 		}
 	}
 	return s
-}
-
-func readInput(file string) (*Game, error) {
-	b, err := ioutil.ReadFile(file)
-	if err != nil {
-		return nil, err
-	}
-	return readGame(string(b)), nil
 }
 
 func parseGroup(line string, side string, num int) *Group {
@@ -400,14 +394,17 @@ func (g *Game) Part2() int {
 }
 
 func main() {
-	game, err := readInput(InputFile())
-	if err != nil {
-		log.Fatalf("error reading input: %s\n", err)
+	game := readGame(InputString(input))
+	
+	res := game.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", res)
 	}
 
-	res := game.Part1()
-	fmt.Printf("Part 1: %d\n", res)
-
 	res = game.Part2()
-	fmt.Printf("Part 2: %d\n", res)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", res)
+	}
 }
+
+var benchmark = false

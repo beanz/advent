@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func Part1(e *ElfProg2018) int {
 	c := 0
@@ -31,8 +35,16 @@ func Part2(e *ElfProg2018) int {
 }
 
 func main() {
-	e := NewElfProg2018(ReadInputLines())
-	fmt.Printf("Part 1: %d\n", Part1(e))
-	e = NewElfProg2018(ReadInputLines())
-	fmt.Printf("Part 2: %d\n", Part2(e))
+	e := NewElfProg2018(InputLines(input))
+	p1 := Part1(e)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	e = NewElfProg2018(InputLines(input))
+	p2 := Part2(e)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

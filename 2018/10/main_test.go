@@ -54,3 +54,10 @@ func TestSolve(t *testing.T) {
 `, s)
 	assert.Equal(t, 10144, time)
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

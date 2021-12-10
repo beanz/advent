@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"sort"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Game struct {
 	dep      map[string]map[string]bool
@@ -114,8 +118,16 @@ func (g *Game) Part2() int {
 }
 
 func main() {
-	g := NewGame(ReadInputLines())
-	fmt.Printf("Part 1: %s\n", g.Part1())
-	g = NewGame(ReadInputLines())
-	fmt.Printf("Part 2: %d\n", g.Part2())
+	g := NewGame(InputLines(input))
+	p1 := g.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %s\n", p1)
+	}
+	g = NewGame(InputLines(input))
+	p2 := g.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func Part1(changes []int) int {
 	s := 0
@@ -35,7 +39,15 @@ func ReadInput(file string) []int {
 }
 
 func main() {
-	changes := ReadInput(InputFile())
-	fmt.Printf("Part 1: %d\n", Part1(changes))
-	fmt.Printf("Part 2: %d\n", Part2(changes))
+	changes := Ints(InputString(input))
+	p1 := Part1(changes)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := Part2(changes)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

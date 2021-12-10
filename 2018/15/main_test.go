@@ -121,3 +121,10 @@ func TestGame7(t *testing.T) {
 	testPart1(t, l, 220480)
 	testPart2(t, l, 53576)
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

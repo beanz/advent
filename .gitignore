@@ -19,3 +19,5 @@ aoc-rust/target
 cover.out
 /.vscode
 snippet[0-9]*.txt
+/benchmarks/benchmarks.md
+/benchmarks/results

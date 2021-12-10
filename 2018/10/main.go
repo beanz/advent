@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Star struct {
 	p Point
@@ -88,8 +92,12 @@ func (g *Game) Solve() (string, int) {
 }
 
 func main() {
-	g := NewGame(ReadInputLines())
+	g := NewGame(InputLines(input))
 	s, t := g.Solve()
-	fmt.Printf("Part 1:\n%s\n", s)
-	fmt.Printf("Part 2: %d\n", t)
+	if !benchmark {
+		fmt.Printf("Part 1:\n%s\n", s)
+		fmt.Printf("Part 2: %d\n", t)
+	}
 }
+
+var benchmark = false

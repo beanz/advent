@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"sort"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Player struct {
 	x, y    int
@@ -293,11 +297,17 @@ func play2(lines []string) int {
 }
 
 func main() {
-	lines := ReadInputLines()
+	lines := InputLines(input)
 
 	res := play1(lines)
-	fmt.Printf("Part 1: %d\n", res)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", res)
+	}
 
 	res = play2(lines)
-	fmt.Printf("Part 2: %d\n", res)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", res)
+	}
 }
+
+var benchmark = false

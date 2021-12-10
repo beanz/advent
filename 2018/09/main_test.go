@@ -24,3 +24,10 @@ func TestPlayMarblesFaster(t *testing.T) {
 	assert.Equal(t, 385820, playMarblesFaster(468, 71843))
 	assert.Equal(t, 3156297594, playMarblesFaster(468, 7184300))
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

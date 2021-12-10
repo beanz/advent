@@ -128,3 +128,10 @@ Infection:
 	counts = game.Play()
 	assert.Equal(t, 139, counts["Infection"], "Infection should win")
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

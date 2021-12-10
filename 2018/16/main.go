@@ -1,15 +1,18 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"log"
-	"io/ioutil"
 	"regexp"
 	"strconv"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Op struct {
 	code int
@@ -40,14 +43,6 @@ func readInts(ints []string) ([]int, error) {
 		nums = append(nums, n)
 	}
 	return nums, nil
-}
-
-func readInput(file string) (*Game, error) {
-	b, err := ioutil.ReadFile(file)
-	if err != nil {
-		return nil, err
-	}
-	return readGame(string(b)), nil
 }
 
 func readGame(input string) *Game {
@@ -83,8 +78,8 @@ func readGame(input string) *Game {
 		}
 		program = append(program, Op{o[0], o[1], o[2], o[3]})
 	}
-	fmt.Printf("Output parsed %d output chunks\n", len(output))
-	fmt.Printf("Program parsed %d instructions\n", len(program))
+	//fmt.Printf("Output parsed %d output chunks\n", len(output))
+	//fmt.Printf("Program parsed %d instructions\n", len(program))
 	return &Game{output, program}
 }
 
@@ -293,19 +288,22 @@ func play2(g *Game) int {
 	for i := 0; i < 16; i++ {
 		s += " " + solution[i]
 	}
-	fmt.Printf("Part 1b:\n%s\n", s)
+	//fmt.Printf("Part 1b:\n%s\n", s)
 	return run(g, solution)
 }
 
 func main() {
-	game, err := readInput(InputFile())
-	if err != nil {
-		log.Fatalf("error reading input: %s\n", err)
-	}
+	game := readGame(InputString(input))
 
 	res := play1(game)
-	fmt.Printf("Part 1: %d\n", res)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", res)
+	}
 
 	res = play2(game)
-	fmt.Printf("Part 2: %d\n", res)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", res)
+	}
 }
+
+var benchmark = false

@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"log"
 	"math"
@@ -8,6 +9,9 @@ import (
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Door struct {
 	p   Point
@@ -164,8 +168,16 @@ func (g *Game) Part2(cutoff int) int {
 }
 
 func main() {
-	g := NewGame(ReadInputLines())
-	fmt.Printf("Part 1: %d\n", g.Part1())
-	g = NewGame(ReadInputLines())
-	fmt.Printf("Part 2: %d\n", g.Part2(1000))
+	g := NewGame(InputLines(input))
+	p1 := g.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	g = NewGame(InputLines(input))
+	p2 := g.Part2(1000)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

@@ -1,17 +1,18 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math"
-	//"regexp"
-	//"sort"
 	"strconv"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Star struct {
 	x, y, z, t int
@@ -59,14 +60,6 @@ func (g *Game) String() string {
 		r += fmt.Sprintf("%d: %s\n", i, c)
 	}
 	return r
-}
-
-func readInput(file string) (*Game, error) {
-	b, err := ioutil.ReadFile(file)
-	if err != nil {
-		return nil, err
-	}
-	return readGame(string(b)), nil
 }
 
 func readInts(intStrings []string) ([]int, error) {
@@ -124,11 +117,11 @@ func (g *Game) Part1() int {
 }
 
 func main() {
-	game, err := readInput(InputFile())
-	if err != nil {
-		log.Fatalf("error reading input: %s\n", err)
-	}
-
+	game := readGame(InputString(input))
 	res := game.Part1()
-	fmt.Printf("Part 1: %d\n", res)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", res)
+	}
 }
+
+var benchmark = false

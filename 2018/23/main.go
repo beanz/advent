@@ -1,17 +1,19 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"math"
 	"regexp"
-	//"sort"
 	"strconv"
 	"strings"
 
 	aoc "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Point struct {
 	x, y, z int
@@ -54,14 +56,6 @@ type Game struct {
 
 func (g *Game) String() string {
 	return fmt.Sprintf("%s #%d", g.bb, len(g.bots))
-}
-
-func readInput(file string) (*Game, error) {
-	b, err := ioutil.ReadFile(file)
-	if err != nil {
-		return nil, err
-	}
-	return readGame(string(b)), nil
 }
 
 func readGame(input string) *Game {
@@ -267,15 +261,16 @@ func play2(g *Game) int {
 }
 
 func main() {
-	game, err := readInput(aoc.InputFile())
-	if err != nil {
-		log.Fatalf("error reading input: %s\n", err)
-	}
-	//fmt.Printf("%s\n", game)
+	game := readGame(aoc.InputString(input))
 
 	res := play1(game)
-	fmt.Printf("Part 1: %d\n", res)
-
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", res)
+	}
 	res = play2(game)
-	fmt.Printf("Part 2: %d\n", res)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", res)
+	}
 }
+
+var benchmark = false

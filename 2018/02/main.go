@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func stringContainsRepeats(s string, n int) bool {
 	for i := 0; i <= len(s)-n; i++ {
@@ -52,7 +56,15 @@ func Part2(lines []string) string {
 }
 
 func main() {
-	lines := ReadInputLines()
-	fmt.Printf("Part 1: %d\n", Part1(lines))
-	fmt.Printf("Part 2: %s\n", Part2(lines))
+	lines := InputLines(input)
+	p1 := Part1(lines)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := Part2(lines)
+	if !benchmark {
+		fmt.Printf("Part 2: %s\n", p2)
+	}
 }
+
+var benchmark = false

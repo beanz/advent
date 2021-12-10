@@ -63,3 +63,10 @@ func TestSolve(t *testing.T) {
 	assert.Equal(t, "237,227,14", sq.String())
 	assert.Equal(t, 108, level)
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

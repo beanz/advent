@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func playMarbles(players, marbles int) int {
 	maxScore := 0
@@ -72,7 +76,16 @@ func playMarblesFaster(players, marbles int) int {
 }
 
 func main() {
-	ints := SimpleReadInts(ReadInputLines()[0])
+	ints := SimpleReadInts(InputLines(input)[0])
 	players, marbles := ints[0], ints[1]
-	fmt.Printf("%d", playMarblesFaster(players, marbles))
+	p1 := playMarblesFaster(players, marbles)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := playMarblesFaster(players, marbles*100)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

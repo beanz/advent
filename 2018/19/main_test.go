@@ -15,3 +15,10 @@ func TestPart1(t *testing.T) {
 func TestPart2(t *testing.T) {
 	assert.Equal(t, 18992484, Part2(NewElfProg2018(ReadLines("input.txt"))))
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

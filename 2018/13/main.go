@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"sort"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Track map[Point]byte
 
@@ -255,8 +259,14 @@ func (g *Game) Part2() string {
 }
 
 func main() {
-	g := NewGame(ReadInputLines())
-	fmt.Printf("Part1: %s\n", g.Part1())
-	g = NewGame(ReadInputLines())
-	fmt.Printf("Part2: %s\n", g.Part2())
+	g := NewGame(InputLines(input))
+	if !benchmark {
+		fmt.Printf("Part1: %s\n", g.Part1())
+	}
+	g = NewGame(InputLines(input))
+	if !benchmark {
+		fmt.Printf("Part2: %s\n", g.Part2())
+	}
 }
+
+var benchmark = false

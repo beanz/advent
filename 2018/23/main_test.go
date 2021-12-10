@@ -59,3 +59,10 @@ func TestPlay2(t *testing.T) {
 		t.Errorf("Expected point of distance 36 to be found not %d\n", res)
 	}
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}
