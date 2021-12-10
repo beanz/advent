@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Portal struct {
 	exit  Point
@@ -179,9 +183,17 @@ func (d *Donut) Part2() int {
 }
 
 func main() {
-	lines := ReadInputLines()
+	lines := InputLines(input)
 	donut := NewDonut(lines)
 	//fmt.Print("%s\n", donut)
-	fmt.Printf("Part 1: %d\n", donut.Part1())
-	fmt.Printf("Part 2: %d\n", donut.Part2())
+	p1 := donut.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := donut.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

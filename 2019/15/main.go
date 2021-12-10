@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math"
 
 	aoc "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type IntCode struct {
 	p     []int
@@ -321,9 +325,16 @@ func part2(ship *Ship) int {
 }
 
 func main() {
-	lines := aoc.ReadInputLines()
+	lines := aoc.InputLines(input)
 	p := aoc.SimpleReadInts(lines[0])
 	s := part1(p)
-	fmt.Printf("Part 1: %d\n", s.steps)
-	fmt.Printf("Part 2: %d\n", part2(s))
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", s.steps)
+	}
+	p2 := part2(s)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

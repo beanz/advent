@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Beam struct {
 	prog   []int
@@ -111,9 +115,17 @@ func (b *Beam) part2() int {
 }
 
 func main() {
-	lines := ReadInputLines()
+	lines := InputLines(input)
 	p := SimpleReadInts(lines[0])
 	beam := NewBeam(p)
-	fmt.Printf("Part 1: %d\n", beam.part1())
-	fmt.Printf("Part 2: %d\n", beam.part2())
+	p1 := beam.part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := beam.part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math"
 	"strconv"
@@ -8,6 +9,9 @@ import (
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type SearchRecord struct {
 	pos   Point
@@ -192,9 +196,17 @@ func part2(p []int, scaff *Scaffold) int {
 }
 
 func main() {
-	lines := ReadInputLines()
+	lines := InputLines(input)
 	p := SimpleReadInts(lines[0])
 	scaff := part1(p)
-	fmt.Printf("Part 1: %d\n", scaff.AlignmentSum())
-	fmt.Printf("Part 2: %d\n", part2(p, scaff))
+	p1 := scaff.AlignmentSum()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := part2(p, scaff)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

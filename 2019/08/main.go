@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func counts(s string) map[rune]int {
 	r := make(map[rune]int, 3)
@@ -52,7 +56,7 @@ func part2(line string, w, h int) string {
 }
 
 func main() {
-	line := ReadInputLines()[0]
+	line := InputLines(input)[0]
 	w := 25
 	h := 6
 	if InputFile() == "test1.txt" {
@@ -60,6 +64,14 @@ func main() {
 		h = 2
 	}
 	l := w * h
-	fmt.Printf("Part 1: %d\n", part1(line, l))
-	fmt.Printf("Part 2:\n%s", part2(line, w, h))
+	p1 := part1(line, l)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := part2(line, w, h)
+	if !benchmark {
+		fmt.Printf("Part 2:\n%s", p2)
+	}
 }
+
+var benchmark = false

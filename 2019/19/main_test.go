@@ -20,3 +20,10 @@ func TestParts(t *testing.T) {
 	beam.size = 100 - 1
 	assert.Equal(t, 8071006, beam.part2())
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func Calc1(s []uint) []uint {
 	REP := []int{0, 1, 0, -1}
@@ -102,8 +106,16 @@ func ReadUint8s(line string) []uint {
 }
 
 func main() {
-	lines := ReadInputLines()
+	lines := InputLines(input)
 	inp := ReadUint8s(lines[0])
-	fmt.Printf("Part 1: %s\n", Part1(inp, 100))
-	fmt.Printf("Part 2: %s\n", Part2(inp))
+	p1 := Part1(inp, 100)
+	if !benchmark {
+		fmt.Printf("Part 1: %s\n", p1)
+	}
+	p2 := Part2(inp)
+	if !benchmark {
+		fmt.Printf("Part 2: %s\n", p2)
+	}
 }
+
+var benchmark = false

@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math/rand"
 	"strings"
@@ -9,6 +10,9 @@ import (
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func part1(prog []int) int {
 	ic := NewIntCode(prog, []int{})
@@ -101,6 +105,11 @@ func part1(prog []int) int {
 }
 
 func main() {
-	prog := SimpleReadInts(ReadInputLines()[0])
-	fmt.Printf("Part 1: %d\n", part1(prog))
+	prog := SimpleReadInts(InputLines(input)[0])
+	p1 := part1(prog)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
 }
+
+var benchmark = false

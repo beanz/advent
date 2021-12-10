@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	aoc "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Game struct {
 	p     []int
@@ -133,11 +137,17 @@ func (g *Game) Part2() int {
 }
 
 func main() {
-	lines := aoc.ReadInputLines()
+	lines := aoc.InputLines(input)
 	p := aoc.SimpleReadInts(lines[0])
-	g := NewGame(p)
-	fmt.Printf("Part 1: %d\n", g.Part1())
+	p1 := NewGame(p).Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
 	p = aoc.SimpleReadInts(lines[0])
-	g = NewGame(p)
-	fmt.Printf("Part 2: %d\n", g.Part2())
+	p2 := NewGame(p).Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math/big"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type ShuffleKind int
 
@@ -130,9 +134,17 @@ func (g *Game) Backward(card int64, rounds int64) int64 {
 }
 
 func main() {
-	lines := ReadInputLines()
+	lines := InputLines(input)
 	g1 := NewGame(lines, 10007)
-	fmt.Printf("Part 1: %d\n", g1.Forward(2019))
+	p1 := g1.Forward(2019)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
 	g2 := NewGame(lines, 119315717514047)
-	fmt.Printf("Part 2: %d\n", g2.Backward(2020, 101741582076661))
+	p2 := g2.Backward(2020, 101741582076661)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

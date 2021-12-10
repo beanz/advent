@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math"
 	"sort"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type VisitKey struct {
 	a1, a2 Point
@@ -181,8 +185,16 @@ func (g *Game) Part2(num int) int {
 }
 
 func main() {
-	lines := ReadInputLines()
+	lines := InputLines(input)
 	g := NewGame(lines)
-	fmt.Printf("Part 1: %d\n", g.Part1())
-	fmt.Printf("Part 2: %d\n", g.Part2(200))
+	p1 := g.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := g.Part2(200)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

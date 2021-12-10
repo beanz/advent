@@ -64,3 +64,10 @@ func TestPlay(t *testing.T) {
 	assert.Equal(t, "3100786347", part1(prog))
 	assert.Equal(t, "87023", part2(prog))
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

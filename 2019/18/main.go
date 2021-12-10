@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"container/heap"
 	"fmt"
 	"math"
@@ -9,6 +10,9 @@ import (
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Rogue struct {
 	m        map[Point]rune
@@ -288,7 +292,7 @@ func (r *Rogue) part2() int {
 }
 
 func main() {
-	lines := ReadInputLines()
+	lines := InputLines(input)
 	rogue := NewRogue(lines)
 	if rogue.debug {
 		fmt.Printf("%s\n", rogue)
@@ -297,6 +301,14 @@ func main() {
 	if rogue.debug {
 		fmt.Printf("%s\n", rogue)
 	}
-	fmt.Printf("Part 1: %d\n", rogue.part1())
-	fmt.Printf("Part 2: %d\n", rogue.part2())
+	p1 := rogue.part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := rogue.part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

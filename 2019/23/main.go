@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func part1(prog []int) int {
 	ic := []*IntCode{}
@@ -78,8 +82,16 @@ func part2(prog []int) int {
 }
 
 func main() {
-	lines := ReadInputLines()
+	lines := InputLines(input)
 	prog := SimpleReadInts(lines[0]) // TOFIX: needs int64
-	fmt.Printf("Part 1: %d\n", part1(prog))
-	fmt.Printf("Part 2: %d\n", part2(prog))
+	p1 := part1(prog)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := part2(prog)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

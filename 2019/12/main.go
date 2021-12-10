@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type MoonField int
 
@@ -127,7 +131,15 @@ func (moons *Moons) Part2() int64 {
 }
 
 func main() {
-	lines := ReadInputLines()
-	fmt.Printf("Part 1: %d\n", NewMoons(lines).Part1(1000))
-	fmt.Printf("Part 2: %d\n", NewMoons(lines).Part2())
+	lines := InputLines(input)
+	p1 := NewMoons(lines).Part1(1000)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := NewMoons(lines).Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

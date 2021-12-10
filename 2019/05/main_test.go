@@ -85,3 +85,10 @@ func TestPlay(t *testing.T) {
 	prog = aoc.SimpleReadInts(aoc.ReadLines("input.txt")[0])
 	assert.Equal(t, 8834787, NewGame(prog).Part2())
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

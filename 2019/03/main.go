@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math"
 	"strconv"
@@ -8,6 +9,9 @@ import (
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Path map[Point]int
 
@@ -61,8 +65,12 @@ func Calc(lines []string) (int, int) {
 }
 
 func main() {
-	lines := ReadInputLines()
+	lines := InputLines(input)
 	dist, steps := Calc(lines)
-	fmt.Printf("Part 1: %d\n", dist)
-	fmt.Printf("Part 2: %d\n", steps)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", dist)
+		fmt.Printf("Part 2: %d\n", steps)
+	}
 }
+
+var benchmark = false
