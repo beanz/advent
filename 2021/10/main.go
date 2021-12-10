@@ -88,37 +88,53 @@ func MedianOfMedians(inp []int, n int) int {
 	if len(inp) <= 10 {
 		return SimpleMedianN(inp, n)
 	}
-
-	numSlices := (len(inp) + 4) / 5
-	meds := make([]int, numSlices)
-	for i := 0; i < numSlices; i++ {
-		start := i * 5
-		end := start + 5
-		if end > len(inp) {
-			end = len(inp)
-		}
-		sort.Ints(inp[start:end])
-		meds[i] = inp[(start+end)/2]
-	}
-	pivot := MedianOfMedians(meds, len(meds)/2)
 	lhs := make([]int, 0, len(inp))
 	equal := make([]int, 0, len(inp))
 	rhs := make([]int, 0, len(inp))
-	for i := range inp {
-		if inp[i] < pivot {
-			lhs = append(lhs, inp[i])
-		} else if inp[i] > pivot {
-			rhs = append(rhs, inp[i])
-		} else {
-			equal = append(equal, inp[i])
+	numSlices := (len(inp) + 4) / 5
+	meds := make([]int, 0, numSlices)
+	for {
+
+		numSlices = (len(inp) + 4) / 5 // redundant on first iteration
+		meds = meds[:0]
+		for i := 0; i < numSlices; i++ {
+			start := i * 5
+			end := start + 5
+			if end > len(inp) {
+				end = len(inp)
+			}
+			sort.Ints(inp[start:end])
+			meds = append(meds, inp[(start+end)/2])
 		}
+		pivot := MedianOfMedians(meds, len(meds)/2)
+		for i := range inp {
+			if inp[i] < pivot {
+				lhs = append(lhs, inp[i])
+			} else if inp[i] > pivot {
+				rhs = append(rhs, inp[i])
+			} else {
+				equal = append(equal, inp[i])
+			}
+		}
+		var next []int
+		if n < len(lhs) {
+			next = lhs
+		} else if n < len(lhs)+len(equal) {
+			return pivot
+		} else {
+			next, n = rhs, n-len(lhs)-len(equal)
+		}
+		if len(next) <= 10 {
+			return SimpleMedianN(next, n)
+		}
+		inp = inp[:0]
+		for _, v := range next {
+			inp = append(inp, v)
+		}
+		lhs = lhs[:0]
+		equal = equal[:0]
+		rhs = rhs[:0]
 	}
-	if n < len(lhs) {
-		return MedianOfMedians(lhs, n)
-	} else if n < len(lhs)+len(equal) {
-		return pivot
-	}
-	return MedianOfMedians(rhs, n-len(lhs)-len(equal))
 }
 
 func SimpleMedianN(inp []int, n int) int {

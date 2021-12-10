@@ -39,3 +39,10 @@ func TestFish(t *testing.T) {
 			fmt.Sprintf("%s x %d days", tc.file, tc.days))
 	}
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

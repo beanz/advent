@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Board struct {
 	b [][]int
@@ -95,9 +99,13 @@ func (h *Hall) Bingo() (int, int) {
 }
 
 func main() {
-	inp := ReadInputChunks()
+	inp := InputChunks(input)
 	g := NewHall(inp)
 	p1, p2 := g.Bingo()
-	fmt.Printf("Part 1: %d\n", p1)
-	fmt.Printf("Part 2: %d\n", p2)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

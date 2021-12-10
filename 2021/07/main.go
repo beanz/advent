@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"sort"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func Fuel1(a, b int) int {
 	return Abs(a - b)
@@ -100,8 +104,12 @@ func Calc(inp []int) (int, int) {
 }
 
 func main() {
-	inp := ReadInputInts()
+	inp := InputInts(input)
 	p1, p2 := Calc(inp)
-	fmt.Printf("Part 1: %d\n", p1)
-	fmt.Printf("Part 2: %d\n", p2)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

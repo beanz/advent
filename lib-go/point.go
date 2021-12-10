@@ -107,19 +107,3 @@ func (pp* PointPair) String() string {
 func (pp* PointPair) Norm() *Point {
 	return pp.P1.Norm(pp.P2)
 }
-
-func ReadFilePointPairs(file string) []*PointPair {
-	lints := ReadFileIntLines(file)
-	pp := make([]*PointPair, len(lints))
-	for i, ints := range lints {
-		pp[i] = &PointPair{
-			P1: &Point{X: ints[0], Y: ints[1]},
-			P2: &Point{X: ints[2], Y: ints[3]},
-		}
-	}
-	return pp
-}
-
-func ReadInputPointPairs() []*PointPair {
-	return ReadFilePointPairs(InputFile())
-}

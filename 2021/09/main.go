@@ -59,10 +59,18 @@ func (l *LavaTubes) Part2() int {
 }
 
 func main() {
-	g := NewLavaTubes(InputBytes(input))
+	bytes := InputBytes(input)
+	var inp []byte
+	inp = make([]byte, len(input))
+	copy(inp, bytes)
+	g := NewLavaTubes(inp)
+	p1 := g.Part1()
 	if !benchmark {
-		fmt.Printf("Part 1: %d\n", g.Part1())
-		fmt.Printf("Part 2: %d\n", g.Part2())
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := g.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
 	}
 }
 

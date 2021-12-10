@@ -1,9 +1,13 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type School struct {
 	init []int
@@ -40,8 +44,16 @@ func (s *School) Part2() int {
 }
 
 func main() {
-	inp := ReadInputInts()
+	inp := InputInts(input)
 	s := NewSchool(inp)
-	fmt.Printf("Part 1: %d\n", s.Part1())
-	fmt.Printf("Part 2: %d\n", s.Part2())
+	p1 := s.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := s.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

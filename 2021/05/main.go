@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Board struct {
 	b [][]int
@@ -24,8 +28,16 @@ type Diag struct {
 	debug bool
 }
 
-func NewDiag(in []*PointPair) *Diag {
-	return &Diag{in, false}
+func NewDiag(in []string) *Diag {
+	pp := make([]*PointPair, len(in))
+	for i, l := range in {
+		ints := Ints(l)
+		pp[i] = &PointPair{
+			P1: &Point{X: ints[0], Y: ints[1]},
+			P2: &Point{X: ints[2], Y: ints[3]},
+		}
+	}
+	return &Diag{pp, false}
 }
 
 func (d *Diag) Overlaps() (int, int) {
@@ -58,9 +70,13 @@ func (d *Diag) Overlaps() (int, int) {
 }
 
 func main() {
-	inp := ReadInputPointPairs()
+	inp := InputLines(input)
 	d := NewDiag(inp)
 	p1, p2 := d.Overlaps()
-	fmt.Printf("Part 1: %d\n", p1)
-	fmt.Printf("Part 2: %d\n", p2)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

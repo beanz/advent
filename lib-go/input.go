@@ -10,18 +10,27 @@ import (
 	"unicode"
 )
 
-func InputString(embedded string) string {
-	if len(os.Args) < 2 || os.Args[1][0] == '-' {
-		return embedded
-	}
-	return string(ReadFileBytes(os.Args[1]))
-}
-
 func InputBytes(embedded []byte) []byte {
 	if len(os.Args) < 2 || os.Args[1][0] == '-' {
 		return embedded
 	}
 	return ReadFileBytes(os.Args[1])
+}
+
+func InputString(embedded []byte) string {
+	return string(InputBytes(embedded))
+}
+
+func InputInts(embedded []byte) []int {
+	return Ints(InputString(embedded))
+}
+
+func InputLines(embedded []byte) []string {
+	return strings.Split(strings.TrimSuffix(InputString(embedded), "\n"), "\n")
+}
+
+func InputChunks(embedded []byte) []string {
+	return strings.Split(strings.TrimSuffix(InputString(embedded), "\n\n"), "\n\n")
 }
 
 func InputFile() string {

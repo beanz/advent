@@ -10,6 +10,7 @@ GO_TEST=$(sort $(wildcard ????/??/main_test.go))
 GO_BIN=$(subst /main.go,/aoc-go,${GO_SRC})
 GO_LOG=$(subst /main.go,/aoc-go.log,${GO_SRC})
 GO_ERR=$(subst /main.go,/aoc-go.err,${GO_SRC})
+GO_BENCH=$(patsubst %/main.go,benchmarks/results/%-ns,${GO_SRC})
 
 RS_SRC=$(sort $(wildcard aoc-rust/src/bin/aoc-????-??.rs))
 RS_BIN=$(subst src/bin,target/release,${RS_SRC:.rs=})
@@ -73,6 +74,19 @@ cr: ${CR_LOG} ${CR_BIN}
 
 go-build: ${GO_BIN}
 go: ${GO_LOG} ${GO_BIN}
+go-bench: ${GO_BENCH}
+
+benchmarks/README.md: benchmarks/README.template.md benchmarks/benchmarks.md
+	cat $^ > $@
+
+benchmarks/benchmarks.md: $(GO_BENCH) benchmarks/main.go
+	cd benchmarks && go run .
+
+benchmarks/results/%-ns: %/main.go
+	@mkdir -p $(@D)
+	(cd $* && go test -run=XXX -bench=BenchmarkMain . )| grep "BenchmarkMain-" | awk '{print $$3}' > $@
+
+
 
 nim-build: ${NIM_BIN}
 nim: ${NIM_LOG} ${NIM_BIN}
@@ -139,6 +153,10 @@ aoc-rust/target/release/%.log: aoc-rust/target/release/%
 	     tee $(notdir $<).log ) 2>&1 1>&3 | \
 	     tee $(notdir $<).err ) 3>&1 1>&2
 
+benchmarks/results/%.ns: %/aoc-go
+	mkdir -p $(dir $@) && \
+	( cd $(dir $<) && go test -bench . ) 2>&1 | tee >$@
+
 %/aoc.pl.log: %/aoc.pl
 	cd $(dir $@) && \
 	  ( ( ${TIME} perl aoc.pl input.txt | tee aoc.pl.log ) 2>&1 1>&3 | \
@@ -155,7 +173,8 @@ clean-perl:
 	find . -type d -name '_Inline' -print0| xargs -r -0 rm -rf
 
 clean-go:
-	rm -f ${GO_LOG} ${GO_ERR} ${GO_BIN}
+	rm -f ${GO_LOG} ${GO_ERR} ${GO_BENCH} ${GO_BIN} \
+		benchmark/results benchmarks/benchmarks.md
 
 clean-cpp:
 	rm -f ${CPP_LOG} ${CPP_ERR} ${CPP_BIN}
@@ -179,6 +198,7 @@ build2017: go2017-build zig2017-build nim2017-build cr2017-build cpp2017-build p
 build2018: go2018-build zig2018-build nim2018-build cr2018-build cpp2018-build perl2018-build
 build2019: go2019-build zig2019-build nim2019-build cr2019-build cpp2019-build perl2019-build
 build2020: go2020-build zig2020-build nim2020-build cr2020-build cpp2020-build perl2020-build
+build2021: go2021-build zig2021-build nim2021-build cr2021-build cpp2021-build perl2021-build
 
 cpp2015-build: $(filter 2015/%,${CPP_BIN})
 cpp2015: $(filter 2015/%,${CPP_LOG})
@@ -192,6 +212,8 @@ cpp2019-build: $(filter 2019/%,${CPP_BIN})
 cpp2019: $(filter 2019/%,${CPP_LOG})
 cpp2020-build: $(filter 2020/%,${CPP_BIN})
 cpp2020: $(filter 2020/%,${CPP_LOG})
+cpp2021-build: $(filter 2021/%,${CPP_BIN})
+cpp2021: $(filter 2021/%,${CPP_LOG})
 
 cr2015-build: $(filter 2015/%,${CR_BIN})
 cr2015: $(filter 2015/%,${CR_LOG})
@@ -205,19 +227,36 @@ cr2019-build: $(filter 2019/%,${CR_BIN})
 cr2019: $(filter 2019/%,${CR_LOG})
 cr2020-build: $(filter 2020/%,${CR_BIN})
 cr2020: $(filter 2020/%,${CR_LOG})
+cr2021-build: $(filter 2021/%,${CR_BIN})
+cr2021: $(filter 2021/%,${CR_LOG})
 
 go2015-build: $(filter 2015/%,${GO_BIN})
 go2015: $(filter 2015/%,${GO_LOG})
+go2015-bench: $(filter benchmarks/results/2015/%,${GO_BENCH})
+
 go2016-build: $(filter 2016/%,${GO_BIN})
 go2016: $(filter 2016/%,${GO_LOG})
-go2017-build: $(filter 2017/%,${GO_BIN})
+go2016-bench: $(filter benchmarks/results/2016/%,${GO_BENCH})
+
+go2017-build: $(filter benchmarks/results/2017/%,${GO_BIN})
 go2017: $(filter 2017/%,${GO_LOG})
+go2017-bench: $(filter benchmarks/results/2017/%,${GO_BENCH})
+
 go2018-build: $(filter 2018/%,${GO_BIN})
 go2018: $(filter 2018/%,${GO_LOG})
+go2018-bench: $(filter benchmarks/results/2018/%,${GO_BENCH})
+
 go2019-build: $(filter 2019/%,${GO_BIN})
 go2019: $(filter 2019/%,${GO_LOG})
+go2019-bench: $(filter benchmarks/results/2019/%,${GO_BENCH})
+
 go2020-build: $(filter 2020/%,${GO_BIN})
 go2020: $(filter 2020/%,${GO_LOG})
+go2020-bench: $(filter benchmarks/results/2020/%,${GO_BENCH})
+
+go2021-build: $(filter 2021/%,${GO_BIN})
+go2021: $(filter 2021/%,${GO_LOG})
+go2021-bench: $(filter benchmarks/results/2021/%,${GO_BENCH})
 
 nim2015-build: $(filter 2015/%,${NIM_BIN})
 nim2015: $(filter 2015/%,${NIM_LOG})
@@ -231,6 +270,8 @@ nim2019-build: $(filter 2019/%,${NIM_BIN})
 nim2019: $(filter 2019/%,${NIM_LOG})
 nim2020-build: $(filter 2020/%,${NIM_BIN})
 nim2020: $(filter 2020/%,${NIM_LOG})
+nim2021-build: $(filter 2021/%,${NIM_BIN})
+nim2021: $(filter 2021/%,${NIM_LOG})
 
 perl2015: $(filter 2015/%,${PERL_LOG})
 perl2016: $(filter 2016/%,${PERL_LOG})
@@ -238,12 +279,14 @@ perl2017: $(filter 2017/%,${PERL_LOG})
 perl2018: $(filter 2018/%,${PERL_LOG})
 perl2019: $(filter 2019/%,${PERL_LOG})
 perl2020: $(filter 2020/%,${PERL_LOG})
+perl2021: $(filter 2021/%,${PERL_LOG})
 perl2015-build: $(filter 2015/%,${PERL_CHK})
 perl2016-build: $(filter 2016/%,${PERL_CHK})
 perl2017-build: $(filter 2017/%,${PERL_CHK})
 perl2018-build: $(filter 2018/%,${PERL_CHK})
 perl2019-build: $(filter 2019/%,${PERL_CHK})
 perl2020-build: $(filter 2020/%,${PERL_CHK})
+perl2021-build: $(filter 2021/%,${PERL_CHK})
 
 zig-test: zig2015-test zig2016-test zig2017-test zig2018-test zig2019-test zig2020-test zig2021-test
 zig2015-test: $(filter 2015/%,${ZIG_SRC})
@@ -293,3 +336,6 @@ rs2019-build: $(filter aoc-rust/target/release/aoc-2019-%,${RS_BIN})
 rs2019: $(filter aoc-rust/target/release/aoc-2019-%,${RS_LOG})
 rs2020-build: $(filter aoc-rust/target/release/aoc-2020-%,${RS_BIN})
 rs2020: $(filter aoc-rust/target/release/aoc-2020-%,${RS_LOG})
+rs2021-build: $(filter aoc-rust/target/release/aoc-2021-%,${RS_BIN})
+rs2021: $(filter aoc-rust/target/release/aoc-2021-%,${RS_LOG})
+

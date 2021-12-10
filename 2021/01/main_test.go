@@ -60,3 +60,10 @@ func TestFun(t *testing.T) {
 			tc.ans, NewGame(ReadIntsFromFile(tc.file)).Fun(tc.window), tc.file)
 	}
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

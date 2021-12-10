@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Segments int
 
@@ -174,8 +178,16 @@ func (n *Notes) Part2() int {
 }
 
 func main() {
-	inp := ReadInputLines()
+	inp := InputLines(input)
 	n := NewNotes(inp)
-	fmt.Printf("Part 1: %d\n", n.Part1())
-	fmt.Printf("Part 2: %d\n", n.Part2())
+	p1 := n.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := n.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false
