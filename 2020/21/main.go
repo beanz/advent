@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"sort"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Allergen string
 type Ingredient string
@@ -123,7 +127,15 @@ func (m *Menu) Part2() string {
 }
 
 func main() {
-	lines := ReadInputLines()
-	fmt.Printf("Part 1: %d\n", NewMenu(lines).Part1())
-	fmt.Printf("Part 2: %s\n", NewMenu(lines).Part2())
+	lines := InputLines(input)
+	p1 := NewMenu(lines).Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := NewMenu(lines).Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %s\n", p2)
+	}
 }
+
+var benchmark = false

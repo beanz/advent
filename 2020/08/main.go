@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"strconv"
 	"strings"
 
 	aoc "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Inst struct {
 	op  string
@@ -92,8 +96,16 @@ func (hh *HH) Part2() int {
 }
 
 func main() {
-	lines := aoc.ReadInputLines()
+	lines := aoc.InputLines(input)
 	hh := NewHH(lines)
-	fmt.Printf("Part 1: %d\n", hh.Part1())
-	fmt.Printf("Part 2: %d\n", hh.Part2())
+	p1 := hh.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := hh.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

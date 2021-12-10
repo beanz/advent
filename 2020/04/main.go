@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"strconv"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Passport map[string]string
 
@@ -161,8 +165,16 @@ func (s *Scanner) Part2() int {
 }
 
 func main() {
-	chunks := ReadInputChunks()
+	chunks := InputChunks(input)
 	scanner := NewScanner(chunks)
-	fmt.Printf("Part 1: %d\n", scanner.Part1())
-	fmt.Printf("Part 2: %d\n", scanner.Part2())
+	p1 := scanner.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := scanner.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

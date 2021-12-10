@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"regexp"
 	"strconv"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Ent struct {
 	i1, i2 int
@@ -69,8 +73,16 @@ func (db *DB) Part2() int {
 }
 
 func main() {
-	lines := ReadInputLines()
+	lines := InputLines(input)
 	db := NewDB(lines)
-	fmt.Printf("Part 1: %d\n", db.Part1())
-	fmt.Printf("Part 2: %d\n", db.Part2())
+	p1 := db.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := db.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

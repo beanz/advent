@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Cup struct {
 	val uint
@@ -126,7 +130,15 @@ func (g *Game) Part2(moves uint, max uint) uint {
 }
 
 func main() {
-	line := ReadInputLines()[0]
-	fmt.Printf("Part 1: %s\n", NewGame(line).Part1(100))
-	fmt.Printf("Part 2: %d\n", NewGame(line).Part2(10000000, 1000000))
+	line := InputLines(input)[0]
+	p1 := NewGame(line).Part1(100)
+	if !benchmark {
+		fmt.Printf("Part 1: %s\n", p1)
+	}
+	p2 := NewGame(line).Part2(10000000, 1000000)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

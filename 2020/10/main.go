@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"sort"
 
 	aoc "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func Part1(numbers []int) int {
 	numbers = append(numbers, numbers[len(numbers)-1]+3)
@@ -47,9 +51,16 @@ func Part2(numbers []int) int64 {
 }
 
 func main() {
-	numbers := aoc.ReadInputInts()
+	numbers := aoc.InputInts(input)
 	sort.Ints(numbers)
-
-	fmt.Printf("Part 1: %d\n", Part1(numbers))
-	fmt.Printf("Part 2: %d\n", Part2(numbers))
+	p1 := Part1(numbers)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := Part2(numbers)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Ans []string
 
@@ -59,8 +63,16 @@ func (d *Dec) Part2() int {
 }
 
 func main() {
-	chunks := ReadInputChunks()
+	chunks := InputChunks(input)
 	dec := NewDec(chunks)
-	fmt.Printf("Part 1: %d\n", dec.Part1())
-	fmt.Printf("Part 2: %d\n", dec.Part2())
+	p1 := dec.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := dec.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

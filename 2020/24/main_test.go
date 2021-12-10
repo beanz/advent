@@ -43,3 +43,10 @@ func TestPart2(t *testing.T) {
 			fmt.Sprintf("%s x %d", tc.file, tc.days))
 	}
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

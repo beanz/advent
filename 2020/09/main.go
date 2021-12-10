@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math"
 
 	aoc "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func Part1(numbers []int64, pre int64) int64 {
 	for i := pre; i < int64(len(numbers)); i++ {
@@ -51,9 +55,15 @@ func Part2(numbers []int64, part1 int64) int64 {
 }
 
 func main() {
-	b := aoc.ReadInputBytes()
-	numbers := aoc.SimpleReadInt64s(string(b))
+	numbers := aoc.SimpleReadInt64s(aoc.InputString(input))
 	part1 := Part1(numbers, 25)
-	fmt.Printf("Part 1: %d\n", part1)
-	fmt.Printf("Part 2: %d\n", Part2(numbers, part1))
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", part1)
+	}
+	part2 := Part2(numbers, part1)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", part2)
+	}
 }
+
+var benchmark = false

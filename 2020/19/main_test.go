@@ -32,3 +32,10 @@ func TestPart2(t *testing.T) {
 		assert.Equal(t, tc.ans, NewMatcher(ReadChunks(tc.file)).Part2())
 	}
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

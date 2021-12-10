@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"strconv"
 	"time"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type NavInst struct {
 	act byte
@@ -170,9 +174,15 @@ func (n *Nav) Part2() int {
 }
 
 func main() {
-	lines := ReadInputLines()
+	lines := InputLines(input)
 	p1 := NewNav(lines).Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
 	p2 := NewNav(lines).Part2()
-	fmt.Printf("Part 1: %d\n", p1)
-	fmt.Printf("Part 2: %d\n", p2)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

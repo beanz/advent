@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math"
 	"math/big"
@@ -8,6 +9,9 @@ import (
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func Part1(lines []string) int {
 	dt := MustParseInt(lines[0])
@@ -65,7 +69,15 @@ func Part2(lines []string) *big.Int {
 }
 
 func main() {
-	lines := ReadInputLines()
-	fmt.Printf("Part 1: %d\n", Part1(lines))
-	fmt.Printf("Part 2: %d\n", Part2(lines))
+	lines := InputLines(input)
+	p1 := Part1(lines)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := Part2(lines)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"regexp"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Rule struct {
 	ch string
@@ -120,7 +124,15 @@ func (m *Matcher) Part2() int {
 }
 
 func main() {
-	chunks := ReadInputChunks()
-	fmt.Printf("Part 1: %d\n", NewMatcher(chunks).Part1())
-	fmt.Printf("Part 2: %d\n", NewMatcher(chunks).Part2())
+	chunks := InputChunks(input)
+	p1 := NewMatcher(chunks).Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := NewMatcher(chunks).Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

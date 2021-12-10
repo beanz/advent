@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Map struct {
 	l     []string
@@ -58,9 +62,17 @@ func (m *Map) Part2() int64 {
 }
 
 func main() {
-	lines := ReadInputLines()
+	lines := InputLines(input)
 	m := NewMap(lines)
 	//fmt.Printf("%s\n", m)
-	fmt.Printf("Part 1: %d\n", m.Part1())
-	fmt.Printf("Part 2: %d\n", m.Part2())
+	p1 := m.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := m.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

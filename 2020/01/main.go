@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"gonum.org/v1/gonum/stat/combin"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Report struct {
 	e     []int
@@ -45,9 +49,16 @@ func (r *Report) Part2() int {
 }
 
 func main() {
-	lines := ReadInputLines()
+	lines := InputLines(input)
 	report := NewReport(lines)
-	//fmt.Print("%s\n", report)
-	fmt.Printf("Part 1: %d\n", report.Solve(2020, 2))
-	fmt.Printf("Part 2: %d\n", report.Solve(2020, 3))
+	r := report.Solve(2020, 2)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", r)
+	}
+	r = report.Solve(2020, 3)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", r)
+	}
 }
+
+var benchmark = false

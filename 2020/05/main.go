@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func SeatID(l string) int {
 	s := 0
@@ -54,8 +58,16 @@ func (s *SeatPlan) Part2() int {
 }
 
 func main() {
-	lines := ReadInputLines()
+	lines := InputLines(input)
 	sp := NewSeatPlan(lines)
-	fmt.Printf("Part 1: %d\n", sp.Part1())
-	fmt.Printf("Part 2: %d\n", sp.Part2())
+	p1 := sp.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := sp.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

@@ -28,3 +28,10 @@ func TestPart1(t *testing.T) {
 		assert.Equal(t, tc.ans, Part1(ReadLines(tc.file)), tc.file)
 	}
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

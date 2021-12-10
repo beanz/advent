@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func Calc(nums []int, maxTurn int) int {
 	lastSeen := make([]int, maxTurn)
@@ -47,7 +51,15 @@ func Part2(nums []int) int {
 }
 
 func main() {
-	ints := ReadInputInts()
-	fmt.Printf("Part 1: %d\n", Part1(ints))
-	fmt.Printf("Part 2: %d\n", Part2(ints))
+	numbers := InputInts(input)
+	p1 := Part1(numbers)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := Part2(numbers)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

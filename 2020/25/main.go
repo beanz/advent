@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math/big"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func LoopSize(pub uint64) int64 {
 	ls := int64(0)
@@ -26,6 +30,11 @@ func Part1(in []string) string {
 }
 
 func main() {
-	lines := ReadInputLines()
-	fmt.Printf("Part 1: %s\n", Part1(lines))
+	lines := InputLines(input)
+	p1 := Part1(lines)
+	if !benchmark {
+		fmt.Printf("Part 1: %s\n", p1)
+	}
 }
+
+var benchmark = false

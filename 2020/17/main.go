@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Cube []int
 
@@ -228,7 +232,15 @@ func (m *Map) Calc() int {
 }
 
 func main() {
-	lines := ReadInputLines()
-	fmt.Printf("Part 1: %d\n", NewMap(lines, 3).Calc())
-	fmt.Printf("Part 2: %d\n", NewMap(lines, 4).Calc())
+	lines := InputLines(input)
+	p1 := NewMap(lines, 3).Calc()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := NewMap(lines, 4).Calc()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

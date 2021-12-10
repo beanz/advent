@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"strconv"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func Part1(lines []string) int64 {
 	mem := make(map[int64]int64, len(lines))
@@ -125,7 +129,15 @@ func Part2(lines []string, file string) int64 {
 }
 
 func main() {
-	lines := ReadInputLines()
-	fmt.Printf("Part 1: %d\n", Part1(lines))
-	fmt.Printf("Part 2: %d\n", Part2(lines, InputFile()))
+	lines := InputLines(input)
+	p1 := Part1(lines)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := Part2(lines, InputFile())
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

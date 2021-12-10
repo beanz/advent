@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -8,6 +9,9 @@ import (
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type BC struct {
 	bt string
@@ -81,8 +85,16 @@ func (bs *BS) Part2() int {
 }
 
 func main() {
-	lines := ReadInputLines()
+	lines := InputLines(input)
 	bs := NewBS(lines)
-	fmt.Printf("Part 1: %d\n", bs.Part1())
-	fmt.Printf("Part 2: %d\n", bs.Part2())
+	p1 := bs.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := bs.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

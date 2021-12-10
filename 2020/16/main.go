@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Field struct {
 	min1, max1, min2, max2 int
@@ -136,11 +140,18 @@ func (m *Mess) Solve() int {
 }
 
 func main() {
-	lines := ReadInputLines()
+	lines := InputLines(input)
 	m := NewMess(lines)
-	fmt.Printf("Part 1: %d\n", m.error)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", m.error)
+	}
 	if InputFile() == "test2.txt" {
 		m.onlyDepart = false
 	}
-	fmt.Printf("Part 2: %d\n", m.Solve())
+	p2 := m.Solve()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

@@ -52,3 +52,10 @@ func TestPart2(t *testing.T) {
 		int64(321176691637769), Part2(ReadLines("input.txt")),
 		"file input.txt")
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}
