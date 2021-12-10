@@ -26,3 +26,10 @@ func TestPlay(t *testing.T) {
 	game := Game{"10000", 20, false}
 	assert.Equal(t, "01100", game.Play())
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

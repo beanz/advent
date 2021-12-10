@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Game struct {
 	elves *Circle
@@ -73,10 +77,17 @@ func (g Game) Part2() int {
 }
 
 func main() {
-	in := ReadInputInts()
+	in := InputInts(input)
 	game := NewGame(in[0], false)
-	fmt.Printf("Part 1: %d\n", game.Part1())
-
+	p1 := game.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
 	game = NewGame(in[0], false)
-	fmt.Printf("Part 2: %d\n", game.Part2())
+	p2 := game.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

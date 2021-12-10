@@ -12,7 +12,7 @@ import (
 )
 
 //go:embed input.txt
-var input string
+var input []byte
 
 type Inst struct {
 	kind string
@@ -130,5 +130,10 @@ func (g *Game) Part1() int {
 
 func main() {
 	game := readGame(aoc.InputString(input))
-	fmt.Printf("Part 1: %d\n", game.Part1())
+	p1 := game.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
 }
+
+var benchmark = false

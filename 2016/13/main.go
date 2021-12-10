@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math/bits"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Game struct {
 	fav    int
@@ -87,15 +91,21 @@ func (g Game) Part2() int {
 }
 
 func main() {
-	input := ReadInputInts()[0]
+	input := InputInts(input)[0]
 	x, y := 31, 39
 	if input == 10 {
 		x, y = 7, 4
 	}
 	game := Game{input, Point{x, y}}
 	res := game.Part1()
-	fmt.Printf("Part 1: %d\n", res)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", res)
+	}
 
 	res = game.Part2()
-	fmt.Printf("Part 2: %d\n", res)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", res)
+	}
 }
+
+var benchmark = false

@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"log"
 	"os"
@@ -10,6 +11,9 @@ import (
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Game struct {
 	lines []string
@@ -161,7 +165,9 @@ func (g Game) Part1(in string) string {
 func (g Game) Part2(in string) string {
 	perms := Permutations(0, len(in)-1)
 	for pn, p := range perms {
-		fmt.Fprintf(os.Stderr, "%6.2f\r", 100*(float64(pn)/float64(len(perms))))
+		if !benchmark {
+			fmt.Fprintf(os.Stderr, "%6.2f\r", 100*(float64(pn)/float64(len(perms))))
+		}
 		s := ""
 		for _, i := range p {
 			s += string(in[i])
@@ -174,7 +180,15 @@ func (g Game) Part2(in string) string {
 }
 
 func main() {
-	game := readGame(ReadInputLines())
-	fmt.Printf("Part 1: %s\n", game.Part1("abcdefgh"))
-	fmt.Printf("Part 2: %s\n", game.Part2("fbgdceah"))
+	game := readGame(InputLines(input))
+	p1 := game.Part1("abcdefgh")
+	if !benchmark {
+		fmt.Printf("Part 1: %s\n", p1)
+	}
+	p2 := game.Part2("fbgdceah")
+	if !benchmark {
+		fmt.Printf("Part 2: %s\n", p2)
+	}
 }
+
+var benchmark = false

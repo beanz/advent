@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"crypto/md5"
 	"fmt"
 	"strings"
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Game struct {
 	salt      string
@@ -84,13 +88,19 @@ func (g *Game) Play() int {
 }
 
 func main() {
-	input := ReadInputLines()[0]
+	input := InputLines(input)[0]
 
 	game := Game{input, 0, map[int]string{}, false, false}
 	res := game.Play()
-	fmt.Printf("Part 1: %d\n", res)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", res)
+	}
 
 	game = Game{input, 0, map[int]string{}, true, false}
 	res = game.Play()
-	fmt.Printf("Part 2: %d\n", res)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", res)
+	}
 }
+
+var benchmark = false

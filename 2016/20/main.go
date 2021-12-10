@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"sort"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Range struct {
 	min, max int64
@@ -82,8 +86,16 @@ func (g Game) Part2(max int64) int64 {
 }
 
 func main() {
-	game := readGame(ReadInputLines())
+	game := readGame(InputLines(input))
 
-	fmt.Printf("Part 1: %d\n", game.Part1())
-	fmt.Printf("Part 2: %d\n", game.Part2(4294967295))
+	p1 := game.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := game.Part2(4294967295)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

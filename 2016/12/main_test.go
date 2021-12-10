@@ -20,3 +20,10 @@ func TestPart2(t *testing.T) {
 	prog = ReadElfProg2016(ReadLines("input.txt"))
 	assert.Equal(t, 9227661, Part2(prog))
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

@@ -23,3 +23,10 @@ func TestPlay2(t *testing.T) {
 	assert.Equal(t, "05ace8e3", game.Part2(),
 		"Next password should be calculated")
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

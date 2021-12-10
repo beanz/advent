@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"log"
 	"regexp"
@@ -8,6 +9,9 @@ import (
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Output struct {
 	num    int
@@ -202,14 +206,17 @@ func (g *Game) Part2() int {
 }
 
 func main() {
-	game := readGame(ReadInputLines())
+	game := readGame(InputLines(input))
 
-	//fmt.Printf("%s\n", game)
 	res := game.Part1()
-	fmt.Printf("Part 1: %d\n", res)
-	//fmt.Printf("%s\n", game)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", res)
+	}
 
 	res = game.Part2()
-	fmt.Printf("Part 2: %d\n", res)
-	//fmt.Printf("%s\n", game)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", res)
+	}
 }
+
+var benchmark = false

@@ -43,3 +43,10 @@ func TestPart1Full(t *testing.T) {
 	g := readGame()
 	assert.Equal(t, 31, g.Part1())
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"crypto/md5"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Game struct {
 	doorID string
@@ -89,11 +93,17 @@ func (g *Game) Part2() string {
 }
 
 func main() {
-	game := readGame(ReadInputLines()[0])
+	game := readGame(InputLines(input)[0])
 
 	res := game.Part1()
-	fmt.Printf("Part 1: %s\n", res)
+	if !benchmark {
+		fmt.Printf("Part 1: %s\n", res)
+	}
 
 	res = game.Part2()
-	fmt.Printf("Part 2: %s\n", res)
+	if !benchmark {
+		fmt.Printf("Part 2: %s\n", res)
+	}
 }
+
+var benchmark = false

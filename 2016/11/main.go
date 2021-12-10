@@ -1,9 +1,13 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"sort"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Floor int
 
@@ -306,8 +310,14 @@ func (g *Game) Part2() int {
 func main() {
 	game := readGame()
 	res := game.Part1()
-	fmt.Printf("Part 1: %d\n", res)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", res)
+	}
 	game = readGame()
 	res = game.Part2()
-	fmt.Printf("Part 2: %d\n", res)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", res)
+	}
 }
+
+var benchmark = false

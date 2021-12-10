@@ -18,3 +18,10 @@ func TestStretchedMD5(t *testing.T) {
 	game := Game{"abc", 0, map[int]string{}, true, false}
 	assert.Equal(t, "a107ff634856bb300138cac6568c0f24", game.MD5(0))
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

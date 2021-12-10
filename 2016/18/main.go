@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Game struct {
 	row   string
@@ -74,10 +78,15 @@ func (g *Game) Part2() int {
 }
 
 func main() {
-	game := readGame(ReadInputLines()[0])
+	game := readGame(InputLines(input)[0])
 	res := game.Part1()
-	fmt.Printf("Part 1: %d\n", res)
-
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", res)
+	}
 	res = game.Part2()
-	fmt.Printf("Part 2: %d\n", res)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", res)
+	}
 }
+
+var benchmark = false

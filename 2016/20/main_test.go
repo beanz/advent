@@ -20,3 +20,10 @@ func TestPart2(t *testing.T) {
 	g = readGame([]string{"5-8", "2-3", "0-7"})
 	assert.Equal(t, int64(1), g.Part2(9))
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

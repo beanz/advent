@@ -28,3 +28,10 @@ func TestPart2(t *testing.T) {
 	assert.Equal(t, 830, Game{4, 4, "ulqzkmiv", false}.Part2())
 	assert.Equal(t, 590, Game{4, 4, "mmsxrhfx", false}.Part2())
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}
