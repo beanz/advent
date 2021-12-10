@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Scanner struct {
 	depth int
@@ -55,7 +59,15 @@ func (fw *Firewall) Part2() int {
 }
 
 func main() {
-	fw := NewFirewall(ReadLines(InputFile()))
-	fmt.Printf("Part 1: %d\n", fw.Part1())
-	fmt.Printf("Part 2: %d\n", fw.Part2())
+	fw := NewFirewall(InputLines(input))
+	p1 := fw.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := fw.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

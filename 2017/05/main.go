@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Prog struct {
 	jumps []int
@@ -12,8 +16,8 @@ type Prog struct {
 	debug bool
 }
 
-func NewProg(file string) *Prog {
-	return &Prog{ReadInts(ReadLines(file)), 0, false}
+func NewProg(inp []int) *Prog {
+    return &Prog{inp, 0, false}
 }
 
 func (p *Prog) Part1() int {
@@ -45,8 +49,16 @@ func (p *Prog) Part2() int {
 }
 
 func main() {
-	prog := NewProg(InputFile())
-	fmt.Printf("Part 1: %d\n", prog.Part1())
-	prog = NewProg(InputFile())
-	fmt.Printf("Part 2: %d\n", prog.Part2())
+	prog := NewProg(InputInts(input))
+	p1 := prog.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	prog = NewProg(InputInts(input))
+	p2 := prog.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

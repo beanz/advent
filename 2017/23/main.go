@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"log"
 	"strconv"
@@ -8,6 +9,9 @@ import (
 
 	aoc "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Reg map[byte]int
 
@@ -38,7 +42,7 @@ func (g *Game) regValueOrImmediate(s string) int {
 }
 
 func NewGame(lines []string) *Game {
-	g := &Game{[]Inst{}, Reg{}, 0, 0, true}
+	g := &Game{[]Inst{}, Reg{}, 0, 0, false}
 	for _, line := range lines {
 		inst := strings.Split(line, " ")
 		reg := inst[1][0]
@@ -114,6 +118,11 @@ func (g *Game) Part1() int {
 }
 
 func main() {
-	lines := aoc.ReadInputLines()
-	fmt.Printf("Part 1: %d\n", NewGame(lines).Part1())
+	lines := aoc.InputLines(input)
+	p1 := NewGame(lines).Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
 }
+
+var benchmark = false

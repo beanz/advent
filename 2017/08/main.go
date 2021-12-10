@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math"
 	"log"
@@ -10,6 +11,9 @@ import (
 	. "github.com/beanz/advent/lib-go"
 )
 
+//go:embed input.txt
+var input []byte
+
 type CPU struct {
 	prog  []string
 	reg   map[string]int
@@ -17,8 +21,8 @@ type CPU struct {
 	debug bool
 }
 
-func NewCPU(file string) *CPU {
-	return &CPU{ReadLines(file), map[string]int{}, math.MinInt64, false}
+func NewCPU(inp []string) *CPU {
+	return &CPU{inp, map[string]int{}, math.MinInt64, false}
 }
 
 func (c *CPU) Run() {
@@ -81,6 +85,14 @@ func (c *CPU) Part2() int {
 }
 
 func main() {
-	fmt.Printf("Part 1: %d\n", NewCPU(InputFile()).Part1())
-	fmt.Printf("Part 2: %d\n", NewCPU(InputFile()).Part2())
+	p1 := NewCPU(InputLines(input)).Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := NewCPU(InputLines(input)).Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

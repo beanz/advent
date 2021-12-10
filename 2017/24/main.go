@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"sort"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Component struct {
 	in, out int
@@ -129,8 +133,12 @@ func (g *Game) Play() (int, int) {
 }
 
 func main() {
-	lines := ReadInputLines()
+	lines := InputLines(input)
 	best, longest := NewGame(lines).Play()
-	fmt.Printf("Part 1: %d\n", best)
-	fmt.Printf("Part 2: %d\n", longest)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", best)
+		fmt.Printf("Part 2: %d\n", longest)
+	}
 }
+
+var benchmark = false

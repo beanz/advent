@@ -19,3 +19,10 @@ func TestPart2(t *testing.T) {
 	assert.Equal(t, 12, readGame("123123").Part2())
 	assert.Equal(t, 4, readGame("12131415").Part2())
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

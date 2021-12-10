@@ -17,3 +17,10 @@ func TestPart2(t *testing.T) {
 	assert.Equal(t, 806, Part2(747))
 	assert.Equal(t, 2391, Part2(2380))
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

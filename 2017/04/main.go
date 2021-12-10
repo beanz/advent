@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"sort"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func IsValid(words []string) bool {
 	seen := map[string]bool{}
@@ -68,6 +72,15 @@ func Part2(lines []string) int {
 }
 
 func main() {
-	fmt.Printf("Part 1: %d\n", Part1(ReadInputLines()))
-	fmt.Printf("Part 2: %d\n", Part2(ReadInputLines()))
+	lines := InputLines(input)
+	p1 := Part1(lines)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := Part2(lines)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

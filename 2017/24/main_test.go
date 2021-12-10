@@ -15,3 +15,10 @@ func TestPlay(t *testing.T) {
 	assert.Equal(t, 1940, best)
 	assert.Equal(t, 1928, longest)
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"log"
 	"regexp"
@@ -9,6 +10,9 @@ import (
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Disc struct {
 	weight int
@@ -28,10 +32,10 @@ func (t *Tower) String() string {
 	return s
 }
 
-func NewTower(file string) *Tower {
+func NewTower(inp []string) *Tower {
 	tower := &Tower{map[string]*Disc{}, false}
 	lineRe := regexp.MustCompile(`^(\S+)\s+\((\d+)\)(.*)$`)
-	for _, line := range ReadLines(file) {
+	for _, line := range inp {
 		m := lineRe.FindStringSubmatch(line)
 		if m == nil {
 			log.Fatalf("Invalid line: %s\n", line)
@@ -121,8 +125,16 @@ func (t *Tower) Part2() int {
 }
 
 func main() {
-	tower := NewTower(InputFile())
-	fmt.Printf("Part 1: %s\n", tower.Part1())
-	tower = NewTower(InputFile())
-	fmt.Printf("Part 2: %d\n", tower.Part2())
+	tower := NewTower(InputLines(input))
+	p1 := tower.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %s\n", p1)
+	}
+	tower = NewTower(InputLines(input))
+	p2 := tower.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

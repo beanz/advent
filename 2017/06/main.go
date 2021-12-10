@@ -1,20 +1,23 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
 
+//go:embed input.txt
+var input []byte
+
 type Mem struct {
 	banks []int
 	debug bool
 }
 
-func NewMem(file string) *Mem {
-	line := ReadLines(file)[0]
-	return &Mem{ReadInts(strings.Split(line, "\t")), false}
+func NewMem(inp []int) *Mem {
+	return &Mem{inp, false}
 }
 
 func (m *Mem) State() string {
@@ -62,8 +65,16 @@ func (m *Mem) Part2() int {
 }
 
 func main() {
-	mem := NewMem(InputFile())
-	fmt.Printf("Part 1: %d\n", mem.Part1())
-	mem = NewMem(InputFile())
-	fmt.Printf("Part 2: %d\n", mem.Part2())
+	mem := NewMem(InputInts(input))
+	p1 := mem.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	mem = NewMem(InputInts(input))
+	p2 := mem.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

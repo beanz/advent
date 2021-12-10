@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type NodeState byte
 
@@ -129,7 +133,15 @@ func (g *Game) Part2(bursts int) int {
 }
 
 func main() {
-	lines := ReadInputLines()
-	fmt.Printf("Part 1: %d\n", NewGame(lines).Part1(10000))
-	fmt.Printf("Part 2: %d\n", NewGame(lines).Part2(10000000))
+	lines := InputLines(input)
+	p1 := NewGame(lines).Part1(10000)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := NewGame(lines).Part2(10000000)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

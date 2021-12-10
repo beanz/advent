@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"log"
 	"sort"
@@ -10,6 +11,9 @@ import (
 
 	aoc "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Reg map[byte]int
 
@@ -160,7 +164,15 @@ func Part2(lines []string) int {
 }
 
 func main() {
-	lines := aoc.ReadInputLines()
-	fmt.Printf("Part 1: %d\n", NewGame(lines, nil, nil, 0).Part1())
-	fmt.Printf("Part 2: %d\n", Part2(lines))
+	lines := aoc.InputLines(input)
+	p1 := NewGame(lines, nil, nil, 0).Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := Part2(lines)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"log"
 	"math"
@@ -8,6 +9,9 @@ import (
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Action struct {
 	value bool
@@ -136,6 +140,11 @@ func (g *Game) Part1() int {
 }
 
 func main() {
-	chunks := ReadInputChunks()
-	fmt.Printf("Part 1: %d\n", NewGame(chunks).Part1())
+	chunks := InputChunks(input)
+	p1 :=  NewGame(chunks).Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
 }
+
+var benchmark = false

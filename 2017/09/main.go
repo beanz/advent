@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Stream struct {
 	s     string
@@ -13,8 +17,8 @@ type Stream struct {
 	debug bool
 }
 
-func NewStream(file string) *Stream {
-	return &Stream{ReadLines(file)[0], 0, 1, false}
+func NewStream(inp []string) *Stream {
+	return &Stream{inp[0], 0, 1, false}
 }
 
 func (s *Stream) Parse() (int, int) {
@@ -54,6 +58,14 @@ func (s *Stream) Part2() int {
 }
 
 func main() {
-	fmt.Printf("Part 1: %d\n", NewStream(InputFile()).Part1())
-	fmt.Printf("Part 2: %d\n", NewStream(InputFile()).Part2())
+	p1 := NewStream(InputLines(input)).Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := NewStream(InputLines(input)).Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

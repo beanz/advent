@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"log"
 	"strconv"
@@ -9,6 +10,9 @@ import (
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Dance struct {
 	programs string
@@ -106,8 +110,16 @@ func (d *Dance) Part2() string {
 }
 
 func main() {
-	dance := ReadDance("abcdefghijklmnop", ReadLines(InputFile())[0])
-	fmt.Printf("Part 1: %s\n", dance.Part1())
-	dance = ReadDance("abcdefghijklmnop", ReadLines(InputFile())[0])
-	fmt.Printf("Part 2: %s\n", dance.Part2())
+	dance := ReadDance("abcdefghijklmnop", InputLines(input)[0])
+	p1 := dance.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %s\n", p1)
+	}
+	dance = ReadDance("abcdefghijklmnop", InputLines(input)[0])
+	p2 := dance.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %s\n", p2)
+	}
 }
+
+var benchmark = false

@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"log"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Pattern [][]byte
 
@@ -255,7 +259,15 @@ func (g *Game) Part2() int {
 }
 
 func main() {
-	lines := ReadInputLines()
-	fmt.Printf("Part 1: %d\n", NewGame(lines).Part1())
-	fmt.Printf("Part 2: %d\n", NewGame(lines).Part2())
+	lines := InputLines(input)
+	p1 := NewGame(lines).Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := NewGame(lines).Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

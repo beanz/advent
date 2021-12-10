@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Rope struct {
 	twists []int
@@ -27,8 +31,7 @@ func (r *Rope) String() string {
 	return strings.Join(s, " ")
 }
 
-func NewRope(file string, rlen int) *Rope {
-	line := ReadLines(file)[0]
+func NewRope(line string, rlen int) *Rope {
 	nums := ReadInts(strings.Split(line, ","))
 	rope := []int{}
 	for i := 0; i < rlen; i++ {
@@ -37,8 +40,7 @@ func NewRope(file string, rlen int) *Rope {
 	return &Rope{nums, rope, 0, 0, false}
 }
 
-func NewPart2Rope(file string, rlen int) *Rope {
-	line := ReadLines(file)[0]
+func NewPart2Rope(line string, rlen int) *Rope {
 	nums := []int{}
 	for _, ch := range strings.Split(line, "") {
 		nums = append(nums, int(byte(ch[0])))
@@ -104,6 +106,14 @@ func (r *Rope) Part2() string {
 }
 
 func main() {
-	fmt.Printf("Part 1: %d\n", NewRope(InputFile(), 256).Part1())
-	fmt.Printf("Part 2: %s\n", NewPart2Rope(InputFile(), 256).Part2())
+	p1 := NewRope(InputLines(input)[0], 256).Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := NewPart2Rope(InputLines(input)[0], 256).Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %s\n", p2)
+	}
 }
+
+var benchmark = false

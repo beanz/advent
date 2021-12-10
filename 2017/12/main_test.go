@@ -20,3 +20,10 @@ func TestPart2(t *testing.T) {
 	g = Play(ReadLines("input.txt"))
 	assert.Equal(t, 211, g.Part2())
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

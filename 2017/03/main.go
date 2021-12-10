@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func FindPosition(in int) Point {
 	var i int
@@ -87,10 +91,15 @@ func Part2(in int) int {
 }
 
 func main() {
-	input := ReadInputInts()[0]
+	input := InputInts(input)[0]
 	res := Part1(input)
-	fmt.Printf("Part 1: %d\n", res)
-
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", res)
+	}
 	res = Part2(input)
-	fmt.Printf("Part 2: %d\n", res)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", res)
+	}
 }
+
+var benchmark = false

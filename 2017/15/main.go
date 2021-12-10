@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func ReadGenerators(lines []string) []int {
 	return []int{
@@ -66,7 +70,15 @@ func Part2(g []int) int {
 }
 
 func main() {
-	generators := ReadGenerators(ReadLines(InputFile()))
-	fmt.Printf("Part 1: %d\n", Part1(generators))
-	fmt.Printf("Part 2: %d\n", Part2(generators))
+	generators := ReadGenerators(InputLines(input))
+	p1 := Part1(generators)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := Part2(generators)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math/bits"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Rope struct {
 	twists []int
@@ -160,7 +164,14 @@ func Part2(m *Map) int {
 }
 
 func main() {
-	ones, m := Part1(InputFile())
-	fmt.Printf("Part 1: %d\n", ones)
-	fmt.Printf("Part 2: %d\n", Part2(m))
+	ones, m := Part1(InputLines(input)[0])
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", ones)
+	}
+	p2 := Part2(m)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark = false

@@ -23,3 +23,10 @@ func TestPart2(t *testing.T) {
 	assert.Equal(t, 3, Part2(ReadLines("test-2.txt")))
 	assert.Equal(t, 208, Part2(ReadLines("input.txt")))
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}
