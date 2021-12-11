@@ -3,7 +3,6 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	"sort"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -28,53 +27,8 @@ func FuelSum1(p int, inp []int) int {
 	return c
 }
 
-func MedianOfMedians(inp []int, n int) int {
-	if len(inp) <= 10 {
-		return SimpleMedianN(inp, n)
-	}
-
-	numSlices := (len(inp) + 4) / 5
-	meds := make([]int, numSlices)
-	for i := 0; i < numSlices; i++ {
-		start := i * 5
-		end := start + 5
-		if end > len(inp) {
-			end = len(inp)
-		}
-		sort.Ints(inp[start:end])
-		meds[i] = inp[(start+end)/2]
-	}
-	pivot := MedianOfMedians(meds, len(meds)/2)
-	var lhs, equal, rhs []int
-	for i := range inp {
-		if inp[i] < pivot {
-			lhs = append(lhs, inp[i])
-		} else if inp[i] > pivot {
-			rhs = append(rhs, inp[i])
-		} else {
-			equal = append(equal, inp[i])
-		}
-	}
-	if n < len(lhs) {
-		return MedianOfMedians(lhs, n)
-	} else if n < len(lhs)+len(equal) {
-		return pivot
-	}
-	return MedianOfMedians(rhs, n-len(lhs)-len(equal))
-}
-
-func SimpleMedianN(inp []int, n int) int {
-	sort.Ints(inp)
-	return inp[n]
-}
-
-func SimpleMedian(inp []int) int {
-	sort.Ints(inp)
-	return inp[len(inp)/2]
-}
-
 func MinFuel1(inp []int) int {
-	return FuelSum1(MedianOfMedians(inp, len(inp)/2), inp)
+	return FuelSum1(SimpleMedianN(inp, len(inp)/2), inp)
 }
 
 func FuelSum2(p int, inp []int) int {
@@ -104,8 +58,9 @@ func Calc(inp []int) (int, int) {
 }
 
 func main() {
-	inp := InputInts(input)
-	p1, p2 := Calc(inp)
+	inp := InputBytes(input)
+	ints := FastInts(inp, 1024)
+	p1, p2 := Calc(ints)
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
 		fmt.Printf("Part 2: %d\n", p2)

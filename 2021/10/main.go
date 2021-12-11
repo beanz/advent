@@ -4,7 +4,6 @@ import (
 	_ "embed"
 	"fmt"
 	. "github.com/beanz/advent/lib-go"
-	"sort"
 )
 
 //go:embed input.txt
@@ -41,7 +40,7 @@ func Calc(in []byte) (int, int) {
 			st = st[:0] // reset stack
 		}
 	}
-	return p1, MedianOfMedians(p2, len(p2)/2)
+	return p1, SimpleMedianN(p2, len(p2)/2)
 }
 
 func main() {
@@ -82,62 +81,4 @@ func score2(b byte) int {
 	default:
 		panic("bad score1 " + string(b))
 	}
-}
-
-func MedianOfMedians(inp []int, n int) int {
-	if len(inp) <= 10 {
-		return SimpleMedianN(inp, n)
-	}
-	lhs := make([]int, 0, len(inp))
-	equal := make([]int, 0, len(inp))
-	rhs := make([]int, 0, len(inp))
-	numSlices := (len(inp) + 4) / 5
-	meds := make([]int, 0, numSlices)
-	for {
-
-		numSlices = (len(inp) + 4) / 5 // redundant on first iteration
-		meds = meds[:0]
-		for i := 0; i < numSlices; i++ {
-			start := i * 5
-			end := start + 5
-			if end > len(inp) {
-				end = len(inp)
-			}
-			sort.Ints(inp[start:end])
-			meds = append(meds, inp[(start+end)/2])
-		}
-		pivot := MedianOfMedians(meds, len(meds)/2)
-		for i := range inp {
-			if inp[i] < pivot {
-				lhs = append(lhs, inp[i])
-			} else if inp[i] > pivot {
-				rhs = append(rhs, inp[i])
-			} else {
-				equal = append(equal, inp[i])
-			}
-		}
-		var next []int
-		if n < len(lhs) {
-			next = lhs
-		} else if n < len(lhs)+len(equal) {
-			return pivot
-		} else {
-			next, n = rhs, n-len(lhs)-len(equal)
-		}
-		if len(next) <= 10 {
-			return SimpleMedianN(next, n)
-		}
-		inp = inp[:0]
-		for _, v := range next {
-			inp = append(inp, v)
-		}
-		lhs = lhs[:0]
-		equal = equal[:0]
-		rhs = rhs[:0]
-	}
-}
-
-func SimpleMedianN(inp []int, n int) int {
-	sort.Ints(inp)
-	return inp[n]
 }

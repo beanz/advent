@@ -49,7 +49,7 @@ func TestMedianOfMediansBig(t *testing.T) {
 	for _, file := range []string{"test1.txt", "test2.txt", "input.txt"} {
 		inp := ReadIntsFromFile(file)
 		mom := MedianOfMedians(inp, len(inp)/2)
-		simple := SimpleMedian(inp)
+		simple := SimpleMedianN(inp, len(inp)/2)
 		assert.Equal(t, simple, mom, file)
 	}
 }

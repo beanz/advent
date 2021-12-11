@@ -5,6 +5,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"math/rand"
 	"testing"
+
+	. "github.com/beanz/advent/lib-go"
 )
 
 //go:embed test1.txt
