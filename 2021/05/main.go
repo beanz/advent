@@ -10,60 +10,87 @@ import (
 //go:embed input.txt
 var input []byte
 
-type Board struct {
-	b [][]int
-	score int
-	won bool
-	num int
-	rleft []int
-	cleft []int
-}
+const (
+	X1 = 0
+	Y1 = 1
+	X2 = 2
+	Y2 = 3
+)
 
-type NumLocation struct {
-	b, r, c int
+type Line []int
+
+func (l Line) Norm() (int, int) {
+	nx, ny := 0, 0
+	if l[X1] > l[X2] {
+		nx = -1
+	} else if l[X1] < l[X2] {
+		nx = 1
+	}
+	if l[Y1] > l[Y2] {
+		ny = -1
+	} else if l[Y1] < l[Y2] {
+		ny = 1
+	}
+	return nx, ny
 }
 
 type Diag struct {
-	pp []*PointPair
+	pp    []Line
 	debug bool
 }
 
 func NewDiag(in []string) *Diag {
-	pp := make([]*PointPair, len(in))
+	pp := make([]Line, len(in))
 	for i, l := range in {
-		ints := Ints(l)
-		pp[i] = &PointPair{
-			P1: &Point{X: ints[0], Y: ints[1]},
-			P2: &Point{X: ints[2], Y: ints[3]},
+		ints := make([]int, 4)
+		j := 0
+		n := 0
+		num := false
+		for _, ch := range l {
+			if ch >= '0' && ch <= '9' {
+				num = true
+				n = n*10 + int(ch-'0')
+			} else if num {
+				ints[j] = n
+				j++
+				n = 0
+				num = false
+			}
 		}
+		if num {
+			ints[j] = n
+		}
+		pp[i] = Line(ints)
 	}
 	return &Diag{pp, false}
 }
 
 func (d *Diag) Overlaps() (int, int) {
-	d1 := make(map[Point]int)
-	d2 := make(map[Point]int)
+	d1 := make([]byte, 1024*1024)
 	c1 := 0
 	c2 := 0
-	for _, pp := range d.pp {
-		n := pp.Norm()
-		var lineLen = MaxInt(Abs(pp.P1.X - pp.P2.X), Abs(pp.P1.Y - pp.P2.Y))
-		x := pp.P1.X
-		y := pp.P1.Y
-		for i := 0; i <= lineLen; i++ {
-			p := Point{x,y}
-			if n.X == 0 || n.Y == 0 {
-				d1[p]++
-				if d1[p] == 2 {
+	for _, line := range d.pp {
+		nx, ny := line.Norm()
+		p1inc := nx == 0 || ny == 0
+		var lineLen = MaxInt(Abs(line[X1]-line[X2]), Abs(line[Y1]-line[Y2]))
+		for i, x, y := 0, line[X1], line[Y1]; i <= lineLen; i, x, y = i+1, x+nx, y+ny {
+			k := y<<10 + x
+			v := d1[k]
+			p1, p2 := v%8, v/8
+			if p1 > 2 && p2 > 2 {
+				continue
+			}
+			if p1inc {
+				p1++
+				if p1 == 2 {
 					c1++
 				}
 			}
-			d2[p]++
-			if d2[p] == 2 {
+			p2++
+			if p2 == 2 {
 				c2++
 			}
-			x += n.X
-			y += n.Y
+			d1[k] = p1 + p2<<3
 		}
 	}
 	return c1, c2
