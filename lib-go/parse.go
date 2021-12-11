@@ -57,3 +57,23 @@ func FastInts(l []byte, expected int) []int {
 	}
 	return res
 }
+
+func FastBytes(l []byte) []byte {
+	res := l[:0]
+	var n byte
+	num := false
+	for _, ch := range l {
+		if ch >= '0' && ch <= '9' {
+			num = true
+			n = n*10 + ch - '0'
+		} else if num {
+			res = append(res, n)
+			n = 0
+			num = false
+		}
+	}
+	if num {
+		res = append(res, n)
+	}
+	return res
+}
