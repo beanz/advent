@@ -65,7 +65,6 @@ func (o *Octopodes) Calc(days int) (int, int) {
 		if p2 == o.m.Size() {
 			return p1, day
 		}
-		//fmt.Printf("Day %d\n%s\n", day, o)
 		day++
 	}
 	return p1, -1
@@ -74,7 +73,7 @@ func (o *Octopodes) Calc(days int) (int, int) {
 func main() {
 	bytes := InputBytes(input)
 	var inp []byte
-	inp = make([]byte, len(input))
+	inp = make([]byte, len(bytes))
 	copy(inp, bytes)
 	g := NewOctopodes(inp)
 	p1, p2 := g.Calc(100)

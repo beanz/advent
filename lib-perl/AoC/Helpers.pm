@@ -467,6 +467,8 @@ sub read_chunky_records {
      WIDTH => 1,
      MAP => 2,
      STRFN => 3,
+     X => 0,
+     Y => 1,
     };
 
   sub _new {
@@ -571,7 +573,7 @@ sub read_chunky_records {
     return $self->[MAP]->[$i] = $v;
   }
 
-  sub visit {
+  sub visit_xy {
     my ($self, $fn) = @_;
     for my $y (0..$self->[HEIGHT]-1) {
       for my $x (0..$self->[WIDTH]-1) {
@@ -580,35 +582,42 @@ sub read_chunky_records {
     }
   }
 
-  sub neighbours_4 {
-    my ($self, $x, $y, $fn) = @_;
+  sub visit {
+    my ($self, $fn) = @_;
+    for my $i (0..($self->[WIDTH]*$self->[HEIGHT])-1) {
+      $fn->($self, $i, $self->[MAP]->[$i])
+    }
+  }
+
+  sub neighbours4 {
+    my ($self, $p) = @_;
+    my $xy = $self->xy($p);
     my @n;
-    if ($x > 0) {
-      push @n, [$x-1, $y];
+    if ($xy->[X] > 0) {
+      push @n, $p;
     }
-    if ($x < $self->[WIDTH]-1) {
-      push @n, [$x+1, $y];
+    if ($xy->[X] < $self->[WIDTH]-1) {
+      push @n, $p+1;
     }
-    if ($y > 0) {
-      push @n, [$x, $y-1];
+    if ($xy->[Y] > 0) {
+      push @n, $p-$self->[WIDTH];
     }
-    if ($y < $self->[HEIGHT]-1) {
-      push @n, [$x, $y+1];
+    if ($xy->[Y] < $self->[HEIGHT]-1) {
+      push @n, $p+$self->[WIDTH];
     }
     return wantarray ? @n : \@n;
   }
 
-  sub neighbours_8 {
-    my ($self, $x, $y) = @_;
+  sub neighbours8 {
+    my ($self, $p) = @_;
+    my $xy = $self->xy($p);
     my @n;
     for my $o ([-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]) {
-      my $ox = $x + $o->[0];
-      my $oy = $y + $o->[1];
-      if ($ox < 0 || $ox >= $self->[WIDTH] ||
-          $oy < 0 || $oy >= $self->[HEIGHT]) {
-        next;
-      }
-      push @n, [$ox, $oy];
+      my $ox = $xy->[X] + $o->[X];
+      my $oy = $xy->[Y] + $o->[Y];
+      push @n, $ox+$oy*$self->[WIDTH]
+        if (0 <= $ox && $ox < $self->[WIDTH] &&
+            0 <= $oy && $oy < $self->[HEIGHT]);
     }
     return wantarray ? @n : \@n;
   }

@@ -5,7 +5,7 @@ use v5.10;
 use lib "../../lib-perl";
 no warnings 'portable';
 use AoC::Helpers qw/:all/;
-#use Carp::Always qw/carp verbose/;
+use Carp::Always qw/carp verbose/;
 #use Algorithm::Combinatorics qw/permutations combinations/;
 $; = $" = ',';
 
@@ -17,14 +17,14 @@ my $i = $reader->($file);
 my $i2 = $reader->($file);
 
 sub flash {
-  my ($in, $x, $y) = @_;
-  $in->set($x, $y, -1);
-  for my $nb ($in->neighbours_8($x, $y)) {
-    my $v = $in->get($nb->[X], $nb->[Y]);
+  my ($in, $p) = @_;
+  $in->set_idx($p, -1);
+  for my $nb ($in->neighbours8($p)) {
+    my $v = $in->get_idx($nb);
     next if ($v == -1); # already flashed
-    $in->set($nb->[X], $nb->[Y], $v+1);
+    $in->set_idx($nb, $v+1);
     if ($v >= 9) {
-      flash($in, $nb->[X], $nb->[Y]);
+      flash($in, $nb);
     }
   }
 }
@@ -39,12 +39,11 @@ sub calc {
       $in->add_idx($i, 1);
     }
     $in->visit(sub {
-                 my ($in, $x, $y, $v) = @_;
+                 my ($in, $p, $v) = @_;
                  if ($v > 9) {
-                   flash($in, $x, $y);
+                   flash($in, $p);
                  }
                });
-
     my $p2 = 0;
     for my $i (0..$in->last_index) {
       if ($in->get_idx($i) == -1) {
@@ -53,11 +52,11 @@ sub calc {
         $p2++;
       }
     }
-    print "Day $day\n", $in->pretty(), "\n";
+    print "Day $day ($p2)\n", $in->pretty(), "\n" if DEBUG;
     if ($day == $p1_days) {
       $p1 = $c;
     }
-    if ($p2 == $in->last_index+1) {
+    if ($p2 == $in->len) {
       return [$p1, $day];
     }
     $day++;
