@@ -7,7 +7,7 @@ The following are the benchmarks for the Go implementations of solutions for eac
 Day 1 | - | - | 52.8µs | 24.5ms | 10µs | 36.5ms | 48.5µs
 Day 2 | - | - | 42.2µs | 15.2ms | 4.5ms | 1.17ms | 688µs
 Day 3 | - | - | 43.6µs | 229ms | 77.3ms | 62.9µs | 143µs
-Day 4 | - | - | 3.31ms | 7.57ms | 168ms | 847µs | 499µs
+Day 4 | - | - | 3.31ms | 7.57ms | 168ms | 847µs | 420µs
 Day 5 | - | 24.7s | 166ms | 526ms | 2.9ms | 164µs | **🔴 1.68ms**
 Day 6 | - | - | 33.4ms | 73.4ms | 36.8ms | 2.66ms | 180µs
 Day 7 | - | - | 4.29ms | 418µs | 8.59ms | 2.9ms | 108µs
@@ -29,4 +29,4 @@ Day 22 | - | 36.6ms | 1.08s | 4.67s | 453µs | 127ms | -
 Day 23 | - | **🔴 2m18s** | 4.53ms | 378ms | - | **🔴 1.46s** | -
 Day 24 | - | 97ms | **🔴 4.98s** | 223ms | 455ms | 241ms | -
 Day 25 | - | 181ms | 1.52s | 19.1ms | - | 45.8ms | -
-*Total* | *0s* | *4m28s* | *17.4s* | *42.3s* | *47.8s* | *3.93s* | *6.25ms*
+*Total* | *0s* | *4m28s* | *17.4s* | *42.3s* | *47.8s* | *3.93s* | *6.17ms*

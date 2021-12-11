@@ -60,7 +60,7 @@ func NewHall(in []string) *Hall {
 
 func (h *Hall) AddLookup(call byte, nl *NumLocation) {
 	if _, ok := h.lookup[call]; !ok {
-		h.lookup[call] = []*NumLocation{}
+		h.lookup[call] = make([]*NumLocation, 0, 35)
 	}
 	h.lookup[call] = append(h.lookup[call], nl)
 }
