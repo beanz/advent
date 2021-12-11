@@ -1,0 +1,149 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use List::Util qw/min max sum/;
+
+my $file = shift // "input.txt";
+open my $fh, '<', $file or die "failed to open $file: $!\n";
+my $c;
+{
+  undef $/;
+  $c = <$fh>;
+}
+close $fh;
+$c =~ s/\n$// or warn "file doesn't end with \\n\n";
+my @nums = ($c =~ m/(-?\d+)/mg);
+if (@nums) {
+  if (@nums == 1) {
+    if ($c =~ /\d{40}/) {
+      print "very big number?\n";
+    } elsif ($c =~ /\d{20}/) {
+      print "big number?\n";
+    } else {
+      print "Single number @nums\n";
+    }
+  } else {
+    if ($c =~ /\d{40}/) {
+      print "very big number?\n";
+    } elsif ($c =~ /\d{20}/) {
+      print "big number?\n";
+    } else {
+      my $min = min(@nums);
+      my $max = max(@nums);
+      print "".(~~@nums)." numbers between $min and $max\n";
+      if ($max > 4294967000) {
+        print "limit of uint32\n";
+      } elsif ($max > 2147483000) {
+        print "limit of int32?\n";
+      } else {
+        print sum(@nums)/@nums, " average\n";
+      }
+    }
+  }
+}
+
+print desc($c);
+
+sub desc {
+  my ($c, $pre) = @_;
+  $pre //= "";
+  my $res;
+  my $bytes = length($c);
+  if ($c =~ /\n\n/) {
+    my $chunks = () = $c =~ /\n\n/mg;
+    $chunks++ if ($c !~ /\n\n$/); # file doesn't end with \n\n
+    $res .= $pre."$chunks chunks\n";
+    my %d;
+    my @ch = split /\n\n/, $c;
+    for my $i (0..$#ch) {
+      push @{$d{desc($ch[$i], $pre."  ")}}, $i;
+    }
+    if (keys %d == 1) {
+      $res .= "Single type of chunk:\n".(keys %d)[0];
+      return $res;
+    }
+    $res .= "Several chunk types:\n";
+    for my $desc (sort { @{$d{$a}} <=> @{$d{$b}} } keys %d) {
+      my $n = ~~@{$d{$desc}};
+      my $list = $n < 10 ? " (indices=".(join ",", @{$d{$desc}}).")" : "";
+      $res .= "* $n of:$list\n".$desc;
+    }
+    return $res;
+  }
+  my $minus_num = () = $c =~ /-[0-9]/mg;
+  my @i = split/\n/, $c;
+  my $h = @i;
+  my %fw;
+  $fw{$_}++ for (map {(split/\s+/, $_)[0]} @i);
+  if (keys %fw < 20 && keys %fw > $h) {
+    my $list = join",", sort keys %fw;
+    $res .= $pre."small set of first words";
+    if (length $list < 80) {
+      $res .= ((length $list > 40) ? ":\n".$pre."  " : ": ").$list."\n";
+    }
+  }
+  my %lens;
+  $lens{$_}++ for (map length, @i);
+  my %ch;
+  $ch{$_}++ for (split//,$c);
+  delete $ch{"\n"};
+  my $charset;
+  if (keys %ch < 20) {
+    $charset = (join "", sort keys %ch);
+    $charset =~ s/(\d)\d+(\d)/$1-$2/;
+    $charset =~ s/([a-z])[a-z]+([a-z])/$1-$2/;
+    $charset =~ s/([A-Z])[A-Z]+([A-Z])/$1-$2/;
+  } else {
+    $charset = (keys %ch)." different chars ";
+    my $n = 0;
+    for my $ch (sort { $a cmp $b } keys %ch) {
+      $charset .= $ch;
+      last if ($n++ == 11);
+    }
+    $charset .= "...";
+  }
+
+  if ($charset =~ /^(\D)(-?)0-9$/) {
+    my $sep = $1;
+    my $type = ($2 ? "" : "positive ");
+    my $n = () = $c =~ /\b\d+\b/mg;
+    $charset .= "\n$pre'$sep' separated list of $n ${type}ints";
+  } elsif ($charset eq '-0-9') {
+    my $n = () = $c =~ /\b\d+\b/mg;
+    $charset .= " $n ints?"
+  } elsif ($charset eq '0-9') {
+    my $n = () = $c =~ /\b\d+\b/mg;
+    $charset .= " $n ints"
+  }
+  if ($charset =~ /\#/ && $charset =~ /\./) {
+    $charset .= "\n${pre}possible rogue!";
+  }
+  if ($h == 1) {
+    $res .= $pre."Single line of ".length($c)." chars from $charset\n";
+  } else {
+    if (keys %lens == 1) {
+      my $w = (keys %lens)[0];
+      if ($w == $h) {
+        $res .= $pre."Square of $h lines of $w chars from $charset\n";
+      } else {
+        $res .= $pre."$h lines of $w chars from $charset\n";
+      }
+    } else {
+      my $desc = keys %lens == 1 ? "all of ".(keys %lens)[0] :
+        "of ".min(keys %lens)." to ".max(keys %lens);
+      $res .= $pre."$h lines $desc chars from $charset\n";
+    }
+  }
+
+  if ($minus_num) {
+    if ($minus_num == $h) {
+      $res .= $pre."Possible negative numbers on every line\n";
+    } elsif ($minus_num > $h) {
+      $res .= $pre."Possible negative numbers multiple per line\n";
+    } else {
+      $res .= $pre."Possible negative numbers ($minus_num)\n";
+    }
+  }
+  return $res;
+}
+
