@@ -128,7 +128,7 @@ aoc-gccgo: main.go
 	mv main $@
 
 gocpu.out: main.go
-	go test $$(grep -q Bench *_test.go && echo " -bench .") -cpuprofile=$@
+	go test $$(grep -q Bench *_test.go && echo "-run=XXX -bench .") -cpuprofile=$@
 
 go-prof: gocpu.out
 	go tool pprof -http=":9999" $<
