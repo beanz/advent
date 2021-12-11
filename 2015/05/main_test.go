@@ -45,3 +45,10 @@ func TestParts(t *testing.T) {
 	assert.Equal(t, 258, p1)
 	assert.Equal(t, 53, p2)
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

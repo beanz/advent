@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func SumSeries(first, last int) int {
 	return (1 + last - first) * (first + last) / 2
@@ -23,5 +27,10 @@ func calc(in []int) int {
 }
 
 func main() {
-	fmt.Printf("Part 1: %d\n", calc(ReadInputInts()))
+	p1 := calc(InputInts(input))
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
 }
+
+var benchmark bool

@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"sort"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func calc(in []string) (int, int) {
 	var paper int
@@ -25,8 +29,12 @@ func calc(in []string) (int, int) {
 }
 
 func main() {
-	s := ReadInputLines()
+	s := InputLines(input)
 	p1, p2 := calc(s)
-	fmt.Printf("Part 1: %d\n", p1)
-	fmt.Printf("Part 2: %d\n", p2)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark bool

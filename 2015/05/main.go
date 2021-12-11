@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func nice(s string) (bool, bool) {
 	vc := 0
@@ -58,8 +62,12 @@ func calc(in []string) (int, int) {
 }
 
 func main() {
-	in := ReadInputLines()
+	in := InputLines(input)
 	p1, p2 := calc(in)
-	fmt.Printf("Part 1: %d\n", p1)
-	fmt.Printf("Part 2: %d\n", p2)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark bool

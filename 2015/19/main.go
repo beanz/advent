@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math/rand"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Rule struct {
 	find    string
@@ -82,8 +86,16 @@ func (m *Mach) Part2() int {
 }
 
 func main() {
-	s := ReadInputChunks()
+	s := InputChunks(input)
 	m := NewMach(s)
-	fmt.Printf("Part 1: %d\n", m.Part1())
-	fmt.Printf("Part 2: %d\n", m.Part2())
+	p1 := m.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := m.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark bool

@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func Valid(pw string) bool {
 	seen := make(map[string]bool, len(pw)/2)
@@ -42,8 +46,15 @@ func Next(cur string) string {
 }
 
 func main() {
-	in := ReadInputLines()
+	in := InputLines(input)
 	p1 := Next(in[0])
-	fmt.Printf("Part 1: %s\n", p1)
-	fmt.Printf("Part 2: %s\n", Next(p1))
+	if !benchmark {
+		fmt.Printf("Part 1: %s\n", p1)
+	}
+	p2 := Next(p1)
+	if !benchmark {
+		fmt.Printf("Part 2: %s\n", p2)
+	}
 }
+
+var benchmark bool

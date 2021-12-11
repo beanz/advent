@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"strings"
 
 	aoc "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 const (
 	RA = 0
@@ -93,7 +97,15 @@ func (c *Comp) Part2() uint {
 }
 
 func main() {
-	g := NewComp(aoc.ReadInputLines())
-	fmt.Printf("Part 1: %d\n", g.Part1())
-	fmt.Printf("Part 2: %d\n", g.Part2())
+	g := NewComp(aoc.InputLines(input))
+	p1 := g.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := g.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark bool

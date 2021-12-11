@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Deer struct {
 	name     string
@@ -84,11 +88,19 @@ func Part2(in []string, endTime int) int {
 
 func main() {
 	file := InputFile()
-	in := ReadFileLines(file)
+	in := InputLines(input)
 	endTime := 1000
 	if file == "input.txt" {
 		endTime = 2503
 	}
-	fmt.Printf("Part 1: %d\n", Part1(in, endTime))
-	fmt.Printf("Part 2: %d\n", Part2(in, endTime))
+	p1 := Part1(in, endTime)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := Part2(in, endTime)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark bool

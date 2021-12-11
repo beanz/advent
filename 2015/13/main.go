@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Table struct {
 	h map[int]int
@@ -60,8 +64,16 @@ func (t *Table) Part2() int {
 }
 
 func main() {
-	s := ReadInputLines()
+	s := InputLines(input)
 	t := NewTable(s)
-	fmt.Printf("Part 1: %d\n", t.Part1())
-	fmt.Printf("Part 2: %d\n", t.Part2())
+	p1 := t.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := t.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark bool

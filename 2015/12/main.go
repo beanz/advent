@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"encoding/json"
 	"fmt"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func Part1(s string) int {
 	ints := Ints(s)
@@ -61,7 +65,15 @@ func Part2(s string) int {
 }
 
 func main() {
-	in := ReadInputLines()
-	fmt.Printf("Part 1: %d\n", Part1(in[0]))
-	fmt.Printf("Part 2: %d\n", Part2(in[0]))
+	in := InputLines(input)
+	p1 := Part1(in[0])
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := Part2(in[0])
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark bool

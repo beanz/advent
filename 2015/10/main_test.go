@@ -38,3 +38,10 @@ func TestRun(t *testing.T) {
 			fmt.Sprintf("part 1: %s %d", tc.s, tc.it))
 	}
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

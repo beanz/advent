@@ -33,3 +33,10 @@ func TestPart2(t *testing.T) {
 			"part 2: "+tc.file)
 	}
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

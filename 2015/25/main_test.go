@@ -33,3 +33,10 @@ func TestInput(t *testing.T) {
 	assert.Equal(t, 19980801, calc(ReadFileInts("input.txt")),
 		"Part 1 on input.txt")
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

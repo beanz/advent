@@ -28,3 +28,10 @@ func TestCalc(t *testing.T) {
 		assert.Equal(t, tc.p2, p2, "part 2: "+n)
 	}
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

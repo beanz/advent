@@ -1,9 +1,13 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Life struct {
 	init []bool
@@ -127,12 +131,18 @@ func (l *Life) Part2(rounds int) int {
 
 func main() {
 	file := InputFile()
-	s := ReadFileLines(file)
+	s := InputLines(input)
 	rounds := 100
 	if file != "input.txt" {
 		rounds = 4
 	}
 	l := NewLife(s)
-	fmt.Printf("Part 1: %d\n", l.Part1(rounds))
-	fmt.Printf("Part 2: %d\n", l.Part2(rounds))
+	p1 := l.Part1(rounds)
+	p2 := l.Part2(rounds)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark bool

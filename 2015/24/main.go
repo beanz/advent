@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math"
 	"sort"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func SolveAux(in []int, sum int) [][]int {
 	minLen := math.MaxInt32
@@ -64,6 +68,14 @@ func Part2(in []int) int {
 }
 
 func main() {
-	fmt.Printf("Part 1: %d\n", Part1(ReadInputInts()))
-	fmt.Printf("Part 2: %d\n", Part2(ReadInputInts()))
+	p1 := Part1(InputInts(input))
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := Part2(InputInts(input))
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark bool

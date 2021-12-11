@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"strconv"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func Iter(s string) string {
 	return Run(s, 1)
@@ -37,9 +41,15 @@ func Run(s string, num int) string {
 }
 
 func main() {
-	in := ReadInputLines()
+	in := InputLines(input)
 	s40 := Run(in[0], 40)
-	fmt.Printf("Part 1: %d\n", len(s40))
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", len(s40))
+	}
 	s50 := Run(s40, 10)
-	fmt.Printf("Part 2: %d\n", len(s50))
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", len(s50))
+	}
 }
+
+var benchmark bool

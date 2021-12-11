@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"github.com/cznic/mathutil"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func NumPresents(house int, part2 bool) int {
 	multi := 10
@@ -52,7 +56,15 @@ func calc(in int, part2 bool) int {
 }
 
 func main() {
-	in := ReadInputInts()[0]
-	fmt.Printf("Part 1: %d\n", calc(in, false))
-	fmt.Printf("Part 2: %d\n", calc(in, true))
+	in := InputInts(input)[0]
+	p1 := calc(in, false)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := calc(in, true)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark bool

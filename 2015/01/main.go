@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func calc(in []byte) (int, int) {
 	co, cc := 0, 0
@@ -27,8 +31,12 @@ func calc(in []byte) (int, int) {
 }
 
 func main() {
-	b := ReadInputBytes()
+	b := InputBytes(input)
 	p1, p2 := calc(b)
-	fmt.Printf("Part 1: %d\n", p1)
-	fmt.Printf("Part 2: %d\n", p2)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark bool

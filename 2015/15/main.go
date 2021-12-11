@@ -1,12 +1,16 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"math"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 type Ing struct {
 	cap, dur, fla, tex, cal int
@@ -85,7 +89,15 @@ func (r *Recipe) Part2() int {
 }
 
 func main() {
-	r := NewRecipe(ReadInputLines())
-	fmt.Printf("Part 1: %d\n", r.Part1())
-	fmt.Printf("Part 2: %d\n", r.Part2())
+	r := NewRecipe(InputLines(input))
+	p1 := r.Part1()
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := r.Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark bool

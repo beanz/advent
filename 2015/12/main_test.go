@@ -45,3 +45,10 @@ func TestInput(t *testing.T) {
 	assert.Equal(t, 119433, Part1(in), "Part 1 on input.txt")
 	assert.Equal(t, 68466, Part2(in), "Part 2 on input.txt")
 }
+
+func BenchmarkMain(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		main()
+	}
+}

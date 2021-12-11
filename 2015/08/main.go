@@ -1,10 +1,14 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed input.txt
+var input []byte
 
 func Count1(s string) int {
 	cc := 0
@@ -58,7 +62,15 @@ func Part2(in []string) int {
 }
 
 func main() {
-	in := ReadInputLines()
-	fmt.Printf("Part 1: %d\n", Part1(in))
-	fmt.Printf("Part 2: %d\n", Part2(in))
+	in := InputLines(input)
+	p1 := Part1(in)
+	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := Part2(in)
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
+	}
 }
+
+var benchmark bool
