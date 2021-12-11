@@ -21,6 +21,10 @@ func NewLavaTubes(in []byte) *LavaTubes {
 	return &LavaTubes{NewByteMap(in), []int{}}
 }
 
+func (l *LavaTubes) String() string {
+	return l.m.String()
+}
+
 func (l *LavaTubes) Part1() int {
 	risk := 0
 	l.m.Visit(func(i int, v byte) {
@@ -59,10 +63,7 @@ func (l *LavaTubes) Part2() int {
 }
 
 func main() {
-	bytes := InputBytes(input)
-	var inp []byte
-	inp = make([]byte, len(bytes))
-	copy(inp, bytes)
+	inp := InputBytes(input)
 	g := NewLavaTubes(inp)
 	p1 := g.Part1()
 	if !benchmark {

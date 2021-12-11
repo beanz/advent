@@ -82,6 +82,7 @@ func makeTable(benchmarks benchmarkData) string {
 		sb.WriteString("*")
 
 	}
+	sb.WriteByte('\n')
 
 	return sb.String()
 }

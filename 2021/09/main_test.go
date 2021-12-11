@@ -10,6 +10,9 @@ import (
 //go:embed test1.txt
 var test1 []byte
 
+//go:embed input.txt
+var safeinput []byte
+
 type TestCase struct {
 	file string
 	data []byte
@@ -17,6 +20,9 @@ type TestCase struct {
 }
 
 func TestPart1(t *testing.T) {
+	if string(input[:10]) != "5456898789" {
+		copy(input, safeinput)
+	}
 	tests := []TestCase{
 		{"test1.txt", test1, 15},
 		{"input.txt", input, 456},
@@ -27,6 +33,9 @@ func TestPart1(t *testing.T) {
 }
 
 func TestPart2(t *testing.T) {
+	if string(input[:10]) != "5456898789" {
+		copy(input, safeinput)
+	}
 	tests := []TestCase{
 		{"test1.txt", test1, 1134},
 		{"input.txt", input, 1047744},
@@ -61,6 +70,9 @@ func TestByteMapContains(t *testing.T) {
 func BenchmarkMain(b *testing.B) {
 	benchmark = true
 	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		copy(input, safeinput)
+		b.StartTimer()
 		main()
 	}
 }
