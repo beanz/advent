@@ -11,20 +11,108 @@ import (
 //go:embed input.txt
 var input []byte
 
-type Spell struct {
-	name                                   string
-	cost, damage, heal, armor, mana, turns int
+type Spell int
+
+const (
+	MagicMissile Spell = iota
+	Drain
+	Shield
+	Poison
+	Recharge
+)
+
+func (s Spell) String() string {
+	switch s {
+	case MagicMissile:
+		return "Magic Missile"
+	case Drain:
+		return "Drain"
+	case Shield:
+		return "Shield"
+	case Poison:
+		return "Poison"
+	case Recharge:
+		return "Recharge"
+	default:
+		return "Unknown Spell"
+	}
 }
 
-var (
-	MagicMissile = Spell{name: "Magic Missile", cost: 53, damage: 4}
-	Drain        = Spell{name: "Drain", cost: 73, damage: 2, heal: 2}
-	Shield       = Spell{name: "Shield", cost: 113, turns: 6, armor: 7}
-	Poison       = Spell{name: "Poison", cost: 173, turns: 6, damage: 3}
-	Recharge     = Spell{name: "Recharge", cost: 229, turns: 5, mana: 101}
+func (s Spell) Cost() int {
+	switch s {
+	case MagicMissile:
+		return 53
+	case Drain:
+		return 73
+	case Shield:
+		return 113
+	case Poison:
+		return 173
+	case Recharge:
+		return 229
+	default:
+		return 0
+	}
+}
 
-	AllSpells = []Spell{MagicMissile, Drain, Shield, Poison, Recharge}
-)
+func (s Spell) Damage() int {
+	switch s {
+	case MagicMissile:
+		return 4
+	case Drain:
+		return 2
+	case Poison:
+		return 3
+	default:
+		return 0
+	}
+}
+
+func (s Spell) Turns() int {
+	switch s {
+	case Shield:
+		return 6
+	case Poison:
+		return 6
+	case Recharge:
+		return 5
+	default:
+		return 0
+	}
+}
+
+func (s Spell) Heal() int {
+	switch s {
+	case Drain:
+		return 2
+	default:
+		return 0
+	}
+}
+
+func (s Spell) Mana() int {
+	switch s {
+	case Recharge:
+		return 101
+	default:
+		return 0
+	}
+}
+
+func (s Spell) Armor() int {
+	if s == Shield {
+		return 7
+	}
+	return 0
+}
+
+var AllSpells = []Spell{MagicMissile, Drain, Shield, Poison, Recharge}
+
+// Shield       = Spell{name: "Shield", cost: 113, turns: 6, armor: 7}
+// MagicMissile = Spell{name: "Magic Missile", cost: 53, damage: 4}
+// Drain        = Spell{name: "Drain", cost: 73, damage: 2, heal: 2}
+// Poison       = Spell{name: "Poison", cost: 173, turns: 6, damage: 3}
+// Recharge     = Spell{name: "Recharge", cost: 229, turns: 5, mana: 101}
 
 type ActiveSpells map[Spell]int
 
@@ -61,8 +149,10 @@ type State struct {
 }
 
 func (s *State) Clone() *State {
-	nm := Me{hp: s.me.hp, armor: s.me.armor, mana: s.me.mana,
-		manaSpent: s.me.manaSpent, active: make(map[Spell]int),
+	nm := Me{
+		hp: s.me.hp, armor: s.me.armor, mana: s.me.mana,
+		manaSpent: s.me.manaSpent,
+		active:    make(map[Spell]int, len(s.me.active)),
 	}
 	for k, v := range s.me.active {
 		nm.active[k] = v
@@ -81,41 +171,41 @@ func (s *State) Turn(sp Spell) {
 		fmt.Printf("- Boss has %d hit points\n", s.boss.hp)
 	}
 	for k := range s.me.active {
-		s.me.hp += k.heal
-		s.me.mana += k.mana
-		s.boss.hp -= k.damage
+		s.me.hp += k.Heal()
+		s.me.mana += k.Mana()
+		s.boss.hp -= k.Damage()
 		s.me.active[k]--
 		if s.debug {
-			fmt.Printf("%s active\n", k.name)
+			fmt.Printf("%s active\n", k)
 		}
 		if s.me.active[k] == 0 {
-			if k.armor != 0 {
-				s.me.armor -= k.armor
+			if k.Armor() != 0 {
+				s.me.armor -= k.Armor()
 			}
 			if s.debug {
-				fmt.Printf("%s wears off\n", k.name)
+				fmt.Printf("%s wears off\n", k)
 			}
 			delete(s.me.active, k)
 		}
 	}
-	s.me.mana -= sp.cost
-	s.me.manaSpent += sp.cost
+	s.me.mana -= sp.Cost()
+	s.me.manaSpent += sp.Cost()
 
-	if sp.turns > 0 {
+	if sp.Turns() > 0 {
 		if s.debug {
-			fmt.Printf("Player casts %s\n", sp.name)
+			fmt.Printf("Player casts %s\n", sp)
 		}
-		s.me.active[sp] = sp.turns
-		if sp.armor != 0 {
-			s.me.armor += sp.armor
+		s.me.active[sp] = sp.Turns()
+		if sp.Armor() != 0 {
+			s.me.armor += sp.Armor()
 		}
 	} else {
 		if s.debug {
-			fmt.Printf("Player casts %s with instant effects\n", sp.name)
+			fmt.Printf("Player casts %s with instant effects\n", sp)
 		}
-		s.me.hp += sp.heal
-		s.me.mana += sp.mana
-		s.boss.hp -= sp.damage
+		s.me.hp += sp.Heal()
+		s.me.mana += sp.Mana()
+		s.boss.hp -= sp.Damage()
 	}
 	if s.boss.hp <= 0 {
 		if s.debug {
@@ -132,19 +222,19 @@ func (s *State) Turn(sp Spell) {
 		fmt.Printf("- Boss has %d hit points\n", s.boss.hp)
 	}
 	for k := range s.me.active {
-		s.me.hp += k.heal
-		s.me.mana += k.mana
-		s.boss.hp -= k.damage
+		s.me.hp += k.Heal()
+		s.me.mana += k.Mana()
+		s.boss.hp -= k.Damage()
 		s.me.active[k]--
 		if s.debug {
-			fmt.Printf("%s active (%d)\n", k.name, s.me.active[k])
+			fmt.Printf("%s active (%d)\n", k, s.me.active[k])
 		}
 		if s.me.active[k] == 0 {
-			if k.armor != 0 {
-				s.me.armor -= k.armor
+			if k.Armor() != 0 {
+				s.me.armor -= k.Armor()
 			}
 			if s.debug {
-				fmt.Printf("%s wears off\n", k.name)
+				fmt.Printf("%s wears off\n", k)
 			}
 			delete(s.me.active, k)
 		}
@@ -188,7 +278,7 @@ func (g *Game) Calc(hardMode bool) int {
 			if cur.me.active[spell] > 1 {
 				continue // currently active
 			}
-			if cur.me.mana < spell.cost {
+			if cur.me.mana < spell.Cost() {
 				continue // can't afford spell
 			}
 
