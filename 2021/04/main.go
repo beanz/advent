@@ -11,7 +11,6 @@ import (
 var input []byte
 
 type Board struct {
-	b     [][]byte
 	score int
 	won   bool
 	num   byte
@@ -41,23 +40,19 @@ func NewHall(in []string) *Hall {
 	}
 	for i, bin := range in {
 		nums := FastBytes([]byte(bin))
-		rows := make([][]byte, 5)
 		rleft := make([]byte, 5)
 		cleft := make([]byte, 5)
-		h.boards[i] = &Board{rows, 0, false, byte(i), rleft, cleft}
+		h.boards[i] = &Board{0, false, byte(i), rleft, cleft}
 		var r byte
 		for ; r < 5; r++ {
 			rleft[r] = 5
 			cleft[r] = 5 // *sorry, not sorry*
-			row := make([]byte, 5)
 			var c byte
 			for ; c < 5; c++ {
 				n := nums[r*5+c]
-				row[c] = n
 				h.boards[i].score += int(n)
 				h.AddLookup(n, &NumLocation{byte(i), r, c})
 			}
-			rows[r] = row
 		}
 	}
 	return h
