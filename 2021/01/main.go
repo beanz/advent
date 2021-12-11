@@ -14,8 +14,8 @@ type Game struct {
 	in []int
 }
 
-func NewGame(in []int) *Game {
-	return &Game{in}
+func NewGame(in []byte) *Game {
+	return &Game{FastInts(in, len(in))}
 }
 
 func (g *Game) Part1() int {
@@ -57,8 +57,7 @@ func (g *Game) Fun(n int) int {
 }
 
 func main() {
-	nums := InputInts(input)
-	g := NewGame(nums)
+	g := NewGame(InputBytes(input))
 	p1 := g.Part1()
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)

@@ -1,11 +1,15 @@
 package main
 
 import (
+	_ "embed"
 	"github.com/stretchr/testify/assert"
 	"testing"
 
 	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed test1.txt
+var test1 []byte
 
 func TestWindows(t *testing.T) {
 	assert.Equal(t, [][]int{{1}, {2}, {3}, {4}},
@@ -19,45 +23,48 @@ func TestWindows(t *testing.T) {
 func TestPart1(t *testing.T) {
 	tests := []struct {
 		file string
+		data []byte
 		ans  int
 	}{
-		{"test1.txt", 7},
-		{"input.txt", 1342},
+		{"test1.txt", test1, 7},
+		{"input.txt", input, 1342},
 	}
 	for _, tc := range tests {
 		assert.Equal(t,
-			tc.ans, NewGame(ReadIntsFromFile(tc.file)).Part1(), tc.file)
+			tc.ans, NewGame(InputBytes(tc.data)).Part1(), tc.file)
 	}
 }
 
 func TestPart2(t *testing.T) {
 	tests := []struct {
 		file string
+		data []byte
 		ans  int
 	}{
-		{"test1.txt", 5},
-		{"input.txt", 1378},
+		{"test1.txt", test1, 5},
+		{"input.txt", input, 1378},
 	}
 	for _, tc := range tests {
 		assert.Equal(t,
-			tc.ans, NewGame(ReadIntsFromFile(tc.file)).Part2(), tc.file)
+			tc.ans, NewGame(InputBytes(tc.data)).Part2(), tc.file)
 	}
 }
 
 func TestFun(t *testing.T) {
 	tests := []struct {
 		file   string
+		data   []byte
 		window int
 		ans    int
 	}{
-		{"test1.txt", 1, 7},
-		{"input.txt", 1, 1342},
-		{"test1.txt", 3, 5},
-		{"input.txt", 3, 1378},
+		{"test1.txt", test1, 1, 7},
+		{"input.txt", input, 1, 1342},
+		{"test1.txt", test1, 3, 5},
+		{"input.txt", input, 3, 1378},
 	}
 	for _, tc := range tests {
 		assert.Equal(t,
-			tc.ans, NewGame(ReadIntsFromFile(tc.file)).Fun(tc.window), tc.file)
+			tc.ans, NewGame(InputBytes(tc.data)).Fun(tc.window), tc.file)
 	}
 }
 

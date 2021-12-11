@@ -37,3 +37,23 @@ func NumberString(s string) string {
 	}
 	return n
 }
+
+func FastInts(l []byte, expected int) []int {
+	res := make([]int, 0, expected)
+	n := 0
+	num := false
+	for _, ch := range l {
+		if ch >= '0' && ch <= '9' {
+			num = true
+			n = n*10 + int(ch-'0')
+		} else if num {
+			res = append(res, n)
+			n = 0
+			num = false
+		}
+	}
+	if num {
+		res = append(res, n)
+	}
+	return res
+}
