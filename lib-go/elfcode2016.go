@@ -78,9 +78,9 @@ func (p *ElfProg2016) Run() int {
 			p.ip++
 		case "jnz":
 			val := p.regValueOrImmediate(in.args[0])
-			jmp := p.regValueOrImmediate(in.args[1])
-			if val == 0 {
-				jmp = 1
+			jmp := 1
+			if val != 0 {
+				jmp = p.regValueOrImmediate(in.args[1])
 			}
 			p.ip += jmp
 		case "tgl":
