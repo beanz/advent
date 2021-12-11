@@ -12,7 +12,7 @@ func IntToBin(n int) string {
 func BinToInt(s string) int {
 	i, err := strconv.ParseInt(s, 2, 32)
 	if err != nil {
-		panic(fmt.Sprintf("invalid binary int %d: %s", s, err))
+		panic(fmt.Sprintf("invalid binary int %s: %s", s, err))
 	}
 	return int(i)
 }
