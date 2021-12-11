@@ -35,41 +35,21 @@ func (l Line) Norm() (int, int) {
 }
 
 type Diag struct {
-	pp    []Line
+	ints  []int
 	debug bool
 }
 
-func NewDiag(in []string) *Diag {
-	pp := make([]Line, len(in))
-	for i, l := range in {
-		ints := make([]int, 4)
-		j := 0
-		n := 0
-		num := false
-		for _, ch := range l {
-			if ch >= '0' && ch <= '9' {
-				num = true
-				n = n*10 + int(ch-'0')
-			} else if num {
-				ints[j] = n
-				j++
-				n = 0
-				num = false
-			}
-		}
-		if num {
-			ints[j] = n
-		}
-		pp[i] = Line(ints)
-	}
-	return &Diag{pp, false}
+func NewDiag(in []byte) *Diag {
+	ints := FastInts(in, 2048)
+	return &Diag{ints, false}
 }
 
 func (d *Diag) Overlaps() (int, int) {
 	d1 := make([]byte, 1024*1024)
 	c1 := 0
 	c2 := 0
-	for _, line := range d.pp {
+	for i := 0; i < len(d.ints); i += 4 {
+		line := Line(d.ints[i : i+4])
 		nx, ny := line.Norm()
 		p1inc := nx == 0 || ny == 0
 		var lineLen = MaxInt(Abs(line[X1]-line[X2]), Abs(line[Y1]-line[Y2]))
@@ -97,8 +77,7 @@ func (d *Diag) Overlaps() (int, int) {
 }
 
 func main() {
-	inp := InputLines(input)
-	d := NewDiag(inp)
+	d := NewDiag(InputBytes(input))
 	p1, p2 := d.Overlaps()
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
