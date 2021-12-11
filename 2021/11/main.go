@@ -43,21 +43,23 @@ func (o *Octopodes) Calc(days int) (int, int) {
 	day := 1
 	p1 := -1
 	for {
-		o.m.Visit(func(p int, v byte) {
-			o.m.Add(p, 1)
+		o.m.Visit(func(p int, v byte) (byte, bool) {
+			return v + 1, true
 		})
-		o.m.Visit(func(p int, v byte) {
+		o.m.Visit(func(p int, v byte) (byte, bool) {
 			if v > '9' && v != '~' {
 				o.Flash(p)
 			}
+			return 0, false
 		})
 		p2 := 0
-		o.m.Visit(func(p int, v byte) {
-			if v == '~' {
-				o.m.Set(p, '0')
-				c++
-				p2++
+		o.m.Visit(func(p int, v byte) (byte, bool) {
+			if v != '~' {
+				return 0, false
 			}
+			c++
+			p2++
+			return '0', true
 		})
 		if day == days {
 			p1 = c
@@ -114,12 +116,11 @@ func (m *ByteMap) Size() int {
 }
 
 func (m *ByteMap) IndexToXY(i int) (int, int) {
-	x := i % m.w
-	return x, (i - x) / m.w
+	return i % m.w, i / m.w
 }
 
 func (m *ByteMap) Contains(i int) bool {
-	return i >= 0 && (i%m.w) < m.w-1 && i/m.w < m.h
+	return i >= 0 && (i%m.w) < m.w-1 && i < m.h*m.w
 }
 
 func (m *ByteMap) Get(i int) byte {
@@ -154,22 +155,27 @@ func (m *ByteMap) Neighbours(i int) []int {
 
 func (m *ByteMap) Neighbours8(i int) []int {
 	res := make([]int, 0, 8)
-	for oy := -1; oy <= 1; oy++ {
-		for ox := -1; ox <= 1; ox++ {
-			ni := i + ox + oy*m.w
-			if m.Contains(ni) {
-				res = append(res, ni)
+	x, y := m.IndexToXY(i)
+	for ny := y - 1; ny <= y+1; ny++ {
+		for nx := x - 1; nx <= x+1; nx++ {
+			if nx == x && ny == y {
+				continue
+			}
+			if nx >= 0 && nx < m.w-1 && ny >= 0 && ny < m.h {
+				res = append(res, nx+ny*m.w)
 			}
 		}
 	}
 	return res
 }
 
-func (m *ByteMap) Visit(fn func(i int, v byte)) {
+func (m *ByteMap) Visit(fn func(i int, v byte) (byte, bool)) {
 	for y := 0; y < m.h; y++ {
 		for x := 0; x < m.w-1; x++ { // -1 due to newlines
 			i := x + y*m.w
-			fn(i, m.d[i])
+			if v, update := fn(i, m.d[i]); update {
+				m.d[i] = v
+			}
 		}
 	}
 }
