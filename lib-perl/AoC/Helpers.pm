@@ -548,6 +548,19 @@ sub read_chunky_records {
     return $_[0]->[MAP]->[$_[1]];
   }
 
+  sub add {
+    my ($self, $x, $y, $v) = @_;
+    $v //= 0;
+    my $i = $self->index($x, $y) // 0;
+    return $self->[MAP]->[$i] += $v;
+  }
+
+  sub add_idx {
+    my ($self, $i, $v) = @_;
+    $v //= 0;
+    return $_[0]->[MAP]->[$i] += $v;
+  }
+
   sub set_idx {
     return $_[0]->[MAP]->[$_[1]] = $_[2];
   }
@@ -556,6 +569,48 @@ sub read_chunky_records {
     my ($self, $x, $y, $v) = @_;
     my $i = $self->index($x, $y) // return;
     return $self->[MAP]->[$i] = $v;
+  }
+
+  sub visit {
+    my ($self, $fn) = @_;
+    for my $y (0..$self->[HEIGHT]-1) {
+      for my $x (0..$self->[WIDTH]-1) {
+        $fn->($self, $x, $y, $self->[MAP]->[$self->[WIDTH]*$y + $x]);
+      }
+    }
+  }
+
+  sub neighbours_4 {
+    my ($self, $x, $y, $fn) = @_;
+    my @n;
+    if ($x > 0) {
+      push @n, [$x-1, $y];
+    }
+    if ($x < $self->[WIDTH]-1) {
+      push @n, [$x+1, $y];
+    }
+    if ($y > 0) {
+      push @n, [$x, $y-1];
+    }
+    if ($y < $self->[HEIGHT]-1) {
+      push @n, [$x, $y+1];
+    }
+    return wantarray ? @n : \@n;
+  }
+
+  sub neighbours_8 {
+    my ($self, $x, $y) = @_;
+    my @n;
+    for my $o ([-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]) {
+      my $ox = $x + $o->[0];
+      my $oy = $y + $o->[1];
+      if ($ox < 0 || $ox >= $self->[WIDTH] ||
+          $oy < 0 || $oy >= $self->[HEIGHT]) {
+        next;
+      }
+      push @n, [$ox, $oy];
+    }
+    return wantarray ? @n : \@n;
   }
 
   sub pretty {
