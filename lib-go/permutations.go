@@ -90,13 +90,14 @@ func Variations(k, n int) [][]int {
 }
 
 type Subsets struct {
-	i    int
-	imax int
-	n    int
+	i       int
+	imax    int
+	n       int
+	backing []int
 }
 
 func NewSubsets(n int) *Subsets {
-	return &Subsets{1, (1 << n), n}
+	return &Subsets{1, (1 << n), n, make([]int, 0, n)}
 }
 
 func (ss *Subsets) Done() bool {
@@ -109,7 +110,7 @@ func (ss *Subsets) Next() []int {
 }
 
 func (ss *Subsets) Get() []int {
-	var subset []int
+	subset := ss.backing[:0]
 	for i := 0; i < ss.n; i++ {
 		if (ss.i>>i)&1 == 1 {
 			subset = append(subset, i)
