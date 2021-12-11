@@ -12,6 +12,9 @@ var test0 []byte
 //go:embed test1.txt
 var test1 []byte
 
+//go:embed input.txt
+var safeinput []byte
+
 type TestCase struct {
 	file   string
 	data   []byte
@@ -35,6 +38,9 @@ func TestCalc(t *testing.T) {
 func BenchmarkMain(b *testing.B) {
 	benchmark = true
 	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		copy(input, safeinput)
+		b.StartTimer()
 		main()
 	}
 }

@@ -4,7 +4,6 @@ import (
 	_ "embed"
 	"fmt"
 	"sort"
-	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -27,14 +26,15 @@ func (l *LavaTubes) String() string {
 
 func (l *LavaTubes) Part1() int {
 	risk := 0
-	l.m.Visit(func(i int, v byte) {
+	l.m.Visit(func(i int, v byte) (byte, bool) {
 		for _, nb := range l.m.Neighbours(i) {
 			if l.m.Get(nb) <= v {
-				return
+				return 0, false
 			}
 		}
 		l.lows = append(l.lows, i)
 		risk += int(v-byte('0')) + 1
+		return 0, false
 	})
 	return risk
 }
@@ -68,79 +68,19 @@ func main() {
 	p1 := g.Part1()
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
+	} else {
+		if p1 != 456 {
+			panic(fmt.Sprintf("benchmark got wrong result %d should be %d",
+				p1, 456))
+		}
 	}
 	p2 := g.Part2()
 	if !benchmark {
 		fmt.Printf("Part 2: %d\n", p2)
-	}
-}
-
-type ByteMap struct {
-	d    []byte
-	w, h int
-}
-
-func NewByteMap(in []byte) (i *ByteMap) {
-	var w int
-	for i, ch := range in {
-		if ch == '\n' {
-			w = i + 1 // +1 since we are keeping the newlines
-			break
-		}
-	}
-	h := len(in) / w
-	return &ByteMap{in, w, h}
-}
-
-func (m *ByteMap) String() string {
-	var sb strings.Builder
-	for y := 0; y < m.h; y++ {
-		sb.WriteString(string(m.d[y*m.w : (1+y)*m.w]))
-	}
-	sb.WriteString(fmt.Sprintf("%d x %d\n", m.w, m.h))
-	return sb.String()
-}
-
-func (m *ByteMap) IndexToXY(i int) (int, int) {
-	x := i % m.w
-	return x, (i - x) / m.w
-}
-
-func (m *ByteMap) Contains(i int) bool {
-	return i >= 0 && (i%m.w) < m.w-1 && i/m.w < m.h
-}
-
-func (m *ByteMap) Get(i int) byte {
-	return m.d[i]
-}
-
-func (m *ByteMap) Set(i int, v byte) {
-	m.d[i] = v
-}
-
-func (m *ByteMap) Neighbours(i int) []int {
-	x, y := m.IndexToXY(i)
-	res := make([]int, 0, 4)
-	if x > 0 {
-		res = append(res, i-1)
-	}
-	if x < m.w-2 { // because we've still got newlines!
-		res = append(res, i+1)
-	}
-	if y > 0 {
-		res = append(res, i-m.w)
-	}
-	if y < m.h-1 {
-		res = append(res, i+m.w)
-	}
-	return res
-}
-
-func (m *ByteMap) Visit(fn func(i int, v byte)) {
-	for y := 0; y < m.h; y++ {
-		for x := 0; x < m.w-1; x++ { // -1 due to newlines
-			i := x + y*m.w
-			fn(i, m.d[i])
+	} else {
+		if p2 != 1047744 {
+			panic(fmt.Sprintf("benchmark got wrong result %d should be %d",
+				p1, 1047744))
 		}
 	}
 }
