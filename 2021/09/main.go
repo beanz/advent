@@ -12,72 +12,63 @@ import (
 var input []byte
 
 type LavaTubes struct {
-	m    *ByteMap
-	lows []int
+	m *ByteMap
 }
 
 func NewLavaTubes(in []byte) *LavaTubes {
-	return &LavaTubes{NewByteMap(in), []int{}}
+	return &LavaTubes{NewByteMap(in)}
 }
 
 func (l *LavaTubes) String() string {
 	return l.m.String()
 }
 
-func (l *LavaTubes) Part1() int {
+func (l *LavaTubes) Calc() (int, int) {
 	risk := 0
-	l.m.Visit(func(i int, v byte) (byte, bool) {
-		for _, nb := range l.m.Neighbours(i) {
-			if l.m.Get(nb) <= v {
+	sizes := make([]int, 0, 512)
+	stack := make([]int, 0, 512)
+	for ch := byte('0'); ch < '9'; ch++ {
+		l.m.Visit(func(li int, v byte) (byte, bool) {
+			if v != ch {
 				return 0, false
 			}
-		}
-		l.lows = append(l.lows, i)
-		risk += int(v-byte('0')) + 1
-		return 0, false
-	})
-	return risk
-}
-
-func (l *LavaTubes) Part2() int {
-	sizes := make([]int, 0, len(l.lows))
-	for _, li := range l.lows {
-		size := 0
-		todo := []int{li}
-		for len(todo) > 0 {
-			i := todo[0]
-			todo = todo[1:]
-			if l.m.Get(i) >= '9' {
-				continue
+			risk += int(v-byte('0')) + 1
+			size := 0
+			todo := stack[:0]
+			todo = append(todo, li)
+			for len(todo) > 0 {
+				i := todo[0]
+				todo = todo[1:]
+				if l.m.Get(i) >= '9' {
+					continue
+				}
+				l.m.Set(i, '9')
+				size++
+				for _, nb := range l.m.Neighbours(i) {
+					todo = append(todo, nb)
+				}
 			}
-			l.m.Set(i, '9')
-			size++
-			for _, nb := range l.m.Neighbours(i) {
-				todo = append(todo, nb)
-			}
-		}
-		sizes = append(sizes, size)
+			sizes = append(sizes, size)
+			return 0, false
+		})
 	}
 	sort.Ints(sizes)
-	return sizes[len(sizes)-3] * sizes[len(sizes)-2] * sizes[len(sizes)-1]
+	p2 := sizes[len(sizes)-3] * sizes[len(sizes)-2] * sizes[len(sizes)-1]
+	return risk, p2
 }
 
 func main() {
 	inp := InputBytes(input)
 	g := NewLavaTubes(inp)
-	p1 := g.Part1()
+	p1, p2 := g.Calc()
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
 	} else {
 		if p1 != 456 {
 			panic(fmt.Sprintf("benchmark got wrong result %d should be %d",
 				p1, 456))
 		}
-	}
-	p2 := g.Part2()
-	if !benchmark {
-		fmt.Printf("Part 2: %d\n", p2)
-	} else {
 		if p2 != 1047744 {
 			panic(fmt.Sprintf("benchmark got wrong result %d should be %d",
 				p1, 1047744))
