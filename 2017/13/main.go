@@ -20,11 +20,11 @@ type Firewall struct {
 	debug    bool
 }
 
-func NewFirewall(lines []string) *Firewall {
+func NewFirewall(inp []byte) *Firewall {
 	fw := &Firewall{[]Scanner{}, false}
-	for _, line := range lines {
-		ints := SimpleReadInts(line)
-		fw.scanners = append(fw.scanners, Scanner{ints[0], ints[1]})
+	ints := FastInts(inp, 128)
+	for i := 0; i < len(ints); i += 2 {
+		fw.scanners = append(fw.scanners, Scanner{ints[i], ints[i+1]})
 	}
 	return fw
 }
@@ -59,7 +59,7 @@ func (fw *Firewall) Part2() int {
 }
 
 func main() {
-	fw := NewFirewall(InputLines(input))
+	fw := NewFirewall(InputBytes(input))
 	p1 := fw.Part1()
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
