@@ -2,7 +2,7 @@ package main
 
 import (
 	_ "embed"
-	"github.com/stretchr/testify/assert"
+	assert "github.com/stretchr/testify/require"
 	"testing"
 )
 
