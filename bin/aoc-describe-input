@@ -118,6 +118,10 @@ sub desc {
   if ($charset =~ /\#/ && $charset =~ /\./) {
     $charset .= "\n${pre}possible rogue!";
   }
+  if ($charset =~ /^,/) {
+    my $n = () = $c =~ /,/mg;
+    $charset = "($n ,-separated)"
+  }
   if ($h == 1) {
     $res .= $pre."Single line of ".length($c)." chars from $charset\n";
   } else {
