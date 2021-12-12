@@ -164,6 +164,9 @@ test-zig: aoc-zig
 test-go:
 	go test -v
 
+test-go-fast:
+	go test -short
+
 test-pl:
 	AoC_TEST=2 perl aoc.pl input.txt
 

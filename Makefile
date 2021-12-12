@@ -75,6 +75,11 @@ cr: ${CR_LOG} ${CR_BIN}
 go-build: ${GO_BIN}
 go: ${GO_LOG} ${GO_BIN}
 go-bench: ${GO_BENCH}
+go-test: ${GO_SRC}
+	for f in ${GO_SRC} ; do ( cd $${f%/*} && make test-go ); done
+
+go-test-fast: ${GO_SRC}
+	for f in ${GO_SRC} ; do ( cd $${f%/*} && make test-go-fast ); done
 
 benchmarks/README.md: benchmarks/README.template.md benchmarks/benchmarks.md
 	cat $^ > $@
@@ -165,7 +170,7 @@ benchmarks/results/%.ns: %/aoc-go
 clean: clean-perl clean-go clean-zig clean-nim clean-cr clean-cpp clean-misc
 
 clean-rs:
-	rm -f ${RS_LOG} ${RS_ERR} ${RS_BIN}
+	rm -f ${RS_LOG} ${RS_ERR} ${RS_BIN} ????/??/aoc-rs
 	rm -rf aoc-rust/target
 
 clean-perl:
