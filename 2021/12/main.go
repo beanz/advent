@@ -15,6 +15,7 @@ type Caves struct {
 	ids   map[string]int
 	lower int
 	max   int
+	cache map[int]int
 }
 
 const (
@@ -31,6 +32,7 @@ func NewCaves(in []byte) *Caves {
 		ids:   make(map[string]int, NUM_CAVES),
 		lower: 0,
 		max:   1,
+		cache: make(map[int]int, TWO_POW_NUM_CAVES),
 	}
 	c.ids["start"], c.names[0] = 0, "start"
 	c.ids["end"], c.names[1] = 1, "end"
@@ -79,6 +81,16 @@ func (c *Caves) Solve(start int, seen int, p2 bool, twice bool) int {
 	if (c.lower & start) != 0 {
 		seen |= start
 	}
+	k := ((start << 16) + seen) << 2
+	if p2 {
+		k += 2
+	}
+	if twice {
+		k++
+	}
+	if v, ok := c.cache[k]; ok {
+		return v
+	}
 	paths := 0
 	neighbors := c.nb[start]
 	for nb := 1; nb <= c.max; nb <<= 1 {
@@ -94,6 +106,7 @@ func (c *Caves) Solve(start int, seen int, p2 bool, twice bool) int {
 		}
 		paths += c.Solve(nb, seen, p2, ntwice)
 	}
+	c.cache[k] = paths
 	return paths
 }
 
