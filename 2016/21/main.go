@@ -3,10 +3,6 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	"log"
-	"os"
-	"regexp"
-	"strconv"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
@@ -15,13 +11,120 @@ import (
 //go:embed input.txt
 var input []byte
 
+type TransType byte
+
+const (
+	SwapPosition TransType = iota
+	SwapLetter
+	RotateLeft
+	RotateRight
+	RotateBase
+	Reverse
+	Move
+)
+
+type Transform struct {
+	t    TransType
+	arg1 byte
+	arg2 byte
+}
+
+func NewTransform(s string) Transform {
+	switch s[0] {
+	case 's': // swap
+		if s[5] == 'p' {
+			// 0123456789112345678921234567893123456789
+			// swap position D with position D
+			return Transform{SwapPosition, s[14] - '0', s[30] - '0'}
+		} else {
+			// 0123456789112345678921234567893123456789
+			// swap letter L with letter L
+			return Transform{SwapLetter, s[12], s[26]}
+		}
+	case 'r': // rotate or reverse
+		switch s[7] {
+		case 'l':
+			// 0123456789112345678921234567893123456789
+			// rotate left D steps
+			return Transform{RotateLeft, s[12] - '0', 0}
+		case 'r':
+			// 0123456789112345678921234567893123456789
+			// rotate right D steps
+			return Transform{RotateRight, s[13] - '0', 0}
+		case 'b':
+			// 0123456789112345678921234567893123456789
+			// rotate based on position of letter L
+			return Transform{RotateBase, s[35], 0}
+		case ' ':
+			// 0123456789112345678921234567893123456789
+			// reverse positions D through D
+			return Transform{Reverse, s[18] - '0', s[28] - '0'}
+		}
+	case 'm': // move
+		// 0123456789112345678921234567893123456789
+		// move position D to position D
+		return Transform{Move, s[14] - '0', s[28] - '0'}
+	}
+	panic("")
+}
+
+func (t Transform) String() string {
+	switch t.t {
+	case SwapPosition:
+		return fmt.Sprintf("swap pos %d %d", t.arg1, t.arg2)
+	case SwapLetter:
+		return fmt.Sprintf("swap letter %s %s", string(t.arg1), string(t.arg2))
+	case RotateLeft:
+		return fmt.Sprintf("rotate left %d", t.arg1)
+	case RotateRight:
+		return fmt.Sprintf("rotate right %d", t.arg1)
+	case RotateBase:
+		return fmt.Sprintf("rotate base %s", string(t.arg1))
+	case Reverse:
+		return fmt.Sprintf("reverse %d-%d", t.arg1, t.arg2)
+	case Move:
+		return fmt.Sprintf("move %d to %d", t.arg1, t.arg2)
+	}
+	panic("unknown transform type")
+}
+
+func (t Transform) ApplyTo(s string) string {
+	switch t.t {
+	case SwapPosition:
+		return SwapLetters(s, rune(s[int(t.arg1)]), rune(s[int(t.arg2)]))
+	case SwapLetter:
+		return SwapLetters(s, rune(t.arg1), rune(t.arg2))
+	case Reverse:
+		return ReversePositions(s, int(t.arg1), int(t.arg2))
+	case RotateLeft:
+		return RotateSteps(s, int(t.arg1))
+	case RotateRight:
+		return RotateSteps(s, -1*int(t.arg1))
+	case Move:
+		return MovePositions(s, int(t.arg1), int(t.arg2))
+	case RotateBase:
+		i := strings.Index(s, string(t.arg1))
+		dir := -1
+		if i >= 4 {
+			i++
+		}
+		i++
+		return RotateSteps(s, i*dir)
+	}
+	panic("invalid transform type")
+}
+
 type Game struct {
-	lines []string
+	trans []Transform
 	debug bool
 }
 
-func readGame(lines []string) *Game {
-	return &Game{lines, false}
+func NewGame(lines []string) *Game {
+	trans := make([]Transform, 0, len(lines))
+	for _, l := range lines {
+		trans = append(trans, NewTransform(l))
+	}
+	return &Game{trans, false}
 }
 
 func SwapLetters(s string, a, b rune) string {
@@ -71,103 +174,17 @@ func RotateSteps(s string, o int) string {
 	return n
 }
 
-func (g *Game) ApplyTransform(s, transform string) string {
-	swapPosRe := regexp.MustCompile(`swap position (\d+) with position (\d+)`)
-	swapLetterRe := regexp.MustCompile(`swap letter (.) with letter (.)`)
-	rotateStepsRe := regexp.MustCompile(`rotate (left|right) (\d+) steps?`)
-	rotateBaseRe := regexp.MustCompile(`rotate based on position of letter (.)`)
-	reverseRe := regexp.MustCompile(`reverse positions (\d+) through (\d+)`)
-	moveRe := regexp.MustCompile(`move position (\d+) to position (\d+)`)
-	if g.debug {
-		fmt.Printf("S: %s\nL: %s\n", s, transform)
-	}
-	m := swapPosRe.FindStringSubmatch(transform)
-	if m != nil {
-		i, err := strconv.Atoi(m[1])
-		if err != nil {
-			log.Fatalf("swap first position invalid: %s", err)
-		}
-		j, err := strconv.Atoi(m[2])
-		if err != nil {
-			log.Fatalf("swap second position invalid: %s", err)
-		}
-		s = SwapLetters(s, rune(s[i]), rune(s[j]))
-		return s
-	}
-	m = swapLetterRe.FindStringSubmatch(transform)
-	if m != nil {
-		s = SwapLetters(s, rune(m[1][0]), rune(m[2][0]))
-		return s
-	}
-	m = reverseRe.FindStringSubmatch(transform)
-	if m != nil {
-		i, err := strconv.Atoi(m[1])
-		if err != nil {
-			log.Fatalf("reverse first position invalid: %s", err)
-		}
-		j, err := strconv.Atoi(m[2])
-		if err != nil {
-			log.Fatalf("reverse second position invalid: %s", err)
-		}
-		s = ReversePositions(s, i, j)
-		return s
-	}
-	m = rotateStepsRe.FindStringSubmatch(transform)
-	if m != nil {
-		var dir int
-		if m[1] == "left" {
-			dir = 1
-		} else {
-			dir = -1
-		}
-		i, err := strconv.Atoi(m[2])
-		if err != nil {
-			log.Fatalf("rotate steps invalid: %s", err)
-		}
-		s = RotateSteps(s, i*dir)
-		return s
-	}
-	m = moveRe.FindStringSubmatch(transform)
-	if m != nil {
-		i, err := strconv.Atoi(m[1])
-		if err != nil {
-			log.Fatalf("move first position invalid: %s", err)
-		}
-		j, err := strconv.Atoi(m[2])
-		if err != nil {
-			log.Fatalf("move second position invalid: %s", err)
-		}
-		s = MovePositions(s, i, j)
-		return s
-	}
-	m = rotateBaseRe.FindStringSubmatch(transform)
-	if m != nil {
-		i := strings.Index(s, m[1])
-		dir := -1
-		if i >= 4 {
-			i++
-		}
-		i++
-		s = RotateSteps(s, i*dir)
-		return s
-	}
-	return s
-}
-
 func (g Game) Part1(in string) string {
 	s := in
-	for _, l := range g.lines {
-		s = g.ApplyTransform(s, l)
+	for _, t := range g.trans {
+		s = t.ApplyTo(s)
 	}
 	return s
 }
 
 func (g Game) Part2(in string) string {
 	perms := Permutations(0, len(in)-1)
-	for pn, p := range perms {
-		if !benchmark {
-			fmt.Fprintf(os.Stderr, "%6.2f\r", 100*(float64(pn)/float64(len(perms))))
-		}
+	for _, p := range perms {
 		s := ""
 		for _, i := range p {
 			s += string(in[i])
@@ -180,7 +197,7 @@ func (g Game) Part2(in string) string {
 }
 
 func main() {
-	game := readGame(InputLines(input))
+	game := NewGame(InputLines(input))
 	p1 := game.Part1("abcdefgh")
 	if !benchmark {
 		fmt.Printf("Part 1: %s\n", p1)
