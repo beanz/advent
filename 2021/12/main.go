@@ -9,103 +9,109 @@ import (
 //go:embed input.txt
 var input []byte
 
-type Cave int
+type Caves struct {
+	nb    []int
+	names map[int]string
+	ids   map[string]int
+	lower int
+	max   int
+}
 
 const (
-	START Cave = 0x7374617274
-	END        = 0x656e64
+	NUM_CAVES         = 16 // 16 seems small but only 12 in my input
+	TWO_POW_NUM_CAVES = 65536
+	START             = 0
+	END               = 1
 )
 
-func (c Cave) String() string {
-	s := ""
-	i := int(c)
-	for i > 0 {
-		s = string(byte(i&0xff)) + s
-		i >>= 8
+func NewCaves(in []byte) *Caves {
+	c := &Caves{
+		nb:    make([]int, TWO_POW_NUM_CAVES),
+		names: make(map[int]string, NUM_CAVES),
+		ids:   make(map[string]int, NUM_CAVES),
+		lower: 0,
+		max:   1,
 	}
-	return s
-}
+	c.ids["start"], c.names[0] = 0, "start"
+	c.ids["end"], c.names[1] = 1, "end"
 
-func (c *Cave) HashKey() int {
-	return int(*c)
-}
-
-type CaveSystem struct {
-	g map[Cave][]Cave
-}
-
-func NewCaveSystem(in []byte) *CaveSystem {
-	// 16 seems small but only 12 in my input
-	neighbors := make(map[Cave][]Cave, 16)
-	var start, end int
-	var foundDash bool
-	for _, ch := range in {
+	var start, dash int
+	for i, ch := range in {
 		switch ch {
 		case '-':
-			foundDash = true
+			dash = i
 		case '\n':
-			cs := Cave(start)
-			ce := Cave(end)
-			if ce != START {
-				neighbors[cs] = append(neighbors[cs], ce)
-			}
-			if cs != START {
-				neighbors[ce] = append(neighbors[ce], cs)
-			}
-			start = 0
-			end = 0
-			foundDash = false
-		default:
-			if foundDash {
-				end = end<<8 + int(ch)
-			} else {
-				start = start<<8 + int(ch)
-			}
+			c.AddPath(string(in[start:dash]), string(in[dash+1:i]))
+			start = i + 1
 		}
 	}
-	return &CaveSystem{neighbors}
+	return c
 }
 
-func (c *CaveSystem) Solve(start Cave, seen map[Cave]bool, p2 bool, twice bool) int {
+func (c *Caves) CaveID(cave string) int {
+	if v, ok := c.ids[cave]; ok {
+		return v
+	}
+	c.max <<= 1
+	c.ids[cave] = c.max
+	c.names[c.max] = cave
+	if cave[0] >= 'a' && cave[0] <= 'z' {
+		c.lower |= c.max
+	}
+	return c.max
+}
+
+func (c *Caves) AddPath(s, e string) {
+	start := c.CaveID(s)
+	end := c.CaveID(e)
+	if end != START { // don't bother adding paths to "start"
+		c.nb[start] |= end
+	}
+	if start != START { // don't bother adding paths to "start"
+		c.nb[end] |= start
+	}
+}
+
+func (c *Caves) Solve(start int, seen int, p2 bool, twice bool) int {
 	if start == END {
 		return 1
 	}
-	if (start & 0x20) == 0x20 { // lower case
-		seen[start] = true
+	if (c.lower & start) != 0 {
+		seen |= start
 	}
 	paths := 0
-	for _, nb := range c.g[start] {
+	neighbors := c.nb[start]
+	for nb := 1; nb <= c.max; nb <<= 1 {
+		if (nb & neighbors) == 0 {
+			continue
+		}
 		ntwice := twice
-		if seen[nb] {
+		if (seen & nb) != 0 {
 			if !p2 || twice {
 				continue
 			}
 			ntwice = true
 		}
-		nseen := make(map[Cave]bool, len(seen)+4)
-		for k := range seen {
-			nseen[k] = true
-		}
-		paths += c.Solve(nb, nseen, p2, ntwice)
+		paths += c.Solve(nb, seen, p2, ntwice)
 	}
 	return paths
 }
 
-func (c *CaveSystem) Part1() int {
-	return c.Solve(START, make(map[Cave]bool), false, false)
+func (c *Caves) Part1() int {
+	return c.Solve(START, 0, false, false)
 }
 
-func (c *CaveSystem) Part2() int {
-	return c.Solve(START, make(map[Cave]bool), true, false)
+func (c *Caves) Part2() int {
+	return c.Solve(START, 0, true, false)
 }
 
 func main() {
-	g := NewCaveSystem(InputBytes(input))
-	p1 := g.Part1()
+	c := NewCaves(InputBytes(input))
+	p1 := c.Part1()
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
 	}
-	p2 := g.Part2()
+	p2 := c.Part2()
 	if !benchmark {
 		fmt.Printf("Part 2: %d\n", p2)
 	}

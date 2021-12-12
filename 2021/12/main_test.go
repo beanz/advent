@@ -2,7 +2,7 @@ package main
 
 import (
 	_ "embed"
-	"github.com/stretchr/testify/assert"
+	assert "github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -32,7 +32,7 @@ func TestPart1(t *testing.T) {
 		{"input.txt", input, 4691},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.ans, NewCaveSystem(tc.data).Part1(), tc.file)
+		assert.Equal(t, tc.ans, NewCaves(tc.data).Part1(), tc.file)
 	}
 }
 
@@ -44,7 +44,7 @@ func TestPart2(t *testing.T) {
 		{"input.txt", input, 140718},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.ans, NewCaveSystem(tc.data).Part2(), tc.file)
+		assert.Equal(t, tc.ans, NewCaves(tc.data).Part2(), tc.file)
 	}
 }
 
