@@ -26,6 +26,9 @@ func TestCalc(t *testing.T) {
 		}
 		assert.Equal(t, tc.p1, p1, "part 1: "+n)
 		assert.Equal(t, tc.p2, p2, "part 2: "+n)
+		if testing.Short() {
+			break
+		}
 	}
 }
 

@@ -93,6 +93,9 @@ func TestTurnsExample3(t *testing.T) {
 }
 
 func TestParts(t *testing.T) {
+	if testing.Short() {
+		t.Skip()
+	}
 	g := NewGame(ReadFileInts("input.txt"))
 	assert.Equal(t, 1824, g.Part1(), "part 1")
 	assert.Equal(t, 1937, g.Part2(), "part 2")

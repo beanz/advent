@@ -42,11 +42,17 @@ func TestNumPres(t *testing.T) {
 }
 
 func TestPart1(t *testing.T) {
+	if testing.Short() {
+		t.Skip()
+	}
 	assert.Equal(t, 665280, calc(ReadFileInts("input.txt")[0], false),
 		"part 1")
 }
 
 func TestPart2(t *testing.T) {
+	if testing.Short() {
+		t.Skip()
+	}
 	assert.Equal(t, 705600, calc(ReadFileInts("input.txt")[0], true),
 		"part 2")
 }
