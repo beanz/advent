@@ -44,23 +44,24 @@ func (h *HexPoint) Neighbours() []*HexPoint {
 	}
 }
 
-func (h *HexPoint) Move(dir string) *HexPoint {
+func (h *HexPoint) Move(dir string) {
 	switch dir {
 	case "n":
-		return &HexPoint{h.q, h.r - 1}
+		h.r--
 	case "s":
-		return &HexPoint{h.q, h.r + 1}
+		h.r++
 	case "nw":
-		return &HexPoint{h.q - 1, h.r}
+		h.q--
 	case "se":
-		return &HexPoint{h.q + 1, h.r}
+		h.q++
 	case "ne":
-		return &HexPoint{h.q + 1, h.r - 1}
+		h.q++
+		h.r--
 	case "sw":
-		return &HexPoint{h.q - 1, h.r + 1}
+		h.q--
+		h.r++
 	default:
 		log.Fatalf("Invalid hex direction %s\n", dir)
-		return nil
 	}
 }
 
