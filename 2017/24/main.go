@@ -47,7 +47,7 @@ func (g *Game) String() string {
 }
 
 func NewGame(lines []string) *Game {
-	g := &Game{[]Component{}, false}
+	g := &Game{make([]Component, 0, len(lines)), false}
 	for _, line := range lines {
 		v := SimpleReadInts(line)
 		g.comp = append(g.comp, Component{v[0], v[1]})

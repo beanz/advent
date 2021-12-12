@@ -167,9 +167,14 @@ func TestCalc(t *testing.T) {
 		//slow//{"input.txt", 5, 11408},
 	}
 	for _, tc := range tests {
-		m := NewMap(ReadLines(tc.file), tc.dim)
-		assert.Equal(t, tc.ans, m.Calc(),
-			fmt.Sprintf("%s %d", tc.file, tc.dim))
+		t.Run(tc.file, func(t *testing.T) {
+			if tc.file == "input.txt" && testing.Short() {
+				t.Skip()
+			}
+			m := NewMap(ReadLines(tc.file), tc.dim)
+			assert.Equal(t, tc.ans, m.Calc(),
+				fmt.Sprintf("%s %d", tc.file, tc.dim))
+		})
 	}
 }
 

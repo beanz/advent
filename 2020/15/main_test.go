@@ -43,6 +43,9 @@ func TestPart2(t *testing.T) {
 	for _, tc := range tests {
 		r := Part2(ReadIntsFromFile(tc.file))
 		assert.Equal(t, tc.ans, r, tc.file)
+		if testing.Short() {
+			t.Skip()
+		}
 	}
 }
 

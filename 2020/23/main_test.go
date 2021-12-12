@@ -62,9 +62,14 @@ func TestPart2(t *testing.T) {
 		{"input.txt", 10000000, 1000000, 163035127721},
 	}
 	for _, tc := range tests {
-		assert.Equal(t,
-			tc.ans, NewGame(ReadLines(tc.file)[0]).Part2(tc.moves, tc.max),
-			tc.String())
+		t.Run(fmt.Sprintf("%s %d\n", tc.file, tc.moves), func(t *testing.T) {
+			if tc.moves >= 10000000 && testing.Short() {
+				t.Skip()
+			}
+			assert.Equal(t,
+				tc.ans, NewGame(ReadLines(tc.file)[0]).Part2(tc.moves, tc.max),
+				tc.String())
+		})
 	}
 }
 

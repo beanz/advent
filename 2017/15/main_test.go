@@ -11,6 +11,9 @@ func TestPart1(t *testing.T) {
 }
 
 func TestPart2(t *testing.T) {
+	if testing.Short() {
+		t.Skip()
+	}
 	assert.Equal(t, 309, Part2([]int{65, 8921}))
 	assert.Equal(t, 285, Part2([]int{722, 354}))
 }

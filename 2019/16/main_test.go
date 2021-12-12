@@ -41,8 +41,13 @@ func TestPart2(t *testing.T) {
 		{"input.txt", "21130597"},
 	}
 	for _, tc := range tests {
-		r := Part2(ReadUint8s(ReadLines(tc.file)[0]))
-		assert.Equal(t, tc.res, r)
+		t.Run(tc.file, func(t *testing.T) {
+			if tc.file == "input.txt" && testing.Short() {
+				t.Skip()
+			}
+			r := Part2(ReadUint8s(ReadLines(tc.file)[0]))
+			assert.Equal(t, tc.res, r)
+		})
 	}
 
 }

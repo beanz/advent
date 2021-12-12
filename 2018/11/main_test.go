@@ -58,10 +58,12 @@ func TestSolve(t *testing.T) {
 	assert.Equal(t, "237,227,14", sq.String())
 	assert.Equal(t, 108, level)
 
-	g = NewGame(ReadLines("input.txt"))
-	sq, level = g.Solve()
-	assert.Equal(t, "237,227,14", sq.String())
-	assert.Equal(t, 108, level)
+	if !testing.Short() {
+		g = NewGame(ReadLines("input.txt"))
+		sq, level = g.Solve()
+		assert.Equal(t, "237,227,14", sq.String())
+		assert.Equal(t, 108, level)
+	}
 }
 
 func BenchmarkMain(b *testing.B) {
