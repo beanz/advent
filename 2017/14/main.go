@@ -45,30 +45,19 @@ func NewRope(line string, rlen int) *Rope {
 	return &Rope{nums, rope, 0, 0, false}
 }
 
-func (r *Rope) Twist(pos int) {
-	n := []int{}
-	for i := 0; i < len(r.rope); i++ {
-		offset := ((len(r.rope) + i) - r.cur) % len(r.rope)
-		if r.debug {
-			fmt.Printf("%d: offset=%d ", i, offset)
+func (r *Rope) Twist(twistlen int) {
+	rl := len(r.rope)
+	for i := 0; i < twistlen/2; i++ {
+		j := twistlen - 1 - i
+		if i == j {
+			continue
 		}
-		if offset >= pos {
-			n = append(n, r.rope[i])
-			if r.debug {
-				fmt.Printf("%d\n", i)
-			}
-		} else {
-			altOffset := (pos - 1) - offset
-			alt := (r.cur + altOffset) % len(r.rope)
-			if r.debug {
-				fmt.Printf("%d => %d => %d\n", i, altOffset, alt)
-			}
-			n = append(n, r.rope[alt])
-		}
+		ri := (i + r.cur) % rl
+		rj := (j + r.cur) % rl
+		r.rope[ri], r.rope[rj] = r.rope[rj], r.rope[ri]
 	}
-	r.cur = (r.cur + pos + r.skip) % len(r.rope)
+	r.cur = (r.cur + twistlen + r.skip) % len(r.rope)
 	r.skip++
-	r.rope = n
 }
 
 func (r *Rope) DenseHash() (string, int, []int) {
