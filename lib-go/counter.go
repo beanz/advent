@@ -8,6 +8,7 @@ import (
 
 type ByteCounter interface {
 	Inc(byte)
+	Add(byte, int)
 	Top(int) []byte
 	Bottom(int) []byte
 	Count(byte) int
@@ -23,6 +24,10 @@ func NewMapByteCounter(n int) ByteCounter {
 
 func (bc *MapByteCounter) Inc(ch byte) {
 	bc.m[ch]++
+}
+
+func (bc *MapByteCounter) Add(ch byte, c int) {
+	bc.m[ch] += c
 }
 
 func (bc *MapByteCounter) Top(n int) []byte {
@@ -99,6 +104,16 @@ func (bc *SliceByteCounter) Inc(ch byte) {
 		}
 	}
 	bc.s = append(bc.s, CharCount{ch: ch, count: 1})
+}
+
+func (bc *SliceByteCounter) Add(ch byte, c int) {
+	for i := 0; i < len(bc.s); i++ {
+		if bc.s[i].ch == ch {
+			bc.s[i].count += c
+			return
+		}
+	}
+	bc.s = append(bc.s, CharCount{ch: ch, count: c})
 }
 
 func (bc *SliceByteCounter) Top(n int) []byte {
