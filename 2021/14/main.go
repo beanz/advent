@@ -35,7 +35,7 @@ func NewPolymer(in []byte) *Polymer {
 }
 
 func (p *Polymer) MostMinusLeast(pc map[Pair]int) int {
-	chCount := NewMapByteCounter(26)
+	chCount := NewSliceByteCounter(26)
 	chCount.Inc(p.init[len(p.init)-1])
 	for pair, c := range pc {
 		chCount.Add(pair.a, c)
