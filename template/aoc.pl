@@ -34,7 +34,6 @@ sub calc {
 
 sub calc2 {
   my ($in) = @_;
-  dd([$in],[qw/in/]);
   my $c = 0;
   return $c;
 }
