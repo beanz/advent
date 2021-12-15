@@ -13,7 +13,7 @@ fn part2(depths: &[usize]) -> usize {
 fn main() {
     let inp = aoc::black_box(aoc::slurp_input_file());
     aoc::benchme(|bench: bool| {
-        let depths = aoc::ints::<usize>(&inp).collect::<Vec<usize>>();
+        let depths = aoc::uints::<usize>(&inp).collect::<Vec<usize>>();
         let p1 = part1(&depths);
         if !bench {
             println!("Part 1: {}", p1);
