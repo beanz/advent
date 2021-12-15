@@ -31,6 +31,14 @@ func (m *ByteMap) String() string {
 	return sb.String()
 }
 
+func (m *ByteMap) Width() int {
+	return m.w - 1
+}
+
+func (m *ByteMap) Height() int {
+	return m.h
+}
+
 func (m *ByteMap) Size() int {
 	return (m.w - 1) * m.h
 }
@@ -45,6 +53,10 @@ func (m *ByteMap) Contains(i int) bool {
 
 func (m *ByteMap) Get(i int) byte {
 	return m.d[i]
+}
+
+func (m *ByteMap) GetXY(x, y int) byte {
+	return m.d[x + y*m.w]
 }
 
 func (m *ByteMap) Set(i int, v byte) {
