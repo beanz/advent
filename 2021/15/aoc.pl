@@ -5,7 +5,7 @@ use v5.10;
 use lib "../../lib-perl";
 no warnings 'portable';
 use AoC::Helpers qw/:all/;
-use List::Priority;
+use POE::XS::Queue::Array;
 $; = $" = ',';
 
 my $file = shift // "input.txt";
@@ -50,11 +50,12 @@ sub calc {
   $dim //= 1;
   my $w = $dim*$in->width();
   my $h = $dim*$in->height();
-  #dd([$in],[qw/in/]);
-  my $search = List::Priority->new();
-  $search->insert(0, [0,0,0]);
+  my $search = POE::XS::Queue::Array->new();
+  $search->enqueue(0, [0,0,0]);
   my %visited;
-  while (my $cur = $search->shift()) {
+  while (1) {
+    my ($priority, $queue_id, $cur) = $search->dequeue_next();
+    last unless defined $priority;
     if (defined $visited{$cur->[X],$cur->[Y]} &&
         $visited{$cur->[X],$cur->[Y]} <= $cur->[RISK]) {
       next;
@@ -71,7 +72,7 @@ sub calc {
       if ($x == $w-1 && $y == $h-1) {
         return $risk;
       }
-      $search->insert($risk, [$x, $y, $risk]);
+      $search->enqueue($risk, [$x, $y, $risk]);
     }
   }
   return -1;
