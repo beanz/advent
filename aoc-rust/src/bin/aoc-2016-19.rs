@@ -54,9 +54,9 @@ fn winner2(elves: usize) -> usize {
     if elves == mst {
         return elves;
     } else if elves < 2 * mst {
-	return elves % mst
+        return elves % mst;
     }
-    mst + 2 * (elves%mst)
+    mst + 2 * (elves % mst)
 }
 
 #[test]
@@ -90,7 +90,14 @@ fn winner2_working() {
 }
 
 fn main() {
-    let elves = aoc::ints::<usize>(&aoc::read_input_line()).next().unwrap();
-    println!("Part 1: {}", winner(elves));
-    println!("Part 2: {}", winner2(elves));
+    let inp = aoc::read_input_line();
+    aoc::benchme(|bench: bool| {
+        let elves = aoc::ints::<usize>(&inp).next().unwrap();
+        let p1 = winner(elves);
+        let p2 = winner2(elves);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

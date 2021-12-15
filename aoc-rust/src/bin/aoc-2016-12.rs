@@ -101,7 +101,7 @@ struct ElfComp2016 {
 }
 
 impl ElfComp2016 {
-    fn new(inp: Vec<String>) -> ElfComp2016 {
+    fn new(inp: &[String]) -> ElfComp2016 {
         ElfComp2016 {
             inst: inp.iter().map(|l| Inst::new(l)).collect(),
         }
@@ -144,7 +144,13 @@ fn part1_works() {
 
 fn main() {
     let lines = aoc::input_lines();
-    let comp = ElfComp2016::new(lines);
-    println!("Part 1: {}", comp.part1());
-    println!("Part 2: {}", comp.part2());
+    aoc::benchme(|bench: bool| {
+        let comp = ElfComp2016::new(&lines);
+        let p1 = comp.part1();
+        let p2 = comp.part2();
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

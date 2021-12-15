@@ -48,7 +48,14 @@ fn part2_works() {
 }
 
 fn main() {
-    let steps = aoc::uints::<usize>(&aoc::read_input_line()).next().unwrap();
-    println!("Part 1: {}", part1(2017, steps));
-    println!("Part 2: {}", part2(50_000_000, steps));
+    let inp = aoc::read_input_line();
+    aoc::benchme(|bench: bool| {
+        let steps = aoc::uints::<usize>(&inp).next().unwrap();
+        let p1 = part1(2017, steps);
+        let p2 = part2(50_000_000, steps);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

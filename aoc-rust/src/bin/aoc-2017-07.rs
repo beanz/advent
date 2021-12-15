@@ -122,10 +122,15 @@ impl Tower {
 
 fn main() {
     let inp = aoc::input_lines();
-    let tower = Tower::new(&inp);
-    let p1 = tower.part1();
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", tower.part2(p1));
+    aoc::benchme(|bench: bool| {
+        let tower = Tower::new(&inp);
+        let p1 = tower.part1();
+        let p2 = tower.part2(p1.to_string());
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[allow(dead_code)]

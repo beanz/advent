@@ -191,8 +191,12 @@ fn factory_works() {
 
 fn main() {
     let inp = aoc::input_lines();
-    let mut f = Factory::new(&inp, (17, 61));
-    let (p1, p2) = f.calc();
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", p2);
+    aoc::benchme(|bench: bool| {
+        let mut f = Factory::new(&inp, (17, 61));
+        let (p1, p2) = f.calc();
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

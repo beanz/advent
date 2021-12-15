@@ -50,8 +50,14 @@ fn part2(inp: &[String]) -> usize {
 
 fn main() {
     let inp = aoc::input_lines();
-    println!("Part 1: {}", part1(&inp));
-    println!("Part 2: {}", part2(&inp));
+    aoc::benchme(|bench: bool| {
+        let p1 = part1(&inp);
+        let p2 = part2(&inp);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[allow(dead_code)]

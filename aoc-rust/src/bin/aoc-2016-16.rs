@@ -96,6 +96,12 @@ fn part1_works() {
 
 fn main() {
     let inp = aoc::read_input_line();
-    println!("Part 1: {}", part1(&inp, 272));
-    println!("Part 2: {}", part1(&inp, 35651584));
+    aoc::benchme(|bench: bool| {
+        let p1 = part1(&inp, 272);
+        let p2 = part1(&inp, 35651584);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

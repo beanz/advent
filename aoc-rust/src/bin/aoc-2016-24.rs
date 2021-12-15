@@ -118,10 +118,14 @@ impl Game {
 
 fn main() {
     let inp = aoc::input_lines();
-    let g = Game::new(&inp);
-    let (p1, p2) = g.calc();
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", p2);
+    aoc::benchme(|bench: bool| {
+        let g = Game::new(&inp);
+        let (p1, p2) = g.calc();
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

@@ -138,7 +138,13 @@ fn solve_search_works() {
 
 fn main() {
     let fav = aoc::read_input_line().parse::<u64>().unwrap();
-    let mut maze = Maze::new(fav);
-    println!("Part 1: {}", maze.part1());
-    println!("Part 2: {}", maze.part2());
+    aoc::benchme(|bench: bool| {
+        let mut maze = Maze::new(fav);
+        let p1 = maze.part1();
+        let p2 = maze.part2();
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

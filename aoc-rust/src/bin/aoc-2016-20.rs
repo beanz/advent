@@ -1,4 +1,4 @@
-fn calc(inp: Vec<String>) -> (usize, usize) {
+fn calc(inp: &[String]) -> (usize, usize) {
     let mut ranges = inp
         .iter()
         .map(|l| {
@@ -16,8 +16,7 @@ fn calc(inp: Vec<String>) -> (usize, usize) {
     });
 
     let max = std::u32::MAX as usize;
-    let mut new: Vec<std::ops::RangeInclusive<usize>> = vec![];
-    new.push(ranges[0].clone());
+    let mut new: Vec<std::ops::RangeInclusive<usize>> = vec![ranges[0].clone()];
     let mut p2 = *new[0].start();
     for range in ranges.iter().skip(1) {
         let ni = new.len() - 1;
@@ -47,7 +46,11 @@ fn calc_works() {
 
 fn main() {
     let lines = aoc::input_lines();
-    let (p1, p2) = calc(lines);
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", p2);
+    aoc::benchme(|bench: bool| {
+        let (p1, p2) = calc(&lines);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

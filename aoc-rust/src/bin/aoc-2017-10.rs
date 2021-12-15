@@ -1,6 +1,6 @@
 fn part1(l: &str, len: usize) -> usize {
     let mut r = aoc::Rope::new(len);
-    for pos in aoc::uints::<usize>(&l) {
+    for pos in aoc::uints::<usize>(l) {
         r.twist(pos);
     }
     r.product()
@@ -18,8 +18,14 @@ fn part2(l: &str) -> String {
 
 fn main() {
     let inp = aoc::read_input_line();
-    println!("Part 1: {}", part1(&inp, 256));
-    println!("Part 2: {}", part2(&inp));
+    aoc::benchme(|bench: bool| {
+        let p1 = part1(&inp, 256);
+        let p2 = part2(&inp);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

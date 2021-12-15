@@ -81,13 +81,20 @@ fn rogue_add_works() {
 }
 
 fn main() {
-    let mut r = Rogue::new(&aoc::read_input_line());
-    while r.rows.len() < 40 {
-        r.add();
-    }
-    println!("Part 1: {}", r.count);
-    while r.rows.len() < 400000 {
-        r.add();
-    }
-    println!("Part 2: {}", r.count);
+    let inp = aoc::read_input_line();
+    aoc::benchme(|bench: bool| {
+        let mut r = Rogue::new(&inp);
+        while r.rows.len() < 40 {
+            r.add();
+        }
+        let p1 = r.count;
+        while r.rows.len() < 400000 {
+            r.add();
+        }
+        let p2 = r.count;
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

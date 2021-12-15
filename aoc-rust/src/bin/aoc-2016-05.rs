@@ -54,10 +54,18 @@ impl Gen {
 
 fn main() {
     let inp = aoc::read_input_line();
-    let mut gen = Gen::new(&inp);
-    println!("Part 1: {}", gen.password());
-    gen = Gen::new(&inp);
-    println!("Part 2: {}", gen.strong_password());
+    aoc::benchme(|bench: bool| {
+        let mut gen = Gen::new(&inp);
+        let p1 = gen.password();
+        if !bench {
+            println!("Part 1: {}", p1);
+        }
+        gen = Gen::new(&inp);
+        let p2 = gen.strong_password();
+        if !bench {
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

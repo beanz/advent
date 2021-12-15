@@ -41,7 +41,11 @@ fn part2_works() {
 
 fn main() {
     let nums = aoc::read_input_line();
-    let (p1, p2) = calc(&nums);
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", p2);
+    aoc::benchme(|bench: bool| {
+        let (p1, p2) = calc(&nums);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

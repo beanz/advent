@@ -121,7 +121,11 @@ fn search_works() {
 
 fn main() {
     let inp = aoc::read_input_line();
-    let (p1, p2) = search(&inp);
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", p2);
+    aoc::benchme(|bench: bool| {
+        let (p1, p2) = search(&inp);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

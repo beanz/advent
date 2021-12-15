@@ -111,7 +111,7 @@ enum Op {
 
 impl Op {
     fn new(s: &str) -> Op {
-        let uints: Vec<usize> = aoc::uints::<usize>(&s).collect();
+        let uints: Vec<usize> = aoc::uints::<usize>(s).collect();
         let mut words = s.split(' ');
         match words.next().unwrap() {
             "swap" => match words.next().unwrap() {
@@ -177,7 +177,7 @@ fn part2(ops: &[Op], st: &str) -> String {
     let alpha = vec!['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
     for p in alpha.iter().permutations(8) {
         let plain = p.iter().copied().collect::<String>();
-        let scram = part1(&ops, &plain);
+        let scram = part1(ops, &plain);
         if scram == st {
             return plain;
         }
@@ -187,7 +187,13 @@ fn part2(ops: &[Op], st: &str) -> String {
 
 fn main() {
     let inp = aoc::input_lines();
-    let ops = inp.iter().map(|l| Op::new(l)).collect::<Vec<Op>>();
-    println!("Part 1: {}", part1(&ops, "abcdefgh"));
-    println!("Part 2: {}", part2(&ops, "fbgdceah"));
+    aoc::benchme(|bench: bool| {
+        let ops = inp.iter().map(|l| Op::new(l)).collect::<Vec<Op>>();
+        let p1 = part1(&ops, "abcdefgh");
+        let p2 = part2(&ops, "fbgdceah");
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

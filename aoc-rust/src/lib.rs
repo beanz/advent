@@ -75,10 +75,10 @@ pub fn benchme(mut fun: impl FnMut(bool)) {
     if bench {
         let elapsed = start.elapsed().as_micros();
         println!(
-            "bench {} iterations in {}µs: {}µs",
+            "bench {} iterations in {}µs: {}ns",
             iterations,
             elapsed,
-            elapsed / iterations
+            (1000 * elapsed) as f64 / (iterations as f64)
         );
     }
 }

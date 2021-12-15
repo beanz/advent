@@ -20,7 +20,13 @@ fn calc_works() {
 
 fn main() {
     let inp = aoc::slurp_input_file();
-    let mut jumps = aoc::ints::<isize>(&inp).collect::<Vec<isize>>();
-    println!("Part 1: {}", calc(&mut jumps.clone(), false));
-    println!("Part 2: {}", calc(&mut jumps, true));
+    aoc::benchme(|bench: bool| {
+        let mut jumps = aoc::ints::<isize>(&inp).collect::<Vec<isize>>();
+        let p1 = calc(&mut jumps.clone(), false);
+        let p2 = calc(&mut jumps, true);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

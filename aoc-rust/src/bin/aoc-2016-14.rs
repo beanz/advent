@@ -66,7 +66,7 @@ impl Iterator for StretchedMd5er {
         let mut cs = aoc::md5sum(self.ns.bytes());
         for _n in 1..2017 {
             cs = aoc::md5sum(
-                &cs.iter()
+                cs.iter()
                     .map(|x| format!("{:02x}", x))
                     .collect::<String>()
                     .as_bytes(),
@@ -138,6 +138,12 @@ fn part2(salt: &str) -> usize {
 
 fn main() {
     let salt = aoc::read_input_line();
-    println!("Part 1: {}", part1(&salt));
-    println!("Part 2: {}", part2(&salt));
+    aoc::benchme(|bench: bool| {
+        let p1 = part1(&salt);
+        let p2 = part2(&salt);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

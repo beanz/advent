@@ -44,8 +44,14 @@ impl Keypad {
 
 fn main() {
     let lines: Vec<String> = aoc::input_lines();
-    println!("Part 1: {}", Keypad::part1().calc(&lines));
-    println!("Part 2: {}", Keypad::part2().calc(&lines));
+    aoc::benchme(|bench: bool| {
+        let p1 = Keypad::part1().calc(&lines);
+        let p2 = Keypad::part2().calc(&lines);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

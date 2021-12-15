@@ -68,6 +68,12 @@ fn decompress_works() {
 
 fn main() {
     let inp = aoc::read_input_line();
-    println!("Part 1: {}", decompress(&inp, false));
-    println!("Part 2: {}", decompress(&inp, true));
+    aoc::benchme(|bench: bool| {
+        let p1 = decompress(&inp, false);
+        let p2 = decompress(&inp, true);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

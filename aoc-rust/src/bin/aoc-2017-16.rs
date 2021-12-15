@@ -67,7 +67,7 @@ fn part2(ch: char, moves: &[String]) -> String {
     let mut c = 1;
     let mut cycle_found = false;
     while c <= END {
-        p.dance(&moves);
+        p.dance(moves);
         let k = format!("{}", p);
         if !cycle_found {
             if let Some(prev) = seen.get(&k) {
@@ -95,12 +95,18 @@ fn part2_works() {
 }
 
 fn main() {
-    let moves = aoc::read_input_line()
-        .split(',')
-        .map(|x| x.to_string())
-        .collect::<Vec<String>>();
-    let mut p = Programs::new('p');
-    p.dance(&moves);
-    println!("Part 1: {}", p);
-    println!("Part 2: {}", part2('p', &moves));
+    let inp = aoc::read_input_line();
+    aoc::benchme(|bench: bool| {
+        let moves = inp
+            .split(',')
+            .map(|x| x.to_string())
+            .collect::<Vec<String>>();
+        let mut p = Programs::new('p');
+        p.dance(&moves);
+        let p2 = part2('p', &moves);
+        if !bench {
+            println!("Part 1: {}", p);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

@@ -1,7 +1,7 @@
 use aoc::Point;
 use std::collections::HashSet;
 
-pub fn calc(l: String) -> (usize, Option<usize>) {
+pub fn calc(l: &String) -> (usize, Option<usize>) {
     let mut visited = HashSet::new();
     let mut p = Point::new(0, 0);
     let mut dir = Point::new(0, -1);
@@ -28,9 +28,13 @@ pub fn calc(l: String) -> (usize, Option<usize>) {
 
 fn main() {
     let inp = aoc::read_input_line();
-    let (p1, p2) = calc(inp);
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", p2.unwrap());
+    aoc::benchme(|bench: bool| {
+        let (p1, p2) = calc(&inp);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2.unwrap());
+        }
+    });
 }
 
 #[test]

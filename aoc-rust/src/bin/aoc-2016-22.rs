@@ -12,12 +12,12 @@ struct Grid {
 }
 
 impl Grid {
-    fn new(inp: Vec<String>) -> Grid {
+    fn new(inp: &[String]) -> Grid {
         let mut d: HashMap<(usize, usize), Node> = HashMap::new();
         let mut width = 0;
         let mut height = 0;
         for l in inp.iter().skip(2) {
-            let uints: Vec<usize> = aoc::uints::<usize>(&l).collect();
+            let uints: Vec<usize> = aoc::uints::<usize>(l).collect();
             let x = uints[0];
             let y = uints[1];
             d.insert(
@@ -76,7 +76,13 @@ impl Grid {
 
 fn main() {
     let lines = aoc::input_lines();
-    let g = Grid::new(lines);
-    println!("Part 1: {}", g.part1());
-    println!("Part 2: {}", g.part2());
+    aoc::benchme(|bench: bool| {
+        let g = Grid::new(&lines);
+        let p1 = g.part1();
+        let p2 = g.part2();
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

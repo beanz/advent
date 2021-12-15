@@ -56,7 +56,7 @@ impl Pipes {
     }
     fn add(&mut self, inp: &[String]) {
         for l in inp {
-            let mut progs = aoc::uints::<usize>(&l);
+            let mut progs = aoc::uints::<usize>(l);
             let first = progs.next().unwrap();
             for conn in progs {
                 self.add_connection(first, conn);
@@ -76,10 +76,16 @@ impl Pipes {
 
 fn main() {
     let inp = aoc::input_lines();
-    let mut p = Pipes::new();
-    p.add(&inp);
-    println!("Part 1: {}", p.part1());
-    println!("Part 2: {}", p.part2());
+    aoc::benchme(|bench: bool| {
+        let mut p = Pipes::new();
+        p.add(&inp);
+        let p1 = p.part1();
+        let p2 = p.part2();
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

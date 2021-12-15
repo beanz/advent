@@ -68,7 +68,12 @@ fn parts_work() {
 
 fn main() {
     let inp = aoc::read_input_line();
-    let (p1, mut grid) = part1(&inp);
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", part2(&mut grid));
+    aoc::benchme(|bench: bool| {
+        let (p1, mut grid) = part1(&inp);
+        let p2 = part2(&mut grid);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

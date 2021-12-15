@@ -16,7 +16,7 @@ fn part1_works() {
 }
 
 fn part2(l: &str) -> usize {
-    let uints: Vec<usize> = aoc::uints::<usize>(&l).collect();
+    let uints: Vec<usize> = aoc::uints::<usize>(l).collect();
     for i in 0..uints.len() {
         for j in i + 1..uints.len() {
             if (uints[i] % uints[j]) == 0 {
@@ -38,6 +38,12 @@ fn part2_works() {
 
 fn main() {
     let inp = aoc::input_lines();
-    println!("Part 1: {}", aoc::sum_lines(&inp, part1));
-    println!("Part 2: {}", aoc::sum_lines(&inp, part2));
+    aoc::benchme(|bench: bool| {
+        let p1 = aoc::sum_lines(&inp, part1);
+        let p2 = aoc::sum_lines(&inp, part2);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

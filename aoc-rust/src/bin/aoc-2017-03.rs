@@ -111,7 +111,14 @@ fn part2_works() {
 }
 
 fn main() {
-    let square = aoc::ints::<usize>(&aoc::read_input_line()).next().unwrap();
-    println!("Part 1: {}", part1(square));
-    println!("Part 2: {}", part2(square));
+    let inp = aoc::read_input_line();
+    aoc::benchme(|bench: bool| {
+        let square = aoc::ints::<usize>(&inp).next().unwrap();
+        let p1 = part1(square);
+        let p2 = part2(square);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

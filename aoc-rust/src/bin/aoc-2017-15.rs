@@ -93,8 +93,14 @@ fn part2_works() {
 }
 
 fn main() {
-    let init =
-        aoc::uints::<usize>(&aoc::read_input_line()).collect::<Vec<usize>>();
-    println!("Part 1: {}", part1(init[0], init[1]));
-    println!("Part 2: {}", part2(init[0], init[1]));
+    let inp = aoc::read_input_line();
+    aoc::benchme(|bench: bool| {
+        let init = aoc::uints::<usize>(&inp).collect::<Vec<usize>>();
+        let p1 = part1(init[0], init[1]);
+        let p2 = part2(init[0], init[1]);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

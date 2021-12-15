@@ -35,9 +35,13 @@ fn calc_works() {
 }
 
 fn main() {
-    let mut banks =
-        aoc::ints::<usize>(&aoc::read_input_line()).collect::<Vec<usize>>();
-    let (p1, p2) = calc(&mut banks);
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", p2);
+    let inp = aoc::read_input_line();
+    aoc::benchme(|bench: bool| {
+        let mut banks = aoc::ints::<usize>(&inp).collect::<Vec<usize>>();
+        let (p1, p2) = calc(&mut banks);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

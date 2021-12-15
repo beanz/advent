@@ -10,7 +10,7 @@ fn part1(inp: &[String]) -> isize {
             _ => (),
         }
     }
-    return x * y;
+    x * y
 }
 
 fn part2(inp: &[String]) -> isize {
@@ -30,13 +30,22 @@ fn part2(inp: &[String]) -> isize {
             _ => (),
         }
     }
-    return x * y;
+    x * y
 }
 
 fn main() {
-    let inp = aoc::input_lines();
-    println!("Part 1: {}", part1(&inp));
-    println!("Part 2: {}", part2(&inp));
+    let inp = aoc::black_box(aoc::input_lines());
+    let mut res = 0;
+    aoc::benchme(|bench: bool| {
+        let p1 = part1(&inp);
+        let p2 = part2(&inp);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+        res += p1;
+        res += p2;
+    })
 }
 
 #[allow(dead_code)]

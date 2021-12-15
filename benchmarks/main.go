@@ -164,11 +164,10 @@ func (bm benchmarkData) readResult(file string, lang, year, day string) error {
 	result := strings.TrimSpace(string(data))
 	multiplier := float64(1)
 	switch {
-	case len(result) > 3 && result[len(result)-3:] == "µs":
+	case len(result) > 3 && result[len(result)-2:] == "ns":
 		// rust result
 		s := strings.Split(result, ": ")
 		result = s[1][:len(s[1])-3]
-		multiplier = 1000
 	case len(result) > 14 && result[:13] == "BenchmarkMain":
 		// go result
 		result = strings.Split(result[:len(result)-6], "\t")[2]

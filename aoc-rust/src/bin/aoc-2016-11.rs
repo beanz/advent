@@ -548,19 +548,25 @@ fn solver_works() {
 
 fn main() {
     let inp = aoc::input_lines();
-    let mut solver = Solver::new(&inp);
-    println!("Part 1: {}", solver.solve());
-    solver.names.push("elerium".to_string());
-    solver.init.elements.push(Element {
-        // elerium
-        gen_floor: 1,
-        chip_floor: 1,
+    aoc::benchme(|bench: bool| {
+        let mut solver = Solver::new(&inp);
+        let p1 = solver.solve();
+        solver.names.push("elerium".to_string());
+        solver.init.elements.push(Element {
+            // elerium
+            gen_floor: 1,
+            chip_floor: 1,
+        });
+        solver.names.push("dilithium".to_string());
+        solver.init.elements.push(Element {
+            // dilithium
+            gen_floor: 1,
+            chip_floor: 1,
+        });
+        let p2 = solver.solve();
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
     });
-    solver.names.push("dilithium".to_string());
-    solver.init.elements.push(Element {
-        // dilithium
-        gen_floor: 1,
-        chip_floor: 1,
-    });
-    println!("Part 2: {}", solver.solve());
 }

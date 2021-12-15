@@ -4,7 +4,7 @@ fn run(inp: &[String]) -> (isize, isize) {
     let mut p2 = std::isize::MIN;
     let mut reg: HashMap<String, isize> = HashMap::new();
     for l in inp {
-        let ints = aoc::ints::<isize>(&l).collect::<Vec<isize>>();
+        let ints = aoc::ints::<isize>(l).collect::<Vec<isize>>();
         let mut words = l.split(' ');
         let r1n = words.next().unwrap();
         let op = words.next().unwrap();
@@ -38,9 +38,13 @@ fn run(inp: &[String]) -> (isize, isize) {
 
 fn main() {
     let inp = aoc::input_lines();
-    let (p1, p2) = run(&inp);
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", p2);
+    aoc::benchme(|bench: bool| {
+        let (p1, p2) = run(&inp);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[allow(dead_code)]

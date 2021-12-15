@@ -11,7 +11,7 @@ impl Firewall {
     fn new(inp: &[String]) -> Firewall {
         let mut slots: Vec<Scanner> = Vec::new();
         for l in inp {
-            let uints: Vec<usize> = aoc::uints::<usize>(&l).collect();
+            let uints: Vec<usize> = aoc::uints::<usize>(l).collect();
             slots.push(Scanner {
                 depth: uints[0],
                 range: uints[1],
@@ -48,9 +48,15 @@ impl Firewall {
 
 fn main() {
     let inp = aoc::input_lines();
-    let fw = Firewall::new(&inp);
-    println!("Part 1: {}", fw.part1());
-    println!("Part 2: {}", fw.part2());
+    aoc::benchme(|bench: bool| {
+        let fw = Firewall::new(&inp);
+        let p1 = fw.part1();
+        let p2 = fw.part2();
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

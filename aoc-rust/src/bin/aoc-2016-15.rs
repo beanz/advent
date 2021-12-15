@@ -73,10 +73,14 @@ fn calc_parts() {
 }
 
 fn main() {
-    let discs = aoc::input_lines()
-        .iter()
-        .map(|l| Disc::new(l))
-        .collect::<Vec<Disc>>();
-    println!("Part 1: {}", part1(&discs));
-    println!("Part 2: {}", part2(&discs));
+    let inp = aoc::input_lines();
+    aoc::benchme(|bench: bool| {
+        let discs = inp.iter().map(|l| Disc::new(l)).collect::<Vec<Disc>>();
+        let p1 = part1(&discs);
+        let p2 = part2(&discs);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

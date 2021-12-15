@@ -37,7 +37,7 @@ impl Rect {
     fn rotate_row(&mut self, row: usize, by: usize) {
         self.disp[row].rotate_right(by);
     }
-    fn apply(&mut self, s: String) {
+    fn apply(&mut self, s: &String) {
         let uints: Vec<usize> = aoc::uints::<usize>(&s).collect();
         if s.starts_with("rect") {
             self.rect(uints[0], uints[1]);
@@ -101,11 +101,16 @@ fn rotate_row_works() {
 
 fn main() {
     let inp = aoc::input_lines();
-    let (w, h) = if aoc::is_test() { (7, 3) } else { (50, 6) };
-    let mut r = Rect::new(w, h);
-    for l in inp {
-        r.apply(l);
-    }
-    println!("Part 1: {}", r.count());
-    println!("Part 2:\n{}", r);
+    aoc::benchme(|bench: bool| {
+        let (w, h) = if aoc::is_test() { (7, 3) } else { (50, 6) };
+        let mut r = Rect::new(w, h);
+        for l in &inp {
+            r.apply(l);
+        }
+        let p1 = r.count();
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2:\n{}", r);
+        }
+    });
 }
