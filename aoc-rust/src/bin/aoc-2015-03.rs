@@ -1,7 +1,7 @@
 use aoc::Point;
 use std::collections::HashSet;
 
-pub fn calc(l: String) -> (usize, usize) {
+pub fn calc(l: &str) -> (usize, usize) {
     let mut v1 = HashSet::new();
     let mut v2 = HashSet::new();
     let mut p1p = Point::new(0, 0);
@@ -19,9 +19,13 @@ pub fn calc(l: String) -> (usize, usize) {
 
 fn main() {
     let inp = aoc::read_input_line();
-    let (p1, p2) = calc(inp);
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", p2);
+    aoc::benchme(|bench: bool| {
+        let (p1, p2) = calc(&inp);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

@@ -1,4 +1,4 @@
-pub fn calc(lines: Vec<String>) -> (usize, usize) {
+pub fn calc(lines: &[String]) -> (usize, usize) {
     let mut p1 = [false; 1000000];
     let mut p2: [i32; 1000000] = [0; 1000000];
     for l in lines.iter() {
@@ -52,7 +52,12 @@ pub fn calc(lines: Vec<String>) -> (usize, usize) {
 }
 
 fn main() {
-    let (p1, p2) = calc(aoc::input_lines());
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", p2);
+    let inp = aoc::input_lines();
+    aoc::benchme(|bench: bool| {
+        let (p1, p2) = calc(&inp);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

@@ -50,7 +50,7 @@ pub fn calc(lines: &[String]) -> (usize, usize) {
     let mut p1: usize = 0;
     let mut p2: usize = 0;
     for l in lines {
-        let (b1, b2) = nice(&l);
+        let (b1, b2) = nice(l);
         if b1 {
             p1 += 1;
         }
@@ -62,9 +62,14 @@ pub fn calc(lines: &[String]) -> (usize, usize) {
 }
 
 fn main() {
-    let (p1, p2) = calc(&aoc::input_lines());
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", p2);
+    let inp = aoc::input_lines();
+    aoc::benchme(|bench: bool| {
+        let (p1, p2) = calc(&inp);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

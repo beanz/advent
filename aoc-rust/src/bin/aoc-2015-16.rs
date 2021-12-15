@@ -62,22 +62,28 @@ fn find_sue2(sues: &[Sue], tape: &[(&str, usize)]) -> usize {
 }
 
 fn main() {
-    let sues: Vec<Sue> =
-        aoc::input_lines().iter().map(|l| Sue::new(l)).collect();
-    let tape = [
-        ("children", 3usize),
-        ("cats", 7),
-        ("samoyeds", 2),
-        ("pomeranians", 3),
-        ("akitas", 0),
-        ("vizslas", 0),
-        ("goldfish", 5),
-        ("trees", 3),
-        ("cars", 2),
-        ("perfumes", 1),
-    ];
-    println!("Part 1: {}", find_sue1(&sues, &tape));
-    println!("Part 2: {}", find_sue2(&sues, &tape));
+    let inp = aoc::input_lines();
+    aoc::benchme(|bench: bool| {
+        let sues: Vec<Sue> = inp.iter().map(|l| Sue::new(l)).collect();
+        let tape = [
+            ("children", 3usize),
+            ("cats", 7),
+            ("samoyeds", 2),
+            ("pomeranians", 3),
+            ("akitas", 0),
+            ("vizslas", 0),
+            ("goldfish", 5),
+            ("trees", 3),
+            ("cars", 2),
+            ("perfumes", 1),
+        ];
+        let p1 = find_sue1(&sues, &tape);
+        let p2 = find_sue2(&sues, &tape);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

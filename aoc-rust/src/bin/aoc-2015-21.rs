@@ -252,10 +252,14 @@ impl Battle {
 }
 
 fn main() {
-    let battle = Battle::new();
-    let (p1, p2) = battle.sim();
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", p2);
+    aoc::benchme(|bench: bool| {
+        let battle = Battle::new();
+        let (p1, p2) = &battle.sim();
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

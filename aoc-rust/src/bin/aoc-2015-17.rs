@@ -29,16 +29,22 @@ fn part2(sizes: &[usize], target: usize) -> usize {
 
 fn main() {
     let inp = aoc::slurp_input_file();
-    let sizes = aoc::ints::<usize>(&inp).collect::<Vec<usize>>();
-    let target: usize = {
-        if aoc::is_test() {
-            25
-        } else {
-            150
+    aoc::benchme(|bench: bool| {
+        let sizes = aoc::ints::<usize>(&inp).collect::<Vec<usize>>();
+        let target: usize = {
+            if aoc::is_test() {
+                25
+            } else {
+                150
+            }
+        };
+        let p1 = part1(&sizes, target);
+        let p2 = part2(&sizes, target);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
         }
-    };
-    println!("Part 1: {}", part1(&sizes, target));
-    println!("Part 2: {}", part2(&sizes, target));
+    });
 }
 
 #[test]

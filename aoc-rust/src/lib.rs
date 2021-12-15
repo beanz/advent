@@ -5,6 +5,7 @@ use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
 use std::str;
+use std::time::Instant;
 
 pub fn lines<P>(filename: P) -> Vec<String>
 where
@@ -48,6 +49,40 @@ pub fn is_test() -> bool {
     !input_file().ends_with("input.txt")
 }
 
+pub fn is_benchmark() -> bool {
+    env::var("AoC_BENCH").is_ok()
+}
+
+pub fn black_box<T>(dummy: T) -> T {
+    unsafe {
+        let ret = std::ptr::read_volatile(&dummy);
+        std::mem::forget(dummy);
+        ret
+    }
+}
+
+pub fn benchme(mut fun: impl FnMut(bool)) {
+    let bench = is_benchmark();
+    let start = Instant::now();
+    let mut iterations = 0;
+    loop {
+        fun(bench);
+        iterations += 1;
+        if !bench || start.elapsed().as_micros() > 500000 {
+            break;
+        }
+    }
+    if bench {
+        let elapsed = start.elapsed().as_micros();
+        println!(
+            "bench {} iterations in {}µs: {}µs",
+            iterations,
+            elapsed,
+            elapsed / iterations
+        );
+    }
+}
+
 pub fn input_file() -> String {
     let args: Vec<String> = env::args().collect();
     if args.len() > 1 {
@@ -77,7 +112,7 @@ where
 }
 
 pub fn sum_lines(lines: &[String], line_fn: fn(l: &str) -> usize) -> usize {
-    lines.iter().map(|x| line_fn(&x)).sum()
+    lines.iter().map(|x| line_fn(x)).sum()
 }
 
 pub fn sum_valid_lines(
@@ -85,7 +120,7 @@ pub fn sum_valid_lines(
 ) -> usize {
     lines
         .iter()
-        .map(|x| if valid_line_fn(&x) { 1 } else { 0 })
+        .map(|x| if valid_line_fn(x) { 1 } else { 0 })
         .sum()
 }
 

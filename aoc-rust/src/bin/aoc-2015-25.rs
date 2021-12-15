@@ -11,7 +11,9 @@ fn sum_series_works() {
 }
 
 fn pos_index(x: usize, y: usize) -> usize {
-    (y * (x - 1)) + sum_series(1..=x as isize - 2) as usize + sum_series(1..=y as isize) as usize
+    (y * (x - 1))
+        + sum_series(1..=x as isize - 2) as usize
+        + sum_series(1..=y as isize) as usize
 }
 
 #[test]
@@ -44,6 +46,11 @@ fn part1(row: usize, col: usize) -> usize {
 
 fn main() {
     let inp = aoc::slurp_input_file();
-    let rowcol = aoc::ints::<usize>(&inp).collect::<Vec<usize>>();
-    println!("Part 1: {}", part1(rowcol[0], rowcol[1]));
+    aoc::benchme(|bench: bool| {
+        let rowcol = aoc::ints::<usize>(&inp).collect::<Vec<usize>>();
+        let p1 = part1(rowcol[0], rowcol[1]);
+        if !bench {
+            println!("Part 1: {}", p1);
+        }
+    });
 }

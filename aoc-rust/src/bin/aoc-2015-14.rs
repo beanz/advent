@@ -48,17 +48,23 @@ fn max_score(deers: &[Deer], t: usize) -> usize {
 }
 
 fn main() {
-    let deers: Vec<Deer> =
-        aoc::input_lines().iter().map(|l| Deer::new(l)).collect();
-    let race_time = {
-        if aoc::is_test() {
-            1000
-        } else {
-            2503
+    let inp = aoc::input_lines();
+    aoc::benchme(|bench: bool| {
+        let deers: Vec<Deer> = inp.iter().map(|l| Deer::new(l)).collect();
+        let race_time = {
+            if aoc::is_test() {
+                1000
+            } else {
+                2503
+            }
+        };
+        let p1 = max_dist(&deers, race_time);
+        let p2 = max_score(&deers, race_time);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
         }
-    };
-    println!("Part 1: {}", max_dist(&deers, race_time));
-    println!("Part 2: {}", max_score(&deers, race_time));
+    });
 }
 
 #[test]

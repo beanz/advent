@@ -29,8 +29,14 @@ fn part2(s: &str) -> i32 {
 
 fn main() {
     let inp = aoc::read_input_line();
-    println!("Part 1: {}", part1(&inp));
-    println!("Part 2: {}", part2(&inp));
+    aoc::benchme(|bench: bool| {
+        let p1 = part1(&inp);
+        let p2 = part2(&inp);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

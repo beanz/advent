@@ -63,9 +63,15 @@ fn part2(presents: usize) -> usize {
 
 fn main() {
     let inp = aoc::read_input_line();
-    let presents = inp.parse::<usize>().unwrap();
-    println!("Part 1: {}", part1(presents));
-    println!("Part 2: {}", part2(presents));
+    aoc::benchme(|bench: bool| {
+        let presents = inp.parse::<usize>().unwrap();
+        let p1 = part1(presents);
+        let p2 = part2(presents);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

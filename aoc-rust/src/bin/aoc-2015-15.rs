@@ -76,13 +76,16 @@ fn variations(k: usize, n: usize) -> Vec<Vec<usize>> {
 }
 
 fn main() {
-    let ingredients: Vec<Ingredient> = aoc::input_lines()
-        .iter()
-        .map(|l| Ingredient::new(l))
-        .collect();
-    let (p1, p2) = best_recipe(&ingredients);
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", p2);
+    let inp = aoc::input_lines();
+    aoc::benchme(|bench: bool| {
+        let ingredients: Vec<Ingredient> =
+            inp.iter().map(|l| Ingredient::new(l)).collect();
+        let (p1, p2) = best_recipe(&ingredients);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

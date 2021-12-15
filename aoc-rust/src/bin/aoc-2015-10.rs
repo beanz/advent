@@ -29,10 +29,14 @@ fn calc(s: &str, rounds: i32) -> String {
 
 fn main() {
     let inp = aoc::read_input_line();
-    let s40 = calc(&inp, 40);
-    println!("Part 1: {}", s40.len());
-    let s50 = calc(&s40, 10);
-    println!("Part 2: {}", s50.len());
+    aoc::benchme(|bench: bool| {
+        let s40 = calc(&inp, 40);
+        let s50 = calc(&s40, 10);
+        if !bench {
+            println!("Part 1: {}", s40.len());
+            println!("Part 2: {}", s50.len());
+        }
+    });
 }
 
 #[test]

@@ -8,7 +8,7 @@ struct Grid {
 }
 
 impl Grid {
-    fn new(inp: Vec<String>) -> Grid {
+    fn new(inp: &[String]) -> Grid {
         let mut lights: Vec<bool> = Vec::new();
         let mut w = 0;
         let mut h = 0;
@@ -98,9 +98,15 @@ impl Grid {
 
 fn main() {
     let lines = aoc::input_lines();
-    let g = Grid::new(lines);
-    println!("Part 1: {}", g.part1());
-    println!("Part 2: {}", g.part2());
+    aoc::benchme(|bench: bool| {
+        let g = Grid::new(&lines);
+        let p1 = g.part1();
+        let p2 = g.part2();
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

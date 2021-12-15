@@ -209,8 +209,14 @@ fn sim(hard_mode: bool) -> usize {
 }
 
 fn main() {
-    println!("Part 1: {}", sim(false));
-    println!("Part 2: {}", sim(true));
+    aoc::benchme(|bench: bool| {
+        let p1 = sim(false);
+        let p2 = sim(true);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

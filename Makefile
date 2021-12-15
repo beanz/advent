@@ -10,13 +10,13 @@ GO_TEST=$(sort $(wildcard ????/??/main_test.go))
 GO_BIN=$(subst /main.go,/aoc-go,${GO_SRC})
 GO_LOG=$(subst /main.go,/aoc-go.log,${GO_SRC})
 GO_ERR=$(subst /main.go,/aoc-go.err,${GO_SRC})
-GO_BENCH=$(patsubst %/main.go,benchmarks/results/%-ns,${GO_SRC})
+GO_BENCH=$(subst /main.go,/aoc-go.ns,${GO_SRC})
 
 RS_SRC=$(sort $(wildcard aoc-rust/src/bin/aoc-????-??.rs))
 RS_BIN=$(subst src/bin,target/release,${RS_SRC:.rs=})
-#RS_BIN=$(addsuffix /aoc-rs,$(subst -,/,$(subst aoc-rust/target/release/aoc-,,${RS_REL})))
 RS_LOG=$(addsuffix .log,${RS_BIN})
 RS_ERR=$(addsuffix .err,${RS_BIN})
+RS_BENCH=$(addsuffix .ns,${RS_BIN})
 
 ZIG_SRC=$(sort $(wildcard ????/??/aoc.zig))
 ZIG_BIN=$(subst /aoc.zig,/aoc-zig,${ZIG_SRC})
@@ -84,13 +84,8 @@ go-test-fast: ${GO_SRC}
 benchmarks/README.md: benchmarks/README.template.md benchmarks/benchmarks.md
 	cat $^ > $@
 
-benchmarks/benchmarks.md: $(GO_BENCH) benchmarks/main.go
-	cd benchmarks && go run .
-
-benchmarks/results/%-ns: %/main.go
-	@mkdir -p $(@D)
-	(cd $* && go test -run=XXX -bench=BenchmarkMain . )| grep "BenchmarkMain-" | awk '{print $$3}' > $@
-
+benchmarks/benchmarks.md: $(GO_BENCH) $(RS_BENCH) benchmarks/main.go
+	cd benchmarks && go run . ..
 
 
 nim-build: ${NIM_BIN}
@@ -104,6 +99,7 @@ zig: ${ZIG_LOG} ${ZIG_BIN}
 
 rs-build: ${RS_BIN}
 rs: ${RS_LOG} ${RS_BIN}
+rs-bench: ${RS_BENCH}
 
 aoc-rust/target/release/aoc-%: aoc-rust/src/bin/aoc-%.rs
 	cd aoc-rust && cargo build --release --bin "*$(@F)"
@@ -146,6 +142,11 @@ aoc-rust/target/release/%.log: aoc-rust/target/release/%
 	     tee $(notdir $<).log ) 2>&1 1>&3 | \
 	     tee $(notdir $<).err ) 3>&1 1>&2
 
+aoc-rust/target/release/%.ns: aoc-rust/target/release/%
+	(cd $(dir $<) && \
+	   AoC_BENCH=1 ./$(notdir $<) \
+               ../../../$(addsuffix /input.txt,$(subst -,/,$(subst aoc-rust/target/release/aoc-,,$<))) ) | tee /dev/stderr > $@
+
 %.log: %
 	cd $(dir $@) && \
 	  ( ( ${TIME} ./$(notdir $<) input.txt | \
@@ -158,9 +159,10 @@ aoc-rust/target/release/%.log: aoc-rust/target/release/%
 	     tee $(notdir $<).log ) 2>&1 1>&3 | \
 	     tee $(notdir $<).err ) 3>&1 1>&2
 
-benchmarks/results/%.ns: %/aoc-go
+%/aoc-go.ns: %/aoc-go
 	mkdir -p $(dir $@) && \
-	( cd $(dir $<) && go test -bench . ) 2>&1 | tee >$@
+	(cd $* && go test -run=XXX -bench=BenchmarkMain . ) | \
+	  tee /dev/stderr | grep "BenchmarkMain-" > $@
 
 %/aoc.pl.log: %/aoc.pl
 	cd $(dir $@) && \

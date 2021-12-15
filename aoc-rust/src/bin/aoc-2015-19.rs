@@ -10,7 +10,7 @@ struct Mach {
 }
 
 impl Mach {
-    fn new(inp: Vec<String>) -> Mach {
+    fn new(inp: &[String]) -> Mach {
         let mut rules: Vec<(String, String)> = vec![];
         let mut it = inp.iter();
         loop {
@@ -71,9 +71,15 @@ impl Mach {
 
 fn main() {
     let lines = aoc::input_lines();
-    let mut m = Mach::new(lines);
-    println!("Part 1: {}", m.part1());
-    println!("Part 2: {}", m.part2());
+    aoc::benchme(|bench: bool| {
+        let mut m = Mach::new(&lines);
+        let p1 = m.part1();
+        let p2 = m.part2();
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

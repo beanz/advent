@@ -78,7 +78,7 @@ struct Comp {
 }
 
 impl Comp {
-    fn new(inp: Vec<String>) -> Comp {
+    fn new(inp: &[String]) -> Comp {
         Comp {
             inst: inp.iter().map(|l| Inst::new(l)).collect(),
         }
@@ -105,9 +105,15 @@ impl Comp {
 
 fn main() {
     let lines = aoc::input_lines();
-    let comp = Comp::new(lines);
-    println!("Part 1: {}", comp.part1());
-    println!("Part 2: {}", comp.part2());
+    aoc::benchme(|bench: bool| {
+        let comp = Comp::new(&lines);
+        let p1 = comp.part1();
+        let p2 = comp.part2();
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

@@ -64,12 +64,19 @@ impl Seats {
 }
 
 fn main() {
-    let mut seats = Seats::new();
-    for l in aoc::input_lines() {
-        seats.add(&l);
-    }
-    println!("Part 1: {}", seats.part1());
-    println!("Part 2: {}", seats.part2());
+    let inp = aoc::input_lines();
+    aoc::benchme(|bench: bool| {
+        let mut seats = Seats::new();
+        for l in &inp {
+            seats.add(&l);
+        }
+        let p1 = seats.part1();
+        let p2 = seats.part2();
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

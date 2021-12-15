@@ -96,7 +96,12 @@ fn next_works() {
 
 fn main() {
     let inp = aoc::read_input_line();
-    let p1 = next(&inp);
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", next(&p1));
+    aoc::benchme(|bench: bool| {
+        let p1 = next(&inp);
+        let p2 = next(&p1);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }

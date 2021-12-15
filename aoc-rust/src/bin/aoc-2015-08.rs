@@ -28,12 +28,17 @@ pub fn calc(s: &str) -> (i32, i32) {
 }
 
 fn main() {
-    let (p1, p2) = aoc::input_lines()
-        .iter()
-        .map(|x| calc(&x))
-        .fold((0, 0), |(a1, a2), (b1, b2)| (a1 + b1, a2 + b2));
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", p2);
+    let inp = aoc::input_lines();
+    aoc::benchme(|bench: bool| {
+        let (p1, p2) = inp
+            .iter()
+            .map(|x| calc(x))
+            .fold((0, 0), |(a1, a2), (b1, b2)| (a1 + b1, a2 + b2));
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    })
 }
 
 #[test]

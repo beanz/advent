@@ -3,10 +3,10 @@ extern crate crypto;
 use crypto::digest::Digest;
 use crypto::md5::Md5;
 
-pub fn calc(l: String) -> (usize, usize) {
+pub fn calc(l: &str) -> (usize, usize) {
     let mut md5 = Md5::new();
     let mut p1: usize = 0;
-    let mut num_str = aoc::NumStr::new(l);
+    let mut num_str = aoc::NumStr::new(l.to_string());
     let mut i = 0;
     loop {
         md5.input(num_str.bytes());
@@ -29,9 +29,13 @@ pub fn calc(l: String) -> (usize, usize) {
 
 fn main() {
     let inp = aoc::read_input_line();
-    let (p1, p2) = calc(inp);
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", p2);
+    aoc::benchme(|bench: bool| {
+        let (p1, p2) = calc(&inp);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

@@ -52,13 +52,18 @@ impl Routes {
 }
 
 fn main() {
-    let mut routes = Routes::new();
-    for l in aoc::input_lines() {
-        routes.add(&l);
-    }
-    let (p1, p2) = routes.minmax();
-    println!("Part 1: {}", p1);
-    println!("Part 2: {}", p2);
+    let inp = aoc::input_lines();
+    aoc::benchme(|bench: bool| {
+        let mut routes = Routes::new();
+        for l in &inp {
+            routes.add(&l);
+        }
+        let (p1, p2) = routes.minmax();
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    });
 }
 
 #[test]

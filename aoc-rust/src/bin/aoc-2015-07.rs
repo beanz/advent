@@ -50,18 +50,26 @@ pub fn calc(
 }
 
 fn main() {
-    let mut m = aoc::input_lines().iter().fold(HashMap::new(), |mut m, l| {
-        let v = l.split(" -> ").collect::<Vec<&str>>();
-        let k = v[1].to_owned();
-        m.insert(k, v[0].to_owned());
-        m
+    let inp = aoc::input_lines();
+    aoc::benchme(|bench: bool| {
+        let mut m = inp.iter().fold(HashMap::new(), |mut m, l| {
+            let v = l.split(" -> ").collect::<Vec<&str>>();
+            let k = v[1].to_owned();
+            m.insert(k, v[0].to_owned());
+            m
+        });
+        let mut cache: HashMap<String, u16> = HashMap::new();
+        let p1 = calc(&m, &mut cache, "a");
+        if !bench {
+            println!("Part 1: {}", p1);
+        }
+        let mut cache2: HashMap<String, u16> = HashMap::new();
+        m.insert("b".to_string(), format!("{}", p1));
+        let p2 = calc(&m, &mut cache2, "a");
+        if !bench {
+            println!("Part 2: {}", p2);
+        }
     });
-    let mut cache: HashMap<String, u16> = HashMap::new();
-    let p1 = calc(&m, &mut cache, "a");
-    println!("Part 1: {}", p1);
-    let mut cache2: HashMap<String, u16> = HashMap::new();
-    m.insert("b".to_string(), format!("{}", p1));
-    println!("Part 2: {}", calc(&m, &mut cache2, "a"));
 }
 
 #[test]
