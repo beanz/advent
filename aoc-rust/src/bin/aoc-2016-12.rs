@@ -138,7 +138,7 @@ const EX1: [&str; 6] =
 fn part1_works() {
     let e: Vec<String> =
         EX1.iter().map(|x| x.to_string()).collect::<Vec<String>>();
-    let comp = ElfComp2016::new(e);
+    let comp = ElfComp2016::new(&e);
     assert_eq!(comp.part1(), 42, "part 1 example");
 }
 

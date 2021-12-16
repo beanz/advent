@@ -146,7 +146,7 @@ fn inst_new_works() {
 
 #[test]
 fn part1_works() {
-    let comp = Comp::new(vec![
+    let comp = Comp::new(&vec![
         "inc a".to_string(),
         "jio a, +2".to_string(),
         "tpl a".to_string(),
@@ -157,7 +157,7 @@ fn part1_works() {
 
 #[test]
 fn part2_works() {
-    let comp = Comp::new(vec![
+    let comp = Comp::new(&vec![
         "inc a".to_string(),
         "jio a, +2".to_string(),
         "tpl a".to_string(),

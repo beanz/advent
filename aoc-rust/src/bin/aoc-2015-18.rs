@@ -111,7 +111,7 @@ fn main() {
 
 #[test]
 fn part1_iter_works() {
-    let g = Grid::new(vec![
+    let g = Grid::new(&vec![
         ".#.#.#".to_string(),
         "...##.".to_string(),
         "#....#".to_string(),
@@ -124,7 +124,7 @@ fn part1_iter_works() {
 
 #[test]
 fn part2_iter_works() {
-    let g = Grid::new(vec![
+    let g = Grid::new(&vec![
         "##.#.#".to_string(),
         "...##.".to_string(),
         "#....#".to_string(),

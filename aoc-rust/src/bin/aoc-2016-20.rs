@@ -35,7 +35,7 @@ fn calc(inp: &[String]) -> (usize, usize) {
 
 #[test]
 fn calc_works() {
-    let (p1, p2) = calc(vec![
+    let (p1, p2) = calc(&vec![
         "5-8".to_string(),
         "0-2".to_string(),
         "4-7".to_string(),

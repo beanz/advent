@@ -84,7 +84,7 @@ fn main() {
 
 #[test]
 fn part1_works() {
-    let m1 = Mach::new(vec![
+    let m1 = Mach::new(&vec![
         "H => HO".to_string(),
         "H => OH".to_string(),
         "O => HH".to_string(),
@@ -92,7 +92,7 @@ fn part1_works() {
         "HOH".to_string(),
     ]);
     assert_eq!(m1.part1(), 4, "part 1 of first test input");
-    let m2 = Mach::new(vec![
+    let m2 = Mach::new(&vec![
         "H => HO".to_string(),
         "H => OH".to_string(),
         "O => HH".to_string(),
@@ -113,9 +113,9 @@ fn part2_works() {
         "".to_string(),
         "HOH".to_string(),
     ];
-    let mut m1 = Mach::new(lines);
+    let mut m1 = Mach::new(&lines);
     assert_eq!(m1.part2(), 3, "part 2 of first test input");
-    let mut m2 = Mach::new(vec![
+    let mut m2 = Mach::new(&vec![
         "e => H".to_string(),
         "e => O".to_string(),
         "H => HO".to_string(),

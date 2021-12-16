@@ -47,6 +47,6 @@ fn calc_works() {
     ]
     .iter()
     {
-        assert_eq!(calc(inp.to_string()), exp, "calc: {}", inp);
+        assert_eq!(calc(&inp.to_string()), exp, "calc: {}", inp);
     }
 }
