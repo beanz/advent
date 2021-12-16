@@ -36,14 +36,14 @@ sub packet {
       $n = ($n << 4) + ($a & 0xf);
       last unless ($a & 0x10);
     }
-    #print "V=$version T=$type N=$n\n";
+    print "V=$version T=$type N=$n\n" if DEBUG;
     return [$version, $n];
   } else {
     my $i = num($_[0], 1);
     if ($i == 0) {
       # 15-bit
       my $l = num($_[0], 15);
-      #print "V=$version T=$type I=$i L=$l\n";
+      print "V=$version T=$type I=$i L=$l\n" if DEBUG;
       my $sub = substr $_[0], 0, $l, '';
       my $vs = $version;
       my @p;
@@ -57,7 +57,7 @@ sub packet {
     } else {
       # 11-bit
       my $l = num($_[0], 11);
-      #print "V=$version T=$type I=$i L=$l\n";
+      print "V=$version T=$type I=$i L=$l\n" if DEBUG;
       my $vs = $version;
       my @p;
       for (1..$l) {
