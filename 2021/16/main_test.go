@@ -64,11 +64,11 @@ func TestPart1(t *testing.T) {
 		{"test2f.txt", test2f, 19, 0},
 		{"test2g.txt", test2g, 16, 0},
 		{"test2h.txt", test2h, 20, 1},
-		// {"input.txt", input, 951, 902198718880},
+		{"input.txt", input, 951, 902198718880},
 	}
 	for _, tc := range tests {
 		t.Run(tc.file, func (t *testing.T) {
-			pkt := NewPacketHex(tc.data)
+			pkt := NewPacket(tc.data)
 			p1, p2 := pkt.Parts()
 			assert.Equal(t, tc.p1, p1, tc.file)
 			assert.Equal(t, tc.p2, p2, tc.file)
@@ -84,4 +84,26 @@ func BenchmarkMain(b *testing.B) {
 		b.StartTimer()
 		main()
 	}
+}
+
+func TestBitStream(t *testing.T) {
+	bs := NewBitStream([]byte{0xD2,0xFE,0x28})
+	assert.Equal(t, "110100101111111000101000", bs.String())
+	n, err := bs.Num(3)
+	assert.NoError(t, err)
+	assert.Equal(t, 6, n)
+	n, err = bs.Num(3)
+	assert.NoError(t, err)
+	assert.Equal(t, 4, n)
+	n, err = bs.Num(5)
+	assert.NoError(t, err)
+	assert.Equal(t, 23, n)
+	n, err = bs.Num(5)
+	assert.NoError(t, err)
+	assert.Equal(t, 30, n)
+	n, err = bs.Num(5)
+	assert.NoError(t, err)
+	assert.Equal(t, 5, n)
+	n, err = bs.Num(4)
+	assert.Error(t, err)
 }

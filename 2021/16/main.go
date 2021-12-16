@@ -2,7 +2,9 @@ package main
 
 import (
 	_ "embed"
+	"encoding/hex"
 	"fmt"
+	"strings"
 	. "github.com/beanz/advent/lib-go"
 )
 
@@ -10,71 +12,19 @@ import (
 var input []byte
 
 type Packet struct {
-	b []byte
-	i int
+	bs *BitStream
 }
 
-func NewPacket(bin []byte) *Packet {
-	return &Packet{bin, 0}
-}
-
-func NewPacketHex(in []byte) *Packet {
-	bin := make([]byte, 0, 4*len(in))
-	for _, hex := range in {
-		var bits []byte
-		switch hex {
-		case '0':
-			bits = []byte("0000")
-		case '1':
-			bits = []byte("0001")
-		case '2':
-			bits = []byte("0010")
-		case '3':
-			bits = []byte("0011")
-		case '4':
-			bits = []byte("0100")
-		case '5':
-			bits = []byte("0101")
-		case '6':
-			bits = []byte("0110")
-		case '7':
-			bits = []byte("0111")
-		case '8':
-			bits = []byte("1000")
-		case '9':
-			bits = []byte("1001")
-		case 'A':
-			bits = []byte("1010")
-		case 'B':
-			bits = []byte("1011")
-		case 'C':
-			bits = []byte("1100")
-		case 'D':
-			bits = []byte("1101")
-		case 'E':
-			bits = []byte("1110")
-		case 'F':
-			bits = []byte("1111")
-		}
-		bin = append(bin, bits...)
+func NewPacket(in []byte) *Packet {
+	bs, err := NewBitStreamFromHexBytes(in[:len(in)-1])
+	if err != nil {
+		panic(err)
 	}
-	return &Packet{bin, 0}
+	return &Packet{bs}
 }
 
 func (p *Packet) String() string {
-	return string(p.b)
-}
-
-func (p *Packet) Num(n int) int {
-	v := 0
-	for j := p.i; j <p.i+n; j++ {
-		v <<= 1
-		if p.b[j] == '1' {
-			v++
-		}
-	}
-	p.i += n
-	return v
+	return p.bs.String()
 }
 
 func (p *Packet) Value(kind int, args []int) int {
@@ -110,12 +60,12 @@ func (p *Packet) Value(kind int, args []int) int {
 }
 
 func (p *Packet) Parts() (int,int) {
-	version := p.Num(3)
-	kind := p.Num(3)
+	version := p.bs.MustNum(3)
+	kind := p.bs.MustNum(3)
 	if kind == 4 {
 		n := 0
 		for {
-			a := p.Num(5)
+			a := p.bs.MustNum(5)
 			n = (n << 4) + (a & 0xf);
 			if a <= 0xf {
 				break
@@ -124,24 +74,24 @@ func (p *Packet) Parts() (int,int) {
 		//fmt.Printf("V=%d T=%d N=%d\n", version, kind, n)
 		return version, n
 	}
-	i := p.Num(1)
+	i := p.bs.MustNum(1)
 	if i == 0 { // 15-bit
-		l := p.Num(15)
+		l := p.bs.MustNum(15)
 		//fmt.Printf("V=%d T=%d I=%d L=%d\n", version, kind, i, l)
-		end := p.i+l
+		end := p.bs.Pos()+l
 		vs := version
 		args := make([]int,0, 4)
-		for p.i < end {
+		for p.bs.Pos() < end {
 			v, n := p.Parts()
 			vs += v
 			args = append(args, n)
 		}
 		return vs, p.Value(kind, args)
 	}
-	l := p.Num(11)
+	l := p.bs.MustNum(11)
 	//fmt.Printf("V=%d T=%d I=%d L=%d\n", version, kind, i, l)
 	vs := version
-	args := make([]int,0, 4)
+	args := make([]int, 0, 4)
 	for j := 0; j < l; j++ {
 		v, n := p.Parts()
 		vs += v
@@ -151,7 +101,7 @@ func (p *Packet) Parts() (int,int) {
 }
 
 func main() {
-	p := NewPacketHex(InputBytes(input))
+	p := NewPacket(InputBytes(input))
 	p1, p2 := p.Parts()
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
@@ -160,3 +110,95 @@ func main() {
 }
 
 var benchmark = false
+
+type BitStream struct {
+	b []byte
+	ibit int
+	len int
+}
+
+func NewBitStream(b []byte) *BitStream {
+	return &BitStream{b, 0, len(b)*8}
+}
+
+func NewBitStreamFromHexBytes(hb []byte) (*BitStream, error) {
+	b := make([]byte, 0, len(hb)/2)
+	for i := 0; i < len(hb); i+=2 {
+		var v byte
+		switch {
+		case '0' <= hb[i] && hb[i] <= '9':
+			v = hb[i]-'0'
+		case 'A' <= hb[i] && hb[i] <= 'F':
+			v = 10+hb[i]-'A'
+		case 'a' <= hb[i] && hb[i] <= 'f':
+			v = 10+hb[i]-'a'
+		default:
+			return nil, fmt.Errorf("invalid hex digit %s", string(hb[i]))
+		}
+		v <<= 4
+		switch {
+		case '0' <= hb[i+1] && hb[i+1] <= '9':
+			v += hb[i+1]-'0'
+		case 'A' <= hb[i+1] && hb[i+1] <= 'F':
+			v += 10+hb[i+1]-'A'
+		case 'a' <= hb[i+1] && hb[i+1] <= 'f':
+			v += 10+hb[i+1]-'a'
+		default:
+			return nil, fmt.Errorf("invalid hex digit %s", string(hb[i]))
+		}
+		b = append(b, v)
+	}
+	return &BitStream{b, 0, len(b)*8}, nil
+}
+
+func NewBitStreamFromHexString(s string) (*BitStream, error) {
+	b, err := hex.DecodeString(s)
+	if err != nil {
+		return nil, err
+	}
+	return NewBitStream(b), nil
+}
+
+func (bs *BitStream) String() string {
+	var sb strings.Builder
+	for _, b := range bs.b {
+		fmt.Fprintf(&sb, "%08b", b)
+	}
+	return sb.String()
+}
+
+func (bs *BitStream) Pos() int {
+	return bs.ibit
+}
+
+func (bs *BitStream) MustNum(bits int) int {
+	n, err := bs.Num(bits)
+	if err != nil {
+		panic(err)
+	}
+	return n
+}
+
+func (bs *BitStream) Num(bits int) (int, error) {
+	if bs.ibit + bits > bs.len {
+		return 0, fmt.Errorf("out of bits: have %d wanted %d",
+			bs.len-bs.ibit, bits)
+	}
+	v := 0
+	for bits > 0 {
+		rb := 8 - (bs.ibit % 8);
+		i := bs.ibit / 8;
+		if bits <= rb {
+			v <<= bits;
+			v += (int(bs.b[i]) >> (rb - bits)) & ((1 << bits) - 1);
+			bs.ibit += bits;
+			bits = 0;
+		} else {
+			v <<= rb;
+			v += int(bs.b[i]) & ((1 << rb) - 1);
+			bits -= rb;
+			bs.ibit += rb;
+		}
+	}
+	return v, nil
+}
