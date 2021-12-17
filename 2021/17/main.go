@@ -58,13 +58,14 @@ func (p *Probe) Try(vx, vy int) bool {
 			vx++
 		}
 		vy--
-		if (p.xmin <= x && x <= p.xmax && p.ymin <= y && y <= p.ymax) {
-			return true
-		}
 		if y < p.ymin {
 			return false
 		}
-		if vx == 0 && !(p.xmin <= x && x <= p.xmax) {
+		if p.xmin <= x && x <= p.xmax {
+			if p.ymin <= y && y <= p.ymax {
+				return true
+			}
+		} else if vx == 0 {
 			return false
 		}
 	}
@@ -73,7 +74,11 @@ func (p *Probe) Try(vx, vy int) bool {
 func (p *Probe) Part2() int {
 	p2 := 0
 	ry := Abs(p.ymin)
-	for vx := 0; vx <= p.xmax; vx++ {
+	vx := 0 // min vx is vx+(vx-1)+..+1 > p.xmin
+	for x := 0; x < p.xmin; x += vx {
+		vx++
+	}
+	for ; vx <= p.xmax; vx++ {
 		for vy := -ry; vy <= ry; vy++ {
 			if p.Try(vx, vy) {
 				p2++
