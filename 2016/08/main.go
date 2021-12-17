@@ -83,19 +83,6 @@ func (d *Disp) String() string {
 	return sb.String()
 }
 
-func ScanUint(in []byte, i int) (int, int) {
-	n := 0
-	j := i
-	for ; j < len(in); j++ {
-		if in[j] >= '0' && in[j] <= '9' {
-			n = n*10 + int(in[j]-'0')
-		} else {
-			break
-		}
-	}
-	return n, j
-}
-
 func (d *Disp) Run(in []byte) {
 	for i := 0; i < len(in)-1; i++ {
 		switch in[i+1] {
