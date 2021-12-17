@@ -4,7 +4,7 @@ import (
 	_ "embed"
 	"fmt"
 
-	aoc "github.com/beanz/advent/lib-go"
+	. "github.com/beanz/advent/lib-go"
 )
 
 //go:embed input.txt
@@ -71,8 +71,8 @@ func (g *IntCode) ParseInst() (TestInst, error) {
 		(rawOp / 10000) % 10,
 	}
 
-	var param []int
-	var addr []int
+	param := make([]int,0, 3)
+	addr := make([]int,0, 3)
 	for i := 0; i < arity; i++ {
 		switch mode[i] {
 		case 1:
@@ -212,13 +212,12 @@ func part2(p []int) int {
 }
 
 func main() {
-	lines := aoc.InputLines(input)
-	p := aoc.SimpleReadInts(lines[0])
+	p := FastSignedInts(InputBytes(input), 4096)
 	p1 := part1(p)
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
 	}
-	p = aoc.SimpleReadInts(lines[0])
+	p = FastSignedInts(InputBytes(input), 4096)
 	p2 := part2(p)
 	if !benchmark {
 		fmt.Printf("Part 2: %d\n", p2)
