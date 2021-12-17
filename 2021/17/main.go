@@ -60,7 +60,7 @@ func (p *Probe) Try(vx, vy int) bool {
 			return false
 		}
 		if p.xmin <= x && x <= p.xmax {
-			if p.ymin <= y && y <= p.ymax {
+			if y <= p.ymax {
 				return true
 			}
 		} else if vx == 0 {
