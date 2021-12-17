@@ -54,8 +54,6 @@ func (p *Probe) Try(vx, vy int) bool {
 		y += vy
 		if vx > 0 {
 			vx--
-		} else if vx < 0 {
-			vx++
 		}
 		vy--
 		if y < p.ymin {
