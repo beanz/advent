@@ -75,17 +75,41 @@ func (ic *IntCode) InStr(input string) {
 	}
 }
 
-type IntCodeInst struct {
-	op    int64
-	param []int64
-	addr  []int
+type ParamMode int
+
+const (
+	PositionMode ParamMode = 0
+	ImmediateMode ParamMode = 1
+	BaseMode ParamMode = 2
+)
+
+type OpCode int64
+
+const (
+	OpAdd = 1
+	OpMul = 2
+	OpInput  = 3
+	OpOutput = 4
+	OpJnz = 5
+	OpJz = 6
+	OpLessThan = 7
+	OpEquals = 8
+	OpBase = 9
+	OpDone = 99
+)
+
+func (o OpCode) NoMode() OpCode {
+	return OpCode(o%10)
 }
 
-func OpArity(op int64) int {
-	if op == 99 {
-		return 0
+func (o OpCode) Mode(i int) ParamMode {
+	div := 100
+	if i == 1 {
+		div = 1000
+	} else if i == 2{
+		div = 10000
 	}
-	return []int{0, 3, 3, 1, 1, 2, 2, 3, 3, 1}[op]
+	return ParamMode((int(o)/div)%10)
 }
 
 func (ic *IntCode) Done() bool {
@@ -96,7 +120,7 @@ func (ic *IntCode) ForkWithInput(input int64) *IntCode {
 	prog := make([]int64, len(ic.p))
 	copy(prog, ic.p)
 	return &IntCode{prog, ic.ip, ic.base,
-		[]int64{input}, []int64{}, false, false}
+		[]int64{input}, []int64{}, false, ic.debug}
 }
 
 func (ic *IntCode) sprog(i int) int64 {
@@ -106,34 +130,33 @@ func (ic *IntCode) sprog(i int) int64 {
 	return ic.p[i]
 }
 
-func (ic *IntCode) ParseInst() (IntCodeInst, error) {
-	rawOp := ic.p[ic.ip]
+func (ic *IntCode) Param(op OpCode, i int) int64 {
+	var res int64
+	switch op.Mode(i) {
+	case 1:
+		res = ic.p[ic.ip]
+	case 2:
+		res = ic.sprog(ic.base+int(ic.p[ic.ip]))
+	default:
+		res = ic.sprog(int(ic.p[ic.ip]))
+	}
 	ic.ip++
-	op := rawOp % 100
-	arity := OpArity(op)
-	mode := []int64{
-		(rawOp / 100) % 10,
-		(rawOp / 1000) % 10,
-		(rawOp / 10000) % 10,
-	}
+	return res
+}
 
-	param := make([]int64, 0, 4)
-	addr := make([]int, 0, 4)
-	for i := 0; i < arity; i++ {
-		switch mode[i] {
-		case 1:
-			param = append(param, ic.p[ic.ip])
-			addr = append(addr, -99)
-		case 2:
-			param = append(param, ic.sprog(ic.base+int(ic.p[ic.ip])))
-			addr = append(addr, ic.base+int(ic.p[ic.ip]))
-		default:
-			param = append(param, ic.sprog(int(ic.p[ic.ip])))
-			addr = append(addr, int(ic.p[ic.ip]))
-		}
-		ic.ip++
+func (ic *IntCode) Addr(op OpCode, i int) int {
+	var res int
+	switch op.Mode(i) {
+	case 1:
+		panic("invalid address?")
+	case 2:
+		res = ic.base+int(ic.p[ic.ip])
+	default:
+		res = int(ic.p[ic.ip])
 	}
-	return IntCodeInst{op, param, addr}, nil
+	ic.ip++
+	ic.sprog(res)
+	return res
 }
 
 func (ic *IntCode) Run() RunExitStatus {
@@ -141,82 +164,92 @@ func (ic *IntCode) Run() RunExitStatus {
 		if ic.debug {
 			fmt.Printf("%s\n", ic)
 		}
-		inst, err := ic.ParseInst()
-		if err != nil {
-			panic(err)
-		}
-		op := inst.op
-		switch op {
-		case 1:
+		op := OpCode(ic.p[ic.ip])
+		ic.ip++
+		switch op.NoMode() {
+		case OpAdd:
+			p0 := ic.Param(op, 0)
+			p1 := ic.Param(op, 1)
+			a2 := ic.Addr(op, 2)
 			if ic.debug {
-				fmt.Printf("1: %d + %d = %d => %d\n",
-					inst.param[0], inst.param[1],
-					inst.param[0]+inst.param[1], inst.addr[2])
+				fmt.Printf("1: %d + %d = %d => %d\n", p0, p1, p0 + p1, a2)
 			}
-			ic.p[inst.addr[2]] = inst.param[0] + inst.param[1]
-		case 2:
+			ic.p[a2] = p0 + p1
+		case OpMul:
+			p0 := ic.Param(op, 0)
+			p1 := ic.Param(op, 1)
+			a2 := ic.Addr(op, 2)
 			if ic.debug {
-				fmt.Printf("2: %d * %d = %d => %d\n",
-					inst.param[0], inst.param[1],
-					inst.param[0]*inst.param[1], inst.addr[2])
+				fmt.Printf("2: %d * %d = %d => %d\n", p0, p1, p0 * p1, a2)
 			}
-			ic.p[inst.addr[2]] = inst.param[0] * inst.param[1]
-		case 3:
+			ic.p[a2] = p0 * p1
+		case OpInput:
 			if len(ic.in) == 0 {
-				ic.ip -= 2
+				ic.ip--
 				return NeedInput
 			}
+			a0 := ic.Addr(op, 0)
 			if ic.debug {
-				fmt.Printf("3: %d => %d\n", ic.in[0], inst.addr[0])
+				fmt.Printf("3: %d => %d\n", ic.in[0], a0)
 			}
-			ic.p[inst.addr[0]] = ic.in[0]
+			ic.p[a0] = ic.in[0]
 			ic.in = ic.in[1:]
-		case 4:
+		case OpOutput:
+			p0 := ic.Param(op, 0)
 			if ic.debug {
-				fmt.Printf("4: %d => out\n", inst.param[0])
+				fmt.Printf("4: %d => out\n", p0)
 			}
-			ic.out = append(ic.out, inst.param[0])
+			ic.out = append(ic.out, p0)
 			return ProducedOutput
-		case 5:
+		case OpJnz:
+			p0 := ic.Param(op, 0)
+			p1 := ic.Param(op, 1)
 			if ic.debug {
-				fmt.Printf("5: jnz %d to %d\n", inst.param[0], inst.param[1])
+				fmt.Printf("5: jnz %d to %d\n", p0, p1)
 			}
-			if inst.param[0] != 0 {
-				ic.ip = int(inst.param[1])
+			if p0 != 0 {
+				ic.ip = int(p1)
 			}
-		case 6:
+		case OpJz:
+			p0 := ic.Param(op, 0)
+			p1 := ic.Param(op, 1)
 			if ic.debug {
-				fmt.Printf("6: jz %d to %d\n", inst.param[0], inst.param[1])
+				fmt.Printf("6: jz %d to %d\n", p0, p1)
 			}
-			if inst.param[0] == 0 {
-				ic.ip = int(inst.param[1])
+			if p0 == 0 {
+				ic.ip = int(p1)
 			}
-		case 7:
+		case OpLessThan:
+			p0 := ic.Param(op, 0)
+			p1 := ic.Param(op, 1)
+			a2 := ic.Addr(op, 2)
 			if ic.debug {
-				fmt.Printf("7: %d < %d => %d\n",
-					inst.param[0], inst.param[1], inst.addr[2])
+				fmt.Printf("7: %d < %d => %d\n", p0, p1, a2)
 			}
-			if inst.param[0] < inst.param[1] {
-				ic.p[inst.addr[2]] = 1
+			if p0 < p1 {
+				ic.p[a2] = 1
 			} else {
-				ic.p[inst.addr[2]] = 0
+				ic.p[a2] = 0
 			}
-		case 8:
+		case OpEquals:
+			p0 := ic.Param(op, 0)
+			p1 := ic.Param(op, 1)
+			a2 := ic.Addr(op, 2)
 			if ic.debug {
-				fmt.Printf("8: %d == %d => %d\n",
-					inst.param[0], inst.param[1], inst.addr[2])
+				fmt.Printf("8: %d == %d => %d\n", p0, p1, a2)
 			}
-			if inst.param[0] == inst.param[1] {
-				ic.p[inst.addr[2]] = 1
+			if p0 == p1 {
+				ic.p[a2] = 1
 			} else {
-				ic.p[inst.addr[2]] = 0
+				ic.p[a2] = 0
 			}
-		case 9:
+		case OpBase:
+			p0 := ic.Param(op, 0)
 			if ic.debug {
-				fmt.Printf("9: %d => base\n", inst.param[0])
+				fmt.Printf("9: %d => base\n", p0)
 			}
-			ic.base += int(inst.param[0])
-		case 99:
+			ic.base += int(p0)
+		case OpDone:
 			ic.done = true
 			return Finished
 		default:
