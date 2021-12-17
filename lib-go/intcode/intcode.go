@@ -1,15 +1,24 @@
-package aoc
+package intcode
 
 import (
 	"fmt"
 )
 
+type RunExitStatus int
+
+const (
+	Finished RunExitStatus = iota
+	FinishedOpError
+	NeedInput
+	ProducedOutput
+)
+
 type IntCode struct {
-	p     []int
+	p     []int64
 	ip    int
 	base  int
-	in    []int
-	out   []int
+	in    []int64
+	out   []int64
 	done  bool
 	debug bool
 }
@@ -23,23 +32,28 @@ func (ic *IntCode) String() string {
 	return s
 }
 
-func NewIntCode(p []int, input []int) *IntCode {
-	prog := make([]int, len(p))
+func NewIntCode(p []int64, input []int64) *IntCode {
+	prog := make([]int64, len(p))
 	copy(prog, p)
-	ic := &IntCode{prog, 0, 0, input, []int{}, false, false}
+	out := make([]int64, 0, 32)
+	ic := &IntCode{prog, 0, 0, input, out, false, false}
 	return ic
 }
 
-func NewIntCodeFromASCII(p []int, ascii string) *IntCode {
-	input := []int{}
+func NewIntCodeFromASCII(p []int64, ascii string) *IntCode {
+	input := []int64{}
 	for _, r := range ascii {
-		input = append(input, int(r))
+		input = append(input, int64(r))
 	}
 	return NewIntCode(p, input)
 }
 
-func (ic *IntCode) Out(n int) []int {
-	res := []int{}
+func (ic *IntCode) OutLen() int {
+	return len(ic.out)
+}
+
+func (ic *IntCode) Out(n int) []int64 {
+	res := []int64{}
 	if len(ic.out) >= n {
 		for i := 0; i < n; i++ {
 			res = append(res, ic.out[i])
@@ -49,23 +63,23 @@ func (ic *IntCode) Out(n int) []int {
 	return res
 }
 
-func (ic *IntCode) In(inputs ...int) {
+func (ic *IntCode) In(inputs ...int64) {
 	ic.in = append(ic.in, inputs...)
 }
 
 func (ic *IntCode) InStr(input string) {
 	for _, r := range input {
-		ic.in = append(ic.in, int(r))
+		ic.in = append(ic.in, int64(r))
 	}
 }
 
 type IntCodeInst struct {
-	op    int
-	param []int
+	op    int64
+	param []int64
 	addr  []int
 }
 
-func OpArity(op int) int {
+func OpArity(op int64) int {
 	if op == 99 {
 		return 0
 	}
@@ -76,13 +90,14 @@ func (ic *IntCode) Done() bool {
 	return ic.done
 }
 
-func (ic *IntCode) ForkWithInput(input int) *IntCode {
-	prog := make([]int, len(ic.p))
+func (ic *IntCode) ForkWithInput(input int64) *IntCode {
+	prog := make([]int64, len(ic.p))
 	copy(prog, ic.p)
-	return &IntCode{prog, ic.ip, ic.base, []int{input}, []int{}, false, false}
+	return &IntCode{prog, ic.ip, ic.base,
+		[]int64{input}, []int64{}, false, false}
 }
 
-func (ic *IntCode) sprog(i int) int {
+func (ic *IntCode) sprog(i int) int64 {
 	for len(ic.p) <= i {
 		ic.p = append(ic.p, 0)
 	}
@@ -94,34 +109,34 @@ func (ic *IntCode) ParseInst() (IntCodeInst, error) {
 	ic.ip++
 	op := rawOp % 100
 	arity := OpArity(op)
-	mode := []int{
+	mode := []int64{
 		(rawOp / 100) % 10,
 		(rawOp / 1000) % 10,
 		(rawOp / 10000) % 10,
 	}
 
-	var param []int
-	var addr []int
+	param := make([]int64, 0, 4)
+	addr := make([]int, 0, 4)
 	for i := 0; i < arity; i++ {
 		switch mode[i] {
 		case 1:
 			param = append(param, ic.p[ic.ip])
 			addr = append(addr, -99)
 		case 2:
-			param = append(param, ic.sprog(ic.base+ic.p[ic.ip]))
-			addr = append(addr, ic.base+ic.p[ic.ip])
+			param = append(param, ic.sprog(ic.base+int(ic.p[ic.ip])))
+			addr = append(addr, ic.base+int(ic.p[ic.ip]))
 		default:
-			param = append(param, ic.sprog(ic.p[ic.ip]))
-			addr = append(addr, ic.p[ic.ip])
+			param = append(param, ic.sprog(int(ic.p[ic.ip])))
+			addr = append(addr, int(ic.p[ic.ip]))
 		}
 		ic.ip++
 	}
 	return IntCodeInst{op, param, addr}, nil
 }
 
-func (ic *IntCode) Run() int {
+func (ic *IntCode) Run() RunExitStatus {
 	for {
-		//fmt.Printf("%v\n", g)
+		//fmt.Printf("%s\n", ic)
 		inst, err := ic.ParseInst()
 		if err != nil {
 			panic(err)
@@ -140,26 +155,25 @@ func (ic *IntCode) Run() int {
 			ic.p[inst.addr[2]] = inst.param[0] * inst.param[1]
 		case 3:
 			if len(ic.in) == 0 {
-				//fmt.Printf("3: %d => %d\n", 0, inst.addr[0])
-				ic.p[inst.addr[0]] = -1
-			} else {
-				//fmt.Printf("3: %d => %d\n", ic.in[0], inst.addr[0])
-				ic.p[inst.addr[0]] = ic.in[0]
-				ic.in = ic.in[1:]
+				ic.ip -= 2
+				return NeedInput
 			}
+			//fmt.Printf("3b: %d => %d\n", ic.in[0], inst.addr[0])
+			ic.p[inst.addr[0]] = ic.in[0]
+			ic.in = ic.in[1:]
 		case 4:
 			//fmt.Printf("4: %d => out\n", inst.param[0])
 			ic.out = append(ic.out, inst.param[0])
-			return 0
+			return ProducedOutput
 		case 5:
 			//fmt.Printf("5: jnz %d to %d\n", inst.param[0], inst.param[1])
 			if inst.param[0] != 0 {
-				ic.ip = inst.param[1]
+				ic.ip = int(inst.param[1])
 			}
 		case 6:
 			//fmt.Printf("6: jz %d to %d\n", inst.param[0], inst.param[1])
 			if inst.param[0] == 0 {
-				ic.ip = inst.param[1]
+				ic.ip = int(inst.param[1])
 			}
 		case 7:
 			if inst.param[0] < inst.param[1] {
@@ -174,20 +188,19 @@ func (ic *IntCode) Run() int {
 				ic.p[inst.addr[2]] = 0
 			}
 		case 9:
-			ic.base += inst.param[0]
+			ic.base += int(inst.param[0])
 		case 99:
 			ic.done = true
-			return 1
+			return Finished
 		default:
 			ic.done = true
-			return -1
+			return FinishedOpError
 		}
 		//fmt.Printf("%v\n", ic.p)
 	}
-	return -2
 }
 
-func (ic *IntCode) RunToHalt() []int {
+func (ic *IntCode) RunToHalt() []int64 {
 	for !ic.Done() {
 		ic.Run()
 	}

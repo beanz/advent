@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/beanz/advent/lib-go/intcode"
 	. "github.com/beanz/advent/lib-go"
 )
 
@@ -16,7 +17,7 @@ var input []byte
 type SearchRecord struct {
 	pos   Point
 	steps int
-	ic    *IntCode
+	ic    *intcode.IntCode
 }
 
 type Search []SearchRecord
@@ -72,8 +73,8 @@ func (s *Scaffold) AlignmentSum() int {
 	return ans
 }
 
-func part1(p []int) *Scaffold {
-	ic := NewIntCode(p, []int{})
+func part1(p []int64) *Scaffold {
+	ic := intcode.NewIntCode(p, []int64{})
 	output := ic.RunToHalt()
 	scaff := NewScaffold()
 	for _, ascii := range output {
@@ -101,9 +102,8 @@ func turnsFor(d Direction) []Direction {
 	if d.Dx == 0 {
 		if d.Dy == -1 {
 			return []Direction{Direction{-1, 0}, Direction{1, 0}}
-		} else {
-			return []Direction{Direction{1, 0}, Direction{-1, 0}}
 		}
+		return []Direction{Direction{1, 0}, Direction{-1, 0}}
 	} else if d.Dx == -1 {
 		return []Direction{Direction{0, 1}, Direction{0, -1}}
 	} else {
@@ -126,7 +126,7 @@ func nextFunc(path string, off int, ch string) string {
 	return fun
 }
 
-func part2(p []int, scaff *Scaffold) int {
+func part2(p []int64, scaff *Scaffold) int64 {
 	pos := scaff.bot
 	dir := scaff.dir
 	path := []string{}
@@ -190,14 +190,13 @@ func part2(p []int, scaff *Scaffold) int {
 
 	inputStr := strings.Join([]string{funM, funA, funB, funC, "n\n"}, "\n")
 	p[0] = 2
-	ic := NewIntCodeFromASCII(p, inputStr)
+	ic := intcode.NewIntCodeFromASCII(p, inputStr)
 	output := ic.RunToHalt()
 	return output[len(output)-1]
 }
 
 func main() {
-	lines := InputLines(input)
-	p := SimpleReadInts(lines[0])
+	p := FastInt64s(InputBytes(input), 4096)
 	scaff := part1(p)
 	p1 := scaff.AlignmentSum()
 	if !benchmark {

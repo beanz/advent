@@ -101,3 +101,27 @@ func FastBytes(l []byte) []byte {
 	}
 	return res
 }
+
+func FastInt64s(l []byte, expected int) []int64 {
+	res := make([]int64, 0, expected)
+	var n int64
+	var m int64 = 1
+	num := false
+	for _, ch := range l {
+		if ch == '-' {
+			m = -1
+		} else if ch >= '0' && ch <= '9' {
+			num = true
+			n = n*10 + int64(ch-'0')
+		} else if num {
+			res = append(res, n*m)
+			n = 0
+			m = 1
+			num = false
+		}
+	}
+	if num {
+		res = append(res, n*m)
+	}
+	return res
+}

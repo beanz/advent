@@ -91,8 +91,8 @@ sub run {
            $self->{name}, $self->{ip}, map { $self->{p}->[$self->{ip}+$_]//0
                                            } (0..3)) if (DEBUG > 2);
     my $inst = $self->parse_inst();
-    # printf "op=%d param=%s addr=%s\n",
-    #   $inst->{op}, ppv($inst->{param}), ppv($inst->{addr});
+    printf "op=%d param=%s addr=%s\n",
+      $inst->{op}, ppv($inst->{param}), ppv($inst->{addr}) if (DEBUG > 2);
     my $op = $inst->{op};
     if ($op == 1) {
       printf "$self->{name} add %d + %d = %d => %d\n",

@@ -4,24 +4,27 @@ import (
 	_ "embed"
 	"fmt"
 
+	intcode "github.com/beanz/advent/lib-go/intcode"
 	. "github.com/beanz/advent/lib-go"
 )
 
 //go:embed input.txt
 var input []byte
 
-func part1(prog []int) int {
-	ic := []*IntCode{}
-	for i := 0; i < 50; i++ {
-		ic = append(ic, NewIntCode(prog, []int{i}))
+func part1(prog []int64) int64 {
+	ic := []*intcode.IntCode{}
+	for i := 0 ; i < 50; i++ {
+		ic = append(ic, intcode.NewIntCode(prog, []int64{int64(i)}))
 	}
 	for {
 		for i := 0; i < 50; i++ {
+			//fmt.Printf("i: %d\n", i)
 			rc := ic[i].Run()
-			if rc == 0 {
+			//fmt.Printf("rc=%d\n", rc)
+			if rc == intcode.ProducedOutput {
 				out := ic[i].Out(3)
 				if len(out) >= 3 {
-					//fmt.Printf("recevied %v\n", out)
+					//fmt.Printf("received %v\n", out)
 					addr := out[0]
 					x := out[1]
 					y := out[2]
@@ -32,29 +35,29 @@ func part1(prog []int) int {
 						ic[out[0]].In(x, y)
 					}
 				}
-			} else if rc == 2 {
+			} else if rc == intcode.NeedInput {
 				ic[i].In(-1)
 			}
 		}
 	}
 }
 
-func part2(prog []int) int {
-	ic := []*IntCode{}
-	for i := 0; i < 50; i++ {
-		ic = append(ic, NewIntCode(prog, []int{i}))
+func part2(prog []int64) int64 {
+	ic := []*intcode.IntCode{}
+	for i := 0 ; i < 50; i++ {
+		ic = append(ic, intcode.NewIntCode(prog, []int64{int64(i)}))
 	}
-	natX := 0
-	natY := 0
-	lastY := -1
+	var natX int64
+	var natY int64
+	var lastY int64 = -1
 	for {
 		idle := 0
 		for i := 0; i < 50; i++ {
 			rc := ic[i].Run()
-			if rc == 0 {
+			if rc == intcode.ProducedOutput {
 				out := ic[i].Out(3)
 				if len(out) >= 3 {
-					// fmt.Printf("recevied %v\n", out)
+					//fmt.Printf("received %v\n", out)
 					addr := out[0]
 					x := out[1]
 					y := out[2]
@@ -66,7 +69,7 @@ func part2(prog []int) int {
 						ic[out[0]].In(x, y)
 					}
 				}
-			} else if rc == 2 {
+			} else if rc == intcode.NeedInput {
 				ic[i].In(-1)
 				idle++
 			}
@@ -82,8 +85,7 @@ func part2(prog []int) int {
 }
 
 func main() {
-	lines := InputLines(input)
-	prog := SimpleReadInts(lines[0]) // TOFIX: needs int64
+	prog := FastInt64s(InputBytes(input), 4096)
 	p1 := part1(prog)
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)

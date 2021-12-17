@@ -7,9 +7,15 @@ import (
 	. "github.com/beanz/advent/lib-go"
 )
 
+func ExampleMain() {
+	main()
+	//Output:
+	// Part 1: 211
+	// Part 2: 8071006
+}
+
 func TestParts(t *testing.T) {
-	lines := ReadLines("input.txt")
-	p := SimpleReadInts(lines[0])
+	p := FastInt64s(InputBytes(input), 4096)
 	beam := NewBeam(p)
 	assert.Equal(t, 211, beam.part1())
 	beam.size = 5 - 1

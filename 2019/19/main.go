@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"fmt"
 
+	"github.com/beanz/advent/lib-go/intcode"
 	. "github.com/beanz/advent/lib-go"
 )
 
@@ -11,19 +12,19 @@ import (
 var input []byte
 
 type Beam struct {
-	prog   []int
+	prog   []int64
 	size   int
 	mul    int
 	ratio1 int
 	ratio2 int
 }
 
-func NewBeam(p []int) *Beam {
+func NewBeam(p []int64) *Beam {
 	return &Beam{p, 100 - 1, 1, 1, 1}
 }
 
-func (b *Beam) inBeam(x int, y int) bool {
-	ic := NewIntCode(b.prog, []int{x, y})
+func (b *Beam) inBeam(x, y int) bool {
+	ic := intcode.NewIntCode(b.prog, []int64{int64(x), int64(y)})
 	return ic.RunToHalt()[0] == 1
 }
 
@@ -115,8 +116,7 @@ func (b *Beam) part2() int {
 }
 
 func main() {
-	lines := InputLines(input)
-	p := SimpleReadInts(lines[0])
+	p := FastInt64s(InputBytes(input), 4096)
 	beam := NewBeam(p)
 	p1 := beam.part1()
 	if !benchmark {

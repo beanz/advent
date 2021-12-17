@@ -8,14 +8,15 @@ import (
 
 	"github.com/mxschmitt/golang-combinations"
 
+	"github.com/beanz/advent/lib-go/intcode"
 	. "github.com/beanz/advent/lib-go"
 )
 
 //go:embed input.txt
 var input []byte
 
-func part1(prog []int) int {
-	ic := NewIntCode(prog, []int{})
+func part1(prog []int64) int {
+	ic := intcode.NewIntCode(prog, []int64{})
 	inv := []string{}
 	bad := make(map[string]bool, 5)
 	for _, b := range []string{"giant electromagnet", "infinite loop",
@@ -27,7 +28,7 @@ func part1(prog []int) int {
 	for {
 		s := ""
 		rc := ic.Run()
-		if rc == 2 || rc == 1 {
+		if rc == intcode.NeedInput || rc == intcode.Finished {
 			for {
 				out := ic.Out(1)
 				if len(out) != 1 {
@@ -87,6 +88,9 @@ func part1(prog []int) int {
 				}
 			}
 			dirIndex := strings.LastIndex(s, "Doors here lead")
+			if dirIndex == -1 {
+				continue
+			}
 			dirStr := s[dirIndex:]
 			dir := []string{}
 			for _, d := range []string{"north", "south", "east", "west"} {
@@ -105,7 +109,7 @@ func part1(prog []int) int {
 }
 
 func main() {
-	prog := SimpleReadInts(InputLines(input)[0])
+	prog := FastInt64s(InputBytes(input), 4096)
 	p1 := part1(prog)
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
