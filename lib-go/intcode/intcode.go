@@ -2,6 +2,7 @@ package intcode
 
 import (
 	"fmt"
+	"os"
 )
 
 type RunExitStatus int
@@ -36,7 +37,8 @@ func NewIntCode(p []int64, input []int64) *IntCode {
 	prog := make([]int64, len(p))
 	copy(prog, p)
 	out := make([]int64, 0, 32)
-	ic := &IntCode{prog, 0, 0, input, out, false, false}
+	ic := &IntCode{prog, 0, 0, input, out, false,
+		os.Getenv("INTCODE_DEBUG")!=""}
 	return ic
 }
 
@@ -136,7 +138,9 @@ func (ic *IntCode) ParseInst() (IntCodeInst, error) {
 
 func (ic *IntCode) Run() RunExitStatus {
 	for {
-		//fmt.Printf("%s\n", ic)
+		if ic.debug {
+			fmt.Printf("%s\n", ic)
+		}
 		inst, err := ic.ParseInst()
 		if err != nil {
 			panic(err)
@@ -144,50 +148,73 @@ func (ic *IntCode) Run() RunExitStatus {
 		op := inst.op
 		switch op {
 		case 1:
-			//fmt.Printf("1: %d + %d = %d => %d\n",
-			//	inst.param[0], inst.param[1],
-			//	inst.param[0]+inst.param[1], inst.addr[2])
+			if ic.debug {
+				fmt.Printf("1: %d + %d = %d => %d\n",
+					inst.param[0], inst.param[1],
+					inst.param[0]+inst.param[1], inst.addr[2])
+			}
 			ic.p[inst.addr[2]] = inst.param[0] + inst.param[1]
 		case 2:
-			//fmt.Printf("2: %d * %d = %d => %d\n",
-			//	inst.param[0], inst.param[1],
-			//	inst.param[0]*inst.param[1], inst.addr[2])
+			if ic.debug {
+				fmt.Printf("2: %d * %d = %d => %d\n",
+					inst.param[0], inst.param[1],
+					inst.param[0]*inst.param[1], inst.addr[2])
+			}
 			ic.p[inst.addr[2]] = inst.param[0] * inst.param[1]
 		case 3:
 			if len(ic.in) == 0 {
 				ic.ip -= 2
 				return NeedInput
 			}
-			//fmt.Printf("3b: %d => %d\n", ic.in[0], inst.addr[0])
+			if ic.debug {
+				fmt.Printf("3: %d => %d\n", ic.in[0], inst.addr[0])
+			}
 			ic.p[inst.addr[0]] = ic.in[0]
 			ic.in = ic.in[1:]
 		case 4:
-			//fmt.Printf("4: %d => out\n", inst.param[0])
+			if ic.debug {
+				fmt.Printf("4: %d => out\n", inst.param[0])
+			}
 			ic.out = append(ic.out, inst.param[0])
 			return ProducedOutput
 		case 5:
-			//fmt.Printf("5: jnz %d to %d\n", inst.param[0], inst.param[1])
+			if ic.debug {
+				fmt.Printf("5: jnz %d to %d\n", inst.param[0], inst.param[1])
+			}
 			if inst.param[0] != 0 {
 				ic.ip = int(inst.param[1])
 			}
 		case 6:
-			//fmt.Printf("6: jz %d to %d\n", inst.param[0], inst.param[1])
+			if ic.debug {
+				fmt.Printf("6: jz %d to %d\n", inst.param[0], inst.param[1])
+			}
 			if inst.param[0] == 0 {
 				ic.ip = int(inst.param[1])
 			}
 		case 7:
+			if ic.debug {
+				fmt.Printf("7: %d < %d => %d\n",
+					inst.param[0], inst.param[1], inst.addr[2])
+			}
 			if inst.param[0] < inst.param[1] {
 				ic.p[inst.addr[2]] = 1
 			} else {
 				ic.p[inst.addr[2]] = 0
 			}
 		case 8:
+			if ic.debug {
+				fmt.Printf("8: %d == %d => %d\n",
+					inst.param[0], inst.param[1], inst.addr[2])
+			}
 			if inst.param[0] == inst.param[1] {
 				ic.p[inst.addr[2]] = 1
 			} else {
 				ic.p[inst.addr[2]] = 0
 			}
 		case 9:
+			if ic.debug {
+				fmt.Printf("9: %d => base\n", inst.param[0])
+			}
 			ic.base += int(inst.param[0])
 		case 99:
 			ic.done = true
