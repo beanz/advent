@@ -13,34 +13,9 @@ type Probe struct {
 	xmin, xmax, ymin, ymax int
 }
 
-func num(in []byte, i int) (int, int) {
-	m := 1
-	if in[i] == '-' {
-		m = -1
-		i++
-	}
-	n := 0
-	var j int
-	for j = i; j < len(in) && '0' <= in[j] && in[j] <= '9'; j++ {
-		n = n*10 + int(in[j] - '0')
-	}
-	return n*m, j
-}
-
 func NewProbe(in []byte) *Probe {
-	var i int
-	for i = 0; i < len(in) && in[i]!='='; i++ {}
-	i++
-	xmin, i := num(in, i)
-	i+=2
-	xmax, i := num(in, i)
-	for i = i+1; i < len(in) && in[i]!='='; i++ {}
-	i++
-	ymin, i := num(in, i)
-	i+=2
-	ymax, i := num(in, i)
-
-	return &Probe{xmin, xmax, ymin, ymax}
+	ints := FastSignedInts(in, 4)
+	return &Probe{ints[0], ints[1], ints[2], ints[3]}
 }
 
 func (p *Probe) Part1() int {

@@ -58,6 +58,30 @@ func FastInts(l []byte, expected int) []int {
 	return res
 }
 
+func FastSignedInts(l []byte, expected int) []int {
+	res := make([]int, 0, expected)
+	n := 0
+	m := 1
+	num := false
+	for _, ch := range l {
+		if ch == '-' {
+			m = -1
+		} else if ch >= '0' && ch <= '9' {
+			num = true
+			n = n*10 + int(ch-'0')
+		} else if num {
+			res = append(res, n*m)
+			n = 0
+			m = 1
+			num = false
+		}
+	}
+	if num {
+		res = append(res, n*m)
+	}
+	return res
+}
+
 func FastBytes(l []byte) []byte {
 	res := l[:0]
 	var n byte
