@@ -163,6 +163,11 @@ func (pq *PQ) Pop() interface{} {
 	return item
 }
 
+type VisitKey struct {
+	x, y int
+	path string
+}
+
 func (r *Rogue) find(pos Point, quad rune) int {
 	var expectedKeys int
 	if quad == '*' {
@@ -174,7 +179,7 @@ func (r *Rogue) find(pos Point, quad rune) int {
 		fmt.Printf("Searching for %d keys in quad %s\n",
 			expectedKeys, string(quad))
 	}
-	visited := make(map[string]int)
+	visited := make(map[VisitKey]int)
 	pq := make(PQ, 1)
 	pq[0] = &SearchRecord{pos, 0,
 		expectedKeys, make(map[rune]bool, expectedKeys),
@@ -229,11 +234,10 @@ func (r *Rogue) find(pos Point, quad rune) int {
 				}
 			}
 		}
-		vkey := fmt.Sprintf("%d!%d!%s",
-			cur.pos.X, cur.pos.Y, cur.sortedPath)
+		vkey := VisitKey{cur.pos.X, cur.pos.Y, cur.sortedPath}
 		if v, ok := visited[vkey]; ok && v <= cur.steps {
 			if r.debug {
-				fmt.Printf("  de ja vu (%s)\n", vkey)
+				fmt.Printf("  de ja vu (%v)\n", vkey)
 			}
 			continue
 		}
