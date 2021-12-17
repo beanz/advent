@@ -55,6 +55,9 @@ func (ic *IntCode) OutLen() int {
 }
 
 func (ic *IntCode) Out(n int) []int64 {
+	if n == -1 {
+		n = len(ic.out)
+	}
 	res := []int64{}
 	if len(ic.out) >= n {
 		for i := 0; i < n; i++ {
@@ -99,7 +102,7 @@ const (
 )
 
 func (o OpCode) NoMode() OpCode {
-	return OpCode(o%10)
+	return OpCode(o%100)
 }
 
 func (o OpCode) Mode(i int) ParamMode {
@@ -265,4 +268,14 @@ func (ic *IntCode) RunToHalt() []int64 {
 		ic.Run()
 	}
 	return ic.out
+}
+
+func (ic *IntCode) NextOutput() int64 {
+	for !ic.Done() {
+		ic.Run()
+		if len(ic.out) >= 1 {
+			return ic.Out(1)[0]
+		}
+	}
+	panic("no output")
 }

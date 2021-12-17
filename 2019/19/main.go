@@ -25,7 +25,7 @@ func NewBeam(p []int64) *Beam {
 
 func (b *Beam) inBeam(x, y int) bool {
 	ic := intcode.NewIntCode(b.prog, []int64{int64(x), int64(y)})
-	return ic.RunToHalt()[0] == 1
+	return ic.NextOutput() == 1
 }
 
 func (b *Beam) part1() int {
@@ -124,7 +124,7 @@ func main() {
 	}
 	p2 := beam.part2()
 	if !benchmark {
-		fmt.Printf("Part 2: %d\n", p2)
+	 	fmt.Printf("Part 2: %d\n", p2)
 	}
 }
 
