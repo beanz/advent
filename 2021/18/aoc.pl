@@ -54,11 +54,13 @@ sub re {
     my $l2 = ex($l);
     if ($l2 ne $l) {
       $l = $l2;
+      print "after explode: $l\n" if DEBUG;
       next;
     }
     my $l3 = sp($l);
     if ($l3 ne $l) {
       $l = $l3;
+      print "after split:   $l\n" if DEBUG;
       next;
     }
     return $l;
@@ -106,16 +108,16 @@ sub calc2 {
   return $max;
 }
 
-testExplode();
-testSplit();
-testAdd();
-testMag();
+testExplode() if TEST;
+testSplit() if TEST;
+testAdd() if TEST;
+testMag() if TEST;
 
-testPart1() if (TEST);
+testPart1() if TEST;
 
 print "Part 1: ", calc($i), "\n";
 
-testPart2() if (TEST);
+testPart2() if TEST;
 
 print "Part 2: ", calc2($i2), "\n";
 
