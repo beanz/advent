@@ -30,101 +30,46 @@ sub read_stuff {
 # https://www.euclideanspace.com/maths/algebra/matrix/transforms/examples/index.htm
 my @RS =
   (
-   [1, 0, 0,
-    0, 1, 0,
-    0, 0, 1],
-   [1, 0, 0,
-    0, 0, -1,
-    0, 1, 0],
-   [1, 0, 0,
-    0, -1, 0,
-    0, 0, -1],
-   [1, 0, 0,
-    0, 0, 1,
-    0, -1, 0],
-   [0, -1, 0,
-    1, 0, 0,
-    0, 0, 1],
-   [0, 0, 1,
-    1, 0, 0,
-    0, 1, 0],
-   [0, 1, 0,
-    1, 0, 0,
-    0, 0, -1],
-   [0, 0, -1,
-    1, 0, 0,
-    0, -1, 0],
-   [-1, 0, 0,
-    0, -1, 0,
-    0, 0, 1],
-   [-1, 0, 0,
-    0, 0, -1,
-    0, -1, 0],
-   [-1, 0, 0,
-    0, 1, 0,
-    0, 0, -1],
-   [-1, 0, 0,
-    0, 0, 1,
-    0, 1, 0],
-   [0, 1, 0,
-    -1, 0, 0,
-    0, 0, 1],
-   [0, 0, 1,
-    -1, 0, 0,
-    0, -1, 0],
-   [0, -1, 0,
-    -1, 0, 0,
-    0, 0, -1],
-   [0, 0, -1,
-    -1, 0, 0,
-    0, 1, 0],
-   [0, 0, -1,
-    0, 1, 0,
-    1, 0, 0],
-   [0, 1, 0,
-    0, 0, 1,
-    1, 0, 0],
-   [0, 0, 1,
-    0, -1, 0,
-    1, 0, 0],
-   [0, -1, 0,
-    0, 0, -1,
-    1, 0, 0],
-   [0, 0, -1,
-    0, -1, 0,
-    -1, 0, 0],
-   [0, -1, 0,
-    0, 0, 1,
-    -1, 0, 0],
-   [0, 0, 1,
-    0, 1, 0,
-    -1, 0, 0],
-   [0, 1, 0,
-    0, 0, -1,
-    -1, 0, 0],
+   sub { [ $_[0]->[X], $_[0]->[Y], $_[0]->[Z]] },
+   sub { [ $_[0]->[X], $_[0]->[Z], -$_[0]->[Y]] },
+   sub { [ $_[0]->[X], -$_[0]->[Y], -$_[0]->[Z]] },
+   sub { [ $_[0]->[X], -$_[0]->[Z], $_[0]->[Y]] },
+   sub { [ $_[0]->[Y], -$_[0]->[X], $_[0]->[Z]] },
+   sub { [ $_[0]->[Y], $_[0]->[Z], $_[0]->[X]] },
+   sub { [ $_[0]->[Y], $_[0]->[X], -$_[0]->[Z]] },
+   sub { [ $_[0]->[Y], -$_[0]->[Z], -$_[0]->[X]] },
+   sub { [ -$_[0]->[X], -$_[0]->[Y], $_[0]->[Z]] },
+   sub { [ -$_[0]->[X], -$_[0]->[Z], -$_[0]->[Y]] },
+   sub { [ -$_[0]->[X], $_[0]->[Y], -$_[0]->[Z]] },
+   sub { [ -$_[0]->[X], $_[0]->[Z], $_[0]->[Y]] },
+   sub { [ -$_[0]->[Y], $_[0]->[X], $_[0]->[Z]] },
+   sub { [ -$_[0]->[Y], -$_[0]->[Z], $_[0]->[X]] },
+   sub { [ -$_[0]->[Y], -$_[0]->[X], -$_[0]->[Z]] },
+   sub { [ -$_[0]->[Y], $_[0]->[Z], -$_[0]->[X]] },
+   sub { [ $_[0]->[Z], $_[0]->[Y], -$_[0]->[X]] },
+   sub { [ $_[0]->[Z], $_[0]->[X], $_[0]->[Y]] },
+   sub { [ $_[0]->[Z], -$_[0]->[Y], $_[0]->[X]] },
+   sub { [ $_[0]->[Z], -$_[0]->[X], -$_[0]->[Y]] },
+   sub { [ -$_[0]->[Z], -$_[0]->[Y], -$_[0]->[X]] },
+   sub { [ -$_[0]->[Z], -$_[0]->[X], $_[0]->[Y]] },
+   sub { [ -$_[0]->[Z], $_[0]->[Y], $_[0]->[X]] },
+   sub { [ -$_[0]->[Z], $_[0]->[X], -$_[0]->[Y]] },
   );
 
-#print ~~@RS, "\n";
-#for my $r (@RS) { print "R: @$r\n"; }
-
 sub rotate {
-  my ($p, $r) = @_;
-  return [
-          $p->[X] * $r->[X] + $p->[Y] * $r->[X+3] + $p->[Z] * $r->[X+6],
-          $p->[X] * $r->[Y] + $p->[Y] * $r->[Y+3] + $p->[Z] * $r->[Y+6],
-          $p->[X] * $r->[Z] + $p->[Y] * $r->[Z+3] + $p->[Z] * $r->[Z+6],
-         ];
+  my ($p, $ri) = @_;
+  return $RS[$ri]->($p);
 }
 
-#for my $r (@RS) {
-#  my $r = rotate([1,2,3], $r);
+#for my $ri (0..@RS-1) {
+#  my $r = rotate([1,2,3], $ri);
 #  print "@$r\n";
 #}
 
 for my $j (1..@$in-1) {
   for my $ri (0..@RS-1) {
     for my $b (@{$in->[$j]->{beacons}}) {
-      push @{$in->[$j]->{rotated_beacons}->[$ri]}, rotate($b, $RS[$ri]);
+      push @{$in->[$j]->{rotated_beacons}->[$ri]}, rotate($b, $ri);
     }
   }
 }
@@ -146,11 +91,12 @@ sub align {
     my $known_beacon = $beacons->{l}->[$kbi];
     for my $bi (0..@{$in->[$scanner_i]->{beacons}}-1) {
       my $beacon = $in->[$scanner_i]->{beacons}->[$bi];
-      #print "  assuming [$kbi] @{$known_beacon} == [$bi] @{$beacon}\n";
+      print "  assuming [$kbi] @{$known_beacon} == [$bi] @{$beacon}\n" if (DEBUG > 1);
       for my $ri (0..@RS-1) {
-        #print "trying rotation $ri\n";
         my $rbeacon = $in->[$scanner_i]->{rotated_beacons}->[$ri]->[$bi];
+        print "trying rotation $ri *> @$rbeacon\n" if (DEBUG > 1);
         my $transform = [map { $known_beacon->[$_] - $rbeacon->[$_] } X, Y, Z];
+        print "transform: @$transform\n" if (DEBUG > 1);
         my $c = 0;
         my @new = ();
         for my $obi (0..@{$in->[$scanner_i]->{beacons}}-1) {
@@ -158,7 +104,7 @@ sub align {
           my $robeacon = $in->[$scanner_i]->{rotated_beacons}->[$ri]->[$obi];
           #print "  trying other beacon [$obi] @{$robeacon}\n";
           my $trobeacon = [map { $robeacon->[$_] + $transform->[$_] } X, Y, Z];
-          #print "   @$obeacon > @$robeacon +> @$trobeacon\n";
+          print "   @{$in->[$scanner_i]->{beacons}->[$obi]} *> @$robeacon +> @$trobeacon\n" if (DEBUG > 1);
           if (exists $beacons->{m}->{"@{$trobeacon}"}) {
             $c++;
           } else {
