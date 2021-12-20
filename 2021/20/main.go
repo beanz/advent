@@ -71,14 +71,15 @@ func (i *Image) value(x, y int, def bool) bool {
 
 func (i *Image) index(x, y int, def bool) int {
 	n := 0
-	for oy := -1; oy <= 1; oy++ {
-		for ox := -1; ox <= 1; ox++ {
-			n <<= 1
-			if i.value(x+ox, y+oy, def) {
-				n++
-			}
-		}
-	}
+	if i.value(x+-1, y+-1, def) { n = 256 }
+	if i.value(x+0, y+-1, def) { n += 128 }
+	if i.value(x+1, y+-1, def) { n += 64 }
+	if i.value(x+-1, y+0, def) { n += 32 }
+	if i.value(x+0, y+0, def) { n += 16 }
+	if i.value(x+1, y+0, def) { n += 8 }
+	if i.value(x+-1, y+1, def) { n += 4 }
+	if i.value(x+0, y+1, def) { n += 2 }
+	if i.value(x+1, y+1, def) { n++ }
 	return n
 }
 
