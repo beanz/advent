@@ -12,14 +12,19 @@ var test1 []byte
 //go:embed input.txt
 var safeinput []byte
 
-type TestCase struct {
-	file string
-	data []byte
-	ans  int
+func ExampleMain() {
+	main()
+	//Output:
+	// Part 1: 1
+	// Part 2: 2
 }
 
 func TestPart1(t *testing.T) {
-	tests := []TestCase{
+	tests := []struct {
+		file string
+		data []byte
+		ans  int
+	}{
 		{"test1.txt", test1, 1},
 		{"input.txt", input, 2},
 	}
@@ -29,7 +34,11 @@ func TestPart1(t *testing.T) {
 }
 
 func TestPart2(t *testing.T) {
-	tests := []TestCase{
+	tests := []struct {
+		file string
+		data []byte
+		ans  int
+	}{
 		{"test1.txt", test1, 2},
 		{"input.txt", input, 4},
 	}
