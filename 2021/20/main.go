@@ -64,7 +64,7 @@ func (i *Image) String() string {
 
 func (i *Image) value(x, y int, def bool) bool {
 	if x < 0 || y < 0 || x >= i.w || y >= i.h {
-		return def
+		return i.lookup[0] && def
 	}
 	return i.m[x+y*i.w]
 }
@@ -107,11 +107,11 @@ func (i *Image) Iter(def bool) int {
 
 func (i *Image) Enhance() (int, int) {
 	i.Iter(false)
-	p1 := i.Iter(i.lookup[0])
+	p1 := i.Iter(true)
 	var p2 int
 	for n := 3; n <= 50; n+=2 {
 		i.Iter(false)
-		p2 = i.Iter(i.lookup[0])
+		p2 = i.Iter(true)
 	}
 	return p1, p2
 }
