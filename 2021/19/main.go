@@ -13,6 +13,7 @@ var input []byte
 type Scanner struct {
 	beacons []*Point3D
 	pos     *Point3D
+	rotated [][]*Point3D
 }
 
 type Game struct {
@@ -33,12 +34,19 @@ func NewGame(in []byte) *Game {
 		for i := 0; i < len(ints); i += 3 {
 			points = append(points, &Point3D{ints[i], ints[i+1], ints[i+2]})
 		}
-		g.scanners = append(g.scanners, &Scanner{points, nil})
+		scanner := &Scanner{points, nil, make([][]*Point3D, 24)}
+		for r := 0; r < 24; r++ {
+			scanner.rotated[r] = make([]*Point3D, len(points))
+			for i := 0; i < len(points); i++ {
+				scanner.rotated[r][i] = Rotate(points[i], r)
+			}
+		}
+		g.scanners = append(g.scanners, scanner)
 	}
 	for _, b := range g.scanners[0].beacons {
 		g.beacons[*b] = true
 	}
-	g.scanners[0].pos = &Point3D{0,0,0}
+	g.scanners[0].pos = &Point3D{0, 0, 0}
 	return g
 }
 
@@ -101,11 +109,11 @@ func (g *Game) align(i int) bool {
 	//fmt.Printf("trying to align scanner %d\n", i)
 	alloc := make([]*Point3D, 0, 32)
 	for known := range g.beacons {
-	//for _, known := range  g.scanners[0].beacons {
-		for bi, beacon := range g.scanners[i].beacons {
+		//for _, known := range  g.scanners[0].beacons {
+		for bi := range g.scanners[i].beacons {
 			//fmt.Printf("assuming %s == [%d] %s\n", known, bi, beacon)
 			for ri := 0; ri < 24; ri++ {
-				rbeacon := Rotate(beacon, ri)
+				rbeacon := g.scanners[i].rotated[ri][bi]
 				//fmt.Printf("rotation %d *> %s\n", ri, rbeacon)
 				transform := Point3D{
 					known.X - rbeacon.X,
@@ -115,11 +123,11 @@ func (g *Game) align(i int) bool {
 				//fmt.Printf("transform %s\n", transform)
 				c := 0
 				nb := alloc[:0]
-				for obi, obeacon := range g.scanners[i].beacons {
+				for obi := range g.scanners[i].beacons {
 					if obi == bi {
 						continue
 					}
-					robeacon := Rotate(obeacon, ri)
+					robeacon := g.scanners[i].rotated[ri][obi]
 					trobeacon := Point3D{
 						robeacon.X + transform.X,
 						robeacon.Y + transform.Y,
@@ -133,7 +141,7 @@ func (g *Game) align(i int) bool {
 						nb = append(nb, &trobeacon)
 					}
 				}
-				if (c >= 11) {
+				if c >= 11 {
 					//fmt.Printf("found %d rotation %d %s\n",
 					//    c, ri, transform)
 					g.scanners[i].pos = &transform
@@ -149,7 +157,7 @@ func (g *Game) align(i int) bool {
 }
 
 func (g *Game) Solve() (int, int) {
-	todo := len(g.scanners)-1
+	todo := len(g.scanners) - 1
 	for todo > 0 {
 		for i := 1; i < len(g.scanners); i++ {
 			if g.scanners[i].pos != nil {
@@ -162,7 +170,7 @@ func (g *Game) Solve() (int, int) {
 	}
 	max := 0
 	for i := 0; i < len(g.scanners); i++ {
-		for j := i+1; j < len(g.scanners); j++ {
+		for j := i + 1; j < len(g.scanners); j++ {
 			md := g.scanners[i].pos.ManhattanDistance(*g.scanners[j].pos)
 			if md > max {
 				max = md
