@@ -62,7 +62,7 @@ func (i *Image) String() string {
 
 func (i *Image) value(x, y int, def bool) bool {
 	if x < 0 || y < 0 || x >= i.w || y >= i.h {
-		return def
+		return i.lookup[0] && def
 	}
 	return i.m[x+(y<<9)]
 }
