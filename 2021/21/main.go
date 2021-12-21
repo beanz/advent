@@ -38,16 +38,14 @@ func NewGame(in []byte) *Game {
 
 func (g *Game) Part1() int {
 	s := []int{0, 0}
-	p := []int{g.p1, g.p2}
+	p := []int{g.p1 - 1, g.p2 - 1}
 	dice := NewD100()
 	for {
 		for i := 0; i < 2; i++ {
 			r := dice.Roll() + dice.Roll() + dice.Roll()
 			p[i] += r
-			for p[i] > 10 {
-				p[i] -= 10
-			}
-			s[i] += p[i]
+			p[i] %= 10
+			s[i] += p[i] + 1
 			//fmt.Printf("Player %d moves to space %d for a total score of %d\n",
 			//	i+1, p[i], s[i])
 			if s[i] >= 1000 {
@@ -84,7 +82,7 @@ func (wc *WinCounter) CountWins(pos1, score1, pos2, score2 int8) (int64, int64) 
 	for _, rw := range rollWays {
 		roll, ways := rw[0], rw[1]
 		np1 := pos1 + int8(roll)
-		for np1 > 10 {
+		if np1 > 10 {
 			np1 -= 10
 		}
 		ns1 := score1 + np1

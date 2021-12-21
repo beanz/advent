@@ -56,3 +56,13 @@ func BenchmarkMain(b *testing.B) {
 		main()
 	}
 }
+
+func BenchmarkPart1(b *testing.B) {
+	benchmark = true
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		copy(input, safeinput)
+		b.StartTimer()
+		NewGame(input).Part1()
+	}
+}
