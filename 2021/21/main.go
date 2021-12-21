@@ -76,12 +76,6 @@ func (wc *WinCounter) Len() int {
 var rollWays = [][]int{{3, 1}, {4, 3}, {5, 6}, {6, 7}, {7, 6}, {8, 3}, {9, 1}}
 
 func (wc *WinCounter) CountWins(pos1, score1, pos2, score2 int8) (int64, int64) {
-	if score1 >= 21 {
-		return 1, 0
-	}
-	if score2 >= 21 {
-		return 0, 1
-	}
 	k := ((((int(pos1)<<5 + int(score1)) << 4) + int(pos2)) << 5) + int(score2)
 	if v := wc.cache[k]; v != nil {
 		return (*v).w1, (*v).w2
@@ -94,6 +88,10 @@ func (wc *WinCounter) CountWins(pos1, score1, pos2, score2 int8) (int64, int64) 
 			np1 -= 10
 		}
 		ns1 := score1 + np1
+		if ns1 >= 21 {
+			w1 += int64(ways)
+			continue
+		}
 		// reverse arguments pairs and reverse answers
 		sw2, sw1 := wc.CountWins(pos2, score2, np1, ns1)
 		w1 += sw1 * int64(ways)
