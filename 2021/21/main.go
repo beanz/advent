@@ -80,7 +80,11 @@ type WinCounter struct {
 }
 
 func NewWinCounter() *WinCounter {
-	return &WinCounter{make(map[VisitKey]Counts, 1024)}
+	return &WinCounter{make(map[VisitKey]Counts, 16384)}
+}
+
+func (wc *WinCounter) Len() int {
+	return len(wc.cache)
 }
 
 func (wc *WinCounter) CountWins(pos1, score1, pos2, score2 int64) (int64, int64) {
@@ -111,7 +115,8 @@ func (wc *WinCounter) CountWins(pos1, score1, pos2, score2 int64) (int64, int64)
 }
 
 func (g *Game) Part2() int64 {
-	w1, w2 := NewWinCounter().CountWins(int64(g.p1), 0, int64(g.p2), 0)
+	wc := NewWinCounter()
+	w1, w2 := wc.CountWins(int64(g.p1), 0, int64(g.p2), 0)
 	if w1 > w2 {
 		return w1
 	}
