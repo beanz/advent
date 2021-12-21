@@ -57,41 +57,39 @@ func (g *Game) Part1() int {
 	}
 }
 
-type VisitKey struct {
-	p1, s1, p2, s2 int64
-}
-
 type Counts struct {
 	w1, w2 int64
 }
 
 type WinCounter struct {
-	cache map[VisitKey]Counts
+	cache []*Counts
 }
 
 func NewWinCounter() *WinCounter {
-	return &WinCounter{make(map[VisitKey]Counts, 16384)}
+	return &WinCounter{make([]*Counts, 262144)}
 }
 
 func (wc *WinCounter) Len() int {
 	return len(wc.cache)
 }
 
-func (wc *WinCounter) CountWins(pos1, score1, pos2, score2 int64) (int64, int64) {
+var rollWays = [][]int{{3, 1}, {4, 3}, {5, 6}, {6, 7}, {7, 6}, {8, 3}, {9, 1}}
+
+func (wc *WinCounter) CountWins(pos1, score1, pos2, score2 int8) (int64, int64) {
 	if score1 >= 21 {
 		return 1, 0
 	}
 	if score2 >= 21 {
 		return 0, 1
 	}
-	k := VisitKey{pos1, score1, pos2, score2}
-	if v, ok := wc.cache[k]; ok {
-		return v.w1, v.w2
+	k := ((((int(pos1)<<5 + int(score1)) << 4) + int(pos2)) << 5) + int(score2)
+	if v := wc.cache[k]; v != nil {
+		return (*v).w1, (*v).w2
 	}
 	var w1, w2 int64
-	for _, rw := range [][]int{{3, 1}, {4, 3}, {5, 6}, {6, 7}, {7, 6}, {8, 3}, {9, 1}} {
+	for _, rw := range rollWays {
 		roll, ways := rw[0], rw[1]
-		np1 := pos1 + int64(roll)
+		np1 := pos1 + int8(roll)
 		for np1 > 10 {
 			np1 -= 10
 		}
@@ -101,13 +99,13 @@ func (wc *WinCounter) CountWins(pos1, score1, pos2, score2 int64) (int64, int64)
 		w1 += sw1 * int64(ways)
 		w2 += sw2 * int64(ways)
 	}
-	wc.cache[k] = Counts{w1, w2}
+	wc.cache[k] = &Counts{w1, w2}
 	return w1, w2
 }
 
 func (g *Game) Part2() int64 {
 	wc := NewWinCounter()
-	w1, w2 := wc.CountWins(int64(g.p1), 0, int64(g.p2), 0)
+	w1, w2 := wc.CountWins(int8(g.p1), 0, int8(g.p2), 0)
 	if w1 > w2 {
 		return w1
 	}
