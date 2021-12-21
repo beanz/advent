@@ -57,16 +57,6 @@ func (g *Game) Part1() int {
 	}
 }
 
-var rollWays = map[int]int{
-	3: 1,
-	4: 3,
-	5: 6,
-	6: 7,
-	7: 6,
-	8: 3,
-	9: 1,
-}
-
 type VisitKey struct {
 	p1, s1, p2, s2 int64
 }
@@ -99,7 +89,8 @@ func (wc *WinCounter) CountWins(pos1, score1, pos2, score2 int64) (int64, int64)
 		return v.w1, v.w2
 	}
 	var w1, w2 int64
-	for roll, ways := range rollWays {
+	for _, rw := range [][]int{{3, 1}, {4, 3}, {5, 6}, {6, 7}, {7, 6}, {8, 3}, {9, 1}} {
+		roll, ways := rw[0], rw[1]
 		np1 := pos1 + int64(roll)
 		for np1 > 10 {
 			np1 -= 10
