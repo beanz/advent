@@ -78,12 +78,6 @@ my $i2 = $reader->($file);
   }
   sub diff {
     my ($c0, $c1) = @_;
-    if ($c1->contains($c0)) {
-      return [];
-    }
-    if (!$c0->intersects($c1)) {
-      return [$c0];
-    }
     my @x = $c0->[XMIN];
     push @x, $c1->[XMIN] if ($c0->[XMIN] < $c1->[XMIN] &&
                              $c1->[XMIN] < $c0->[XMAX]);
@@ -190,6 +184,13 @@ sub calc2 {
     #print "processing ", $cuboid->pp, "\n";
     my @n;
     for my $old (@cuboids) {
+      if ($cuboid->contains($old)) {
+        next;
+      }
+      if (!$old->intersects($cuboid)) {
+        push @n, $old;
+        next;
+      }
       push @n, @{$old->diff($cuboid)};
     }
     push @n, $cuboid if ($cuboid->value);
