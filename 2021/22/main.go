@@ -62,12 +62,9 @@ func (c0 *Cuboid) Intersection(c1 *Cuboid) *Cuboid {
 }
 
 func (c0 *Cuboid) Difference(c1 *Cuboid) []*Cuboid {
-	if c1.Contains(c0) {
-		return []*Cuboid{}
-	}
-	if !c0.Intersects(c1) {
-		return []*Cuboid{c0}
-	}
+	// We assume the caller has done this to avoid short-lived list creation:
+	// if c1.Contains(c0) {	return []*Cuboid{} }
+	// if !c0.Intersects(c1) {return []*Cuboid{c0} }
 	x := make([]int, 0, 4)
 	x = append(x, c0.xmin)
 	if c0.xmin < c1.xmin && c1.xmin < c0.xmax {
@@ -151,6 +148,13 @@ func (r *Reactor) Reboot() (int, int) {
 	next := make([]*Cuboid, 0, len(r.cuboids)*27)
 	for _, c := range r.cuboids {
 		for _, old := range cuboids {
+			if c.Contains(old) {
+				continue
+			}
+			if !old.Intersects(c) {
+				next = append(next, old)
+				continue
+			}
 			diff := old.Difference(c)
 			next = append(next, diff...)
 		}
