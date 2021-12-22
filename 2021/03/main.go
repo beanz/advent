@@ -11,12 +11,12 @@ import (
 var input []byte
 
 type Game struct {
-	in []int
+	in   []int
 	bits int
 }
 
 func NewGame(in []string) *Game {
-	g := &Game{make([]int, 0, len(in)), len(in[0])-1}
+	g := &Game{make([]int, 0, len(in)), len(in[0]) - 1}
 	for _, l := range in {
 		g.in = append(g.in, BinToInt(l))
 	}
@@ -24,9 +24,9 @@ func NewGame(in []string) *Game {
 }
 
 func (g *Game) Part1() int {
-	half := len(g.in)/2
+	half := len(g.in) / 2
 	var gamma int
-	for bit := (1<<g.bits); bit >= 1; bit /= 2 {
+	for bit := (1 << g.bits); bit >= 1; bit /= 2 {
 		c := 0
 		for _, n := range g.in {
 			if n&bit != 0 {
@@ -37,13 +37,13 @@ func (g *Game) Part1() int {
 			gamma += bit
 		}
 	}
-	return gamma*(2<<g.bits-1-gamma)
+	return gamma * (2<<g.bits - 1 - gamma)
 }
 
 func (g *Game) Reduce(most bool) int {
 	mask := 0
 	val := 0
-	for bit := (1<<g.bits); bit >= 1; bit /= 2 {
+	for bit := (1 << g.bits); bit >= 1; bit /= 2 {
 		c := 0
 		total := 0
 		for _, n := range g.in {
