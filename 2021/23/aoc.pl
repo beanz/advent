@@ -130,6 +130,10 @@ sub right {
   return \@r;
 }
 
+#print "left(5): @{left(5)}\n";
+#print "right(5): @{right(5)}\n";
+#exit;
+
 sub path {
   my ($p, $nx, $ny) = @_;
   my $ch = $p->[CH];
@@ -241,7 +245,7 @@ sub calc {
   $search->enqueue(0, { %{$in->{p}} });
   my %visited;
   while (1) {
-    print "Q: ", $search->get_item_count(), "\r" if DEBUG;
+    print "Q: ", $search->get_item_count(), "       \r" if DEBUG;
     my $halt = $search->get_item_count() == 0;
     my ($energy, $queue_id, $cur) = $search->dequeue_next();
     if ($halt) {
@@ -313,8 +317,7 @@ sub testPart2 {
     );
   for my $tc (@test_cases) {
     my $lines = read_lines($tc->[0]);
-    my $i = read_stuff($lines);
-    my $res = calc2($i);
-    assertEq("Test 2 [$tc->[0] x $tc->[1]]", $res, $tc->[2]);
+    my $res = calc2($lines);
+    assertEq("Test 2 [$tc->[0]]", $res, $tc->[1]);
   }
 }
