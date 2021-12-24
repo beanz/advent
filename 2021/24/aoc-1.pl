@@ -12,18 +12,18 @@ sub prog {
   my $x = 0;
   my $y = 0;
   my $z = 0;
-  return inp0($x, $y, $z, "");
+  return inp0($z, "");
 }
 
 sub inp0 {
-  my ($xi, $yi, $zi, $ws) = @_;
+  my ($zi, $ws) = @_;
   state %cache;
-  return $cache{$xi,$yi,$zi} if (exists $cache{$xi,$yi,$zi});
+  return $cache{$zi} if (exists $cache{$zi});
 
   for my $wi (reverse 1 .. $inp[0]) {
     my $w = $wi;
-    my $x = $xi;
-    my $y = $yi;
+    my $x;
+    my $y;
     my $z = $zi;
     # prog
   $x = $z;
@@ -39,22 +39,22 @@ sub inp0 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp1($x, $y, $z, $ws.$wi);
+    my $r = inp1($z, $ws.$wi);
     return $r if (defined $r);
   }
-  $cache{$xi,$yi,$zi} = undef;
+  $cache{$zi} = undef;
   return;
 }
 
 sub inp1 {
-  my ($xi, $yi, $zi, $ws) = @_;
+  my ($zi, $ws) = @_;
   state %cache;
-  return $cache{$xi,$yi,$zi} if (exists $cache{$xi,$yi,$zi});
+  return $cache{$zi} if (exists $cache{$zi});
 
   for my $wi (reverse 1 .. $inp[1]) {
     my $w = $wi;
-    my $x = $xi;
-    my $y = $yi;
+    my $x;
+    my $y;
     my $z = $zi;
     # prog
   $x = $z;
@@ -70,22 +70,22 @@ sub inp1 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp2($x, $y, $z, $ws.$wi);
+    my $r = inp2($z, $ws.$wi);
     return $r if (defined $r);
   }
-  $cache{$xi,$yi,$zi} = undef;
+  $cache{$zi} = undef;
   return;
 }
 
 sub inp2 {
-  my ($xi, $yi, $zi, $ws) = @_;
+  my ($zi, $ws) = @_;
   state %cache;
-  return $cache{$xi,$yi,$zi} if (exists $cache{$xi,$yi,$zi});
+  return $cache{$zi} if (exists $cache{$zi});
 
   for my $wi (reverse 1 .. $inp[2]) {
     my $w = $wi;
-    my $x = $xi;
-    my $y = $yi;
+    my $x;
+    my $y;
     my $z = $zi;
     # prog
   $x = $z;
@@ -101,22 +101,22 @@ sub inp2 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp3($x, $y, $z, $ws.$wi);
+    my $r = inp3($z, $ws.$wi);
     return $r if (defined $r);
   }
-  $cache{$xi,$yi,$zi} = undef;
+  $cache{$zi} = undef;
   return;
 }
 
 sub inp3 {
-  my ($xi, $yi, $zi, $ws) = @_;
+  my ($zi, $ws) = @_;
   state %cache;
-  return $cache{$xi,$yi,$zi} if (exists $cache{$xi,$yi,$zi});
+  return $cache{$zi} if (exists $cache{$zi});
 
   for my $wi (reverse 1 .. $inp[3]) {
     my $w = $wi;
-    my $x = $xi;
-    my $y = $yi;
+    my $x;
+    my $y;
     my $z = $zi;
     # prog
   $x = $z;
@@ -133,22 +133,22 @@ sub inp3 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp4($x, $y, $z, $ws.$wi);
+    my $r = inp4($z, $ws.$wi);
     return $r if (defined $r);
   }
-  $cache{$xi,$yi,$zi} = undef;
+  $cache{$zi} = undef;
   return;
 }
 
 sub inp4 {
-  my ($xi, $yi, $zi, $ws) = @_;
+  my ($zi, $ws) = @_;
   state %cache;
-  return $cache{$xi,$yi,$zi} if (exists $cache{$xi,$yi,$zi});
+  return $cache{$zi} if (exists $cache{$zi});
 
   for my $wi (reverse 1 .. $inp[4]) {
     my $w = $wi;
-    my $x = $xi;
-    my $y = $yi;
+    my $x;
+    my $y;
     my $z = $zi;
     # prog
   $x = $z;
@@ -164,23 +164,23 @@ sub inp4 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp5($x, $y, $z, $ws.$wi);
+    my $r = inp5($z, $ws.$wi);
     return $r if (defined $r);
   }
-  $cache{$xi,$yi,$zi} = undef;
+  $cache{$zi} = undef;
   return;
 }
 
 sub inp5 {
-  my ($xi, $yi, $zi, $ws) = @_;
+  my ($zi, $ws) = @_;
   state %cache;
-  return $cache{$xi,$yi,$zi} if (exists $cache{$xi,$yi,$zi});
+  return $cache{$zi} if (exists $cache{$zi});
 print STDERR "$ws.........\r";
 
   for my $wi (reverse 1 .. $inp[5]) {
     my $w = $wi;
-    my $x = $xi;
-    my $y = $yi;
+    my $x;
+    my $y;
     my $z = $zi;
     # prog
   $x = $z;
@@ -196,22 +196,22 @@ print STDERR "$ws.........\r";
   $y *= $x;
   $z += $y;
 
-    my $r = inp6($x, $y, $z, $ws.$wi);
+    my $r = inp6($z, $ws.$wi);
     return $r if (defined $r);
   }
-  $cache{$xi,$yi,$zi} = undef;
+  $cache{$zi} = undef;
   return;
 }
 
 sub inp6 {
-  my ($xi, $yi, $zi, $ws) = @_;
+  my ($zi, $ws) = @_;
   state %cache;
-  return $cache{$xi,$yi,$zi} if (exists $cache{$xi,$yi,$zi});
+  return $cache{$zi} if (exists $cache{$zi});
 
   for my $wi (reverse 1 .. $inp[6]) {
     my $w = $wi;
-    my $x = $xi;
-    my $y = $yi;
+    my $x;
+    my $y;
     my $z = $zi;
     # prog
   $x = $z;
@@ -227,22 +227,22 @@ sub inp6 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp7($x, $y, $z, $ws.$wi);
+    my $r = inp7($z, $ws.$wi);
     return $r if (defined $r);
   }
-  $cache{$xi,$yi,$zi} = undef;
+  $cache{$zi} = undef;
   return;
 }
 
 sub inp7 {
-  my ($xi, $yi, $zi, $ws) = @_;
+  my ($zi, $ws) = @_;
   state %cache;
-  return $cache{$xi,$yi,$zi} if (exists $cache{$xi,$yi,$zi});
+  return $cache{$zi} if (exists $cache{$zi});
 
   for my $wi (reverse 1 .. $inp[7]) {
     my $w = $wi;
-    my $x = $xi;
-    my $y = $yi;
+    my $x;
+    my $y;
     my $z = $zi;
     # prog
   $x = $z;
@@ -259,22 +259,22 @@ sub inp7 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp8($x, $y, $z, $ws.$wi);
+    my $r = inp8($z, $ws.$wi);
     return $r if (defined $r);
   }
-  $cache{$xi,$yi,$zi} = undef;
+  $cache{$zi} = undef;
   return;
 }
 
 sub inp8 {
-  my ($xi, $yi, $zi, $ws) = @_;
+  my ($zi, $ws) = @_;
   state %cache;
-  return $cache{$xi,$yi,$zi} if (exists $cache{$xi,$yi,$zi});
+  return $cache{$zi} if (exists $cache{$zi});
 
   for my $wi (reverse 1 .. $inp[8]) {
     my $w = $wi;
-    my $x = $xi;
-    my $y = $yi;
+    my $x;
+    my $y;
     my $z = $zi;
     # prog
   $x = $z;
@@ -290,22 +290,22 @@ sub inp8 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp9($x, $y, $z, $ws.$wi);
+    my $r = inp9($z, $ws.$wi);
     return $r if (defined $r);
   }
-  $cache{$xi,$yi,$zi} = undef;
+  $cache{$zi} = undef;
   return;
 }
 
 sub inp9 {
-  my ($xi, $yi, $zi, $ws) = @_;
+  my ($zi, $ws) = @_;
   state %cache;
-  return $cache{$xi,$yi,$zi} if (exists $cache{$xi,$yi,$zi});
+  return $cache{$zi} if (exists $cache{$zi});
 
   for my $wi (reverse 1 .. $inp[9]) {
     my $w = $wi;
-    my $x = $xi;
-    my $y = $yi;
+    my $x;
+    my $y;
     my $z = $zi;
     # prog
   $x = $z;
@@ -322,22 +322,22 @@ sub inp9 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp10($x, $y, $z, $ws.$wi);
+    my $r = inp10($z, $ws.$wi);
     return $r if (defined $r);
   }
-  $cache{$xi,$yi,$zi} = undef;
+  $cache{$zi} = undef;
   return;
 }
 
 sub inp10 {
-  my ($xi, $yi, $zi, $ws) = @_;
+  my ($zi, $ws) = @_;
   state %cache;
-  return $cache{$xi,$yi,$zi} if (exists $cache{$xi,$yi,$zi});
+  return $cache{$zi} if (exists $cache{$zi});
 
   for my $wi (reverse 1 .. $inp[10]) {
     my $w = $wi;
-    my $x = $xi;
-    my $y = $yi;
+    my $x;
+    my $y;
     my $z = $zi;
     # prog
   $x = $z;
@@ -354,22 +354,22 @@ sub inp10 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp11($x, $y, $z, $ws.$wi);
+    my $r = inp11($z, $ws.$wi);
     return $r if (defined $r);
   }
-  $cache{$xi,$yi,$zi} = undef;
+  $cache{$zi} = undef;
   return;
 }
 
 sub inp11 {
-  my ($xi, $yi, $zi, $ws) = @_;
+  my ($zi, $ws) = @_;
   state %cache;
-  return $cache{$xi,$yi,$zi} if (exists $cache{$xi,$yi,$zi});
+  return $cache{$zi} if (exists $cache{$zi});
 
   for my $wi (reverse 1 .. $inp[11]) {
     my $w = $wi;
-    my $x = $xi;
-    my $y = $yi;
+    my $x;
+    my $y;
     my $z = $zi;
     # prog
   $x = $z;
@@ -386,22 +386,22 @@ sub inp11 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp12($x, $y, $z, $ws.$wi);
+    my $r = inp12($z, $ws.$wi);
     return $r if (defined $r);
   }
-  $cache{$xi,$yi,$zi} = undef;
+  $cache{$zi} = undef;
   return;
 }
 
 sub inp12 {
-  my ($xi, $yi, $zi, $ws) = @_;
+  my ($zi, $ws) = @_;
   state %cache;
-  return $cache{$xi,$yi,$zi} if (exists $cache{$xi,$yi,$zi});
+  return $cache{$zi} if (exists $cache{$zi});
 
   for my $wi (reverse 1 .. $inp[12]) {
     my $w = $wi;
-    my $x = $xi;
-    my $y = $yi;
+    my $x;
+    my $y;
     my $z = $zi;
     # prog
   $x = $z;
@@ -418,22 +418,22 @@ sub inp12 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp13($x, $y, $z, $ws.$wi);
+    my $r = inp13($z, $ws.$wi);
     return $r if (defined $r);
   }
-  $cache{$xi,$yi,$zi} = undef;
+  $cache{$zi} = undef;
   return;
 }
 
 sub inp13 {
-  my ($xi, $yi, $zi, $ws) = @_;
+  my ($zi, $ws) = @_;
   state %cache;
-  return $cache{$xi,$yi,$zi} if (exists $cache{$xi,$yi,$zi});
+  return $cache{$zi} if (exists $cache{$zi});
 
   for my $wi (reverse 1 .. $inp[13]) {
     my $w = $wi;
-    my $x = $xi;
-    my $y = $yi;
+    my $x;
+    my $y;
     my $z = $zi;
     # prog
   $x = $z;
@@ -452,6 +452,6 @@ sub inp13 {
 
     return $ws.$wi if ($z == 0);
   }
-  $cache{$xi,$yi,$zi} = undef;
+  $cache{$zi} = undef;
   return
 }
