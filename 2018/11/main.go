@@ -11,137 +11,114 @@ import (
 //go:embed input.txt
 var input []byte
 
-type Game struct {
-	serial  int
-	sizeMin int
-	sizeMax int
-	gridMin Point
-	gridMax Point
-	cache   map[Square]int
-	debug   bool
+type CellCache struct {
+	m    []int
+	size int
 }
 
-func NewGame(lines []string) *Game {
-	serial := SimpleReadInts(lines[0])[0]
-	size := SimpleReadInts(lines[1])
-	gridMin := SimpleReadInts(lines[2])
-	gridMax := SimpleReadInts(lines[3])
-	return &Game{serial, size[0], size[1],
-		Point{gridMin[0], gridMin[1]}, Point{gridMax[0], gridMax[1]},
-		map[Square]int{}, false}
+func NewCellCache(size int, serial int) *CellCache {
+	m := make([]int, size*size)
+	cc := &CellCache{m, size}
+	for y := 0; y < size; y++ {
+		for x := 0; x < size; x++ {
+			l := cc.Level(x+1, y+1, serial)
+			if x > 0 {
+				l += m[(x-1)+size*y]
+				if y > 0 {
+					l -= m[(x-1)+size*(y-1)]
+				}
+			}
+			if y > 0 {
+				l += m[x+size*(y-1)]
+			}
+			m[x+size*y] = l
+		}
+	}
+	return cc
 }
 
-func (g *Game) String() string {
-	return fmt.Sprintf("serial: %d size: %d-%d grid: %d-%d, %d-%d",
-		g.serial, g.sizeMin, g.sizeMax,
-		g.gridMin.X, g.gridMax.X, g.gridMin.Y, g.gridMax.Y)
-}
-
-func (g *Game) Level(point Point) int {
-	r := point.X + 10
-	p := r * point.Y
-	p += g.serial
+func (cc *CellCache) Level(x, y, serial int) int {
+	r := x + 10
+	p := r * y
+	p += serial
 	p *= r
 	p /= 100
 	p %= 10
 	return p - 5
 }
 
-type Square struct {
-	p    Point
-	size int
+func (cc *CellCache) Get(x, y int) int {
+	return cc.m[x+y*cc.size]
 }
 
-func (g *Game) LevelSquare(sq Square) int {
-	if l, ok := g.cache[sq]; ok {
-		return l
+type Cells struct {
+	serial     int
+	sizeMin    int
+	sizeMax    int
+	xmin, xmax int
+	ymin, ymax int
+	cc         *CellCache
+	debug      bool
+}
+
+func NewCells(in []byte) *Cells {
+	ints := FastInts(in, 7)
+	return &Cells{ints[0], ints[1], ints[2],
+		ints[3], ints[5], ints[4], ints[6], NewCellCache(ints[2], ints[0]),
+		false,
 	}
-	var ok bool
-	l := 0
-	if l, ok = g.cache[Square{sq.p, sq.size}]; ok {
-		// right edge
-		for j := 0; j < sq.size; j++ {
-			l += g.Level(Point{sq.p.X + sq.size - 1, sq.p.Y + j})
-		}
-		// bottom edge (without right most square)
-		for i := 0; i < sq.size-1; i++ {
-			l += g.Level(Point{sq.p.X + i, sq.p.Y + sq.size - 1})
-		}
-	} else {
-		// left edge
-		for j := 0; j < sq.size; j++ {
-			l += g.Level(Point{sq.p.X, sq.p.Y + j})
-		}
-		// top edge (without left most square)
-		for i := 1; i < sq.size; i++ {
-			l += g.Level(Point{sq.p.X + i, sq.p.Y})
-		}
-		if sq.size > 1 {
-			l += g.LevelSquare(Square{Point{sq.p.X + 1, sq.p.Y + 1},
-				sq.size - 1})
+}
+
+func (c *Cells) LevelSquare(x, y, size int) int {
+	s := c.cc.Get(x+size-1, y+size-1)
+	if x > 0 {
+		s -= c.cc.Get(x-1, y+size-1)
+		if y > 0 {
+			s += c.cc.Get(x-1, y-1)
 		}
 	}
-	g.cache[sq] = l
-	return l
+	if y > 1 {
+		s -= c.cc.Get(x+size-1, y-1)
+	}
+	return s
 }
 
-func (sq Square) String() string {
-	return fmt.Sprintf("%d,%d,%d", sq.p.X, sq.p.Y, sq.size)
-}
-
-func (g *Game) Part1() string {
-	var maxSq Square
+func (c *Cells) Solve(minSize, maxSize int) (int, int, int) {
+	var maxX, maxY, mSize int
 	max := math.MinInt64
-	size := 3
-	for x := g.gridMin.X; x <= g.gridMax.X-size+1; x++ {
-		if g.debug {
+	for size := minSize; size <= maxSize; size++ {
+		for x := c.xmin - 1; x < c.xmax-size+1; x++ {
+			if c.debug {
 			fmt.Printf("%3d %3d\r", size, x)
-		}
-		for y := g.gridMin.Y; y <= g.gridMax.Y-size+1; y++ {
-			sq := Square{Point{x, y}, size}
-			l := g.LevelSquare(sq)
-			if l > max {
-				max = l
-				maxSq = sq
 			}
-		}
-	}
-
-	return fmt.Sprintf("%d,%d", maxSq.p.X, maxSq.p.Y)
-}
-
-func (g *Game) Solve() (Square, int) {
-	var maxSq Square
-	max := math.MinInt64
-	for size := g.sizeMin; size <= g.sizeMax; size++ {
-		for x := g.gridMin.X; x <= g.gridMax.X-size+1; x++ {
-			if g.debug {
-				fmt.Printf("%3d %3d\r", size, x)
-			}
-			for y := g.gridMin.Y; y <= g.gridMax.Y-size+1; y++ {
-				sq := Square{Point{x, y}, size}
-				l := g.LevelSquare(sq)
+			for y := c.ymin - 1; y < c.ymax-size+1; y++ {
+				l := c.LevelSquare(x, y, size)
 				if l > max {
-					max = l
-					maxSq = sq
+					max, maxX, maxY, mSize = l, x, y, size
 				}
 			}
 		}
 	}
+	return maxX+1, maxY+1, mSize
+}
 
-	return maxSq, max
+func (c *Cells) Part1() string {
+	x, y, _ := c.Solve(3, 3)
+	return fmt.Sprintf("%d,%d", x, y)
+}
+
+func (c *Cells) Part2() string {
+	x, y, size := c.Solve(1, 300)
+	return fmt.Sprintf("%d,%d,%d", x, y, size)
 }
 
 func main() {
-	g := NewGame(InputLines(input))
-	p1 := g.Part1()
+	c := NewCells(InputBytes(input))
+	p1 := c.Part1()
+	p2 := c.Part2()
 	if !benchmark {
 		fmt.Printf("Part 1: %s\n", p1)
-	}
-	g = NewGame(InputLines(input))
-	sq, _ := g.Solve()
-	if !benchmark {
-		fmt.Printf("Part 2: %s\n", sq)
+		fmt.Printf("Part 2: %s\n", p2)
 	}
 }
 
