@@ -74,23 +74,16 @@ func NewALU(in []byte) *ALU {
 }
 
 func (a *ALU) Calc(zi int, level int, order []int, ans int) int {
-	k := (zi * 16) + level
+	k := (zi << 4) + level
 	if v, ok := a.cache[k]; ok {
 		return v
 	}
 	for _, w := range order {
-		z := zi
-		x := (z % 26) + a.addX[level]
-		z = z / a.divZ[level]
-		if x == w {
-			x = 0
-		} else {
-			x = 1
+		z := zi / a.divZ[level]
+		if (zi % 26) + a.addX[level] != w {
+			z *= 26
+			z += (w + a.addY[level])
 		}
-		y := 25*x + 1
-		z *= y
-		y = (w + a.addY[level]) * x
-		z += y
 		if level != 13 {
 			r := a.Calc(z, level+1, order, ans*10+w)
 			a.cache[k] = r
