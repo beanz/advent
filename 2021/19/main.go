@@ -11,103 +11,50 @@ import (
 var input []byte
 
 type Scanner struct {
-	beacons []*Point3D
-	pos     *Point3D
-	rotated [][]*Point3D
+	beacons []FP3
+	pos     *FP3
+	rotated [][]FP3
 }
 
 type Game struct {
 	scanners []*Scanner
-	beacons  map[Point3D]bool
+	beacons  map[FP3]bool
 }
 
 func NewGame(in []byte) *Game {
 	chunks := strings.Split(string(in), "\n\n")
 	g := &Game{
 		make([]*Scanner, 0, len(chunks)),
-		make(map[Point3D]bool, 512),
+		make(map[FP3]bool, 512),
 	}
 	for _, ch := range chunks {
 		s := strings.SplitN(ch, "\n", 2)
 		ints := FastSignedInts([]byte(s[1]), 128)
-		points := make([]*Point3D, 0, 32)
+		points := make([]FP3, 0, 32)
 		for i := 0; i < len(ints); i += 3 {
-			points = append(points, &Point3D{ints[i], ints[i+1], ints[i+2]})
+			points = append(points,
+				NewFP3(int16(ints[i]), int16(ints[i+1]), int16(ints[i+2])))
 		}
-		scanner := &Scanner{points, nil, make([][]*Point3D, 24)}
+		scanner := &Scanner{points, nil, make([][]FP3, 24)}
 		for r := 0; r < 24; r++ {
-			scanner.rotated[r] = make([]*Point3D, len(points))
+			scanner.rotated[r] = make([]FP3, len(points))
 			for i := 0; i < len(points); i++ {
-				scanner.rotated[r][i] = Rotate(points[i], r)
+				scanner.rotated[r][i] = points[i].Rotate(r)
 			}
 		}
 		g.scanners = append(g.scanners, scanner)
 	}
 	for _, b := range g.scanners[0].beacons {
-		g.beacons[*b] = true
+		g.beacons[b] = true
 	}
-	g.scanners[0].pos = &Point3D{0, 0, 0}
+	origin := NewFP3(0, 0, 0)
+	g.scanners[0].pos = &origin
 	return g
-}
-
-func Rotate(b *Point3D, rotation int) *Point3D {
-	switch rotation {
-	case 0:
-		return &Point3D{b.X, b.Y, b.Z}
-	case 1:
-		return &Point3D{b.X, b.Z, -b.Y}
-	case 2:
-		return &Point3D{b.X, -b.Y, -b.Z}
-	case 3:
-		return &Point3D{b.X, -b.Z, b.Y}
-	case 4:
-		return &Point3D{b.Y, -b.X, b.Z}
-	case 5:
-		return &Point3D{b.Y, b.Z, b.X}
-	case 6:
-		return &Point3D{b.Y, b.X, -b.Z}
-	case 7:
-		return &Point3D{b.Y, -b.Z, -b.X}
-	case 8:
-		return &Point3D{-b.X, -b.Y, b.Z}
-	case 9:
-		return &Point3D{-b.X, -b.Z, -b.Y}
-	case 10:
-		return &Point3D{-b.X, b.Y, -b.Z}
-	case 11:
-		return &Point3D{-b.X, b.Z, b.Y}
-	case 12:
-		return &Point3D{-b.Y, b.X, b.Z}
-	case 13:
-		return &Point3D{-b.Y, -b.Z, b.X}
-	case 14:
-		return &Point3D{-b.Y, -b.X, -b.Z}
-	case 15:
-		return &Point3D{-b.Y, b.Z, -b.X}
-	case 16:
-		return &Point3D{b.Z, b.Y, -b.X}
-	case 17:
-		return &Point3D{b.Z, b.X, b.Y}
-	case 18:
-		return &Point3D{b.Z, -b.Y, b.X}
-	case 19:
-		return &Point3D{b.Z, -b.X, -b.Y}
-	case 20:
-		return &Point3D{-b.Z, -b.Y, -b.X}
-	case 21:
-		return &Point3D{-b.Z, -b.X, b.Y}
-	case 22:
-		return &Point3D{-b.Z, b.Y, b.X}
-	case 23:
-		return &Point3D{-b.Z, b.X, -b.Y}
-	default:
-		panic("invalid rotation")
-	}
 }
 
 func (g *Game) align(i int) bool {
 	//fmt.Printf("trying to align scanner %d\n", i)
-	alloc := make([]*Point3D, 0, 32)
+	alloc := make([]FP3, 0, 32)
 	for known := range g.beacons {
 		//for _, known := range  g.scanners[0].beacons {
 		for bi := range g.scanners[i].beacons {
@@ -115,11 +62,7 @@ func (g *Game) align(i int) bool {
 			for ri := 0; ri < 24; ri++ {
 				rbeacon := g.scanners[i].rotated[ri][bi]
 				//fmt.Printf("rotation %d *> %s\n", ri, rbeacon)
-				transform := Point3D{
-					known.X - rbeacon.X,
-					known.Y - rbeacon.Y,
-					known.Z - rbeacon.Z,
-				}
+				transform := known.Sub(rbeacon)
 				//fmt.Printf("transform %s\n", transform)
 				c := 0
 				nb := alloc[:0]
@@ -128,17 +71,13 @@ func (g *Game) align(i int) bool {
 						continue
 					}
 					robeacon := g.scanners[i].rotated[ri][obi]
-					trobeacon := Point3D{
-						robeacon.X + transform.X,
-						robeacon.Y + transform.Y,
-						robeacon.Z + transform.Z,
-					}
+					trobeacon := robeacon.Add(transform)
 					//fmt.Printf("ro=%s tro=%s\n", robeacon, trobeacon)
 					if _, ok := g.beacons[trobeacon]; ok {
 						//fmt.Printf("matched %s\n", trobeacon)
 						c++
 					} else {
-						nb = append(nb, &trobeacon)
+						nb = append(nb, trobeacon)
 					}
 				}
 				if c >= 11 {
@@ -146,7 +85,7 @@ func (g *Game) align(i int) bool {
 					//    c, ri, transform)
 					g.scanners[i].pos = &transform
 					for _, b := range nb {
-						g.beacons[*b] = true
+						g.beacons[b] = true
 					}
 					return true
 				}
