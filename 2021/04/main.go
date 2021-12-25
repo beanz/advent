@@ -88,7 +88,7 @@ func (h *Hall) Bingo() (int, int) {
 			h.left--
 			if h.left == 0 {
 				p2 = int(call) * board.score
-				break
+				return p1, p2
 			}
 		}
 	}
