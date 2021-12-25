@@ -82,7 +82,7 @@ sub prog {
   my $x = 0;
   my $y = 0;
   my $z = 0;
-  return inp0($z, "");
+  return inp0($z, 0);
 }
 EOF
 
@@ -108,12 +108,12 @@ for my $i (0..@subs-1) {
   my $sub = $subs[$i];
   print '
 sub inp'.$i.' {
-  my ($zi, $ws) = @_;
+  my ($zi, $ans) = @_;
   state %cache;
   return $cache{$zi} if (exists $cache{$zi});
 ';
   if ($i == 5) {
-    print 'print STDERR "$ws.........\r";'."\n";
+    print 'print STDERR "$ans.........\r";'."\n";
   }
   print '
   for my $wi ('.$reverse.'1 .. $inp['.$i.']) {
@@ -132,7 +132,7 @@ sub inp'.$i.' {
   }
   if ($i+1 == @subs) {
     print '
-    return $ws.$wi if ($z == 0);
+    return $ans*10+$wi if ($z == 0);
   }
   $cache{$zi} = undef;
   return
@@ -140,7 +140,7 @@ sub inp'.$i.' {
 ';
   } else {
     print '
-    my $r = inp'.($i+1).'($z, $ws.$wi);
+    my $r = inp'.($i+1).'($z, $ans*10+$wi);
     return $r if (defined $r);
   }
   $cache{$zi} = undef;

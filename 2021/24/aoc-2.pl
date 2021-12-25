@@ -12,11 +12,11 @@ sub prog {
   my $x = 0;
   my $y = 0;
   my $z = 0;
-  return inp0($z, "");
+  return inp0($z, 0);
 }
 
 sub inp0 {
-  my ($zi, $ws) = @_;
+  my ($zi, $ans) = @_;
   state %cache;
   return $cache{$zi} if (exists $cache{$zi});
 
@@ -39,7 +39,7 @@ sub inp0 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp1($z, $ws.$wi);
+    my $r = inp1($z, $ans*10+$wi);
     return $r if (defined $r);
   }
   $cache{$zi} = undef;
@@ -47,7 +47,7 @@ sub inp0 {
 }
 
 sub inp1 {
-  my ($zi, $ws) = @_;
+  my ($zi, $ans) = @_;
   state %cache;
   return $cache{$zi} if (exists $cache{$zi});
 
@@ -70,7 +70,7 @@ sub inp1 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp2($z, $ws.$wi);
+    my $r = inp2($z, $ans*10+$wi);
     return $r if (defined $r);
   }
   $cache{$zi} = undef;
@@ -78,7 +78,7 @@ sub inp1 {
 }
 
 sub inp2 {
-  my ($zi, $ws) = @_;
+  my ($zi, $ans) = @_;
   state %cache;
   return $cache{$zi} if (exists $cache{$zi});
 
@@ -101,7 +101,7 @@ sub inp2 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp3($z, $ws.$wi);
+    my $r = inp3($z, $ans*10+$wi);
     return $r if (defined $r);
   }
   $cache{$zi} = undef;
@@ -109,7 +109,7 @@ sub inp2 {
 }
 
 sub inp3 {
-  my ($zi, $ws) = @_;
+  my ($zi, $ans) = @_;
   state %cache;
   return $cache{$zi} if (exists $cache{$zi});
 
@@ -133,7 +133,7 @@ sub inp3 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp4($z, $ws.$wi);
+    my $r = inp4($z, $ans*10+$wi);
     return $r if (defined $r);
   }
   $cache{$zi} = undef;
@@ -141,7 +141,7 @@ sub inp3 {
 }
 
 sub inp4 {
-  my ($zi, $ws) = @_;
+  my ($zi, $ans) = @_;
   state %cache;
   return $cache{$zi} if (exists $cache{$zi});
 
@@ -164,7 +164,7 @@ sub inp4 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp5($z, $ws.$wi);
+    my $r = inp5($z, $ans*10+$wi);
     return $r if (defined $r);
   }
   $cache{$zi} = undef;
@@ -172,10 +172,10 @@ sub inp4 {
 }
 
 sub inp5 {
-  my ($zi, $ws) = @_;
+  my ($zi, $ans) = @_;
   state %cache;
   return $cache{$zi} if (exists $cache{$zi});
-print STDERR "$ws.........\r";
+print STDERR "$ans.........\r";
 
   for my $wi (1 .. $inp[5]) {
     my $w = $wi;
@@ -196,7 +196,7 @@ print STDERR "$ws.........\r";
   $y *= $x;
   $z += $y;
 
-    my $r = inp6($z, $ws.$wi);
+    my $r = inp6($z, $ans*10+$wi);
     return $r if (defined $r);
   }
   $cache{$zi} = undef;
@@ -204,7 +204,7 @@ print STDERR "$ws.........\r";
 }
 
 sub inp6 {
-  my ($zi, $ws) = @_;
+  my ($zi, $ans) = @_;
   state %cache;
   return $cache{$zi} if (exists $cache{$zi});
 
@@ -227,7 +227,7 @@ sub inp6 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp7($z, $ws.$wi);
+    my $r = inp7($z, $ans*10+$wi);
     return $r if (defined $r);
   }
   $cache{$zi} = undef;
@@ -235,7 +235,7 @@ sub inp6 {
 }
 
 sub inp7 {
-  my ($zi, $ws) = @_;
+  my ($zi, $ans) = @_;
   state %cache;
   return $cache{$zi} if (exists $cache{$zi});
 
@@ -259,7 +259,7 @@ sub inp7 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp8($z, $ws.$wi);
+    my $r = inp8($z, $ans*10+$wi);
     return $r if (defined $r);
   }
   $cache{$zi} = undef;
@@ -267,7 +267,7 @@ sub inp7 {
 }
 
 sub inp8 {
-  my ($zi, $ws) = @_;
+  my ($zi, $ans) = @_;
   state %cache;
   return $cache{$zi} if (exists $cache{$zi});
 
@@ -290,7 +290,7 @@ sub inp8 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp9($z, $ws.$wi);
+    my $r = inp9($z, $ans*10+$wi);
     return $r if (defined $r);
   }
   $cache{$zi} = undef;
@@ -298,7 +298,7 @@ sub inp8 {
 }
 
 sub inp9 {
-  my ($zi, $ws) = @_;
+  my ($zi, $ans) = @_;
   state %cache;
   return $cache{$zi} if (exists $cache{$zi});
 
@@ -322,7 +322,7 @@ sub inp9 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp10($z, $ws.$wi);
+    my $r = inp10($z, $ans*10+$wi);
     return $r if (defined $r);
   }
   $cache{$zi} = undef;
@@ -330,7 +330,7 @@ sub inp9 {
 }
 
 sub inp10 {
-  my ($zi, $ws) = @_;
+  my ($zi, $ans) = @_;
   state %cache;
   return $cache{$zi} if (exists $cache{$zi});
 
@@ -354,7 +354,7 @@ sub inp10 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp11($z, $ws.$wi);
+    my $r = inp11($z, $ans*10+$wi);
     return $r if (defined $r);
   }
   $cache{$zi} = undef;
@@ -362,7 +362,7 @@ sub inp10 {
 }
 
 sub inp11 {
-  my ($zi, $ws) = @_;
+  my ($zi, $ans) = @_;
   state %cache;
   return $cache{$zi} if (exists $cache{$zi});
 
@@ -386,7 +386,7 @@ sub inp11 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp12($z, $ws.$wi);
+    my $r = inp12($z, $ans*10+$wi);
     return $r if (defined $r);
   }
   $cache{$zi} = undef;
@@ -394,7 +394,7 @@ sub inp11 {
 }
 
 sub inp12 {
-  my ($zi, $ws) = @_;
+  my ($zi, $ans) = @_;
   state %cache;
   return $cache{$zi} if (exists $cache{$zi});
 
@@ -418,7 +418,7 @@ sub inp12 {
   $y *= $x;
   $z += $y;
 
-    my $r = inp13($z, $ws.$wi);
+    my $r = inp13($z, $ans*10+$wi);
     return $r if (defined $r);
   }
   $cache{$zi} = undef;
@@ -426,7 +426,7 @@ sub inp12 {
 }
 
 sub inp13 {
-  my ($zi, $ws) = @_;
+  my ($zi, $ans) = @_;
   state %cache;
   return $cache{$zi} if (exists $cache{$zi});
 
@@ -450,7 +450,7 @@ sub inp13 {
   $y *= $x;
   $z += $y;
 
-    return $ws.$wi if ($z == 0);
+    return $ans*10+$wi if ($z == 0);
   }
   $cache{$zi} = undef;
   return
