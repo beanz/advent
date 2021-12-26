@@ -63,22 +63,25 @@ func combinations(n, m int) [][]int {
 }
 
 func (moons *Moons) Step() {
-	for _, combination := range combinations(len(*moons), 2) {
-		m1 := (*moons)[combination[0]]
-		m2 := (*moons)[combination[1]]
-		for _, axis := range []MoonField{X, Y, Z} {
-			if m1[axis] > m2[axis] {
-				m1[VX+axis]--
-				m2[VX+axis]++
-			} else if m1[axis] < m2[axis] {
-				m1[VX+axis]++
-				m2[VX+axis]--
+	for i := 0; i < len(*moons); i++ {
+		for j := i + 1; j < len(*moons); j++ {
+			m1 := (*moons)[i]
+			m2 := (*moons)[j]
+			var axis MoonField
+			for ; axis < 3; axis++ {
+				if m1[axis] > m2[axis] {
+					m1[VX+axis]--
+					m2[VX+axis]++
+				} else if m1[axis] < m2[axis] {
+					m1[VX+axis]++
+					m2[VX+axis]--
+				}
 			}
-
 		}
 	}
 	for _, m := range *moons {
-		for _, axis := range []MoonField{X, Y, Z} {
+		var axis MoonField
+		for ; axis < 3; axis++ {
 			m[axis] += m[VX+axis]
 		}
 	}
@@ -97,30 +100,32 @@ func (moons *Moons) Part1(steps int) int {
 	return s
 }
 
-func (moons *Moons) axis(a MoonField) string {
-	s := ""
+func (moons *Moons) axis(a MoonField) uint64 {
+	var r uint64
 	for _, m := range *moons {
-		s += fmt.Sprintf("%d:%d\n", m[a], m[VX+a])
+		r = r<<16 + uint64(m[a])
 	}
-	return s
+	return r
 }
 
 func (moons *Moons) Part2() int64 {
 	cycle := []int64{-1, -1, -1}
-	initialState := []string{}
-	for _, axis := range []MoonField{X, Y, Z} {
-		initialState = append(initialState, moons.axis(axis))
+	initialState := make([]uint64, 3)
+	var axis MoonField
+	for axis = 0; axis < 3; axis++ {
+		initialState[axis] = moons.axis(axis)
 	}
-	var steps int64 = 0
+	var steps int64
 	for cycle[X] == -1 || cycle[Y] == -1 || cycle[Z] == -1 {
 		steps++
 		moons.Step()
-		for _, axis := range []MoonField{X, Y, Z} {
+		for axis = 0; axis < 3; axis++ {
 			if cycle[axis] != -1 {
 				// already cycle found
 				continue
 			}
-			if initialState[axis] == moons.axis(axis) {
+			if initialState[axis] == moons.axis(axis) &&
+				moons.axis(axis+3) == 0 {
 				// cycle found
 				//fmt.Printf("Found %d cycle at %d\n", axis, steps)
 				cycle[axis] = steps
