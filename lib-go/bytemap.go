@@ -43,8 +43,16 @@ func (m *ByteMap) Size() int {
 	return (m.w - 1) * m.h
 }
 
+func (m *ByteMap) IndexToString(i int) string {
+	return fmt.Sprintf("%d,%d", i%m.w, i/m.w)
+}
+
 func (m *ByteMap) IndexToXY(i int) (int, int) {
 	return i % m.w, i / m.w
+}
+
+func (m *ByteMap) XYToIndex(x, y int) int {
+	return x + y*m.w
 }
 
 func (m *ByteMap) Contains(i int) bool {
@@ -56,11 +64,15 @@ func (m *ByteMap) Get(i int) byte {
 }
 
 func (m *ByteMap) GetXY(x, y int) byte {
-	return m.d[x + y*m.w]
+	return m.d[x+y*m.w]
 }
 
 func (m *ByteMap) Set(i int, v byte) {
 	m.d[i] = v
+}
+
+func (m *ByteMap) SetXY(x, y int, v byte) {
+	m.d[x+y*m.w] = v
 }
 
 func (m *ByteMap) Add(i int, v byte) {
@@ -81,6 +93,24 @@ func (m *ByteMap) Neighbours(i int) []int {
 	}
 	if y < m.h-1 {
 		res = append(res, i+m.w)
+	}
+	return res
+}
+
+func (m *ByteMap) NeighbourValues(i int) []byte {
+	x, y := m.IndexToXY(i)
+	res := make([]byte, 0, 4)
+	if x > 0 {
+		res = append(res, m.d[i-1])
+	}
+	if x < m.w-2 { // because we've still got newlines!
+		res = append(res, m.d[i+1])
+	}
+	if y > 0 {
+		res = append(res, m.d[i-m.w])
+	}
+	if y < m.h-1 {
+		res = append(res, m.d[i+m.w])
 	}
 	return res
 }

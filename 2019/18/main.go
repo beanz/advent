@@ -1,8 +1,8 @@
 package main
 
 import (
-	_ "embed"
 	"container/heap"
+	_ "embed"
 	"fmt"
 	"math"
 	"sort"
@@ -14,108 +14,101 @@ import (
 //go:embed input.txt
 var input []byte
 
-type Rogue struct {
-	m        map[Point]rune
-	bb       *BoundingBox
-	pos      Point
+type Vault struct {
+	m        *ByteMap
+	pos      int
 	keys     int
-	quadKeys map[rune]map[rune]bool
+	quadKeys map[byte]map[byte]bool
 	debug    bool
 }
 
-func NewRogue(lines []string) *Rogue {
-	bb := NewBoundingBox()
-	bb.Add(Point{0, 0})
-	bb.Add(Point{len(lines[0]) - 1, len(lines) - 1})
-	m := make(map[Point]rune)
-	pos := Point{-1, -1}
+func NewVault(in []byte) *Vault {
+	m := NewByteMap(in)
+	var pos int
 	keys := 0
-	for y, line := range lines {
-		for x, ch := range line {
-			if ch == '@' {
-				pos = Point{x, y}
-				ch = '.'
-			} else if 'a' <= ch && ch <= 'z' {
-				keys++
-			}
-			m[Point{x, y}] = ch
+	m.Visit(func(i int, ch byte) (byte, bool) {
+		if ch == '@' {
+			pos = i
+			return '.', true
 		}
-	}
-	return &Rogue{m, bb, pos, keys, make(map[rune]map[rune]bool), false}
+		if 'a' <= ch && ch <= 'z' {
+			keys++
+		}
+		return ch, false
+	})
+	return &Vault{m, pos, keys, make(map[byte]map[byte]bool, 4), false}
 }
 
-func (r *Rogue) String() string {
-	str := ""
-	for y := r.bb.Min.Y; y <= r.bb.Max.Y; y++ {
-		for x := r.bb.Min.X; x <= r.bb.Max.X; x++ {
-			if r.pos.X == x && r.pos.Y == y {
-				str += "@"
+func (v *Vault) String() string {
+	var sb strings.Builder
+	for y := 0; y < v.m.Height(); y++ {
+		for x := 0; x < v.m.Width(); x++ {
+			if v.pos == v.m.XYToIndex(x, y) {
+				sb.WriteByte('@')
 			} else {
-				str += string(r.m[Point{x, y}])
+				sb.WriteByte(v.m.GetXY(x, y))
 			}
 		}
-		str += "\n"
+		sb.WriteByte('\n')
 	}
-	return str
+	return sb.String()
 }
 
-func (r *Rogue) Optimaze() {
+func (v *Vault) Optimaze() {
 	for {
 		changes := 0
-		for y := r.bb.Min.Y; y <= r.bb.Max.Y; y++ {
-			for x := r.bb.Min.X; x <= r.bb.Max.X; x++ {
-				p := Point{x, y}
-				if r.m[p] != '.' {
-					continue
-				}
-				if r.pos.X == x && r.pos.Y == y {
-					continue
-				}
-				nw := 0
-				for _, np := range p.Neighbours() {
-					if r.m[np] == '#' {
-						nw++
-					}
-				}
-				if nw > 2 {
-					r.m[p] = '#'
-					changes++
+		v.m.Visit(func(i int, ch byte) (byte, bool) {
+			if ch != '.' {
+				return ch, false
+			}
+			if v.pos == i {
+				return ch, false
+			}
+			nw := 0
+			for _, nch := range v.m.NeighbourValues(i) {
+				if nch == '#' {
+					nw++
 				}
 			}
-		}
+			if nw > 2 {
+				changes++
+				return '#', true
+			}
+			return ch, false
+		})
 		if changes == 0 {
 			break
 		}
 	}
 }
 
-func (r *Rogue) isKeyInQuad(key rune, quad rune) bool {
+func (v *Vault) isKeyInQuad(key byte, quad byte) bool {
 	if quad == '*' {
 		return true
 	}
-	_, ok := r.quadKeys[quad][key]
+	_, ok := v.quadKeys[quad][key]
 	return ok
 }
 
-func (r *Rogue) findKeys(pos Point, quad rune) {
-	r.quadKeys[quad] = make(map[rune]bool)
-	visited := make(map[Point]bool)
-	search := []Point{pos}
+func (v *Vault) findKeys(pos int, quad byte) {
+	v.quadKeys[quad] = make(map[byte]bool)
+	visited := make([]bool, 82*82) // TOFIX v.m.maxindex?
+	search := []int{pos}
 	for len(search) > 0 {
 		cur := search[0]
 		search = search[1:]
-		ch := r.m[cur]
+		ch := v.m.Get(cur)
 		if ch == '#' {
 			continue
 		}
-		if _, ok := visited[cur]; ok {
+		if visited[cur] {
 			continue
 		}
 		visited[cur] = true
 		if 'a' <= ch && ch <= 'z' {
-			r.quadKeys[quad][ch] = true
+			v.quadKeys[quad][ch] = true
 		}
-		for _, np := range cur.Neighbours() {
+		for _, np := range v.m.Neighbours(cur) {
 			search = append(search, np)
 		}
 	}
@@ -128,10 +121,10 @@ func SortString(w string) string {
 }
 
 type SearchRecord struct {
-	pos        Point
+	pos        int
 	steps      int
 	remaining  int
-	keys       map[rune]bool
+	keys       map[byte]bool
 	path       string
 	sortedPath string
 }
@@ -164,42 +157,43 @@ func (pq *PQ) Pop() interface{} {
 }
 
 type VisitKey struct {
-	x, y int
+	pos  int
 	path string
 }
 
-func (r *Rogue) find(pos Point, quad rune) int {
+func (v *Vault) find(pos int, quad byte) int {
 	var expectedKeys int
 	if quad == '*' {
-		expectedKeys = r.keys
+		expectedKeys = v.keys
 	} else {
-		expectedKeys = len(r.quadKeys[quad])
+		expectedKeys = len(v.quadKeys[quad])
 	}
-	if r.debug {
+	if v.debug {
 		fmt.Printf("Searching for %d keys in quad %s\n",
 			expectedKeys, string(quad))
 	}
 	visited := make(map[VisitKey]int)
 	pq := make(PQ, 1)
 	pq[0] = &SearchRecord{pos, 0,
-		expectedKeys, make(map[rune]bool, expectedKeys),
+		expectedKeys, make(map[byte]bool, expectedKeys),
 		"", ""}
 	min := math.MaxInt32
 	heap.Init(&pq)
 	for pq.Len() > 0 {
-		if r.debug {
+		if v.debug {
 			fmt.Printf("pq len: %d\n", pq.Len())
 		}
 		cur := heap.Pop(&pq).(*SearchRecord)
-		ch := r.m[cur.pos]
-		if r.debug {
-			fmt.Printf("checking %s %s '%s'\n", cur.pos, cur.path, string(ch))
+		ch := v.m.Get(cur.pos)
+		if v.debug {
+			fmt.Printf("checking %s %s '%s'\n",
+				v.m.IndexToString(cur.pos), cur.path, string(ch))
 		}
 		if ch == '#' {
 			continue
 		}
 		if cur.steps > min {
-			if r.debug {
+			if v.debug {
 				fmt.Printf("  too many steps: %d > %d\n", cur.steps, min)
 			}
 			continue
@@ -207,15 +201,15 @@ func (r *Rogue) find(pos Point, quad rune) int {
 		if 'A' <= ch && ch <= 'Z' {
 			lch := ch + 32
 			if _, ok := cur.keys[lch]; !ok &&
-				r.isKeyInQuad(lch, quad) {
-				if r.debug {
+				v.isKeyInQuad(lch, quad) {
+				if v.debug {
 					fmt.Printf("  blocked by door %s\n", string(ch))
 				}
 				continue
 			}
 		} else if 'a' <= ch && ch <= 'z' {
 			if _, ok := cur.keys[ch]; !ok {
-				if r.debug {
+				if v.debug {
 					fmt.Printf("  found key %s (%ds)\n", string(ch), cur.steps)
 				}
 				cur.keys[ch] = true
@@ -223,7 +217,7 @@ func (r *Rogue) find(pos Point, quad rune) int {
 				cur.path += string(ch)
 				cur.sortedPath = SortString(cur.path)
 				if cur.remaining == 0 {
-					if r.debug {
+					if v.debug {
 						fmt.Printf("Found all keys via %s in %d\n",
 							cur.path, cur.steps)
 					}
@@ -234,19 +228,19 @@ func (r *Rogue) find(pos Point, quad rune) int {
 				}
 			}
 		}
-		vkey := VisitKey{cur.pos.X, cur.pos.Y, cur.sortedPath}
-		if v, ok := visited[vkey]; ok && v <= cur.steps {
-			if r.debug {
+		vkey := VisitKey{cur.pos, cur.sortedPath}
+		if vs, ok := visited[vkey]; ok && vs <= cur.steps {
+			if v.debug {
 				fmt.Printf("  de ja vu (%v)\n", vkey)
 			}
 			continue
 		}
 		visited[vkey] = cur.steps
-		for _, np := range cur.pos.Neighbours() {
-			if r.m[np] == '#' {
+		for _, np := range v.m.Neighbours(cur.pos) {
+			if v.m.Get(np) == '#' {
 				continue
 			}
-			newKeys := make(map[rune]bool, len(cur.keys))
+			newKeys := make(map[byte]bool, len(cur.keys))
 			for k, v := range cur.keys {
 				newKeys[k] = v
 			}
@@ -258,21 +252,21 @@ func (r *Rogue) find(pos Point, quad rune) int {
 	return min
 }
 
-func (r *Rogue) part1() int {
-	return r.find(r.pos, '*')
+func (v *Vault) part1() int {
+	return v.find(v.pos, '*')
 }
 
 type QuadRecord struct {
 	startOffset Point
-	name        rune
+	name        byte
 }
 
-func (r *Rogue) part2() int {
-	for _, np := range r.pos.Neighbours() {
-		r.m[np] = '#'
+func (v *Vault) part2() int {
+	for _, np := range v.m.Neighbours(v.pos) {
+		v.m.Set(np, '#')
 	}
-	if r.debug {
-		fmt.Printf("%s\n", r)
+	if v.debug {
+		fmt.Printf("%s\n", v)
 	}
 	quads := []QuadRecord{
 		QuadRecord{Point{-1, -1}, 'A'},
@@ -282,34 +276,34 @@ func (r *Rogue) part2() int {
 	}
 	sum := 0
 	for _, rec := range quads {
-		start := Point{r.pos.X + rec.startOffset.X,
-			r.pos.Y + rec.startOffset.Y}
+		x, y := v.m.IndexToXY(v.pos)
+		start := v.m.XYToIndex(x+rec.startOffset.X, y+rec.startOffset.Y)
 		quad := rec.name
-		r.findKeys(start, quad)
-		if r.debug {
+		v.findKeys(start, quad)
+		if v.debug {
 			fmt.Printf("Quad %s / %s has %d keys\n",
-				string(quad), start, len(r.quadKeys[quad]))
+				string(quad), v.m.IndexToString(start), len(v.quadKeys[quad]))
 		}
-		sum += r.find(start, quad)
+		sum += v.find(start, quad)
 	}
 	return sum
 }
 
 func main() {
-	lines := InputLines(input)
-	rogue := NewRogue(lines)
-	if rogue.debug {
-		fmt.Printf("%s\n", rogue)
+	inp := InputBytes(input)
+	vault := NewVault(inp)
+	if vault.debug {
+		fmt.Printf("%s\n", vault)
 	}
-	rogue.Optimaze()
-	if rogue.debug {
-		fmt.Printf("%s\n", rogue)
+	vault.Optimaze()
+	if vault.debug {
+		fmt.Printf("%s\n", vault)
 	}
-	p1 := rogue.part1()
+	p1 := vault.part1()
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
 	}
-	p2 := rogue.part2()
+	p2 := vault.part2()
 	if !benchmark {
 		fmt.Printf("Part 2: %d\n", p2)
 	}
