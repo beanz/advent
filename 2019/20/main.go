@@ -11,17 +11,16 @@ import (
 var input []byte
 
 type Portal struct {
-	exit  Point
-	name  string
-	level int
+	exit FP3
+	name string
 }
 
 type Donut struct {
-	m     map[Point]bool
-	p     map[Point]Portal
+	m     map[FP3]bool
+	p     map[FP3]Portal
 	bb    *BoundingBox
-	start Point
-	exit  Point
+	start FP3
+	exit  FP3
 	debug bool
 }
 
@@ -29,7 +28,7 @@ func (d *Donut) String() string {
 	s := ""
 	for y := d.bb.Min.Y; y <= d.bb.Max.Y; y++ {
 		for x := d.bb.Min.X; x <= d.bb.Max.X; x++ {
-			p := Point{x, y}
+			p := NewFP3(int16(x), int16(y), 0)
 			if p == d.start {
 				s += "S"
 			} else if p == d.exit {
@@ -49,16 +48,16 @@ func (d *Donut) String() string {
 
 func NewDonut(lines []string) *Donut {
 	d := &Donut{
-		make(map[Point]bool),
-		make(map[Point]Portal),
+		make(map[FP3]bool),
+		make(map[FP3]Portal),
 		NewBoundingBox(),
-		Point{-1, -1},
-		Point{-1, -1},
+		FP3(0),
+		FP3(0),
 		false}
-	rp := make(map[string]Point)
-	lxy := func(x int, y int) byte {
-		if y > d.bb.Max.Y || y < d.bb.Min.Y ||
-			x > d.bb.Max.X || y < d.bb.Min.X {
+	rp := make(map[string]FP3)
+	lxy := func(x int16, y int16) byte {
+		if int(y) > d.bb.Max.Y || int(y) < d.bb.Min.Y ||
+			int(x) > d.bb.Max.X || int(y) < d.bb.Min.X {
 			return '#'
 		}
 		return lines[y][x]
@@ -66,9 +65,9 @@ func NewDonut(lines []string) *Donut {
 	isPortal := func(ch byte) bool {
 		return 'A' <= ch && ch <= 'Z'
 	}
-	addPortal := func(p Point, bx int, by int, ch1 byte, ch2 byte) {
+	addPortal := func(p FP3, bx int16, by int16, ch1 byte, ch2 byte) {
 		name := string(ch1) + string(ch2)
-		d.m[Point{bx, by}] = true // block except warping
+		d.m[NewFP3(bx, by, 0)] = true // block except warping
 		if name == "AA" {
 			d.start = p
 			return
@@ -77,18 +76,22 @@ func NewDonut(lines []string) *Donut {
 			d.exit = p
 			return
 		}
-		level := 1
-		if p.Y == d.bb.Min.Y+2 ||
-			p.Y == d.bb.Max.Y-2 ||
-			p.X == d.bb.Min.X+2 ||
-			p.X == d.bb.Max.X-2 {
+		var level int16 = 1
+		x, y, _ := p.XYZ()
+		if y == int16(d.bb.Min.Y+2) ||
+			y == int16(d.bb.Max.Y-2) ||
+			x == int16(d.bb.Min.X+2) ||
+			x == int16(d.bb.Max.X-2) {
 			// outer portal
 			level = -1
 		}
 		if exit, ok := rp[name]; ok {
 			// have other end already
-			d.p[p] = Portal{exit, name, level}
-			d.p[exit] = Portal{p, name, -1 * level}
+			ex, ey, _ := exit.XYZ()
+			exitWithLevel := NewFP3(ex, ey, level)
+			startWithLevel := NewFP3(x, y, -1*level)
+			d.p[p] = Portal{exitWithLevel, name}
+			d.p[exit] = Portal{startWithLevel, name}
 			delete(rp, name)
 		} else {
 			rp[name] = p
@@ -96,11 +99,13 @@ func NewDonut(lines []string) *Donut {
 	}
 	d.bb.Add(Point{0, 0})
 	d.bb.Add(Point{len(lines[0]) - 1, len(lines) - 1})
-	for y, line := range lines {
-		for x, ch := range line {
-			p := Point{x, y}
+	for yi, line := range lines {
+		y := int16(yi)
+		for xi, ch := range line {
+			x := int16(xi)
+			p := NewFP3(x, y, 0)
 			if ch == '#' {
-				d.bb.Add(p)
+				d.bb.Add(Point{int(x), int(y)})
 				d.m[p] = true
 			} else if ch == '.' {
 				if isPortal(lxy(x, y-2)) &&
@@ -123,52 +128,58 @@ func NewDonut(lines []string) *Donut {
 }
 
 type Search struct {
-	pos   Point
+	pos   FP3
 	steps int
-	level int
 	path  []string
 }
 
-func (s Search) vKey() string {
-	return fmt.Sprintf("%d,%d^%d", s.pos.X, s.pos.Y, s.level)
-}
-
 func (d *Donut) Search(recurse bool) int {
-	todo := []Search{Search{d.start, 0, 0, []string{}}}
-	visited := make(map[string]bool)
+	todo := make([]Search, 0, 720)
+	todo = append(todo, Search{d.start, 0, []string{}})
+	ox := []int16{0, 1, 0, -1}
+	oy := []int16{-1, 0, 1, 0}
+	exitX, exitY, _ := d.exit.XYZ()
+	visited := make(map[FP3]bool, 850000)
+	mx := 0
 	for len(todo) > 0 {
+		if len(todo) > mx {
+			mx = len(todo)
+		}
 		cur := todo[0]
 		todo = todo[1:]
-		vkey := cur.vKey()
+		vkey := cur.pos
 		if _, ok := visited[vkey]; ok {
 			continue
 		}
 		visited[vkey] = true
-		if _, ok := d.m[cur.pos]; ok {
+		x, y, level := cur.pos.XYZ()
+		pos2d := NewFP3(x, y, 0)
+		if _, ok := d.m[pos2d]; ok {
 			continue
 		}
 		// fmt.Printf("Trying %s @ %d (%d %v)\n",
 		// 	cur.pos, cur.level, cur.steps, cur.path)
-		if cur.level == 0 &&
-			cur.pos.X == d.exit.X && cur.pos.Y == d.exit.Y {
+		if level == 0 && x == exitX && y == exitY {
 			return cur.steps
 		}
-		if portal, ok := d.p[cur.pos]; ok {
-			nlevel := cur.level
+		if portal, ok := d.p[pos2d]; ok {
+			px, py, plevel := portal.exit.XYZ()
+			nlevel := level
 			if recurse {
-				nlevel += portal.level
+				nlevel += plevel
 			}
 			// fmt.Printf("  found %s to %s, level %d\n",
 			// 	portal.name, portal.exit, nlevel)
 			if nlevel >= 0 {
 				npath := append(cur.path, portal.name)
 				todo = append(todo,
-					Search{portal.exit, cur.steps + 1, nlevel, npath})
+					Search{NewFP3(px, py, nlevel), cur.steps + 1, npath})
 			}
 		}
-		for _, np := range cur.pos.Neighbours() {
+		for i := 0; i < 4; i++ {
 			todo = append(todo,
-				Search{np, cur.steps + 1, cur.level, cur.path})
+				Search{NewFP3(x+ox[i], y+oy[i], level),
+					cur.steps + 1, cur.path})
 		}
 	}
 	return -1
