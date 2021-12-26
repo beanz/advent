@@ -1,6 +1,7 @@
 package main
 
 import (
+	assert "github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -16,4 +17,13 @@ func BenchmarkMain(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		main()
 	}
+}
+
+func TestAlphaNumSet(t *testing.T) {
+	cs := AlphaNumSet(0)
+	cs = cs.Add('a')
+	cs = cs.Add('b')
+	assert.Equal(t, "ab", cs.String(), "alphanumset a&b")
+	assert.True(t, cs.Contains('a'), "contains a")
+	assert.False(t, cs.Contains('c'), "contains c")
 }

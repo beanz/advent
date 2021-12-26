@@ -5,7 +5,7 @@ import (
 	_ "embed"
 	"fmt"
 	"math"
-	"sort"
+	"math/bits"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
@@ -18,7 +18,8 @@ type Vault struct {
 	m        *ByteMap
 	pos      int
 	keys     int
-	quadKeys map[byte]map[byte]bool
+	keySet   AlphaNumSet
+	quadKeys []AlphaNumSet
 	debug    bool
 }
 
@@ -26,6 +27,7 @@ func NewVault(in []byte) *Vault {
 	m := NewByteMap(in)
 	var pos int
 	keys := 0
+	cs := AlphaNumSet(0)
 	m.Visit(func(i int, ch byte) (byte, bool) {
 		if ch == '@' {
 			pos = i
@@ -33,10 +35,11 @@ func NewVault(in []byte) *Vault {
 		}
 		if 'a' <= ch && ch <= 'z' {
 			keys++
+			cs = cs.Add(ch)
 		}
 		return ch, false
 	})
-	return &Vault{m, pos, keys, make(map[byte]map[byte]bool, 4), false}
+	return &Vault{m, pos, keys, cs, make([]AlphaNumSet, 4), DEBUG()}
 }
 
 func (v *Vault) String() string {
@@ -82,16 +85,16 @@ func (v *Vault) Optimaze() {
 	}
 }
 
-func (v *Vault) isKeyInQuad(key byte, quad byte) bool {
-	if quad == '*' {
+func (v *Vault) isKeyInQuad(key byte, quad int) bool {
+	if quad == -1 {
 		return true
 	}
-	_, ok := v.quadKeys[quad][key]
-	return ok
+	bit := AlphaNumBit(key)
+	return (v.quadKeys[quad] & bit) != 0
 }
 
-func (v *Vault) findKeys(pos int, quad byte) {
-	v.quadKeys[quad] = make(map[byte]bool)
+func (v *Vault) findKeys(pos int, quad int) {
+	v.quadKeys[quad] = NewAlphaNumSet()
 	visited := make([]bool, 82*82) // TOFIX v.m.maxindex?
 	search := []int{pos}
 	for len(search) > 0 {
@@ -106,7 +109,7 @@ func (v *Vault) findKeys(pos int, quad byte) {
 		}
 		visited[cur] = true
 		if 'a' <= ch && ch <= 'z' {
-			v.quadKeys[quad][ch] = true
+			v.quadKeys[quad] = v.quadKeys[quad].Add(ch)
 		}
 		for _, np := range v.m.Neighbours(cur) {
 			search = append(search, np)
@@ -114,19 +117,12 @@ func (v *Vault) findKeys(pos int, quad byte) {
 	}
 }
 
-func SortString(w string) string {
-	s := strings.Split(w, "")
-	sort.Strings(s)
-	return strings.Join(s, "")
-}
-
 type SearchRecord struct {
-	pos        int
-	steps      int
-	remaining  int
-	keys       map[byte]bool
-	path       string
-	sortedPath string
+	pos       int
+	steps     int
+	remaining int
+	keys      AlphaNumSet
+	path      string
 }
 
 type Search []SearchRecord
@@ -157,26 +153,23 @@ func (pq *PQ) Pop() interface{} {
 }
 
 type VisitKey struct {
-	pos  int
-	path string
+	pos       int
+	foundKeys uint64
 }
 
-func (v *Vault) find(pos int, quad byte) int {
+func (v *Vault) find(pos int, quad int) int {
 	var expectedKeys int
-	if quad == '*' {
+	if quad == -1 {
 		expectedKeys = v.keys
 	} else {
-		expectedKeys = len(v.quadKeys[quad])
+		expectedKeys = v.quadKeys[quad].Size()
 	}
 	if v.debug {
-		fmt.Printf("Searching for %d keys in quad %s\n",
-			expectedKeys, string(quad))
+		fmt.Printf("Searching for %d keys in quad %d\n", expectedKeys, quad)
 	}
 	visited := make(map[VisitKey]int)
 	pq := make(PQ, 1)
-	pq[0] = &SearchRecord{pos, 0,
-		expectedKeys, make(map[byte]bool, expectedKeys),
-		"", ""}
+	pq[0] = &SearchRecord{pos, 0, expectedKeys, NewAlphaNumSet(), ""}
 	min := math.MaxInt32
 	heap.Init(&pq)
 	for pq.Len() > 0 {
@@ -200,22 +193,20 @@ func (v *Vault) find(pos int, quad byte) int {
 		}
 		if 'A' <= ch && ch <= 'Z' {
 			lch := ch + 32
-			if _, ok := cur.keys[lch]; !ok &&
-				v.isKeyInQuad(lch, quad) {
+			if !cur.keys.Contains(lch) && v.isKeyInQuad(lch, quad) {
 				if v.debug {
 					fmt.Printf("  blocked by door %s\n", string(ch))
 				}
 				continue
 			}
 		} else if 'a' <= ch && ch <= 'z' {
-			if _, ok := cur.keys[ch]; !ok {
+			if !cur.keys.Contains(ch) {
 				if v.debug {
 					fmt.Printf("  found key %s (%ds)\n", string(ch), cur.steps)
 				}
-				cur.keys[ch] = true
+				cur.keys = cur.keys.Add(ch)
 				cur.remaining--
 				cur.path += string(ch)
-				cur.sortedPath = SortString(cur.path)
 				if cur.remaining == 0 {
 					if v.debug {
 						fmt.Printf("Found all keys via %s in %d\n",
@@ -228,7 +219,7 @@ func (v *Vault) find(pos int, quad byte) int {
 				}
 			}
 		}
-		vkey := VisitKey{cur.pos, cur.sortedPath}
+		vkey := VisitKey{cur.pos, uint64(cur.keys)}
 		if vs, ok := visited[vkey]; ok && vs <= cur.steps {
 			if v.debug {
 				fmt.Printf("  de ja vu (%v)\n", vkey)
@@ -240,12 +231,8 @@ func (v *Vault) find(pos int, quad byte) int {
 			if v.m.Get(np) == '#' {
 				continue
 			}
-			newKeys := make(map[byte]bool, len(cur.keys))
-			for k, v := range cur.keys {
-				newKeys[k] = v
-			}
-			new := &SearchRecord{np, cur.steps + 1, cur.remaining, newKeys,
-				cur.path, cur.sortedPath}
+			new := &SearchRecord{np, cur.steps + 1, cur.remaining, cur.keys,
+				cur.path}
 			heap.Push(&pq, new)
 		}
 	}
@@ -253,12 +240,12 @@ func (v *Vault) find(pos int, quad byte) int {
 }
 
 func (v *Vault) part1() int {
-	return v.find(v.pos, '*')
+	return v.find(v.pos, -1)
 }
 
 type QuadRecord struct {
 	startOffset Point
-	name        byte
+	indexname   byte
 }
 
 func (v *Vault) part2() int {
@@ -268,30 +255,23 @@ func (v *Vault) part2() int {
 	if v.debug {
 		fmt.Printf("%s\n", v)
 	}
-	quads := []QuadRecord{
-		QuadRecord{Point{-1, -1}, 'A'},
-		QuadRecord{Point{1, -1}, 'B'},
-		QuadRecord{Point{-1, 1}, 'C'},
-		QuadRecord{Point{1, 1}, 'D'},
-	}
+	quads := []Point{{-1, -1}, {1, -1}, {-1, 1}, {1, 1}}
 	sum := 0
-	for _, rec := range quads {
+	for i, start := range quads {
 		x, y := v.m.IndexToXY(v.pos)
-		start := v.m.XYToIndex(x+rec.startOffset.X, y+rec.startOffset.Y)
-		quad := rec.name
-		v.findKeys(start, quad)
+		start := v.m.XYToIndex(x+start.X, y+start.Y)
+		v.findKeys(start, i)
 		if v.debug {
-			fmt.Printf("Quad %s / %s has %d keys\n",
-				string(quad), v.m.IndexToString(start), len(v.quadKeys[quad]))
+			fmt.Printf("Quad %d / %s has %d keys\n",
+				i, v.m.IndexToString(start), v.quadKeys[i].Size())
 		}
-		sum += v.find(start, quad)
+		sum += v.find(start, i)
 	}
 	return sum
 }
 
 func main() {
-	inp := InputBytes(input)
-	vault := NewVault(inp)
+	vault := NewVault(InputBytes(input))
 	if vault.debug {
 		fmt.Printf("%s\n", vault)
 	}
@@ -310,3 +290,55 @@ func main() {
 }
 
 var benchmark = false
+
+type AlphaNumSet uint64
+
+func NewAlphaNumSet() AlphaNumSet {
+	return AlphaNumSet(0)
+}
+
+func (s AlphaNumSet) Add(ch byte) AlphaNumSet {
+	s |= AlphaNumBit(ch)
+	return s
+}
+
+func (s AlphaNumSet) Size() int {
+	return bits.OnesCount64(uint64(s))
+}
+
+func (s AlphaNumSet) Contains(ch byte) bool {
+	return (s & AlphaNumBit(ch)) != 0
+}
+
+func (s AlphaNumSet) String() string {
+	var sb strings.Builder
+	var bit AlphaNumSet = 1
+	for ch := byte('0'); ch <= '9'; ch, bit = ch+1, bit<<1 {
+		if (s & bit) != 0 {
+			sb.WriteByte(ch)
+		}
+	}
+	for ch := byte('A'); ch <= 'Z'; ch, bit = ch+1, bit<<1 {
+		if (s & bit) != 0 {
+			sb.WriteByte(ch)
+		}
+	}
+	for ch := byte('a'); ch <= 'z'; ch, bit = ch+1, bit<<1 {
+		if (s & bit) != 0 {
+			sb.WriteByte(ch)
+		}
+	}
+	return sb.String()
+}
+
+func AlphaNumBit(ch byte) AlphaNumSet {
+	switch {
+	case ch >= 97:
+		ch -= (6 + 7 + 48)
+	case ch >= 65:
+		ch -= (7 + 48)
+	case ch >= 48:
+		ch -= 48
+	}
+	return AlphaNumSet(1 << ch)
+}
