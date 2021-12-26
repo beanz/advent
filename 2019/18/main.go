@@ -132,7 +132,7 @@ type PQ []*SearchRecord
 func (pq PQ) Len() int { return len(pq) }
 
 func (pq PQ) Less(i, j int) bool {
-	return pq[i].remaining < pq[j].remaining
+	return pq[i].steps < pq[j].steps
 }
 
 func (pq PQ) Swap(i, j int) {
@@ -239,7 +239,7 @@ func (v *Vault) find(pos int, quad int) int {
 	return min
 }
 
-func (v *Vault) part1() int {
+func (v *Vault) Part1() int {
 	return v.find(v.pos, -1)
 }
 
@@ -248,7 +248,7 @@ type QuadRecord struct {
 	indexname   byte
 }
 
-func (v *Vault) part2() int {
+func (v *Vault) Part2() int {
 	for _, np := range v.m.Neighbours(v.pos) {
 		v.m.Set(np, '#')
 	}
@@ -279,11 +279,11 @@ func main() {
 	if vault.debug {
 		fmt.Printf("%s\n", vault)
 	}
-	p1 := vault.part1()
+	p1 := vault.Part1()
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
 	}
-	p2 := vault.part2()
+	p2 := vault.Part2()
 	if !benchmark {
 		fmt.Printf("Part 2: %d\n", p2)
 	}
