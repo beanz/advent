@@ -4,7 +4,6 @@ import (
 	"container/heap"
 	_ "embed"
 	"fmt"
-	"math"
 	"math/bits"
 	"strings"
 
@@ -122,7 +121,6 @@ type SearchRecord struct {
 	steps     int
 	remaining int
 	keys      AlphaNumSet
-	path      string
 }
 
 type Search []SearchRecord
@@ -167,63 +165,33 @@ func (v *Vault) find(pos int, quad int) int {
 	if v.debug {
 		fmt.Printf("Searching for %d keys in quad %d\n", expectedKeys, quad)
 	}
-	visited := make(map[VisitKey]int)
+	visited := make(map[VisitKey]int, 1280000)
 	pq := make(PQ, 1)
-	pq[0] = &SearchRecord{pos, 0, expectedKeys, NewAlphaNumSet(), ""}
-	min := math.MaxInt32
+	pq[0] = &SearchRecord{pos, 0, expectedKeys, NewAlphaNumSet()}
 	heap.Init(&pq)
 	for pq.Len() > 0 {
-		if v.debug {
-			fmt.Printf("pq len: %d\n", pq.Len())
-		}
 		cur := heap.Pop(&pq).(*SearchRecord)
 		ch := v.m.Get(cur.pos)
-		if v.debug {
-			fmt.Printf("checking %s %s '%s'\n",
-				v.m.IndexToString(cur.pos), cur.path, string(ch))
-		}
-		if ch == '#' {
-			continue
-		}
-		if cur.steps > min {
-			if v.debug {
-				fmt.Printf("  too many steps: %d > %d\n", cur.steps, min)
-			}
-			continue
-		}
+		//fmt.Printf("checking %s '%s'\n",v.m.IndexToString(cur.pos), string(ch))
 		if 'A' <= ch && ch <= 'Z' {
 			lch := ch + 32
 			if !cur.keys.Contains(lch) && v.isKeyInQuad(lch, quad) {
-				if v.debug {
-					fmt.Printf("  blocked by door %s\n", string(ch))
-				}
+				//fmt.Printf("  blocked by door %s\n", string(ch))
 				continue
 			}
 		} else if 'a' <= ch && ch <= 'z' {
 			if !cur.keys.Contains(ch) {
-				if v.debug {
-					fmt.Printf("  found key %s (%ds)\n", string(ch), cur.steps)
-				}
+				//fmt.Printf("  found key %s (%ds)\n", string(ch), cur.steps)
 				cur.keys = cur.keys.Add(ch)
 				cur.remaining--
-				cur.path += string(ch)
 				if cur.remaining == 0 {
-					if v.debug {
-						fmt.Printf("Found all keys via %s in %d\n",
-							cur.path, cur.steps)
-					}
-					if min > cur.steps {
-						min = cur.steps
-					}
-					continue
+					//fmt.Printf("Found all keys in %d\n", cur.steps)
+					return cur.steps
 				}
 			}
 		}
 		vkey := VisitKey{cur.pos, uint64(cur.keys)}
-		if vs, ok := visited[vkey]; ok && vs <= cur.steps {
-			if v.debug {
-				fmt.Printf("  de ja vu (%v)\n", vkey)
-			}
+		if _, ok := visited[vkey]; ok {
 			continue
 		}
 		visited[vkey] = cur.steps
@@ -231,12 +199,11 @@ func (v *Vault) find(pos int, quad int) int {
 			if v.m.Get(np) == '#' {
 				continue
 			}
-			new := &SearchRecord{np, cur.steps + 1, cur.remaining, cur.keys,
-				cur.path}
+			new := &SearchRecord{np, cur.steps + 1, cur.remaining, cur.keys}
 			heap.Push(&pq, new)
 		}
 	}
-	return min
+	return -1
 }
 
 func (v *Vault) Part1() int {

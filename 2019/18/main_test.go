@@ -87,9 +87,15 @@ func TestPart2(t *testing.T) {
 	}
 }
 
+//go:embed input.txt
+var safeinput []byte
+
 func BenchmarkMain(b *testing.B) {
 	benchmark = true
 	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		copy(input, safeinput)
+		b.StartTimer()
 		main()
 	}
 }
