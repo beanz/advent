@@ -10,29 +10,7 @@ import (
 //go:embed input.txt
 var input []byte
 
-func Calc1(s []uint) []uint {
-	REP := []int{0, 1, 0, -1}
-	o := []uint{}
-	for i := 1; i <= len(s); i++ {
-		n := 0
-		for j := 0; j < len(s); j++ {
-			di := (1 + j) / i
-			m := REP[di%4]
-			d := int(s[j]) * m
-			n += d
-			//fmt.Printf("%d*%d(%d) + ", s[j], m, d)
-		}
-		if n < 0 {
-			n *= -1
-		}
-		n = n % 10
-		o = append(o, uint(n))
-		//fmt.Printf("\n")
-	}
-	return o
-}
-
-func Digits(s []uint, n int) string {
+func Digits(s []uint8, n int) string {
 	str := ""
 	for i := 0; i < n; i++ {
 		str += string(rune(s[i] + 48))
@@ -40,17 +18,35 @@ func Digits(s []uint, n int) string {
 	return str
 }
 
-func Part1(inp []uint, phases int) string {
+func Part1(inp []uint8, phases int) string {
+	REP := []int{0, 1, 0, -1}
 	s := inp
+	o := make([]uint8, 0, 650)
 	//fmt.Printf("Input signal: %s\n", Digits(s, 8))
 	for ph := 1; ph <= phases; ph++ {
-		s = Calc1(s)
+		for i := 1; i <= len(s); i++ {
+			n := 0
+			for j := 0; j < len(s); j++ {
+				di := (1 + j) / i
+				m := REP[di%4]
+				d := int(s[j]) * m
+				n += d
+				//fmt.Printf("%d*%d(%d) + ", s[j], m, d)
+			}
+			if n < 0 {
+				n *= -1
+			}
+			n = n % 10
+			o = append(o, uint8(n))
+			//fmt.Printf("\n")
+		}
+		s, o = o, s[:0]
 		//fmt.Printf("Phase %d: %s\n", ph, Digits(s, 8))
 	}
 	return Digits(s, 8)
 }
 
-func Offset(s []uint, digits int) int {
+func Offset(s []uint8, digits int) int {
 	r := 0
 	for i := 0; i < digits; i++ {
 		r *= 10
@@ -58,61 +54,58 @@ func Offset(s []uint, digits int) int {
 	}
 	return r
 }
-func Calc2(s []uint) []uint {
-	o := []uint{}
-	sum := 0
-	for i := 0; i < len(s); i++ {
-		sum += int(s[i])
-	}
-	for i := 0; i < len(s); i++ {
-		n := sum
-		if n < 0 {
-			n *= -1
-		}
-		n = n % 10
-		o = append(o, uint(n))
-		sum -= int(s[i])
-	}
-	return o
-}
 
-func Part2(inp []uint) string {
+func Part2(inp []uint8) string {
 	off := Offset(inp, 7)
-	inp10000 := []uint{}
-	o := 0
+	inp10000 := make([]uint8, 0, 521801)
+	k := 0
 	for i := 0; i < 10000; i++ {
 		for j := 0; j < len(inp); j++ {
-			if o >= off {
+			if k >= off {
 				inp10000 = append(inp10000, inp[j])
 			}
-			o++
+			k++
 		}
 	}
 	//fmt.Printf("Input signal: %s\n", Digits(s, 8))
 	phases := 100
+	o := make([]uint8, 0, 521801)
 	for ph := 1; ph <= phases; ph++ {
-		inp10000 = Calc2(inp10000)
+		sum := 0
+		for i := 0; i < len(inp10000); i++ {
+			sum += int(inp10000[i])
+		}
+		for i := 0; i < len(inp10000); i++ {
+			n := sum
+			if n < 0 {
+				n *= -1
+			}
+			n = n % 10
+			o = append(o, uint8(n))
+			sum -= int(inp10000[i])
+		}
+		inp10000, o = o, inp10000[:0]
 		//fmt.Printf("Phase %d: %s\n", ph, Digits(inp10000, 8))
 	}
 	return Digits(inp10000, 8)
 }
 
-func ReadUint8s(line string) []uint {
-	inp := []uint{}
-	for i := 0; i < len(line); i++ {
-		inp = append(inp, uint(line[i])-48)
+func ReadUint8s(in []byte) []uint8 {
+	inp := make([]uint8, 0, len(in))
+	for i := 0; i < len(in); i++ {
+		inp = append(inp, uint8(in[i])-48)
 	}
 	return inp
 }
 
 func main() {
-	lines := InputLines(input)
-	inp := ReadUint8s(lines[0])
-	p1 := Part1(inp, 100)
+	inp := InputBytes(input)
+	p1 := Part1(ReadUint8s(inp[:len(inp)-1]), 100)
 	if !benchmark {
 		fmt.Printf("Part 1: %s\n", p1)
 	}
-	p2 := Part2(inp)
+	inp = InputBytes(input)
+	p2 := Part2(ReadUint8s(inp[:len(inp)-1]))
 	if !benchmark {
 		fmt.Printf("Part 2: %s\n", p2)
 	}
