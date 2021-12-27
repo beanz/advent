@@ -24,6 +24,21 @@ func (p FP3) XYZ() (int16, int16, int16) {
 	return x, y, z
 }
 
+func (p FP3) ProjXY() FP3 {
+	return p ^ (p & 0xffff)
+}
+
+func FP3UKeyMax(bits int, zbits int) int {
+	return 2 << (bits*2 + zbits)
+}
+
+func (p FP3) UKey(bits int, zbits int) uint64 {
+	z := p & 0xffff
+	y := (p >> 16) & 0xffff
+	x := (p >> 32) & 0xffff
+	return uint64((x<<bits+y)<<zbits + z)
+}
+
 func (p FP3) ManhattanDistance(o FP3) int {
 	z := int16(p & 0xffff)
 	y := int16((p >> 16) & 0xffff)

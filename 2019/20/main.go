@@ -130,36 +130,31 @@ func NewDonut(lines []string) *Donut {
 type Search struct {
 	pos   FP3
 	steps int
-	path  []string
 }
 
 func (d *Donut) Search(recurse bool) int {
 	todo := make([]Search, 0, 720)
-	todo = append(todo, Search{d.start, 0, []string{}})
+	todo = append(todo, Search{d.start, 0})
 	ox := []int16{0, 1, 0, -1}
 	oy := []int16{-1, 0, 1, 0}
-	exitX, exitY, _ := d.exit.XYZ()
-	visited := make(map[FP3]bool, 850000)
-	mx := 0
+	exit := d.exit.ProjXY() // level 0
+	visited := make([]bool, FP3UKeyMax(7, 7))
 	for len(todo) > 0 {
-		if len(todo) > mx {
-			mx = len(todo)
-		}
 		cur := todo[0]
 		todo = todo[1:]
-		vkey := cur.pos
-		if _, ok := visited[vkey]; ok {
+		vkey := cur.pos.UKey(7, 7)
+		if visited[vkey] {
 			continue
 		}
 		visited[vkey] = true
 		x, y, level := cur.pos.XYZ()
-		pos2d := NewFP3(x, y, 0)
+		pos2d := cur.pos.ProjXY()
 		if _, ok := d.m[pos2d]; ok {
 			continue
 		}
 		// fmt.Printf("Trying %s @ %d (%d %v)\n",
 		// 	cur.pos, cur.level, cur.steps, cur.path)
-		if level == 0 && x == exitX && y == exitY {
+		if cur.pos == exit {
 			return cur.steps
 		}
 		if portal, ok := d.p[pos2d]; ok {
@@ -171,15 +166,14 @@ func (d *Donut) Search(recurse bool) int {
 			// fmt.Printf("  found %s to %s, level %d\n",
 			// 	portal.name, portal.exit, nlevel)
 			if nlevel >= 0 {
-				npath := append(cur.path, portal.name)
 				todo = append(todo,
-					Search{NewFP3(px, py, nlevel), cur.steps + 1, npath})
+					Search{NewFP3(px, py, nlevel), cur.steps + 1})
 			}
 		}
 		for i := 0; i < 4; i++ {
 			todo = append(todo,
 				Search{NewFP3(x+ox[i], y+oy[i], level),
-					cur.steps + 1, cur.path})
+					cur.steps + 1})
 		}
 	}
 	return -1
