@@ -225,9 +225,9 @@ func (g *Game) Finished() bool {
 }
 
 func (g *Game) Safe() bool {
-	genFloor := map[Element]Floor{}
-	chipFloor := map[Element]Floor{}
-	genCount := map[Floor]int{}
+	genFloor := make(map[Element]Floor, 10)
+	chipFloor := make(map[Element]Floor, 10)
+	genCount := make([]int, 4)
 	for _, item := range g.items {
 		if item.kind == CHIP {
 			chipFloor[item.element] = item.floor
@@ -244,35 +244,14 @@ func (g *Game) Safe() bool {
 	return true
 }
 
-func (g *Game) MoveItems(items []int) {
-	for _, movedItem := range items {
-		if g.debug {
-			fmt.Printf("moving item %s from %s to %s\n",
-				g.items[movedItem], g.items[movedItem].floor, g.lift)
-		}
-		g.items[movedItem].floor = g.lift
-	}
-}
-
 func (g *Game) FloorItems(f Floor) []int {
-	items := []int{}
+	items := make([]int, 0, 20)
 	for i, item := range g.items {
 		if item.floor == f {
 			items = append(items, i)
 		}
 	}
 	return items
-}
-
-func ItemChoices(items []int) [][]int {
-	choices := [][]int{}
-	for i := 0; i < len(items); i++ {
-		choices = append(choices, []int{items[i]})
-		for j := i + 1; j < len(items); j++ {
-			choices = append(choices, []int{items[i], items[j]})
-		}
-	}
-	return choices
 }
 
 func NextFloors(floor Floor) []Floor {
