@@ -1,9 +1,12 @@
 package main
 
 import (
+	"container/heap"
 	_ "embed"
 	"fmt"
 	"sort"
+
+	. "github.com/beanz/advent/lib-go"
 )
 
 //go:embed input.txt
@@ -12,10 +15,10 @@ var input []byte
 type Floor int
 
 const (
-	FIRST  Floor = 1
-	SECOND       = 2
-	THIRD        = 3
-	FOURTH       = 4
+	FIRST Floor = iota
+	SECOND
+	THIRD
+	FOURTH
 )
 
 func (f Floor) String() string {
@@ -34,15 +37,16 @@ func (f Floor) String() string {
 type Element int
 
 const (
-	THULIUM    Element = 0
-	PLUTONIUM          = 1
-	STRONTIUM          = 2
-	PROMETHIUM         = 3
-	RUTHENIUM          = 4
-	LITHIUM            = 5
-	HYDROGEN           = 6
-	ELERIUM            = 7
-	DILITHIUM          = 8
+	ELEVATOR Element = iota
+	THULIUM
+	PLUTONIUM
+	STRONTIUM
+	PROMETHIUM
+	RUTHENIUM
+	LITHIUM
+	HYDROGEN
+	ELERIUM
+	DILITHIUM
 )
 
 func (e Element) String() string {
@@ -130,19 +134,85 @@ func (g *Game) String() string {
 	return s
 }
 
-func readGame() *Game {
-	return &Game{[]*Item{
-		&Item{THULIUM, GENERATOR, FIRST},
-		&Item{THULIUM, CHIP, FIRST},
-		&Item{PLUTONIUM, GENERATOR, FIRST},
-		&Item{STRONTIUM, GENERATOR, FIRST},
-		&Item{PLUTONIUM, CHIP, SECOND},
-		&Item{STRONTIUM, CHIP, SECOND},
-		&Item{PROMETHIUM, GENERATOR, THIRD},
-		&Item{PROMETHIUM, CHIP, THIRD},
-		&Item{RUTHENIUM, GENERATOR, THIRD},
-		&Item{RUTHENIUM, CHIP, THIRD},
-	}, FIRST, false}
+func NewGame(in []byte) *Game {
+	items := make([]*Item, 0, 20)
+	for i := 0; i < len(in); i++ {
+		var floor Floor
+		switch in[i+4] {
+		case 'f':
+			if in[i+5] == 'i' {
+				floor = FIRST
+			} else {
+				floor = FOURTH
+			}
+		case 's':
+			floor = SECOND
+		case 't':
+			floor = THIRD
+		default:
+			panic(fmt.Sprintf("invalid floor: %s", []byte{in[i+4], in[i+5]}))
+		}
+		i += 24
+		for ; i < len(in); i++ {
+			if in[i] == ' ' {
+				var el Element
+				switch in[i+1] {
+				case 't':
+					if in[i+2] == 'h' {
+						el = THULIUM
+						i += 7
+					}
+				case 'p':
+					if in[i+2] == 'l' {
+						el = PLUTONIUM
+						i += 9
+					} else if in[i+2] == 'r' {
+						el = PROMETHIUM
+						i += 10
+					}
+				case 's':
+					el = STRONTIUM
+					i += 9
+				case 'r':
+					if in[i+2] == 'u' {
+						el = RUTHENIUM
+						i += 9
+					}
+				case 'l':
+					el = LITHIUM
+					i += 7
+				case 'e':
+					el = ELERIUM
+					i += 7
+				case 'd':
+					el = DILITHIUM
+					i += 9
+				case 'h':
+					el = HYDROGEN
+					i += 8
+				}
+				i++
+				if el == ELEVATOR {
+					continue
+				}
+				var k Kind
+				if in[i] == '-' {
+					k = CHIP
+					//fmt.Printf("found %s chip\n", el)
+				} else if in[i+1] == 'g' {
+					k = GENERATOR
+					//fmt.Printf("found %s generator\n", el)
+				} else {
+					panic("parsing failed")
+				}
+				items = append(items, &Item{el, k, floor})
+			} else if in[i] == '.' {
+				i++
+				break
+			}
+		}
+	}
+	return &Game{items, FIRST, false}
 }
 
 func (g *Game) Finished() bool {
@@ -225,6 +295,29 @@ func (s Search) String() string {
 	return fmt.Sprintf("Moves %d\n%s\n", s.moves, s.game)
 }
 
+type SearchQueue []Search
+type PQ []*Search
+
+func (pq PQ) Len() int { return len(pq) }
+
+func (pq PQ) Less(i, j int) bool {
+	return pq[i].moves < pq[j].moves
+}
+func (pq PQ) Swap(i, j int) {
+	pq[i], pq[j] = pq[j], pq[i]
+}
+func (pq *PQ) Push(x interface{}) {
+	item := x.(*Search)
+	*pq = append(*pq, item)
+}
+func (pq *PQ) Pop() interface{} {
+	old := *pq
+	n := len(old)
+	item := old[n-1]
+	*pq = old[0 : n-1]
+	return item
+}
+
 type RuneSlice []rune
 
 func (p RuneSlice) Len() int           { return len(p) }
@@ -260,41 +353,48 @@ func (g *Game) VisitKey() string {
 }
 
 func (g *Game) Part1() int {
-	todo := []Search{Search{g.Copy(), 0}}
-	best := 1000000
-	visited := map[string]bool{}
-	for len(todo) > 0 {
+	pq := make(PQ, 1, 1000)
+	pq[0] = &Search{g.Copy(), 0}
+	visited := make(map[string]bool, 6050000)
+	heap.Init(&pq)
+	for pq.Len() > 0 {
 		//fmt.Fprintf(os.Stderr, "%d\r", len(todo))
-		cur := todo[0]
+		cur := heap.Pop(&pq).(*Search)
 		key := cur.game.VisitKey()
-		todo = todo[1:]
 		if visited[key] {
 			continue
 		}
 		visited[key] = true
 		if cur.game.Finished() {
 			//fmt.Printf("Finished in %d moves\n", cur.moves)
-			if cur.moves < best {
-				best = cur.moves
-				continue
-			}
-		}
-		if cur.moves > best {
-			continue
+			return cur.moves
 		}
 		floorItems := cur.game.FloorItems(cur.game.lift)
 		for _, nf := range NextFloors(cur.game.lift) {
-			for _, items := range ItemChoices(floorItems) {
+			for i := 0; i < len(floorItems); i++ {
+				moved := false
+				for j := i + 1; j < len(floorItems); j++ {
+					ng := cur.game.Copy()
+					ng.lift = nf
+					ng.items[floorItems[i]].floor = ng.lift
+					ng.items[floorItems[j]].floor = ng.lift
+					if ng.Safe() {
+						heap.Push(&pq, &Search{ng, cur.moves + 1})
+					}
+				}
+				if moved {
+					continue
+				}
 				ng := cur.game.Copy()
 				ng.lift = nf
-				ng.MoveItems(items)
+				ng.items[floorItems[i]].floor = ng.lift
 				if ng.Safe() {
-					todo = append(todo, Search{ng, cur.moves + 1})
+					heap.Push(&pq, &Search{ng, cur.moves + 1})
 				}
 			}
 		}
 	}
-	return best
+	return 0
 }
 
 func (g *Game) Part2() int {
@@ -308,12 +408,12 @@ func (g *Game) Part2() int {
 }
 
 func main() {
-	game := readGame()
+	game := NewGame(InputBytes(input))
 	res := game.Part1()
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", res)
 	}
-	game = readGame()
+	game = NewGame(InputBytes(input))
 	res = game.Part2()
 	if !benchmark {
 		fmt.Printf("Part 2: %d\n", res)
