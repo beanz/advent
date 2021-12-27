@@ -5,34 +5,30 @@ import (
 	"testing"
 )
 
-type TestCase struct {
-	i   int
-	res int
+func ExampleMain() {
+	main()
+	//Output:
+	// Part 1: 931
+	// Part 2: 609
 }
 
 func TestPlay(t *testing.T) {
-	tests := []TestCase{
-		{111111, 1},
-		{223450, 0},
-		{123789, 0},
-		{123444, 1},
-		{111122, 1},
+	tests := []struct {
+		in     int
+		p1, p2 int
+	}{
+		{111111, 1, 0},
+		{223450, 0, 0},
+		{123789, 0, 0},
+		{112233, 1, 1},
+		{123444, 1, 0},
+		{111122, 1, 1},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.res, Part1([]int{tc.i, tc.i}))
+		p1, p2 := Parts(tc.in, tc.in)
+		assert.Equal(t, tc.p1, p1, "part 1: %d", tc.in)
+		assert.Equal(t, tc.p2, p2, "part 2: %d", tc.in)
 	}
-	assert.Equal(t, 931, Part1([]int{272091, 815432}))
-
-	tests = []TestCase{
-		{112233, 1},
-		{123444, 0},
-		{111122, 1},
-	}
-	for _, tc := range tests {
-		assert.Equal(t, tc.res, Part2([]int{tc.i, tc.i}))
-	}
-	assert.Equal(t, 609, Part2([]int{272091, 815432}))
-
 }
 
 func BenchmarkMain(b *testing.B) {

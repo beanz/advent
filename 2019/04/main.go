@@ -11,67 +11,55 @@ import (
 //go:embed input.txt
 var input []byte
 
-func Count(s string, ch byte) int {
-	c := 0
-	for i := 0; i < len(s); i++ {
-		if s[i] == ch {
-			c++
+func Parts(start, end int) (int, int) {
+	p1, p2 := 0, 0
+	s := make([]int, 6)
+	for i := start; i <= end; i++ {
+		if i < 100000 || i > 999999 {
+			continue
+		}
+		s[5] = i % 10
+		s[4] = (i / 10) % 10
+		if s[4] > s[5] {
+			continue
+		}
+		s[3] = (i / 100) % 10
+		if s[3] > s[4] {
+			continue
+		}
+		s[2] = (i / 1000) % 10
+		if s[2] > s[3] {
+			continue
+		}
+		s[1] = (i / 10000) % 10
+		if s[1] > s[2] {
+			continue
+		}
+		s[0] = (i / 100000) % 10
+		if s[0] > s[1] {
+			continue
+		}
+		if s[0] == s[1] || s[1] == s[2] || s[2] == s[3] ||
+			s[3] == s[4] || s[4] == s[5] {
+			p1++
+		}
+		if (s[0] == s[1] && s[1] != s[2]) ||
+			(s[1] == s[2] && s[2] != s[3] && s[1] != s[0]) ||
+			(s[2] == s[3] && s[3] != s[4] && s[2] != s[1]) ||
+			(s[3] == s[4] && s[4] != s[5] && s[3] != s[2]) ||
+			(s[4] == s[5] && s[4] != s[3]) {
+			p2++
 		}
 	}
-	return c
-}
-
-func Part1(r []int) int {
-	c := 0
-	for i := r[0]; i <= r[1]; i++ {
-		s := fmt.Sprintf("%d", i)
-		if len(s) != 6 {
-			continue
-		}
-		if s[0] > s[1] || s[1] > s[2] || s[2] > s[3] ||
-			s[3] > s[4] || s[4] > s[5] {
-			continue
-		}
-		for ch := 48; ch <= 57; ch++ {
-			if Count(s, byte(ch)) >= 2 {
-				c++
-				break
-			}
-		}
-	}
-	return c
-}
-
-func Part2(r []int) int {
-	c := 0
-	for i := r[0]; i <= r[1]; i++ {
-		s := fmt.Sprintf("%d", i)
-		if len(s) != 6 {
-			continue
-		}
-		if s[0] > s[1] || s[1] > s[2] || s[2] > s[3] ||
-			s[3] > s[4] || s[4] > s[5] {
-			continue
-		}
-		for ch := 48; ch <= 57; ch++ {
-			if Count(s, byte(ch)) == 2 {
-				c++
-				break
-			}
-		}
-	}
-	return c
+	return p1, p2
 }
 
 func main() {
 	lines := InputLines(input)
 	i := ReadInts(strings.Split(lines[0], "-"))
-	p1 := Part1(i)
+	p1, p2 := Parts(i[0], i[1])
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
-	}
-	p2 := Part2(i)
-	if !benchmark {
 		fmt.Printf("Part 2: %d\n", p2)
 	}
 }
