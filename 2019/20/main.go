@@ -16,7 +16,7 @@ type Portal struct {
 }
 
 type Donut struct {
-	m     map[FP3]bool
+	m     []bool
 	p     map[FP3]Portal
 	bb    *BoundingBox
 	start FP3
@@ -35,7 +35,7 @@ func (d *Donut) String() string {
 				s += "E"
 			} else if _, ok := d.p[p]; ok {
 				s += "~"
-			} else if _, ok := d.m[p]; ok {
+			} else if d.m[x+128*y] {
 				s += "#"
 			} else {
 				s += "."
@@ -48,7 +48,7 @@ func (d *Donut) String() string {
 
 func NewDonut(lines []string) *Donut {
 	d := &Donut{
-		make(map[FP3]bool),
+		make([]bool, 65536),
 		make(map[FP3]Portal),
 		NewBoundingBox(),
 		FP3(0),
@@ -67,7 +67,7 @@ func NewDonut(lines []string) *Donut {
 	}
 	addPortal := func(p FP3, bx int16, by int16, ch1 byte, ch2 byte) {
 		name := string(ch1) + string(ch2)
-		d.m[NewFP3(bx, by, 0)] = true // block except warping
+		d.m[bx+128*by] = true // block except warping
 		if name == "AA" {
 			d.start = p
 			return
@@ -106,7 +106,7 @@ func NewDonut(lines []string) *Donut {
 			p := NewFP3(x, y, 0)
 			if ch == '#' {
 				d.bb.Add(Point{int(x), int(y)})
-				d.m[p] = true
+				d.m[x+128*y] = true
 			} else if ch == '.' {
 				if isPortal(lxy(x, y-2)) &&
 					isPortal(lxy(x, y-1)) {
@@ -149,7 +149,7 @@ func (d *Donut) Search(recurse bool) int {
 		visited[vkey] = true
 		x, y, level := cur.pos.XYZ()
 		pos2d := cur.pos.ProjXY()
-		if _, ok := d.m[pos2d]; ok {
+		if d.m[x+128*y] {
 			continue
 		}
 		// fmt.Printf("Trying %s @ %d (%d %v)\n",
