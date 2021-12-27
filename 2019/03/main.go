@@ -4,8 +4,6 @@ import (
 	_ "embed"
 	"fmt"
 	"math"
-	"strconv"
-	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -13,60 +11,87 @@ import (
 //go:embed input.txt
 var input []byte
 
-type Path map[Point]int
+type Path map[FP2]int
 
-func Dir(d byte) Direction {
-	switch d {
-	case 'U':
-		return Direction{0, -1}
-	case 'D':
-		return Direction{0, 1}
-	case 'L':
-		return Direction{-1, 0}
-	case 'R':
-		return Direction{1, 0}
-	}
-	return Direction{0, 0}
-}
-
-func FindPath(line string) Path {
-	path := make(map[Point]int)
-	p := Point{0, 0}
+func Calc(inp []byte) (int, int) {
+	u := NewFP2(0, -1)
+	d := NewFP2(0, 1)
+	l := NewFP2(-1, 0)
+	r := NewFP2(1, 0)
+	path := make(Path, 262144)
+	p := NewFP2(0, 0)
 	steps := 0
-	for _, m := range strings.Split(line, ",") {
-		dir := Dir(m[0])
-		c, _ := strconv.Atoi(m[1:])
-		for i := 0; i < c; i++ {
-			p = p.In(dir)
+	var i int
+	for ; i < len(inp); i++ {
+		var dir FP2
+		switch inp[i] {
+		case 'U':
+			dir = u
+		case 'D':
+			dir = d
+		case 'L':
+			dir = l
+		case 'R':
+			dir = r
+		}
+		i++
+		c := int(inp[i] - '0')
+		for i++; '0' <= inp[i] && inp[i] <= '9'; i++ {
+			c = c*10 + int(inp[i]-'0')
+		}
+		for j := 0; j < c; j++ {
+			p = p.Add(dir)
 			steps++
 			path[p] = steps
 		}
-	}
-	return path
-}
-
-func Calc(lines []string) (int, int) {
-	p1 := FindPath(lines[0])
-	p2 := FindPath(lines[1])
-	dist := math.MaxInt64
-	steps := math.MaxInt64
-	for p, s1 := range p1 {
-		if s2, ok := p2[p]; ok {
-			if s1+s2 < steps {
-				steps = s1 + s2
-			}
-			d := p.ManhattanDistance(Point{0, 0})
-			if d < dist {
-				dist = d
-			}
+		if inp[i] == '\n' {
+			break
 		}
 	}
-	return dist, steps
+	minDist := math.MaxInt64
+	minSteps := math.MaxInt64
+	origin := NewFP2(0, 0)
+	p = NewFP2(0, 0)
+	steps = 0
+	for i++; i < len(inp); i++ {
+		var dir FP2
+		switch inp[i] {
+		case 'U':
+			dir = u
+		case 'D':
+			dir = d
+		case 'L':
+			dir = l
+		case 'R':
+			dir = r
+		}
+		i++
+		c := int(inp[i] - '0')
+		for i++; '0' <= inp[i] && inp[i] <= '9'; i++ {
+			c = c*10 + int(inp[i]-'0')
+		}
+		for j := 0; j < c; j++ {
+			p = p.Add(dir)
+			steps++
+			if s1, ok := path[p]; ok {
+				if s1+steps < minSteps {
+					minSteps = s1 + steps
+				}
+				d := p.ManhattanDistance(origin)
+				if d < minDist {
+					minDist = d
+				}
+			}
+		}
+		if inp[i] == '\n' {
+			break
+		}
+	}
+	return minDist, minSteps
 }
 
 func main() {
-	lines := InputLines(input)
-	dist, steps := Calc(lines)
+	dist, steps := Calc(InputBytes(input))
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", dist)
 		fmt.Printf("Part 2: %d\n", steps)
