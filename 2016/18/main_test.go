@@ -5,15 +5,22 @@ import (
 	"testing"
 )
 
-func TestNewRow(t *testing.T) {
-	g := Game{"..^^.", 3, 0, false}
-	assert.Equal(t, ".^^^^", g.NewRow(g.row))
-	assert.Equal(t, "^^..^", g.NewRow(".^^^^"))
+func ExampleMain() {
+	main()
+	//Output:
+	// Part 1: 1913
+	// Part 2: 19993564
 }
 
-func TestPart1(t *testing.T) {
-	g := Game{".^^.^.^^^^", 10, 0, false}
-	assert.Equal(t, 38, g.Part1())
+func TestParts(t *testing.T) {
+	g := Game{[]byte("..^^."), 2, 3, 0}
+	p1, p2 := g.Parts()
+	assert.Equal(t, 4, p1)
+	assert.Equal(t, 6, p2)
+	g = Game{[]byte(".^^.^.^^^^"), 10, 20, 0}
+	p1, p2 = g.Parts()
+	assert.Equal(t, 38, p1)
+	assert.Equal(t, 93, p2)
 }
 
 func BenchmarkMain(b *testing.B) {

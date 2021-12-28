@@ -11,81 +11,63 @@ import (
 var input []byte
 
 type Game struct {
-	row   string
-	h     int
-	count int
-	debug bool
+	row      []byte
+	p1c, p2c int
+	count    int
 }
 
-func readGame(input string) *Game {
-	return &Game{input, 40, 0, false}
+func NewGame(in []byte) *Game {
+	return &Game{in[:len(in)-1], 40, 400000, 0}
 }
 
-func (g *Game) NewTile(p string, x int) string {
-	var left, right byte
+func (g *Game) NewTile(p []bool, x int) bool {
+	var left, right bool
 	if x > 0 {
 		left = p[x-1]
-	} else {
-		left = '.'
 	}
 	if x < len(p)-1 {
 		right = p[x+1]
-	} else {
-		right = '.'
 	}
-	if left == '^' && right == '.' {
-		return "^"
-	}
-	if left == '.' && right == '^' {
-		return "^"
+	if left != right {
+		return true
 	}
 	g.count++
-	return "."
+	return false
 }
 
-func (g *Game) NewRow(c string) string {
-	n := ""
-	for x := 0; x < len(c); x++ {
-		n += g.NewTile(c, x)
-	}
-	return n
-}
-
-func (g *Game) Part1() int {
+func (g *Game) Parts() (int, int) {
+	l := len(g.row)
+	p := make([]bool, l)
 	for x := 0; x < len(g.row); x++ {
-		if g.row[x] == '.' {
+		p[x] = g.row[x] == '^'
+		if !p[x] {
 			g.count++
 		}
 	}
-	p := g.row
-	if g.debug {
-		fmt.Println(p)
-	}
-	for y := 1; y < g.h; y++ {
-		p = g.NewRow(p)
-		if g.debug {
-			fmt.Println(p)
+	n := make([]bool, 0, l)
+	y := 1
+	for ; y < g.p1c; y++ {
+		for x := 0; x < l; x++ {
+			n = append(n, g.NewTile(p, x))
 		}
+		p, n = n, p[:0]
 	}
-	return g.count
-}
-
-func (g *Game) Part2() int {
-	g.h = 400000
-	g.count = 0
-	//g.debug = true
-	return g.Part1()
+	p1 := g.count
+	for ; y < g.p2c; y++ {
+		for x := 0; x < l; x++ {
+			n = append(n, g.NewTile(p, x))
+		}
+		p, n = n, p[:0]
+	}
+	return p1, g.count
 }
 
 func main() {
-	game := readGame(InputLines(input)[0])
-	res := game.Part1()
+	game := NewGame(InputBytes(input))
+	p1, p2 := game.Parts()
 	if !benchmark {
-		fmt.Printf("Part 1: %d\n", res)
-	}
-	res = game.Part2()
-	if !benchmark {
-		fmt.Printf("Part 2: %d\n", res)
+		fmt.Printf("Part 1: %d\n", p1)
+		fmt.Printf("Part 2: %d\n", p2)
 	}
 }
 
