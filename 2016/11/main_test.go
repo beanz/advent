@@ -24,39 +24,27 @@ func TestNextFloors(t *testing.T) {
 }
 
 func TestVisitKey(t *testing.T) {
-	g := &Game{[]*Item{
-		&Item{HYDROGEN, GENERATOR, SECOND},
-		&Item{HYDROGEN, CHIP, FIRST},
-		&Item{LITHIUM, GENERATOR, THIRD},
-		&Item{LITHIUM, CHIP, FIRST},
-	}, FIRST, false}
-	assert.Equal(t, "0!1,0,2,0!", g.VisitKey())
-	g = &Game{[]*Item{
-		&Item{HYDROGEN, GENERATOR, SECOND},
-		&Item{HYDROGEN, CHIP, FIRST},
-		&Item{LITHIUM, GENERATOR, THIRD},
-		&Item{LITHIUM, CHIP, THIRD},
-	}, FIRST, false}
-	assert.Equal(t, "0!1,0!2", g.VisitKey())
+	f := NewFacility(test1)
+	assert.Equal(t, "0!1,0,2,0!", f.VisitKey(f.state))
 
-	g = &Game{[]*Item{
-		&Item{HYDROGEN, GENERATOR, SECOND},
-		&Item{HYDROGEN, CHIP, SECOND},
-		&Item{LITHIUM, GENERATOR, THIRD},
-		&Item{LITHIUM, CHIP, THIRD},
-	}, FIRST, false}
-	og := &Game{[]*Item{
-		&Item{HYDROGEN, GENERATOR, THIRD},
-		&Item{HYDROGEN, CHIP, THIRD},
-		&Item{LITHIUM, GENERATOR, SECOND},
-		&Item{LITHIUM, CHIP, SECOND},
-	}, FIRST, false}
-	assert.Equal(t, g.VisitKey(), og.VisitKey())
+	f = NewFacility([]byte(`The first floor contains a hydrogen-compatible microchip.
+The second floor contains a hydrogen generator.
+The third floor contains a lithium-compatible microchip and a lithium generator.
+`))
+	assert.Equal(t, "0!1,0!2", f.VisitKey(f.state))
+
+	f = NewFacility([]byte(`The second floor contains a hydrogen-compatible microchip and a hydrogen generator.
+The third floor contains a lithium-compatible microchip and a lithium generator.
+`))
+	of := NewFacility([]byte(`The second floor contains a lithium-compatible microchip and a lithium generator.
+The third floor contains a hydrogen-compatible microchip and a hydrogen generator.
+`))
+	assert.Equal(t, f.VisitKey(f.state), of.VisitKey(of.state))
 }
 
 func TestPart1(t *testing.T) {
-	g := NewGame(test1)
-	assert.Equal(t, 11, g.Part1())
+	f := NewFacility(test1)
+	assert.Equal(t, uint(11), f.Part1())
 }
 
 func BenchmarkMain(b *testing.B) {
