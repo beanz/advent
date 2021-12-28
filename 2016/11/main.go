@@ -358,20 +358,20 @@ func (f *Facility) VisitKey(fs FloorState) string {
 	r := make(ByteSlice, 0, len(f.names))
 	for _, el := range f.names {
 		if genFloor[el] == chipFloor[el] {
-			r = append(r, byte(byte(genFloor[el])+byte('0')))
+			r = append(r, byte(genFloor[el])+byte('0'))
 		} else {
-			s = append(s, byte(byte(genFloor[el])+byte('0')), ',')
-			s = append(s, byte(byte(chipFloor[el])+byte('0')), ',')
+			s = append(s, byte(genFloor[el])+byte('0'))
+			s = append(s, byte(chipFloor[el])+byte('0'))
 		}
 	}
-	s[len(s)-1] = '!'
+	s = append(s, '!')
 	sort.Sort(ByteSlice(r))
 	s = append(s, r...)
 	return string(s)
 }
 
 func (f *Facility) Part1() uint {
-	visited := make(map[string]bool, 6050000)
+	visited := make(map[string]bool, 300000)
 	pq := make(PQ, 1, 1000)
 	pq[0] = &Search{f.state, 0}
 	heap.Init(&pq)

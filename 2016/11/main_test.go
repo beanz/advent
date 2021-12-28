@@ -25,13 +25,13 @@ func TestNextFloors(t *testing.T) {
 
 func TestVisitKey(t *testing.T) {
 	f := NewFacility(test1)
-	assert.Equal(t, "0!1,0,2,0!", f.VisitKey(f.state))
+	assert.Equal(t, "0!1020!", f.VisitKey(f.state))
 
 	f = NewFacility([]byte(`The first floor contains a hydrogen-compatible microchip.
 The second floor contains a hydrogen generator.
 The third floor contains a lithium-compatible microchip and a lithium generator.
 `))
-	assert.Equal(t, "0!1,0!2", f.VisitKey(f.state))
+	assert.Equal(t, "0!10!2", f.VisitKey(f.state))
 
 	f = NewFacility([]byte(`The second floor contains a hydrogen-compatible microchip and a hydrogen generator.
 The third floor contains a lithium-compatible microchip and a lithium generator.
