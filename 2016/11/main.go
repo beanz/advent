@@ -4,7 +4,6 @@ import (
 	"container/heap"
 	_ "embed"
 	"fmt"
-	"sort"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
@@ -340,38 +339,37 @@ func (p ByteSlice) Len() int           { return len(p) }
 func (p ByteSlice) Less(i, j int) bool { return p[i] < p[j] }
 func (p ByteSlice) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 
-func (f *Facility) VisitKey(fs FloorState) string {
-	s := make(ByteSlice, 0, len(f.names)*2)
-	s = append(s, byte(byte(fs.ItemFloor(ELEVATOR, CHIP))+byte('0')), '!')
-	genFloor := map[Element]Floor{}
-	chipFloor := map[Element]Floor{}
+type VKey uint64
+
+func (f *Facility) VisitKey(fs FloorState) VKey {
+	r := uint64(fs.ItemFloor(ELEVATOR, CHIP))
 	for _, fl := range []Floor{FOURTH, THIRD, SECOND, FIRST} {
+		var pairs uint64
+		var chips uint64
+		var gens uint64
 		for _, el := range f.names {
-			if fs.At(el, CHIP, fl) {
-				chipFloor[el] = fl
-			}
-			if fs.At(el, GENERATOR, fl) {
-				genFloor[el] = fl
+			chip := fs.At(el, CHIP, fl)
+			gen := fs.At(el, GENERATOR, fl)
+			if chip && gen {
+				pairs++
+			} else {
+				if chip {
+					chips++
+				}
+				if gen {
+					gens++
+				}
 			}
 		}
+		r = (r << 4) + uint64(pairs)
+		r = (r << 4) + uint64(gens)
+		r = (r << 4) + uint64(chips)
 	}
-	r := make(ByteSlice, 0, len(f.names))
-	for _, el := range f.names {
-		if genFloor[el] == chipFloor[el] {
-			r = append(r, byte(genFloor[el])+byte('0'))
-		} else {
-			s = append(s, byte(genFloor[el])+byte('0'))
-			s = append(s, byte(chipFloor[el])+byte('0'))
-		}
-	}
-	s = append(s, '!')
-	sort.Sort(ByteSlice(r))
-	s = append(s, r...)
-	return string(s)
+	return VKey(r)
 }
 
 func (f *Facility) Part1() uint {
-	visited := make(map[string]bool, 300000)
+	visited := make(map[VKey]bool, 300000)
 	pq := make(PQ, 1, 1000)
 	pq[0] = &Search{f.state, 0}
 	heap.Init(&pq)
