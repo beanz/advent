@@ -1,7 +1,6 @@
 package main
 
 import (
-	"container/heap"
 	_ "embed"
 	"fmt"
 	"strings"
@@ -303,31 +302,6 @@ type Search struct {
 
 type SearchQueue []Search
 
-type PQ []*Search
-
-func (pq PQ) Len() int { return len(pq) }
-
-func (pq PQ) Less(i, j int) bool {
-	return pq[i].moves < pq[j].moves
-}
-
-func (pq PQ) Swap(i, j int) {
-	pq[i], pq[j] = pq[j], pq[i]
-}
-
-func (pq *PQ) Push(x interface{}) {
-	item := x.(*Search)
-	*pq = append(*pq, item)
-}
-
-func (pq *PQ) Pop() interface{} {
-	old := *pq
-	n := len(old)
-	item := old[n-1]
-	*pq = old[0 : n-1]
-	return item
-}
-
 type Item struct {
 	el Element
 	k  Kind
@@ -370,11 +344,11 @@ func (f *Facility) VisitKey(fs FloorState) VKey {
 
 func (f *Facility) Part1() uint {
 	visited := make(map[VKey]bool, 300000)
-	pq := make(PQ, 1, 1000)
-	pq[0] = &Search{f.state, 0}
-	heap.Init(&pq)
-	for pq.Len() > 0 {
-		cur := heap.Pop(&pq).(*Search)
+	todo := make([]*Search, 1, 1000)
+	todo[0] = &Search{f.state, 0}
+	for len(todo) > 0 {
+		cur := todo[0]
+		todo = todo[1:]
 		//fmt.Printf("%d\r", pq.Len())
 		vk := f.VisitKey(cur.state)
 		if visited[vk] {
@@ -405,7 +379,7 @@ func (f *Facility) Part1() uint {
 					nstate = nstate.Add(floorItems[j].el, floorItems[j].k, nf)
 					if f.SafeFloor(nstate, nf) && f.SafeFloor(nstate, liftFloor) {
 						moved = false
-						heap.Push(&pq, &Search{nstate, cur.moves + 1})
+						todo = append(todo, &Search{nstate, cur.moves + 1})
 					}
 				}
 				if moved {
@@ -415,7 +389,7 @@ func (f *Facility) Part1() uint {
 				nstate = nstate.Add(ELEVATOR, CHIP, nf)
 				nstate = nstate.Add(floorItems[i].el, floorItems[i].k, nf)
 				if f.SafeFloor(nstate, nf) && f.SafeFloor(nstate, liftFloor) {
-					heap.Push(&pq, &Search{nstate, cur.moves + 1})
+					todo = append(todo, &Search{nstate, cur.moves + 1})
 				}
 			}
 		}
