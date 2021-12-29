@@ -12,11 +12,21 @@ import (
 var input []byte
 
 type Component struct {
-	in, out int
+	in, out uint16
 }
 
 func (c Component) String() string {
 	return fmt.Sprintf("%d/%d", c.in, c.out)
+}
+
+type ComponentUsed uint64
+
+func (cu ComponentUsed) Add(i int) ComponentUsed {
+	return cu | (1 << i)
+}
+
+func (cu ComponentUsed) Used(i int) bool {
+	return cu&(1<<i) != 0
 }
 
 type sortComponents []Component
@@ -34,8 +44,7 @@ func (c sortComponents) Len() int {
 }
 
 type Game struct {
-	comp  []Component
-	debug bool
+	comp []Component
 }
 
 func (g *Game) String() string {
@@ -46,20 +55,21 @@ func (g *Game) String() string {
 	return s
 }
 
-func NewGame(lines []string) *Game {
-	g := &Game{make([]Component, 0, len(lines)), false}
-	for _, line := range lines {
-		v := SimpleReadInts(line)
-		g.comp = append(g.comp, Component{v[0], v[1]})
+func NewGame(in []byte) *Game {
+	ints := FastInts(in, 128)
+	c := make([]Component, 0, len(ints)/2)
+	for i := 0; i < len(ints); i += 2 {
+		c = append(c, Component{uint16(ints[i]), uint16(ints[i+1])})
 	}
-	sort.Sort(sortComponents(g.comp))
-	return g
+	sort.Sort(sortComponents(c))
+	return &Game{c}
 }
 
 type Search struct {
-	used map[Component]bool
-	comp []Component
-	port int
+	used  ComponentUsed
+	len   uint16
+	score uint16
+	port  uint16
 }
 
 func String(cs []Component) string {
@@ -70,61 +80,37 @@ func String(cs []Component) string {
 	return s
 }
 
-func Score(comps []Component) int {
-	s := 0
-	for _, c := range comps {
-		s += c.in + c.out
-	}
-	return s
-}
-
-func (g *Game) Play() (int, int) {
-	todo := []Search{Search{map[Component]bool{}, []Component{}, 0}}
-	best := 0
-	longest := 0
-	longestLen := 0
+func (g *Game) Play() (uint16, uint16) {
+	todo := make([]Search, 1, 90000)
+	todo[0] = Search{ComponentUsed(0), 0, 0, 0}
+	var best uint16
+	var longest uint16
+	var longestLen uint16
 	for len(todo) > 0 {
 		cur := todo[0]
 		todo = todo[1:]
-		if g.debug {
-			fmt.Printf("Cur: %d %s\n", cur.port, String(cur.comp))
+		if cur.score > best {
+			best = cur.score
 		}
-		if Score(cur.comp) > best {
-			best = Score(cur.comp)
-			if g.debug {
-				fmt.Printf("New best: %s\n", String(cur.comp))
-			}
+		if cur.len > longestLen ||
+			(cur.len == longestLen && cur.score > longest) {
+			longest = cur.score
+			longestLen = cur.len
 		}
-		if len(cur.comp) > longestLen ||
-			(len(cur.comp) == longestLen && Score(cur.comp) > longest) {
-			longest = Score(cur.comp)
-			longestLen = len(cur.comp)
-			if g.debug {
-				fmt.Printf("New longest: %s\n", String(cur.comp))
-			}
-		}
-		for _, c := range g.comp {
-			if cur.used[c] {
+		for i, c := range g.comp {
+			if cur.used.Used(i) {
 				continue
 			}
 			switch cur.port {
 			case c.in:
-				new := Search{map[Component]bool{}, []Component{}, c.out}
-				for _, u := range cur.comp {
-					new.comp = append(new.comp, u)
-					new.used[u] = true
-				}
-				new.comp = append(new.comp, c)
-				new.used[c] = true
+				nused := cur.used.Add(i)
+				new := Search{
+					nused, cur.len + 1, cur.score + c.in + c.out, c.out}
 				todo = append(todo, new)
 			case c.out:
-				new := Search{map[Component]bool{}, []Component{}, c.in}
-				for _, u := range cur.comp {
-					new.comp = append(new.comp, u)
-					new.used[u] = true
-				}
-				new.comp = append(new.comp, c)
-				new.used[c] = true
+				nused := cur.used.Add(i)
+				new := Search{
+					nused, cur.len + 1, cur.score + c.in + c.out, c.in}
 				todo = append(todo, new)
 			}
 		}
@@ -133,8 +119,7 @@ func (g *Game) Play() (int, int) {
 }
 
 func main() {
-	lines := InputLines(input)
-	best, longest := NewGame(lines).Play()
+	best, longest := NewGame(InputBytes(input)).Play()
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", best)
 		fmt.Printf("Part 2: %d\n", longest)

@@ -1,21 +1,21 @@
 package main
 
 import (
+	_ "embed"
 	"github.com/stretchr/testify/assert"
 	"testing"
-
-	. "github.com/beanz/advent/lib-go"
 )
 
+//go:embed test.txt
+var test []byte
+
 func TestPlay(t *testing.T) {
-	best, longest := NewGame(ReadLines("test.txt")).Play()
-	assert.Equal(t, 31, best)
-	assert.Equal(t, 19, longest)
-	if !testing.Short() {
-		best, longest = NewGame(ReadLines("input.txt")).Play()
-		assert.Equal(t, 1940, best)
-		assert.Equal(t, 1928, longest)
-	}
+	best, longest := NewGame(test).Play()
+	assert.Equal(t, uint16(31), best)
+	assert.Equal(t, uint16(19), longest)
+	best, longest = NewGame(input).Play()
+	assert.Equal(t, uint16(1940), best)
+	assert.Equal(t, uint16(1928), longest)
 }
 
 func BenchmarkMain(b *testing.B) {
