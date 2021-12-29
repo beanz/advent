@@ -30,6 +30,24 @@ func TestDragon(t *testing.T) {
 	}
 }
 
+func TestDragon2(t *testing.T) {
+	tests := []struct {
+		in  string
+		len int
+		out string
+	}{
+		{"1", 3, "100"},
+		{"0", 3, "001"},
+		{"11111", 11, "11111000000"},
+		{"111100001010", 25, "1111000010100101011110000"},
+	}
+	for _, tc := range tests {
+		g := NewGame([]byte(tc.in))
+		assert.Equal(t, tc.out, PrettyDragon(g.Dragon(tc.len)),
+			"%s x %d", tc.in, tc.len)
+	}
+}
+
 func TestChecksum(t *testing.T) {
 	tests := []struct {
 		in  string
@@ -39,8 +57,8 @@ func TestChecksum(t *testing.T) {
 		{"10000011110010000111", "01100"},
 	}
 	for _, tc := range tests {
-		d := NewGame([]byte(tc.in))
-		assert.Equal(t, tc.out, Checksum(d.input), tc.in)
+		g := NewGame([]byte(tc.in))
+		assert.Equal(t, tc.out, Checksum(g.input), tc.in)
 	}
 }
 
