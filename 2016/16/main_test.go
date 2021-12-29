@@ -5,26 +5,47 @@ import (
 	"testing"
 )
 
+func ExampleMain() {
+	main()
+	//Output:
+	// Part 1: 00000100100001100
+	// Part 2: 00011010100010010
+}
+
 func TestDragon(t *testing.T) {
-	assert.Equal(t, "100", Dragon("1", 3))
-	assert.Equal(t, "001", Dragon("0", 3))
-	assert.Equal(t, "11111000000", Dragon("11111", 11))
-	assert.Equal(t, "1111000010100101011110000", Dragon("111100001010", 25))
+	tests := []struct {
+		in  string
+		len int
+		out string
+	}{
+		{"1", 3, "100"},
+		{"0", 3, "001"},
+		{"11111", 11, "11111000000"},
+		{"111100001010", 25, "1111000010100101011110000"},
+	}
+	for _, tc := range tests {
+		g := NewGame([]byte(tc.in))
+		assert.Equal(t, tc.out, PrettyDragon(g.Dragon(tc.len)),
+			"%s x %d", tc.in, tc.len)
+	}
 }
 
 func TestChecksum(t *testing.T) {
-	assert.Equal(t, "100", Checksum("110010110100"))
-	assert.Equal(t, "01100", Checksum("10000011110010000111"))
-}
-
-func TestDiscData(t *testing.T) {
-	game := Game{"10000", 20, false}
-	assert.Equal(t, "10000011110010000111", game.DiscData())
+	tests := []struct {
+		in  string
+		out string
+	}{
+		{"110010110100", "100"},
+		{"10000011110010000111", "01100"},
+	}
+	for _, tc := range tests {
+		d := NewGame([]byte(tc.in))
+		assert.Equal(t, tc.out, Checksum(d.input), tc.in)
+	}
 }
 
 func TestPlay(t *testing.T) {
-	game := Game{"10000", 20, false}
-	assert.Equal(t, "01100", game.Play())
+	assert.Equal(t, "01100", NewGame([]byte("10000")).Play(20))
 }
 
 func BenchmarkMain(b *testing.B) {
