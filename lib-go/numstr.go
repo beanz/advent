@@ -14,6 +14,14 @@ func NewNumStr(prefix string) *NumStr {
 	return &NumStr{b: b, l: pl + 1, pl: pl}
 }
 
+func NewNumStrFromBytes(prefix []byte) *NumStr {
+	pl := len(prefix)
+	b := make([]byte, pl+10)
+	copy(b, prefix)
+	b[len(prefix)] = '0'
+	return &NumStr{b: b, l: pl + 1, pl: pl}
+}
+
 func (n *NumStr) Bytes() []byte {
 	return n.b[:n.l]
 }

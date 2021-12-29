@@ -1,40 +1,48 @@
 package main
 
 import (
-	_ "embed"
 	"crypto/md5"
+	_ "embed"
 	"fmt"
-	"strings"
 	. "github.com/beanz/advent/lib-go"
+	"strings"
 )
 
 //go:embed input.txt
 var input []byte
 
 type Game struct {
-	salt      string
+	salt      []byte
 	index     int
-	md5cache  map[int]string
+	numstr    *NumStr
+	ring      []string
 	stretched bool
-	debug     bool
+}
+
+func NewGame(salt []byte, stretched bool) *Game {
+	if salt[len(salt)-1] == '\n' {
+		salt = salt[:len(salt)-1]
+	}
+	ring := make([]string, 1001)
+	g := &Game{salt, 0, NewNumStrFromBytes(salt), ring, stretched}
+	for i := 0; i < 1001; i++ {
+		ring[i] = g.NextMD5()
+	}
+	return g
 }
 
 func (g *Game) String() string {
-	return fmt.Sprintf("Salt: %s Index: %d\n", g.salt, g.index)
+	return fmt.Sprintf("Salt: %s Index: %d\n", string(g.salt), g.index)
 }
 
-func (g *Game) MD5(i int) string {
-	if s, ok := g.md5cache[i]; ok {
-		return s
-	}
-	str := fmt.Sprintf("%s%d", g.salt, i)
-	sum := fmt.Sprintf("%x", md5.Sum([]byte(str)))
+func (g *Game) NextMD5() string {
+	sum := fmt.Sprintf("%x", md5.Sum(g.numstr.Bytes()))
 	if g.stretched {
 		for i := 0; i < 2016; i++ {
 			sum = fmt.Sprintf("%x", md5.Sum([]byte(sum)))
 		}
 	}
-	g.md5cache[i] = sum
+	g.numstr.Inc()
 	return sum
 }
 
@@ -55,48 +63,44 @@ func Triple(s string) string {
 	return res
 }
 
-func (g *Game) NextKey() string {
+func (g *Game) NextKey() int {
 	var sum string
-LOOP:
 	for {
-		sum = g.MD5(g.index)
-		delete(g.md5cache, g.index)
+		ti := g.index
+		sum = g.ring[ti%1001]
+		g.ring[ti%1001] = g.NextMD5()
 		g.index++
 		ch := Triple(sum)
 		if ch == "" {
 			continue
 		}
 		match := ch + ch + ch + ch + ch
-		for i := 0; i < 1000; i++ {
-			sum = g.MD5(g.index + i)
+		for i := 1; i < 1001; i++ {
+			sum = g.ring[(ti+i)%1001]
 			if strings.Contains(sum, match) {
-				if g.debug {
-					fmt.Printf("Got a hit at index %d\n", g.index-1)
-				}
-				break LOOP
+				//fmt.Printf("Got a hit at index %d\n", ti)
+				return ti
 			}
 		}
 	}
-	return sum
 }
 
 func (g *Game) Play() int {
+	var r int
 	for i := 0; i < 64; i++ {
-		g.NextKey()
+		r = g.NextKey()
 	}
-	return g.index - 1
+	return r
 }
 
 func main() {
-	input := InputLines(input)[0]
-
-	game := Game{input, 0, map[int]string{}, false, false}
+	game := NewGame(InputBytes(input), false)
 	res := game.Play()
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", res)
 	}
 
-	game = Game{input, 0, map[int]string{}, true, false}
+	game = NewGame(InputBytes(input), true)
 	res = game.Play()
 	if !benchmark {
 		fmt.Printf("Part 2: %d\n", res)
