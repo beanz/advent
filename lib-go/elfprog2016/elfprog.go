@@ -9,28 +9,39 @@ import (
 type InstKind byte
 
 const (
-	Copy InstKind = iota
-	CopyImmediate
+	CopyRR InstKind = iota
+	CopyIR
+	CopyRI
+	CopyII
 	Inc
 	Dec
-	Jnz
-	JnzImmediate
+	JnzII
+	JnzIR
+	JnzRI
+	JnzRR
+	Toggle
 )
 
 func (ik InstKind) String() string {
 	switch ik {
-	case Copy:
-		return "cpy"
-	case CopyImmediate:
-		return "cpyi"
+	case CopyRR:
+		return "cpyrr"
+	case CopyIR:
+		return "cpyir"
+	case CopyRI:
+		return "cpyri"
 	case Inc:
 		return "inc"
 	case Dec:
 		return "dec"
-	case Jnz:
-		return "jnz"
-	case JnzImmediate:
-		return "jnzi"
+	case JnzII:
+		return "jnzii"
+	case JnzRI:
+		return "jnzri"
+	case JnzIR:
+		return "jnzir"
+	case Toggle:
+		return "tgl"
 	default:
 		panic("invalid instkind")
 	}
@@ -67,16 +78,22 @@ func NewElfProg(in []byte) *ElfProg {
 	for i := 0; i < len(in); {
 		switch in[i] {
 		case 'c':
-			if in[i+4] == 'a' || in[i+4] == 'b' || in[i+4] == 'c' || in[i+4] == 'd' {
+			if 'a' <= in[i+4] && in[i+4] <= 'd' {
+				if 'a' <= in[i+6] && in[i+6] <= 'd' {
+					ep.inst = append(ep.inst,
+						&Inst{CopyRR, []int{int(in[i+4] - 'a'), int(in[i+6] - 'a')}})
+					i += 8
+					break
+				}
+				v, j := aoc.ScanInt(in, i+6)
+				i = j + 1
 				ep.inst = append(ep.inst,
-					&Inst{Copy, []int{int(in[i+4] - 'a'), int(in[i+6] - 'a')}})
-				i += 8
-				break
+					&Inst{CopyRI, []int{int(in[i+4] - 'a'), v}})
 			}
 			v, j := aoc.ScanInt(in, i+4)
 			i = j + 1
 			ep.inst = append(ep.inst,
-				&Inst{CopyImmediate, []int{v, int(in[i] - 'a')}})
+				&Inst{CopyIR, []int{v, int(in[i] - 'a')}})
 			i += 2
 		case 'i':
 			ep.inst = append(ep.inst, &Inst{Inc, []int{int(in[i+4] - 'a')}})
@@ -85,19 +102,27 @@ func NewElfProg(in []byte) *ElfProg {
 			ep.inst = append(ep.inst, &Inst{Dec, []int{int(in[i+4] - 'a')}})
 			i += 6
 		case 'j':
-			if in[i+4] == 'a' || in[i+4] == 'b' || in[i+4] == 'c' || in[i+4] == 'd' {
+			if 'a' <= in[i+4] && in[i+4] <= 'd' {
 				v, j := aoc.ScanInt(in, i+6)
 				ep.inst = append(ep.inst,
-					&Inst{Jnz, []int{int(in[i+4] - 'a'), v}})
+					&Inst{JnzRI, []int{int(in[i+4] - 'a'), v}})
 				i = j + 1
 				break
 			}
 			v1, j := aoc.ScanInt(in, i+4)
 			i = j + 1
+			if in[i] == 'a' || in[i] == 'b' || in[i] == 'c' || in[i] == 'd' {
+				ep.inst = append(ep.inst,
+					&Inst{JnzIR, []int{v1, int(in[i] - 'a')}})
+				i = i + 2
+				break
+			}
 			v2, j := aoc.ScanInt(in, i)
 			i = j + 1
-			ep.inst = append(ep.inst,
-				&Inst{JnzImmediate, []int{v1, v2}})
+			ep.inst = append(ep.inst, &Inst{JnzII, []int{v1, v2}})
+		case 't':
+			ep.inst = append(ep.inst, &Inst{Toggle, []int{int(in[i+4] - 'a')}})
+			i += 6
 		default:
 			fmt.Printf("%s\n", string(in[i:]))
 			panic("invalid instruction")
@@ -110,50 +135,70 @@ func (p *ElfProg) Run() int {
 	p.ip = 0
 	for p.ip < len(p.inst) {
 		in := p.inst[p.ip]
+		//fmt.Printf("%d: %s %v\n", p.ip, in, p.reg)
 		switch in.kind {
 		case Inc:
 			p.reg[in.args[0]]++
 		case Dec:
 			p.reg[in.args[0]]--
-		case Copy:
+		case CopyRR:
 			p.reg[in.args[1]] = p.reg[in.args[0]]
-		case CopyImmediate:
+		case CopyIR:
 			p.reg[in.args[1]] = in.args[0]
-		case Jnz:
+		case CopyII:
+			break
+			// skip
+		case JnzRI:
 			v := p.reg[in.args[0]]
 			if v != 0 {
 				p.ip += in.args[1] - 1 // -1 because we add one every iteration
 			}
-		case JnzImmediate:
+		case JnzRR:
+			v := p.reg[in.args[0]]
+			if v != 0 {
+				p.ip += p.reg[in.args[1]] - 1 // -1 because we add one every iteration
+			}
+		case JnzIR:
+			v := in.args[0]
+			if v != 0 {
+				p.ip += p.reg[in.args[1]] - 1 // -1 because we add one every iteration
+			}
+		case JnzII:
 			v := in.args[0]
 			if v != 0 {
 				p.ip += in.args[1] - 1 // -1 because we add one every iteration
+			}
+		case Toggle:
+			offset := p.reg[in.args[0]]
+			offset += p.ip
+			if offset < 0 || offset >= len(p.inst) {
+				break
+			}
+			tin := p.inst[offset]
+			switch tin.kind {
+			case Inc:
+				tin.kind = Dec
+			case Dec:
+				tin.kind = Inc
+			case Toggle:
+				tin.kind = Inc
+			case JnzRI:
+				tin.kind = CopyRI
+			case JnzIR:
+				tin.kind = CopyIR
+			case JnzII:
+				tin.kind = CopyII
+			case CopyIR:
+				tin.kind = JnzIR
+			case CopyRI:
+				tin.kind = JnzRI
+			case CopyII:
+				tin.kind = JnzII
 			}
 		default:
 			panic("invalid instruction")
 		}
 		p.ip++
-		// 	p.ip += jmp
-		// case "tgl":
-		// 	offset := p.regValueOrImmediate(in.args[0])
-		// 	offset += p.ip
-		// 	if offset < 0 || offset >= len(p.inst) {
-		// 		p.ip++
-		// 		continue
-		// 	}
-		// 	tin := p.inst[offset]
-		// 	switch tin.kind {
-		// 	case "inc":
-		// 		tin.kind = "dec"
-		// 	case "dec":
-		// 		tin.kind = "inc"
-		// 	case "tgl":
-		// 		tin.kind = "inc"
-		// 	case "jnz":
-		// 		tin.kind = "cpy"
-		// 	case "cpy":
-		// 		tin.kind = "jnz"
-		// 	}
 		// 	p.ip++
 		// default:
 		// 	fmt.Fprintf(os.Stderr, "Unsupported instruction: %s\n", in)
