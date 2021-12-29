@@ -20,6 +20,10 @@ const (
 	JnzRI
 	JnzRR
 	Toggle
+	Nop
+	Add
+	Sub
+	Mul
 )
 
 func (ik InstKind) String() string {
@@ -42,6 +46,14 @@ func (ik InstKind) String() string {
 		return "jnzir"
 	case Toggle:
 		return "tgl"
+	case Nop:
+		return "nop"
+	case Add:
+		return "add"
+	case Sub:
+		return "sub"
+	case Mul:
+		return "mul"
 	default:
 		panic("invalid instkind")
 	}
@@ -131,10 +143,61 @@ func NewElfProg(in []byte) *ElfProg {
 	return ep
 }
 
+func optimize(prog []*Inst) []*Inst {
+	nop := &Inst{Nop, nil}
+	opt := make([]*Inst, len(prog))
+	for i := 0; i < len(prog); i++ {
+		in := prog[i]
+		if in.kind == JnzRI && in.args[1] == -2 {
+			p1 := prog[i-2]
+			p2 := prog[i-1]
+			if p2.kind == Dec && in.args[0] == p2.args[0] {
+				if p1.kind == Inc {
+					opt[i-2] = nop
+					opt[i-1] = nop
+					opt[i] = &Inst{Add, []int{p1.args[0], in.args[0]}}
+					continue
+				} else if p1.kind == Dec {
+					opt[i-2] = nop
+					opt[i-1] = nop
+					opt[i] = &Inst{Sub, []int{p1.args[0], in.args[0]}}
+					continue
+				}
+			} else if p1.kind == Dec && in.args[0] == p1.args[0] {
+				if p2.kind == Inc {
+					opt[i-2] = nop
+					opt[i-1] = nop
+					opt[i] = &Inst{Add, []int{p2.args[0], in.args[0]}}
+					continue
+				} else if p2.kind == Dec {
+					opt[i-2] = nop
+					opt[i-1] = nop
+					opt[i] = &Inst{Sub, []int{p2.args[0], in.args[0]}}
+					continue
+				}
+			}
+		} else if in.kind == JnzRI && in.args[1] == -5 {
+			p1 := opt[i-2]
+			p2 := opt[i-1]
+			if p2.kind == Dec && in.args[0] == p2.args[0] && p1.kind == Add {
+				opt[i-2] = nop
+				opt[i-1] = nop
+				opt[i] = &Inst{Mul, []int{p1.args[0], p1.args[1], p2.args[0]}}
+				continue
+			}
+		}
+
+		opt[i] = in
+	}
+	return opt
+}
+
 func (p *ElfProg) Run() int {
 	p.ip = 0
+	opt := optimize(p.inst)
 	for p.ip < len(p.inst) {
-		in := p.inst[p.ip]
+		in := opt[p.ip]
+		//in := p.inst[p.ip]
 		//fmt.Printf("%d: %s %v\n", p.ip, in, p.reg)
 		switch in.kind {
 		case Inc:
@@ -175,6 +238,7 @@ func (p *ElfProg) Run() int {
 				break
 			}
 			tin := p.inst[offset]
+			//fmt.Printf("toggling instruction at %d: %s\n", offset, tin)
 			switch tin.kind {
 			case Inc:
 				tin.kind = Dec
@@ -195,15 +259,21 @@ func (p *ElfProg) Run() int {
 			case CopyII:
 				tin.kind = JnzII
 			}
+			opt = optimize(p.inst)
+		case Add:
+			p.reg[in.args[0]] += p.reg[in.args[1]]
+			p.reg[in.args[1]] = 0
+		case Mul:
+			p.reg[in.args[0]] += p.reg[in.args[1]] * p.reg[in.args[2]]
+			p.reg[in.args[1]] = 0
+			p.reg[in.args[2]] = 0
+		case Nop:
+			// no op
 		default:
+			fmt.Printf("%v\n", in)
 			panic("invalid instruction")
 		}
 		p.ip++
-		// 	p.ip++
-		// default:
-		// 	fmt.Fprintf(os.Stderr, "Unsupported instruction: %s\n", in)
-		// 	p.ip++
-		// }
 	}
 	return p.reg[0]
 }
