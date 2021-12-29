@@ -138,3 +138,21 @@ func ScanUint(in []byte, i int) (int, int) {
 	}
 	return n, j
 }
+
+func ScanInt(in []byte, i int) (int, int) {
+	n := 0
+	j := i
+	m := 1
+	if in[j] == '-' {
+		m = -1
+		j++
+	}
+	for ; j < len(in); j++ {
+		if in[j] >= '0' && in[j] <= '9' {
+			n = n*10 + int(in[j]-'0')
+		} else {
+			break
+		}
+	}
+	return n * m, j
+}
