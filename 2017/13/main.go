@@ -11,8 +11,9 @@ import (
 var input []byte
 
 type Scanner struct {
-	depth int
-	r     int
+	depth   int
+	r       int
+	modulus int
 }
 
 type Firewall struct {
@@ -24,35 +25,40 @@ func NewFirewall(inp []byte) *Firewall {
 	fw := &Firewall{[]Scanner{}, false}
 	ints := FastInts(inp, 128)
 	for i := 0; i < len(ints); i += 2 {
-		fw.scanners = append(fw.scanners, Scanner{ints[i], ints[i+1]})
+		fw.scanners = append(fw.scanners,
+			Scanner{ints[i], ints[i+1], ((ints[i+1] - 1) * 2)})
 	}
 	return fw
 }
 
-func (fw *Firewall) Run(delay int) (int, bool) {
-	sev := 0
-	caught := false
+func (fw *Firewall) Run(delay int) bool {
 	for _, s := range fw.scanners {
-		if (delay+s.depth)%((s.r-1)*2) == 0 {
+		if (delay+s.depth)%s.modulus == 0 {
+			if fw.debug {
+				fmt.Printf("hit at depth %d\n", s.depth)
+			}
+			return true
+		}
+	}
+	return false
+}
+
+func (fw *Firewall) Part1() int {
+	sev := 0
+	for _, s := range fw.scanners {
+		if s.depth%s.modulus == 0 {
 			if fw.debug {
 				fmt.Printf("hit at depth %d\n", s.depth)
 			}
 			sev += s.depth * s.r
-			caught = true
 		}
 	}
-	return sev, caught
-}
-
-func (fw *Firewall) Part1() int {
-	sev, _ := fw.Run(0)
 	return sev
 }
 
 func (fw *Firewall) Part2() int {
 	for delay := 0; ; delay++ {
-		_, caught := fw.Run(delay)
-		if !caught {
+		if !fw.Run(delay) {
 			return delay
 		}
 	}
