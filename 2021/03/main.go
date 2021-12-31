@@ -15,12 +15,22 @@ type Game struct {
 	bits int
 }
 
-func NewGame(in []string) *Game {
-	g := &Game{make([]int, 0, len(in)), len(in[0]) - 1}
-	for _, l := range in {
-		g.in = append(g.in, BinToInt(l))
+func NewGame(in []byte) *Game {
+	bits := 0
+	ints := make([]int, 0, 1000)
+	n := 0
+	for i := 0; i < len(in); i++ {
+		if in[i] == '\n' {
+			ints = append(ints, n)
+			if bits == 0 {
+				bits = i
+			}
+			n = 0
+			continue
+		}
+		n = (n << 1) + int(in[i]-'0')
 	}
-	return g
+	return &Game{ints, bits - 1}
 }
 
 func (g *Game) Part1() int {
@@ -80,8 +90,7 @@ func (g *Game) Part2() int {
 }
 
 func main() {
-	lines := InputLines(input)
-	g := NewGame(lines)
+	g := NewGame(InputBytes(input))
 	p1 := g.Part1()
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
