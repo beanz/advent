@@ -20,8 +20,7 @@ const (
 )
 
 type Game struct {
-	points map[Point]NodeState
-	bb     *BoundingBox
+	points []NodeState
 	cur    Point
 	dir    Direction
 	count  int
@@ -30,11 +29,21 @@ type Game struct {
 
 func (g *Game) String() string {
 	s := ""
-	for y := g.bb.Min.Y; y <= g.bb.Max.Y; y++ {
-		for x := g.bb.Min.X; x <= g.bb.Max.X; x++ {
+	ci := (g.cur.X + 255) + 512*(g.cur.Y+255)
+	bb := NewBoundingBox()
+	for y := -255; y <= 255; y++ {
+		for x := -255; x <= 255; x++ {
 			p := Point{x, y}
+			if g.Get(p) != CLEAN {
+				bb.Add(p)
+			}
+		}
+	}
+	for y := bb.Min.Y; y <= bb.Max.Y; y++ {
+		for x := bb.Min.X; x <= bb.Max.X; x++ {
+			i := (x + 255) + 512*(y+255)
 			var sq string
-			switch g.points[p] {
+			switch g.points[i] {
 			case INFECTED:
 				sq = "#"
 			case WEAKENED:
@@ -44,7 +53,7 @@ func (g *Game) String() string {
 			default:
 				sq = "."
 			}
-			if p == g.cur {
+			if i == ci {
 				sq = Red(sq)
 			}
 			s += sq
@@ -55,8 +64,7 @@ func (g *Game) String() string {
 }
 
 func NewGame(lines []string) *Game {
-	g := &Game{map[Point]NodeState{},
-		NewBoundingBox(),
+	g := &Game{make([]NodeState, 512*512),
 		Point{0, 0},
 		Compass("N").Direction(),
 		0,
@@ -64,31 +72,39 @@ func NewGame(lines []string) *Game {
 	for y, line := range lines {
 		for x, ch := range line {
 			p := Point{x, y}
-			g.bb.Add(p)
 			if ch == '#' {
-				g.points[p] = INFECTED
+				g.Set(p, INFECTED)
 			}
 		}
 	}
-	g.cur = Point{(g.bb.Max.X + g.bb.Min.X) / 2, (g.bb.Max.Y + g.bb.Min.Y) / 2}
+	g.cur = Point{len(lines[0]) / 2, len(lines) / 2}
 	return g
 }
 
+func (g *Game) Get(p Point) NodeState {
+	i := (p.X + 255) + 512*(p.Y+255)
+	return g.points[i]
+}
+
+func (g *Game) Set(p Point, s NodeState) {
+	i := (p.X + 255) + 512*(p.Y+255)
+	g.points[i] = s
+}
+
 func (g *Game) Burst1() {
-	infected := g.points[g.cur] == INFECTED
+	infected := g.Get(g.cur) == INFECTED
 	if infected {
 		g.dir = g.dir.CW()
 	} else {
 		g.dir = g.dir.CCW()
 	}
 	if infected {
-		delete(g.points, g.cur)
+		g.Set(g.cur, CLEAN)
 	} else {
-		g.points[g.cur] = INFECTED
+		g.Set(g.cur, INFECTED)
 		g.count++
 	}
 	g.cur = g.cur.In(g.dir)
-	g.bb.Add(g.cur)
 }
 
 func (g *Game) Part1(bursts int) int {
@@ -102,24 +118,23 @@ func (g *Game) Part1(bursts int) int {
 }
 
 func (g *Game) Burst2() {
-	state := g.points[g.cur]
+	state := g.Get(g.cur)
 	switch state {
 	case WEAKENED:
 		// no turn
-		g.points[g.cur] = INFECTED
+		g.Set(g.cur, INFECTED)
 		g.count++
 	case INFECTED:
 		g.dir = g.dir.CW()
-		g.points[g.cur] = FLAGGED
+		g.Set(g.cur, FLAGGED)
 	case FLAGGED:
 		g.dir = g.dir.CW().CW()
-		delete(g.points, g.cur)
+		g.Set(g.cur, CLEAN)
 	default: // CLEAN
 		g.dir = g.dir.CCW()
-		g.points[g.cur] = WEAKENED
+		g.Set(g.cur, WEAKENED)
 	}
 	g.cur = g.cur.In(g.dir)
-	g.bb.Add(g.cur)
 }
 
 func (g *Game) Part2(bursts int) int {
