@@ -10,11 +10,11 @@ import (
 //go:embed input.txt
 var input []byte
 
-type Axis bool
+type Axis byte
 
 const (
-	XAxis Axis = true
-	YAxis      = false
+	XAxis Axis = 0
+	YAxis Axis = 1
 )
 
 type Fold struct {
@@ -23,13 +23,13 @@ type Fold struct {
 }
 
 type Game struct {
-	m    map[int]bool
+	m    map[int]struct{}
 	f    []Fold
-	w, h int
+	wh [2]int
 }
 
 func NewGame(in []byte) *Game {
-	m := make(map[int]bool, 1024)
+	p := make([][2]int, 0, 1000)
 	w := 0
 	h := 0
 	i := 0
@@ -48,7 +48,7 @@ LOOP:
 			if y > h {
 				h = y
 			}
-			m[x+(y<<12)] = true
+			p = append(p, [2]int{x,y})
 			y = 0
 			if in[i+1] == '\n' {
 				i += 2
@@ -73,14 +73,28 @@ LOOP:
 			y = 0
 		}
 	}
-	return &Game{m, f, w, h}
+	wh := [2]int{w,h}
+	fold, f := f[0], f[1:]
+	m := make(map[int]struct{}, 1024)
+	for _, v := range p {
+		i := 0
+		if fold.axis == YAxis {
+			i++
+		}
+		if v[i] > fold.n {
+			v[i] = fold.n - (v[i] - fold.n)
+		}
+		m[v[0]+(v[1]<<12)] = struct{}{}
+	}
+	wh[fold.axis] = fold.n -1
+	return &Game{m, f, wh}
 }
 
 func (g *Game) String() string {
 	var sb strings.Builder
-	for y := 0; y <= g.h; y++ {
-		for x := 0; x <= g.w; x++ {
-			if g.m[x+(y<<12)] {
+	for y := 0; y <= g.wh[1]; y++ {
+		for x := 0; x <= g.wh[0]; x++ {
+			if _, ok := g.m[x+(y<<12)]; ok {
 				sb.WriteByte('#')
 			} else {
 				sb.WriteByte(' ')
@@ -92,42 +106,17 @@ func (g *Game) String() string {
 }
 
 func (g *Game) Parts() (int, string) {
-	p1 := -1
+	p1 := len(g.m)
 	for _, f := range g.f {
-		if f.axis == XAxis {
-			// fold x
-			w := 0
-			for xy := range g.m {
-				x, y := xy%4096, xy>>12
-				if x > f.n {
-					delete(g.m, xy)
-					x = f.n - (x - f.n)
-					g.m[x+(y<<12)] = true
-				}
-				if x > w {
-					w = x
-				}
+		for xy := range g.m {
+			v := [2]int{xy%4096, xy>>12}
+			if v[f.axis] > f.n {
+				delete(g.m, xy)
+				v[f.axis] = f.n - (v[f.axis] - f.n)
+				g.m[v[0]+(v[1]<<12)] = struct{}{}
 			}
-			g.w = w
-		} else {
-			// fold y
-			h := 0
-			for xy := range g.m {
-				x, y := xy%4096, xy>>12
-				if y > f.n {
-					delete(g.m, xy)
-					y = f.n - (y - f.n)
-					g.m[x+(y<<12)] = true
-				}
-				if y > h {
-					h = y
-				}
-			}
-			g.h = h
 		}
-		if p1 == -1 {
-			p1 = len(g.m)
-		}
+		g.wh[f.axis] = f.n - 1
 	}
 	return p1, g.String()
 }
