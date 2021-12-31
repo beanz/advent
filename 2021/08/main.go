@@ -31,26 +31,26 @@ func (s Segments) String() string {
 }
 
 func (s Segments) Digit() int {
-	switch s.String() {
-	case "abcefg":
+	switch s {
+	case 119: // 1+2+4+16+32+64
 		return 0
-	case "cf":
+	case 36: // 4+32
 		return 1
-	case "acdeg":
+	case 93: // 1+4+8+16+64
 		return 2
-	case "acdfg":
+	case 109: // 1+4+8+32+64
 		return 3
-	case "bcdf":
+	case 46: // 2+4+8+32
 		return 4
-	case "abdfg":
+	case 107: // 1 + 2 + 8 + 32 + 64
 		return 5
-	case "abdefg":
+	case 123: // 1+2+8+16+32+64
 		return 6
-	case "acf":
+	case 37: // 1+4+32
 		return 7
-	case "abcdefg":
+	case 127: // 1+2+4+8+16+32+64
 		return 8
-	case "abcdfg":
+	case 111: // 1+2+4+8+32+64
 		return 9
 	default:
 		return -1
@@ -60,8 +60,8 @@ func (s Segments) Digit() int {
 type Entry struct {
 	pattern      []Segments
 	output       []Segments
-	patternOfLen map[int][]Segments
-	outputOfLen  map[int][]Segments
+	patternOfLen [][]Segments
+	outputOfLen  [][]Segments
 }
 
 type Notes struct {
@@ -71,13 +71,52 @@ type Notes struct {
 
 func NewNotes(in []byte) *Notes {
 	entries := make([]Entry, 0, 200)
-	pl := make(map[int][]Segments)
-	ps := make([]Segments, 0, 10)
-	ol := make(map[int][]Segments)
-	os := make([]Segments, 0, 4)
+	var pl [][]Segments
+	var ps []Segments
+	var ol [][]Segments
+	var os []Segments
+
+	prep := func() {
+		pl = make([][]Segments, 8)
+		pl[2] = make([]Segments, 0, 1)
+		pl[3] = make([]Segments, 0, 1)
+		pl[4] = make([]Segments, 0, 1)
+		pl[7] = make([]Segments, 0, 1)
+		pl[5] = make([]Segments, 0, 3)
+		pl[6] = make([]Segments, 0, 3)
+		ps = make([]Segments, 0, 10)
+		ol = make([][]Segments, 8)
+		ol[2] = make([]Segments, 0, 1)
+		ol[3] = make([]Segments, 0, 1)
+		ol[4] = make([]Segments, 0, 1)
+		ol[7] = make([]Segments, 0, 1)
+		ol[5] = make([]Segments, 0, 3)
+		ol[6] = make([]Segments, 0, 3)
+		os = make([]Segments, 0, 4)
+	}
 	j := 0
 	state := true // pattern part
 	word := false
+	prepared := false
+
+	addWord := func(i int) {
+		if word {
+			if !prepared {
+				prep()
+				prepared = true
+			}
+			s := NewSegments(in[j:i])
+			l := i - j
+			if state {
+				ps = append(ps, s)
+				pl[l] = append(pl[l], s)
+			} else {
+				os = append(os, s)
+				ol[l] = append(ol[l], s)
+			}
+			word = false
+		}
+	}
 	for i := 0; i < len(in); i++ {
 		if 'a' <= in[i] && in[i] <= 'g' {
 			if !word {
@@ -85,33 +124,11 @@ func NewNotes(in []byte) *Notes {
 				word = true
 			}
 		} else if in[i] == ' ' {
-			if word {
-				s := NewSegments(in[j:i])
-				l := i - j
-				if state {
-					ps = append(ps, s)
-					pl[l] = append(pl[l], s)
-				} else {
-					os = append(os, s)
-					ol[l] = append(ol[l], s)
-				}
-				word = false
-			}
+			addWord(i)
 		} else if in[i] == '|' {
 			state = false // output part
 		} else if in[i] == '\n' {
-			if word {
-				s := NewSegments(in[j:i])
-				l := i - j
-				if state {
-					ps = append(ps, s)
-					pl[l] = append(pl[l], s)
-				} else {
-					os = append(os, s)
-					ol[l] = append(ol[l], s)
-				}
-				word = false
-			}
+			addWord(i)
 			entries = append(entries,
 				Entry{
 					pattern:      ps,
@@ -120,10 +137,7 @@ func NewNotes(in []byte) *Notes {
 					outputOfLen:  ol,
 				})
 			word = false
-			pl = make(map[int][]Segments)
-			ps = make([]Segments, 0, 10)
-			ol = make(map[int][]Segments)
-			os = make([]Segments, 0, 4)
+			prepared = false
 			state = true // pattern part
 		}
 	}
@@ -133,11 +147,8 @@ func NewNotes(in []byte) *Notes {
 func (n *Notes) Part1() int {
 	c := 0
 	for _, e := range n.entries {
-		for l, v := range e.outputOfLen {
-			if l == 2 || l == 3 || l == 4 || l == 7 {
-				c += len(v)
-			}
-		}
+		c += len(e.outputOfLen[2]) + len(e.outputOfLen[3]) +
+			len(e.outputOfLen[4]) + len(e.outputOfLen[7])
 	}
 	return c
 }
