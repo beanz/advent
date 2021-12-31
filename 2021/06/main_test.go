@@ -1,41 +1,46 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
-	"github.com/stretchr/testify/assert"
+	assert "github.com/stretchr/testify/require"
 	"testing"
-
-	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed test1.txt
+var test1 []byte
 
 type TestCase struct {
 	file string
+	data []byte
 	days int
 	ans  int
 }
 
 func TestFish(t *testing.T) {
 	tests := []TestCase{
-		{"test1.txt", 1, 5},
-		{"test1.txt", 2, 6},
-		{"test1.txt", 3, 7},
-		{"test1.txt", 4, 9},
-		{"test1.txt", 5, 10},
-		{"test1.txt", 8, 10},
-		{"test1.txt", 9, 11},
-		{"test1.txt", 10, 12},
-		{"test1.txt", 11, 15},
-		{"test1.txt", 12, 17},
-		{"test1.txt", 13, 19},
-		{"test1.txt", 18, 26},
-		{"test1.txt", 80, 5934},
-		{"test1.txt", 256, 26984457539},
-		{"input.txt", 80, 365131},
-		{"input.txt", 256, 1650309278600},
+		{"test1.txt", test1, 1, 5},
+		{"test1.txt", test1, 2, 6},
+		{"test1.txt", test1, 3, 7},
+		{"test1.txt", test1, 4, 9},
+		{"test1.txt", test1, 5, 10},
+		{"test1.txt", test1, 8, 10},
+		{"test1.txt", test1, 9, 11},
+		{"test1.txt", test1, 10, 12},
+		{"test1.txt", test1, 11, 15},
+		{"test1.txt", test1, 12, 17},
+		{"test1.txt", test1, 13, 19},
+		{"test1.txt", test1, 18, 26},
+		{"test1.txt", test1, 80, 5934},
+		{"test1.txt", test1, 256, 26984457539},
+		{"input.txt", input, 80, 365131},
+		{"input.txt", input, 256, 1650309278600},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.ans,
-			NewSchool(ReadFileInts(tc.file)).Fish(tc.days),
+		d := make([]byte, len(tc.data))
+		copy(d, tc.data)
+		p1, _ := NewSchool(d).Fish(tc.days, tc.days)
+		assert.Equal(t, tc.ans, p1,
 			fmt.Sprintf("%s x %d days", tc.file, tc.days))
 	}
 }

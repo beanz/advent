@@ -10,48 +10,44 @@ import (
 var input []byte
 
 type School struct {
-	init []int
+	init []byte
 }
 
-func NewSchool(in []int) *School {
-	return &School{in}
+func NewSchool(in []byte) *School {
+	return &School{FastBytes(in)}
 }
 
-func (s *School) Fish(days int) int {
+func (s *School) Fish(d1, d2 int) (int, int) {
 	fish := make([]int, 9)
 	for _, t := range s.init {
 		fish[t]++
 	}
 
-	for d := 1; d <= days; d++ {
-		next := make([]int, 9)
-		next[6] = fish[0]
-		next[8] = fish[0]
+	for d := 1; d <= d1; d++ {
+		z := fish[0]
 		for i := 0; i < 8; i++ {
-			next[i] += fish[i+1]
+			fish[i] = fish[i+1]
 		}
-		fish = next
+		fish[6] += z
+		fish[8] = z
 	}
-	return Sum(fish...)
-}
-
-func (s *School) Part1() int {
-	return s.Fish(80)
-}
-
-func (s *School) Part2() int {
-	return s.Fish(256)
+	p1 := Sum(fish...)
+	for d := d1 + 1; d <= d2; d++ {
+		z := fish[0]
+		for i := 0; i < 8; i++ {
+			fish[i] = fish[i+1]
+		}
+		fish[6] += z
+		fish[8] = z
+	}
+	return p1, Sum(fish...)
 }
 
 func main() {
-	inp := InputInts(input)
-	s := NewSchool(inp)
-	p1 := s.Part1()
+	s := NewSchool(InputBytes(input))
+	p1, p2 := s.Fish(80, 256)
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
-	}
-	p2 := s.Part2()
-	if !benchmark {
 		fmt.Printf("Part 2: %d\n", p2)
 	}
 }
