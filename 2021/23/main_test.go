@@ -115,11 +115,11 @@ func TestHome(t *testing.T) {
 	g := NewGame(test0)
 	assert.Equal(t, NoPosition, g.init.Home(NewPosition(9, 2)),
 		"no free home space")
-	delete(g.init.m, NewPosition(3, 3))
+	g.init.m[NewPosition(3, 3)] = nil
 	assert.Equal(t, "3,3", g.init.Home(NewPosition(9, 2)).String(),
 		"best home")
 	g = NewGame(test0)
-	delete(g.init.m, NewPosition(3, 2))
+	g.init.m[NewPosition(3, 2)] = nil
 	assert.Equal(t, "3,2", g.init.Home(NewPosition(9, 2)).String(),
 		"second best home")
 }
@@ -128,7 +128,7 @@ func TestPathClear(t *testing.T) {
 	g := NewGame(test0)
 	_, clear := g.init.PathClear(NewPosition(9, 2), NewPosition(3, 2))
 	assert.False(t, clear)
-	delete(g.init.m, NewPosition(3, 2))
+	g.init.m[NewPosition(3, 2)] = nil
 	cost, clear := g.init.PathClear(NewPosition(9, 2), NewPosition(3, 2))
 	assert.True(t, clear)
 	assert.Equal(t, 8, cost)
@@ -136,15 +136,15 @@ func TestPathClear(t *testing.T) {
 
 func TestMoves(t *testing.T) {
 	g := NewGame(test0)
-	assert.Equal(t, "[1,1/9 2,1/8 4,1/6 6,1/4 8,1/2 10,1/2 11,1/3]",
+	assert.Equal(t, "[8,1/2 6,1/4 4,1/6 2,1/8 1,1/9 10,1/2 11,1/3]",
 		fmt.Sprintf("%v", g.init.Moves(NewPosition(9, 2))))
 	assert.Equal(t, "[]",
 		fmt.Sprintf("%v", g.init.Moves(NewPosition(3, 3))))
 	g = NewGame(test0)
 	g.init.m[NewPosition(10, 1)] = g.init.m[NewPosition(9, 2)]
-	delete(g.init.m, NewPosition(9, 2))
+	g.init.m[NewPosition(9, 2)] = nil
 	assert.Equal(t, "[]", fmt.Sprintf("%v", g.init.Moves(NewPosition(10, 1))))
-	delete(g.init.m, NewPosition(3, 2))
+	g.init.m[NewPosition(3, 2)] = nil
 	assert.Equal(t, "[3,2/8]",
 		fmt.Sprintf("%v", g.init.Moves(NewPosition(10, 1))))
 }

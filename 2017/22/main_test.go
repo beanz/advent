@@ -14,12 +14,10 @@ func TestPart1(t *testing.T) {
 
 func TestPart2(t *testing.T) {
 	assert.Equal(t, 26, NewGame(ReadLines("test.txt")).Part2(100))
-	if !testing.Short() {
-		assert.Equal(t, 2511944,
-			NewGame(ReadLines("test.txt")).Part2(10000000))
-		assert.Equal(t, 2512144,
-			NewGame(ReadLines("input.txt")).Part2(10000000))
-	}
+	assert.Equal(t, 2511944,
+		NewGame(ReadLines("test.txt")).Part2(10000000))
+	assert.Equal(t, 2512144,
+		NewGame(ReadLines("input.txt")).Part2(10000000))
 }
 
 func BenchmarkMain(b *testing.B) {

@@ -54,7 +54,7 @@ func NewAmphipod(ch byte) Amphipod {
 
 type State struct {
 	energy   int
-	m        map[Position]Amphipod
+	m        []*Amphipod
 	homeSize int
 }
 
@@ -62,7 +62,7 @@ func (s *State) String() string {
 	var sb strings.Builder
 	sb.WriteString("#############\n#")
 	for i := 0; i < 11; i++ {
-		if amp, ok := s.m[Position(i)]; ok {
+		if amp := s.m[Position(i)]; amp != nil {
 			sb.WriteByte(amp.ch)
 		} else {
 			sb.WriteByte('.')
@@ -70,7 +70,7 @@ func (s *State) String() string {
 	}
 	sb.WriteString("#\n###")
 	for i := 11; i < 15; i++ {
-		if amp, ok := s.m[Position(i)]; ok {
+		if amp := s.m[Position(i)]; amp != nil {
 			sb.WriteByte(amp.ch)
 		} else {
 			sb.WriteByte('.')
@@ -81,7 +81,7 @@ func (s *State) String() string {
 	for h := 2; h <= s.homeSize; h++ {
 		sb.WriteString("  #")
 		for i := 11 + 4*(h-1); i < 15+4*(h-1); i++ {
-			if amp, ok := s.m[Position(i)]; ok {
+			if amp := s.m[Position(i)]; amp != nil {
 				sb.WriteByte(amp.ch)
 			} else {
 				sb.WriteByte('.')
@@ -97,6 +97,9 @@ func (s *State) String() string {
 func (s *State) Key() string {
 	ki := make([]int, 0, 16)
 	for pos, amp := range s.m {
+		if amp == nil {
+			continue
+		}
 		ki = append(ki, int(pos)<<8+int(amp.ch))
 	}
 	sort.Ints(ki)
@@ -115,7 +118,7 @@ func (s *State) IsHome(pos Position) bool {
 		return false
 	}
 	for hy := s.homeSize + 1; hy > y; hy-- {
-		if ta, ok := s.m[NewPosition(amp.hx, hy)]; ok && amp.ch != ta.ch {
+		if ta := s.m[NewPosition(amp.hx, hy)]; ta != nil && amp.ch != ta.ch {
 			return false
 		}
 	}
@@ -123,8 +126,11 @@ func (s *State) IsHome(pos Position) bool {
 }
 
 func (s *State) Done() bool {
-	for pos := range s.m {
-		if !s.IsHome(pos) {
+	for pos, amp := range s.m {
+		if amp == nil {
+			continue
+		}
+		if !s.IsHome(Position(pos)) {
 			return false
 		}
 	}
@@ -135,8 +141,8 @@ func (s *State) Home(pos Position) Position {
 	amp := s.m[pos]
 	hx := amp.hx
 	for hy := s.homeSize + 1; hy >= 2; hy-- {
-		ta, ok := s.m[NewPosition(amp.hx, hy)]
-		if !ok {
+		ta := s.m[NewPosition(amp.hx, hy)]
+		if ta == nil {
 			return NewPosition(hx, hy)
 		}
 		if ta.ch != amp.ch {
@@ -153,7 +159,11 @@ func (s *State) PathClear(pos Position, new Position) (int, bool) {
 	for x != nx || y != ny {
 		switch {
 		case nx == x:
-			y++
+			if y < ny {
+				y++
+			} else {
+				y--
+			}
 		case y != 1:
 			y--
 		case x > nx:
@@ -162,7 +172,7 @@ func (s *State) PathClear(pos Position, new Position) (int, bool) {
 			x++
 		}
 		npos := NewPosition(x, y)
-		if _, ok := s.m[npos]; ok {
+		if s.m[npos] != nil {
 			return 0, false
 		}
 		cost++
@@ -182,7 +192,7 @@ func (mc MoveCost) String() string {
 func (s *State) Moves(pos Position) []MoveCost {
 	// no moves if we are home already
 	if s.IsHome(pos) {
-		return []MoveCost{}
+		return nil
 	}
 	x, y := pos.XY()
 	home := s.Home(pos)
@@ -193,25 +203,33 @@ func (s *State) Moves(pos Position) []MoveCost {
 	}
 	if y == 1 {
 		// can only move home from row 1
-		return []MoveCost{}
+		return nil
+	}
+	rowOnePos := NewPosition(x, 1)
+	costToRowOne, clear := s.PathClear(pos, rowOnePos)
+	if !clear {
+		return nil
 	}
 	res := make([]MoveCost, 0, 7)
-	if 1 < x {
-		npos := NewPosition(1, 1)
-		if cost, clear := s.PathClear(pos, npos); clear {
-			res = append(res, MoveCost{npos, cost})
+	for nx, cost := x-1, costToRowOne; nx >= 1; nx, cost = nx-1, cost+1 {
+		npos := NewPosition(nx, 1)
+		if s.m[npos] != nil {
+			break
 		}
-	}
-	for mx := 2; mx < 12; mx += 2 {
-		npos := NewPosition(mx, 1)
-		if cost, clear := s.PathClear(pos, npos); clear {
-			res = append(res, MoveCost{npos, cost})
+		if nx == 3 || nx == 5 || nx == 7 || nx == 9 {
+			continue
 		}
+		res = append(res, MoveCost{npos, cost + 1})
 	}
-
-	npos := NewPosition(11, 1)
-	if cost, clear := s.PathClear(pos, npos); clear {
-		res = append(res, MoveCost{npos, cost})
+	for nx, cost := x+1, costToRowOne; nx <= 11; nx, cost = nx+1, cost+1 {
+		npos := NewPosition(nx, 1)
+		if s.m[npos] != nil {
+			break
+		}
+		if nx == 3 || nx == 5 || nx == 7 || nx == 9 {
+			continue
+		}
+		res = append(res, MoveCost{npos, cost + 1})
 	}
 	return res
 }
@@ -222,7 +240,7 @@ type Game struct {
 
 func NewGame(in []byte) *Game {
 	x, y := 0, 0
-	init := make(map[Position]Amphipod, 8)
+	init := make([]*Amphipod, 27)
 	for i := range in {
 		if in[i] == '\n' {
 			x = 0
@@ -231,7 +249,8 @@ func NewGame(in []byte) *Game {
 			//fmt.Printf("%d,%d: %s %d %d\n",
 			//	x, y, string(in[i]), me, 3+2*int(in[i]-'A'))
 			pos := NewPosition(x, y)
-			init[pos] = NewAmphipod(in[i])
+			amp := NewAmphipod(in[i])
+			init[pos] = &amp
 		}
 		x++
 	}
@@ -280,17 +299,19 @@ func (g *Game) Solve(state *State) int {
 		}
 		visited[vk] = true
 		for pos, amp := range cur.m {
-			for _, moveCost := range cur.Moves(pos) {
+			if amp == nil {
+				continue
+			}
+			moves := cur.Moves(Position(pos))
+			if moves == nil {
+				continue
+			}
+			for _, moveCost := range moves {
 				n := &State{cur.energy + moveCost.cost*amp.me,
-					make(map[Position]Amphipod, len(cur.m)),
+					make([]*Amphipod, len(cur.m)),
 					cur.homeSize}
-				for k, v := range cur.m {
-					if k != pos {
-						n.m[k] = v
-					} else {
-						n.m[moveCost.pos] = v
-					}
-				}
+				copy(n.m, cur.m)
+				n.m[moveCost.pos], n.m[pos] = n.m[pos], nil
 				heap.Push(&pq, n)
 			}
 		}
@@ -304,26 +325,33 @@ func (g *Game) Part1() int {
 
 func (g *Game) Part2() int {
 	n := &State{0,
-		make(map[Position]Amphipod, len(g.init.m)+8),
+		make([]*Amphipod, len(g.init.m)+8),
 		g.init.homeSize + 2}
-	for k, v := range g.init.m {
-		x, y := k.XY()
+	for i, amp := range g.init.m {
+		if amp == nil {
+			continue
+		}
+		x, y := Position(i).XY()
 		if y == 3 {
-			n.m[NewPosition(x, y+2)] = v
+			n.m[NewPosition(x, y+2)] = amp
 		} else {
-			n.m[k] = v
+			n.m[i] = amp
 		}
 	}
 	// #D#C#B#A#
 	// #D#B#A#C#
-	n.m[NewPosition(3, 3)] = NewAmphipod('D')
-	n.m[NewPosition(3, 4)] = NewAmphipod('D')
-	n.m[NewPosition(5, 3)] = NewAmphipod('C')
-	n.m[NewPosition(5, 4)] = NewAmphipod('B')
-	n.m[NewPosition(7, 3)] = NewAmphipod('B')
-	n.m[NewPosition(7, 4)] = NewAmphipod('A')
-	n.m[NewPosition(9, 3)] = NewAmphipod('A')
-	n.m[NewPosition(9, 4)] = NewAmphipod('C')
+	nd := NewAmphipod('D')
+	nc := NewAmphipod('C')
+	nb := NewAmphipod('B')
+	na := NewAmphipod('A')
+	n.m[NewPosition(3, 3)] = &nd
+	n.m[NewPosition(3, 4)] = &nd
+	n.m[NewPosition(5, 3)] = &nc
+	n.m[NewPosition(5, 4)] = &nb
+	n.m[NewPosition(7, 3)] = &nb
+	n.m[NewPosition(7, 4)] = &na
+	n.m[NewPosition(9, 3)] = &na
+	n.m[NewPosition(9, 4)] = &nc
 	return g.Solve(n)
 }
 
