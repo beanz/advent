@@ -4,7 +4,6 @@ import (
 	_ "embed"
 	"fmt"
 	"log"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -15,7 +14,7 @@ import (
 //go:embed input.txt
 var input []byte
 
-type Reg map[byte]int
+type Reg []int
 
 type Inst func(*Game)
 
@@ -32,47 +31,54 @@ type Game struct {
 
 func (g *Game) String() string {
 	s := fmt.Sprintf("%d %d: ", g.id, g.ip)
-	r := []int{}
-	for k := range g.regs {
-		r = append(r, int(k))
-	}
-	sort.Ints(r)
-
-	for _, b := range r {
-		if g.regs[byte(b)] != 0 {
-			s += fmt.Sprintf("%s=%d ", string(byte(b)), g.regs[byte(b)])
+	for i, v := range g.regs {
+		if v != 0 {
+			s += fmt.Sprintf("%s=%d ", string('a'+byte(i)), v)
 		}
 	}
 	return s
 }
 
+func (g *Game) regOrImmediate(s string) (int, bool) {
+	if 'a' <= s[0] && s[0] <= 'z' {
+		return int(byte(s[0]) - 'a'), true
+	}
+	val, _ := strconv.Atoi(s)
+	return val, false
+}
+
 func (g *Game) regValueOrImmediate(s string) int {
 	if 'a' <= s[0] && s[0] <= 'z' {
-		return g.regs[s[0]]
+		return g.regs[int(byte(s[0])-'a')]
 	}
 	val, _ := strconv.Atoi(s)
 	return val
 }
 
 func NewGame(lines []string, cs, cr chan int, id int) *Game {
-	g := &Game{[]Inst{}, Reg{}, 0, 0, 0, 0, id, false}
-	g.regs['p'] = id
+	regs := make(Reg, 26)
+	g := &Game{[]Inst{}, regs, 0, 0, 0, 0, id, false}
+	g.regs['p'-'a'] = id
 	for _, line := range lines {
 		inst := strings.Split(line, " ")
-		reg := inst[1][0]
+		reg := int(byte(inst[1][0]) - 'a')
 		var fn Inst
 		switch inst[0] {
 		case "snd":
 			fn = func(*Game) {
 				if cs != nil {
+					delay := time.NewTimer(400 * time.Microsecond)
 					select {
 					case cs <- g.regs[reg]:
+						if !delay.Stop() {
+							<-delay.C
+						}
 						g.sendCount++
 						if g.debug {
 							fmt.Printf("send %d from %d\n",
 								g.regs[reg], g.id)
 						}
-					case <-time.After(1 * time.Second):
+					case <-delay.C:
 						g.ip += 1000000
 					}
 				} else {
@@ -83,12 +89,16 @@ func NewGame(lines []string, cs, cr chan int, id int) *Game {
 		case "rcv":
 			fn = func(*Game) {
 				if cr != nil {
+					delay := time.NewTimer(400 * time.Microsecond)
 					select {
 					case g.regs[reg] = <-cr:
+						if !delay.Stop() {
+							<-delay.C
+						}
 						if g.debug {
 							fmt.Printf("got %d from %d\n", g.regs[reg], g.id)
 						}
-					case <-time.After(1 * time.Second):
+					case <-delay.C:
 						g.ip += 1000000
 					}
 				} else {
@@ -99,37 +109,95 @@ func NewGame(lines []string, cs, cr chan int, id int) *Game {
 				g.ip++
 			}
 		case "set":
-			fn = func(*Game) {
-				val := g.regValueOrImmediate(inst[2])
-				g.regs[reg] = val
-				g.ip++
+			v, isReg := g.regOrImmediate(inst[2])
+			if isReg {
+				fn = func(*Game) {
+					g.regs[reg] = g.regs[v]
+					g.ip++
+				}
+			} else {
+				fn = func(*Game) {
+					g.regs[reg] = v
+					g.ip++
+				}
 			}
 		case "add":
-			fn = func(*Game) {
-				val := g.regValueOrImmediate(inst[2])
-				g.regs[reg] += val
-				g.ip++
+			v, isReg := g.regOrImmediate(inst[2])
+			if isReg {
+				fn = func(*Game) {
+					g.regs[reg] += g.regs[v]
+					g.ip++
+				}
+			} else {
+				fn = func(*Game) {
+					g.regs[reg] += v
+					g.ip++
+				}
 			}
 		case "mul":
-			fn = func(*Game) {
-				val := g.regValueOrImmediate(inst[2])
-				g.regs[reg] *= val
-				g.ip++
+			v, isReg := g.regOrImmediate(inst[2])
+			if isReg {
+				fn = func(*Game) {
+					g.regs[reg] *= g.regs[v]
+					g.ip++
+				}
+			} else {
+				fn = func(*Game) {
+					g.regs[reg] *= v
+					g.ip++
+				}
 			}
 		case "mod":
-			fn = func(*Game) {
-				val := g.regValueOrImmediate(inst[2])
-				g.regs[reg] %= val
-				g.ip++
+			v, isReg := g.regOrImmediate(inst[2])
+			if isReg {
+				fn = func(*Game) {
+					g.regs[reg] %= g.regs[v]
+					g.ip++
+				}
+			} else {
+				fn = func(*Game) {
+					g.regs[reg] %= v
+					g.ip++
+				}
 			}
 		case "jgz":
-			fn = func(*Game) {
-				val := g.regValueOrImmediate(inst[2])
-				test := g.regValueOrImmediate(inst[1])
-				if test > 0 {
-					g.ip += val
+			v1, isReg1 := g.regOrImmediate(inst[1])
+			v2, isReg2 := g.regOrImmediate(inst[2])
+			if isReg1 {
+				if isReg2 {
+					fn = func(*Game) {
+						if g.regs[v1] > 0 {
+							g.ip += g.regs[v2]
+						} else {
+							g.ip++
+						}
+					}
 				} else {
-					g.ip++
+					fn = func(*Game) {
+						if g.regs[v1] > 0 {
+							g.ip += v2
+						} else {
+							g.ip++
+						}
+					}
+				}
+			} else {
+				if isReg2 {
+					fn = func(*Game) {
+						if v1 > 0 {
+							g.ip += g.regs[v2]
+						} else {
+							g.ip++
+						}
+					}
+				} else {
+					fn = func(*Game) {
+						if v1 > 0 {
+							g.ip += v2
+						} else {
+							g.ip++
+						}
+					}
 				}
 			}
 		default:
@@ -142,9 +210,7 @@ func NewGame(lines []string, cs, cr chan int, id int) *Game {
 
 func (g *Game) Part1() int {
 	for g.ip < len(g.prog) {
-		if g.debug {
-			fmt.Printf("%s\n", g)
-		}
+		//fmt.Printf("%s\n", g)
 		g.prog[g.ip](g)
 		if g.rcv != 0 {
 			return g.rcv
