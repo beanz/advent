@@ -13,7 +13,7 @@ var input []byte
 
 type Segments int
 
-func NewSegments(s string) (res Segments) {
+func NewSegments(s []byte) (res Segments) {
 	for _, ch := range s {
 		res |= (1 << (byte(ch) - byte('a')))
 	}
@@ -62,8 +62,6 @@ type Entry struct {
 	output       []Segments
 	patternOfLen map[int][]Segments
 	outputOfLen  map[int][]Segments
-	line         string
-	no           int
 }
 
 type Notes struct {
@@ -71,33 +69,63 @@ type Notes struct {
 	debug   bool
 }
 
-func NewNotes(in []string) *Notes {
-	entries := make([]Entry, 0, len(in))
-	for i, l := range in {
-		s := strings.Split(l, " | ")
-		p := strings.Split(s[0], " ")
-		o := strings.Split(s[1], " ")
-		pl := make(map[int][]Segments)
-		ps := make([]Segments, len(p))
-		for i := range p {
-			ps[i] = NewSegments(p[i])
-			pl[len(p[i])] = append(pl[len(p[i])], ps[i])
+func NewNotes(in []byte) *Notes {
+	entries := make([]Entry, 0, 200)
+	pl := make(map[int][]Segments)
+	ps := make([]Segments, 0, 10)
+	ol := make(map[int][]Segments)
+	os := make([]Segments, 0, 4)
+	j := 0
+	state := true // pattern part
+	word := false
+	for i := 0; i < len(in); i++ {
+		if 'a' <= in[i] && in[i] <= 'g' {
+			if !word {
+				j = i
+				word = true
+			}
+		} else if in[i] == ' ' {
+			if word {
+				s := NewSegments(in[j:i])
+				l := i - j
+				if state {
+					ps = append(ps, s)
+					pl[l] = append(pl[l], s)
+				} else {
+					os = append(os, s)
+					ol[l] = append(ol[l], s)
+				}
+				word = false
+			}
+		} else if in[i] == '|' {
+			state = false // output part
+		} else if in[i] == '\n' {
+			if word {
+				s := NewSegments(in[j:i])
+				l := i - j
+				if state {
+					ps = append(ps, s)
+					pl[l] = append(pl[l], s)
+				} else {
+					os = append(os, s)
+					ol[l] = append(ol[l], s)
+				}
+				word = false
+			}
+			entries = append(entries,
+				Entry{
+					pattern:      ps,
+					patternOfLen: pl,
+					output:       os,
+					outputOfLen:  ol,
+				})
+			word = false
+			pl = make(map[int][]Segments)
+			ps = make([]Segments, 0, 10)
+			ol = make(map[int][]Segments)
+			os = make([]Segments, 0, 4)
+			state = true // pattern part
 		}
-		ol := make(map[int][]Segments)
-		os := make([]Segments, len(o))
-		for i := range o {
-			os[i] = NewSegments(o[i])
-			ol[len(o[i])] = append(ol[len(o[i])], os[i])
-		}
-		entries = append(entries,
-			Entry{
-				pattern:      ps,
-				patternOfLen: pl,
-				output:       os,
-				outputOfLen:  ol,
-				line:         l,
-				no:           i,
-			})
 	}
 	return &Notes{entries, false}
 }
@@ -162,13 +190,13 @@ func (sp SegmentPerm) String() string {
 
 func (n *Notes) Part2() int {
 	c := 0
-	for _, e := range n.entries {
+	for i, e := range n.entries {
 		sp := NewPerm(e)
 		n := 0
 		for _, w := range e.output {
 			d := sp.Permute(w).Digit()
 			if d == -1 {
-				panic(fmt.Sprintf("%d %s: invalid digit %s", e.no, e.line, w))
+				panic(fmt.Sprintf("invalid digit %s (%d)", w, i))
 			}
 			n = n*10 + d
 		}
@@ -178,8 +206,7 @@ func (n *Notes) Part2() int {
 }
 
 func main() {
-	inp := InputLines(input)
-	n := NewNotes(inp)
+	n := NewNotes(InputBytes(input))
 	p1 := n.Part1()
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)

@@ -1,14 +1,23 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
+	_ "embed"
+	assert "github.com/stretchr/testify/require"
 	"testing"
-
-	. "github.com/beanz/advent/lib-go"
 )
+
+//go:embed test0.txt
+var test0 []byte
+
+//go:embed test1.txt
+var test1 []byte
+
+//go:embed test2.txt
+var test2 []byte
 
 type TestCase struct {
 	file string
+	data []byte
 	ans  int
 }
 
@@ -23,7 +32,7 @@ func TestSegments(t *testing.T) {
 		{s: "abcdefg", ans: 127},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.ans, int(NewSegments(tc.s)))
+		assert.Equal(t, tc.ans, int(NewSegments([]byte(tc.s))))
 	}
 }
 
@@ -47,31 +56,31 @@ func TestDigit(t *testing.T) {
 		{s: "gedca", ans: 2},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.ans, NewSegments(tc.s).Digit())
+		assert.Equal(t, tc.ans, NewSegments([]byte(tc.s)).Digit())
 	}
 }
 
 func TestPart1(t *testing.T) {
 	tests := []TestCase{
-		{"test0.txt", 2},
-		{"test1.txt", 26},
-		{"test2.txt", 0},
-		{"input.txt", 504},
+		{"test0.txt", test0, 2},
+		{"test1.txt", test1, 26},
+		{"test2.txt", test2, 0},
+		{"input.txt", input, 504},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.ans, NewNotes(ReadLines(tc.file)).Part1(), tc.file)
+		assert.Equal(t, tc.ans, NewNotes(tc.data).Part1(), tc.file)
 	}
 }
 
 func TestPart2(t *testing.T) {
 	tests := []TestCase{
-		{"test0.txt", 8394},
-		{"test1.txt", 61229},
-		{"test2.txt", 5353},
-		{"input.txt", 1073431},
+		{"test0.txt", test0, 8394},
+		{"test1.txt", test1, 61229},
+		{"test2.txt", test2, 5353},
+		{"input.txt", input, 1073431},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.ans, NewNotes(ReadLines(tc.file)).Part2(), tc.file)
+		assert.Equal(t, tc.ans, NewNotes(tc.data).Part2(), tc.file)
 	}
 }
 
