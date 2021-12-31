@@ -26,20 +26,27 @@ type Hall struct {
 	calls  []byte
 	boards []*Board
 	left   byte
-	lookup map[byte][]*NumLocation
+	lookup [][]*NumLocation
 }
 
-func NewHall(in []string) *Hall {
-	calls := FastBytes([]byte(in[0]))
-	in = in[1:]
+func NewHall(in []byte) *Hall {
+	i := 0
+	for ; in[i] != '\n'; i++ {
+	}
+	calls := FastBytes([]byte(in[:i]))
+	boardNums := FastBytes([]byte(in[i+1:]))
+	numBoards := len(boardNums) / 25
 	h := &Hall{
 		calls:  calls,
-		boards: make([]*Board, len(in)),
-		left:   byte(len(in)),
-		lookup: make(map[byte][]*NumLocation, 128),
+		boards: make([]*Board, numBoards),
+		left:   byte(numBoards),
+		lookup: make([][]*NumLocation, 0, 100),
 	}
-	for i, bin := range in {
-		nums := FastBytes([]byte(bin))
+	for n := 0; n < 100; n++ {
+		h.lookup = append(h.lookup, make([]*NumLocation, 0, numBoards))
+	}
+	for i := 0; i < numBoards; i++ {
+		nums := boardNums[i*25 : (i+1)*25]
 		rleft := make([]byte, 5)
 		cleft := make([]byte, 5)
 		h.boards[i] = &Board{0, false, byte(i), rleft, cleft}
@@ -51,18 +58,11 @@ func NewHall(in []string) *Hall {
 			for ; c < 5; c++ {
 				n := nums[r*5+c]
 				h.boards[i].score += int(n)
-				h.AddLookup(n, &NumLocation{byte(i), r, c})
+				h.lookup[n] = append(h.lookup[n], &NumLocation{byte(i), r, c})
 			}
 		}
 	}
 	return h
-}
-
-func (h *Hall) AddLookup(call byte, nl *NumLocation) {
-	if _, ok := h.lookup[call]; !ok {
-		h.lookup[call] = make([]*NumLocation, 0, 35)
-	}
-	h.lookup[call] = append(h.lookup[call], nl)
 }
 
 func (h *Hall) Bingo() (int, int) {
@@ -96,8 +96,7 @@ func (h *Hall) Bingo() (int, int) {
 }
 
 func main() {
-	inp := InputChunks(input)
-	g := NewHall(inp)
+	g := NewHall(InputBytes(input))
 	p1, p2 := g.Bingo()
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
