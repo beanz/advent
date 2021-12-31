@@ -3,7 +3,6 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	"strings"
 	. "github.com/beanz/advent/lib-go"
 )
 
@@ -13,85 +12,60 @@ var input []byte
 type SC []bool
 
 type Cucumbers struct {
-	e SC
-	s SC
+	m    *ByteMap
 	w, h int
 }
 
 func NewCucumbers(in []byte) *Cucumbers {
-	c := &Cucumbers{make(SC, len(in)),make(SC, len(in)), 0, 0}
-	x := 0
-	y := 0
-	w := 0
-	for _, ch := range in {
-		switch ch {
-		case '>':
-			c.e[x+y*w] = true
-		case 'v':
-			c.s[x+y*w] = true
-		case '\n':
-			w = x
-			x = -1
-			y++
-		}
-		x++
-	}
-	c.w = w
-	c.h = y
-	return c
+	m := NewByteMap(in)
+	return &Cucumbers{m, m.Width(), m.Height()}
 }
 
 func (c *Cucumbers) String() string {
-	var sb strings.Builder
-	for y := 0; y < c.h; y++ {
-		for x := 0; x < c.w; x++ {
-			if c.e[x+y*c.w] {
-				sb.WriteByte('>')
-			} else if c.s[x+y*c.w] {
-				sb.WriteByte('v')
-			} else {
-				sb.WriteByte('.')
-			}
-		}
-		sb.WriteByte('\n')
-	}
-	return sb.String()
+	return c.m.String()
 }
 
 func (c *Cucumbers) Iter() int {
-	m := []int{}
-	for i := 0; i < len(c.e); i++ {
-		if !c.e[i] {
-			continue
+	moved := 0
+	for y := 0; y < c.h; y++ {
+		i := c.m.XYToIndex(0, y)
+		max := i + c.w - 1
+		if c.m.Get(i) == '.' && c.m.Get(max) == '>' {
+			moved++
+			c.m.Set(i, '>')
+			c.m.Set(max, '.')
+			i++
+			max--
 		}
-		mi := (i%c.w+1)%c.w + c.w*(i/c.w)
-		if !c.e[mi] && !c.s[mi] {
-			m = append(m, i)
-		}
-	}
-	for _, i := range m {
-		c.e[i] = false
-		mi := (i%c.w+1)%c.w + c.w*(i/c.w)
-		c.e[mi] = true
-	}
-	mc := len(m)
-	m = m[:0]
-	for i := 0; i < len(c.s); i++ {
-		if !c.s[i] {
-			continue
-		}
-		mi := (i%c.w) + c.w*((i/c.w+1)%c.h)
-		if !c.e[mi] && !c.s[mi] {
-			m = append(m, i)
+		for ; i < max; i++ {
+			if c.m.Get(i) == '>' && c.m.Get(i+1) == '.' {
+				moved++
+				c.m.Set(i, '.')
+				c.m.Set(i+1, '>')
+				i++
+			}
 		}
 	}
-	mc += len(m)
-	for _, i := range m {
-		c.s[i] = false
-		mi := (i%c.w) + c.w*((i/c.w+1)%c.h)
-		c.s[mi] = true
+	for x := 0; x < c.w; x++ {
+		y := 0
+		max := c.h - 1
+		if c.m.GetXY(x, y) == '.' && c.m.GetXY(x, max) == 'v' {
+			moved++
+			c.m.SetXY(x, y, 'v')
+			c.m.SetXY(x, max, '.')
+			y++
+			max--
+		}
+		for ; y < max; y++ {
+			if c.m.GetXY(x, y) == 'v' && c.m.GetXY(x, y+1) == '.' {
+				moved++
+				c.m.SetXY(x, y, '.')
+				c.m.SetXY(x, y+1, 'v')
+				y++
+			}
+		}
 	}
-	return mc
+	return moved
 }
 
 func (c *Cucumbers) Part1() int {
