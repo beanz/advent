@@ -1,8 +1,8 @@
 package main
 
 import (
-	_ "embed"
 	"container/heap"
+	_ "embed"
 	"fmt"
 	. "github.com/beanz/advent/lib-go"
 )
@@ -11,37 +11,38 @@ import (
 var input []byte
 
 type Cave struct {
-	m *ByteMap
-	dim int
-	mw, mh int
-	w, h int
+	m      *ByteMap
+	dim    uint16
+	mw, mh uint16
+	w, h   uint16
 }
 
 func NewCave(in []byte) *Cave {
 	m := NewByteMap(in)
-	c := &Cave{m, 1, m.Width(), m.Height(), m.Width(), m.Height()}
+	c := &Cave{m, 1, uint16(m.Width()), uint16(m.Height()),
+		uint16(m.Width()), uint16(m.Height())}
 	return c
 }
 
-func (c *Cave) SetDim(n int) {
+func (c *Cave) SetDim(n uint16) {
 	c.dim = n
-	c.w = c.mw*n
-	c.h = c.mh*n
+	c.w = c.mw * n
+	c.h = c.mh * n
 }
 
-func (c *Cave) Risk(x, y int) byte {
-	v := c.m.GetXY(x %c.mw, y % c.mh)-'0'
-	v += byte(x/c.mw)
-	v += byte(y/c.mh)
-	for ;v>9; {
-		v-=9
+func (c *Cave) Risk(x, y uint16) uint16 {
+	v := c.m.GetXY(int(x%c.mw), int(y%c.mh)) - '0'
+	v += byte(x / c.mw)
+	v += byte(y / c.mh)
+	for v > 9 {
+		v -= 9
 	}
-	return v
+	return uint16(v)
 }
 
 type Rec struct {
-	x, y int
-	risk int
+	x, y uint16
+	risk uint16
 }
 
 //type Search []Rec
@@ -71,9 +72,9 @@ func (pq *PQ) Pop() interface{} {
 	return item
 }
 
-func (c *Cave) Solve() int {
-	visited := make(map[int]int, c.mw*c.mh)
-	pq := make(PQ, 1)
+func (c *Cave) Solve() uint16 {
+	visited := make(map[uint32]struct{}, c.mw*c.mh)
+	pq := make(PQ, 1, 10240)
 	pq[0] = &Rec{0, 0, 0}
 	heap.Init(&pq)
 	for pq.Len() > 0 {
@@ -81,31 +82,37 @@ func (c *Cave) Solve() int {
 		if cur.x == c.w-1 && cur.y == c.h-1 {
 			return cur.risk
 		}
-		vk := cur.x + (cur.y<<10)
-		if v, ok := visited[vk]; ok && v <= cur.risk {
+		vk := uint32(cur.x) + (uint32(cur.y) << 10)
+		if _, ok := visited[vk]; ok {
 			continue
 		}
-		visited[vk] = cur.risk
-		for _, o := range [][]int{{0,-1}, {1,0}, {0,1}, {-1,0}} {
-			x := cur.x + o[0]
-			y := cur.y + o[1]
-			if x <0 || y <0 || x >= c.w || y >= c.h {
-				continue
-			}
-			nr := c.Risk(x, y)
-			risk := cur.risk + int(nr)
-			heap.Push(&pq, &Rec{x, y, risk})
+		visited[vk] = struct{}{}
+		if cur.x > 0 {
+			risk := cur.risk + c.Risk(cur.x-1, cur.y)
+			heap.Push(&pq, &Rec{cur.x - 1, cur.y, risk})
+		}
+		if cur.x < c.w-1 {
+			risk := cur.risk + c.Risk(cur.x+1, cur.y)
+			heap.Push(&pq, &Rec{cur.x + 1, cur.y, risk})
+		}
+		if cur.y > 0 {
+			risk := cur.risk + c.Risk(cur.x, cur.y-1)
+			heap.Push(&pq, &Rec{cur.x, cur.y - 1, risk})
+		}
+		if cur.y < c.h-1 {
+			risk := cur.risk + c.Risk(cur.x, cur.y+1)
+			heap.Push(&pq, &Rec{cur.x, cur.y + 1, risk})
 		}
 	}
-	return -1
+	return 0
 }
 
-func (c *Cave) Part1() int {
+func (c *Cave) Part1() uint16 {
 	c.SetDim(1)
 	return c.Solve()
 }
 
-func (c *Cave) Part2() int {
+func (c *Cave) Part2() uint16 {
 	c.SetDim(5)
 	return c.Solve()
 }

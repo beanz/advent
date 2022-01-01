@@ -16,8 +16,8 @@ var safeinput []byte
 type TestCase struct {
 	file string
 	data []byte
-	dim int
-	ans  int
+	dim uint16
+	ans  uint16
 }
 
 func TestSolve(t *testing.T) {
