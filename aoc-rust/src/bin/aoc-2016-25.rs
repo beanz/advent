@@ -89,7 +89,8 @@ impl Inst {
             Inst::Jnz(x, y) => {
                 let vx = x.value(&state.reg);
                 let vy = y.value(&state.reg);
-                state.ip += if vx != 0 { vy } else { 1 } as usize;
+                let j = if vx != 0 { vy } else { 1 };
+                state.ip = (state.ip as isize + j) as usize;
             }
             Inst::Out(x) => {
                 let vx = x.value(&state.reg);
