@@ -161,7 +161,7 @@ aoc-rust/target/release/%.ns: aoc-rust/target/release/%
 
 %/aoc-go.ns: %/aoc-go
 	mkdir -p $(dir $@) && \
-	(cd $* && go test -run=XXX -bench=BenchmarkMain . ) | \
+	(cd $* && go test -run=XXX -benchtime=5s -bench=BenchmarkMain . ) | \
 	  tee /dev/stderr | grep "BenchmarkMain-" > $@
 
 %/aoc.pl.log: %/aoc.pl
