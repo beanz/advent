@@ -64,15 +64,6 @@ func main() {
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
 		fmt.Printf("Part 2: %d\n", p2)
-	} else {
-		if p1 != 456 {
-			panic(fmt.Sprintf("benchmark got wrong result %d should be %d",
-				p1, 456))
-		}
-		if p2 != 1047744 {
-			panic(fmt.Sprintf("benchmark got wrong result %d should be %d",
-				p1, 1047744))
-		}
 	}
 }
 
