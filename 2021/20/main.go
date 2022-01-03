@@ -3,8 +3,8 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	"strings"
 	. "github.com/beanz/advent/lib-go"
+	"strings"
 )
 
 //go:embed input.txt
@@ -13,12 +13,14 @@ var input []byte
 type Image struct {
 	lookup []bool
 	m      []bool
+	m2     []bool
 	w, h   int
 }
 
 func NewImage(in []byte) *Image {
 	lookup := make([]bool, 0, 512)
-	m := make([]bool, 0, 10000)
+	m := make([]bool, 0, 40000)
+	m2 := make([]bool, 0, 40000)
 	var i int
 	for ; i < len(in) && in[i] != '\n'; i++ {
 		v := false
@@ -44,7 +46,7 @@ func NewImage(in []byte) *Image {
 		}
 		x++
 	}
-	return &Image{lookup, m, w, y}
+	return &Image{lookup, m, m2, w, y}
 }
 
 func (i *Image) String() string {
@@ -71,15 +73,33 @@ func (i *Image) value(x, y int, def bool) bool {
 
 func (i *Image) index(x, y int, def bool) int {
 	n := 0
-	if i.value(x+-1, y+-1, def) { n = 256 }
-	if i.value(x+0, y+-1, def) { n += 128 }
-	if i.value(x+1, y+-1, def) { n += 64 }
-	if i.value(x+-1, y+0, def) { n += 32 }
-	if i.value(x+0, y+0, def) { n += 16 }
-	if i.value(x+1, y+0, def) { n += 8 }
-	if i.value(x+-1, y+1, def) { n += 4 }
-	if i.value(x+0, y+1, def) { n += 2 }
-	if i.value(x+1, y+1, def) { n++ }
+	if i.value(x+-1, y+-1, def) {
+		n = 256
+	}
+	if i.value(x+0, y+-1, def) {
+		n += 128
+	}
+	if i.value(x+1, y+-1, def) {
+		n += 64
+	}
+	if i.value(x+-1, y+0, def) {
+		n += 32
+	}
+	if i.value(x+0, y+0, def) {
+		n += 16
+	}
+	if i.value(x+1, y+0, def) {
+		n += 8
+	}
+	if i.value(x+-1, y+1, def) {
+		n += 4
+	}
+	if i.value(x+0, y+1, def) {
+		n += 2
+	}
+	if i.value(x+1, y+1, def) {
+		n++
+	}
 	return n
 }
 
@@ -88,20 +108,21 @@ func (i *Image) next(x, y int, def bool) bool {
 }
 
 func (i *Image) Iter(def bool) int {
-	nw := i.w+2
-	m := make([]bool, nw*(i.h+2))
+	m := i.m2[:0]
 	c := 0
 	for ny, y := 0, -1; y <= i.h; ny, y = ny+1, y+1 {
 		for nx, x := 0, -1; x <= i.w; nx, x = nx+1, x+1 {
 			if i.next(x, y, def) {
 				c++
-				m[nx + nw*ny] = true
+				m = append(m, true)
+			} else {
+				m = append(m, false)
 			}
 		}
 	}
 	i.w += 2
 	i.h += 2
-	i.m = m
+	i.m2, i.m = i.m, m
 	return c
 }
 
@@ -109,7 +130,7 @@ func (i *Image) Enhance() (int, int) {
 	i.Iter(false)
 	p1 := i.Iter(true)
 	var p2 int
-	for n := 3; n <= 50; n+=2 {
+	for n := 3; n <= 50; n += 2 {
 		i.Iter(false)
 		p2 = i.Iter(true)
 	}
