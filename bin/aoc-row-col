@@ -1,0 +1,15 @@
+#!/usr/bin/perl
+
+my @c = <>;
+my $digits = length("".scalar@c);
+
+printf "%${digits}s ", "";
+for (0..7) {
+  printf "%-10d", $_;
+}
+print "\n";
+printf "%${digits}s ", "";
+print "0123456789" x 7, "012345678\n";
+for (0..@c-1) {
+  printf "%${digits}d %s", $_, $c[$_];
+}
