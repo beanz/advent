@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"path/filepath"
 	"math"
-	"regexp"
 	"os"
+	"path/filepath"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -27,8 +27,8 @@ func makeTable(benchmarks benchmarkData) string {
 
 	languages := []string{}
 	for lang := range benchmarks {
-			languages = append(languages, lang)
-		}
+		languages = append(languages, lang)
+	}
 	sort.Strings(languages)
 	for _, lang := range languages {
 		sb.WriteByte('\n')
@@ -110,8 +110,8 @@ func loadBenchmarks(dir string) (benchmarkData, error) {
 	otherRe :=
 		regexp.MustCompile(`/(\d+)/(\d+)/aoc-(\w+).ns$`)
 	language := map[string]string{
-		"go": "Golang",
-		"cr": "Crystal",
+		"go":  "Golang",
+		"cr":  "Crystal",
 		"zig": "Zig",
 		"cpp": "C++",
 		"nim": "Nim",
@@ -167,7 +167,7 @@ func (bm benchmarkData) readResult(file string, lang, year, day string) error {
 	case len(result) > 3 && result[len(result)-2:] == "ns":
 		// rust result
 		s := strings.Split(result, ": ")
-		result = s[1][:len(s[1])-3]
+		result = s[1][:len(s[1])-2]
 	case len(result) > 14 && result[:13] == "BenchmarkMain":
 		// go result
 		result = strings.Split(result[:len(result)-6], "\t")[2]
@@ -178,7 +178,7 @@ func (bm benchmarkData) readResult(file string, lang, year, day string) error {
 	if err != nil {
 		return err
 	}
-	bm[lang][year][day] = time.Duration(int64(math.Round(benchmark*multiplier)))
+	bm[lang][year][day] = time.Duration(int64(math.Round(benchmark * multiplier)))
 	return nil
 }
 
