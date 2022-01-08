@@ -22,6 +22,8 @@ ZIG_SRC=$(sort $(wildcard ????/??/aoc.zig))
 ZIG_BIN=$(subst /aoc.zig,/aoc-zig,${ZIG_SRC})
 ZIG_LOG=$(subst /aoc.zig,/aoc-zig.log,${ZIG_SRC})
 ZIG_ERR=$(subst /aoc.zig,/aoc-zig.err,${ZIG_SRC})
+ZIG_REL=$(subst /aoc.zig,/aoc-zig-rel,${ZIG_SRC})
+ZIG_BENCH=$(subst /aoc.zig,/aoc-zig.ns,${ZIG_SRC})
 
 NIM_SRC=$(sort $(wildcard ????/??/aoc.nim))
 NIM_BIN=$(subst /aoc.nim,/aoc-nim,${NIM_SRC})
@@ -121,6 +123,9 @@ aoc-rust/target/release/aoc-%: aoc-rust/src/bin/aoc-%.rs
 	CRYSTAL_PATH=$(CR_LIB) $(CR) build --release -o $@ $<
 
 %/aoc-zig: %/aoc.zig
+	cd $(dir $@) && zig build-exe --name $(notdir $@) $(notdir $<)
+
+%/aoc-zig-rel: %/aoc.zig
 	cd $(dir $@) && zig build-exe -O ReleaseFast \
 		--name $(notdir $@) $(notdir $<)
 
@@ -159,8 +164,10 @@ aoc-rust/target/release/%.ns: aoc-rust/target/release/%
 	     tee $(notdir $<).log ) 2>&1 1>&3 | \
 	     tee $(notdir $<).err ) 3>&1 1>&2
 
+%/aoc-zig.ns: %/aoc-zig-rel
+	( cd $* && AoC_BENCH=1 ./$(notdir $<) | tee /dev/stderr ) >$@
+
 %/aoc-go.ns: %/aoc-go
-	mkdir -p $(dir $@) && \
 	(cd $* && go test -run=XXX -benchtime=5s -bench=BenchmarkMain . ) | \
 	  tee /dev/stderr | grep "BenchmarkMain-" > $@
 

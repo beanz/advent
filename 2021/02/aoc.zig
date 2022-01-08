@@ -1,98 +1,58 @@
 usingnamespace @import("aoc-lib.zig");
 
-const Sub = struct {
-    pub const Move = enum(u8) { forward, up, down };
-    const Cmd = struct {
-        move: Move, units: i64
-    };
-    cmds: []Cmd,
-
-    pub fn fromInput(inp: anytype, allocator: *Allocator) !*Sub {
-        var cmds = try allocator.alloc(Cmd, inp.len);
-        var hh = try alloc.create(Sub);
-        for (inp) |line, i| {
-            var it = split(line, " ");
-            const cmdstr = it.next().?;
-            const units = try parseInt(i64, it.next().?, 10);
-            var move: Move = undefined;
-            switch (cmdstr[0]) {
-                'f' => {
-                    move = .forward;
-                },
-                'u' => {
-                    move = .up;
-                },
-                'd' => {
-                    move = .down;
-                },
-                else => {
-                    unreachable;
-                },
-            }
-            cmds[i].move = move;
-            cmds[i].units = units;
+fn parts(inp: []const u8) [2]u64 {
+    var x1: u64 = 0;
+    var y1: u64 = 0;
+    var x2: u64 = 0;
+    var y2: u64 = 0;
+    var a: u64 = 0;
+    var i: usize = 0;
+    while (i < inp.len) {
+        switch (inp[i]) {
+            'f' => {
+                var u = inp[i + 8] - '0';
+                x1 += u;
+                x2 += u;
+                y2 += a * u;
+                i += 10;
+            },
+            'd' => {
+                var u = inp[i + 5] - '0';
+                y1 += u;
+                a += u;
+                i += 7;
+            },
+            'u' => {
+                var u = inp[i + 3] - '0';
+                y1 -= u;
+                a -= u;
+                i += 5;
+            },
+            else => {
+                unreachable;
+            },
         }
-        hh.cmds = cmds;
-        return hh;
     }
-
-    pub fn part1(self: *Sub) i64 {
-        var x: i64 = 0;
-        var y: i64 = 0;
-        for (self.cmds) |cmd, i| {
-            switch (cmd.move) {
-                Move.forward => {
-                    x += cmd.units;
-                },
-                Move.up => {
-                    y -= cmd.units;
-                },
-                Move.down => {
-                    y += cmd.units;
-                },
-            }
-        }
-        return x * y;
-    }
-
-    pub fn part2(self: *Sub) i64 {
-        var x: i64 = 0;
-        var y: i64 = 0;
-        var a: i64 = 0;
-        for (self.cmds) |cmd, i| {
-            switch (cmd.move) {
-                Move.forward => {
-                    x += cmd.units;
-                    y += a * cmd.units;
-                },
-                Move.up => {
-                    a -= cmd.units;
-                },
-                Move.down => {
-                    a += cmd.units;
-                },
-            }
-        }
-        return x * y;
-    }
-};
+    return [2]u64{ x1 * y1, x2 * y2 };
+}
 
 test "examples" {
-    const test1 = readLines(test1file);
-    const inp = readLines(inputfile);
+    var t = parts(test1file);
+    try assertEq(@as(u64, 150), t[0]);
+    try assertEq(@as(u64, 900), t[1]);
 
-    var t = Sub.fromInput(test1, alloc) catch unreachable;
-    try assertEq(@as(i64, 150), t.part1());
-    try assertEq(@as(i64, 900), t.part2());
+    var ti = parts(inputfile);
+    try assertEq(@as(u64, 1714950), ti[0]);
+    try assertEq(@as(u64, 1281977850), ti[1]);
+}
 
-    var ti = Sub.fromInput(inp, alloc) catch unreachable;
-    try assertEq(@as(i64, 1714950), ti.part1());
-    try assertEq(@as(i64, 1281977850), ti.part2());
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
+    var p = parts(inp);
+    if (!bench) {
+        try print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
+    }
 }
 
 pub fn main() anyerror!void {
-    var inp = readLines(input());
-    var sub = try Sub.fromInput(inp, alloc);
-    try print("Part1: {}\n", .{sub.part1()});
-    try print("Part2: {}\n", .{sub.part2()});
+    try benchme(input(), aoc);
 }

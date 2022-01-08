@@ -85,9 +85,9 @@ pub fn assertStrEq(exp: []const u8, act: []const u8) anyerror!void {
 }
 
 pub fn DEBUG() i32 {
-    const debug = try std.os.getEnvVarOwned(alloc, "AoC_DEBUG");
-    const i = try parseInt(i32, name, 10);
-    alloc.free(debug);
+    const debuglevel = @import("std").process.getEnvVarOwned(alloc, "AoC_DEBUG") catch return 0;
+    const i = parseInt(i32, debuglevel, 10) catch return 0;
+    alloc.free(debuglevel);
     return i;
 }
 
@@ -106,8 +106,8 @@ pub fn readInts(inp: anytype, T: type) []T {
     return ints.toOwnedSlice();
 }
 
-pub fn readLines(inp: anytype) [][]u8 {
-    var lines = ArrayList([]u8).init(alloc);
+pub fn readLines(inp: anytype) [][]const u8 {
+    var lines = ArrayList([]const u8).init(alloc);
     var lit = std.mem.split(inp, "\n");
     while (lit.next()) |line| {
         if (line.len == 0) {
@@ -222,5 +222,29 @@ pub fn countCharsInLines(lines: [][]const u8, findCh: u8) usize {
 pub fn prettyLines(lines: [][]const u8) void {
     for (lines) |line| {
         warn("{}\n", .{line});
+    }
+}
+
+pub fn BENCH() bool {
+    const is_bench = @import("std").process.getEnvVarOwned(alloc, "AoC_BENCH") catch return false;
+    alloc.free(is_bench);
+    return true;
+}
+
+pub fn benchme(inp: []const u8, call: fn (in: []const u8, bench: bool) anyerror!void) anyerror!void {
+    var it: i128 = 0;
+    const is_bench = BENCH();
+    var start = @import("std").time.nanoTimestamp();
+    var elapsed: i128 = 0;
+    while (true) {
+        try call(inp, is_bench);
+        it += 1;
+        elapsed = @import("std").time.nanoTimestamp() - start;
+        if (!is_bench or elapsed > 500000000) {
+            break;
+        }
+    }
+    if (is_bench) {
+        try print("bench {} iterations in {}ns: {}ns\n", .{ it, elapsed, @divTrunc(elapsed, it) });
     }
 }

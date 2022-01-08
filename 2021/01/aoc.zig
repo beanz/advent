@@ -30,9 +30,16 @@ fn part2(exp: []const i64) usize {
     return calc(exp, 3);
 }
 
-pub fn main() anyerror!void {
-    var scan = readInts(input(), i64);
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
+    var scan = readInts(inp, i64);
     defer free(scan);
-    try print("Part1: {}\n", .{part1(scan)});
-    try print("Part2: {}\n", .{part2(scan)});
+    var p1 = part1(scan);
+    var p2 = part2(scan);
+    if (!bench) {
+        try print("Part1: {}\nPart2: {}\n", .{ p1, p2 });
+    }
+}
+
+pub fn main() anyerror!void {
+    try benchme(input(), aoc);
 }
