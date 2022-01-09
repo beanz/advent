@@ -30,7 +30,7 @@ func InputLines(embedded []byte) []string {
 }
 
 func InputChunks(embedded []byte) []string {
-	return strings.Split(strings.TrimSuffix(InputString(embedded), "\n\n"), "\n\n")
+	return strings.Split(strings.TrimSuffix(InputString(embedded), "\n"), "\n\n")
 }
 
 func InputFile() string {
