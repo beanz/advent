@@ -1,16 +1,18 @@
 usingnamespace @import("aoc-lib.zig");
 
 test "examples" {
-    const test1 = readChunks(test1file);
-    try assertEq(@as(usize, 11), part1(test1));
-    try assertEq(@as(usize, 6), part2(test1));
+    const test1 = readChunks(test1file, talloc);
+    defer talloc.free(test1);
+    try assertEq(@as(usize, 11), part1(test1, talloc));
+    try assertEq(@as(usize, 6), part2(test1, talloc));
 
-    const inp = readChunks(inputfile);
-    try assertEq(@as(usize, 6506), part1(inp));
-    try assertEq(@as(usize, 3243), part2(inp));
+    const inp = readChunks(inputfile, talloc);
+    defer talloc.free(inp);
+    try assertEq(@as(usize, 6506), part1(inp, talloc));
+    try assertEq(@as(usize, 3243), part2(inp, talloc));
 }
 
-fn part1(inp: anytype) usize {
+fn part1(inp: anytype, alloc: *Allocator) usize {
     var c: usize = 0;
     for (inp) |ent| {
         var m = AutoHashMap(u8, usize).init(alloc);
@@ -31,7 +33,7 @@ fn part1(inp: anytype) usize {
     return c;
 }
 
-fn part2(inp: anytype) usize {
+fn part2(inp: anytype, alloc: *Allocator) usize {
     var c: usize = 0;
     for (inp) |ent| {
         var m = AutoHashMap(u8, usize).init(alloc);
@@ -56,8 +58,16 @@ fn part2(inp: anytype) usize {
     return c;
 }
 
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
+    var dec = readChunks(inp, halloc);
+    defer halloc.free(dec);
+    var p1 = part1(dec, halloc);
+    var p2 = part2(dec, halloc);
+    if (!bench) {
+        try print("Part 1: {}\nPart 2: {}\n", .{p1, p2});
+    }
+}
+
 pub fn main() anyerror!void {
-    var dec = readChunks(input());
-    try print("Part1: {}\n", .{part1(dec)});
-    try print("Part2: {}\n", .{part2(dec)});
+    try benchme(input(), aoc);
 }

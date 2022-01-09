@@ -59,8 +59,15 @@ fn part2(inp: anytype) usize {
     return c;
 }
 
-pub fn main() anyerror!void {
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
     const in = input();
-    try print("Part1: {}\n", .{part1(in)});
-    try print("Part2: {}\n", .{part2(in)});
+    var p1 = part1(in);
+    var p2 = part2(in);
+    if (!bench) {
+        try print("Part 1: {}\nPart 2: {}\n", .{p1, p2});
+    }
+}
+
+pub fn main() anyerror!void {
+    try benchme(input(), aoc);
 }

@@ -24,19 +24,43 @@ test "validate eye color" {
 }
 
 test "examples" {
-    const test1 = readChunkyObjects(test1file, "\n\n", "\n ", ":");
+    var test1 = readChunkyObjects(test1file, "\n\n", "\n ", ":", talloc);
+    defer {
+        for (test1) |*e| {
+            e.deinit();
+        }
+        talloc.free(test1);
+    }
     try assertEq(@as(usize, 2), part1(test1));
     try assertEq(@as(usize, 2), part2(test1));
 
-    const test2 = readChunkyObjects(test2file, "\n\n", "\n ", ":");
+    var test2 = readChunkyObjects(test2file, "\n\n", "\n ", ":", talloc);
+    defer {
+        for (test2) |*e| {
+            e.deinit();
+        }
+        talloc.free(test2);
+    }
     try assertEq(@as(usize, 4), part1(test2));
     try assertEq(@as(usize, 0), part2(test2));
 
-    const test3 = readChunkyObjects(test3file, "\n\n", "\n ", ":");
+    var test3 = readChunkyObjects(test3file, "\n\n", "\n ", ":", talloc);
+    defer {
+        for (test3) |*e| {
+            e.deinit();
+        }
+        talloc.free(test3);
+    }
     try assertEq(@as(usize, 4), part1(test3));
     try assertEq(@as(usize, 4), part2(test3));
 
-    const inp = readChunkyObjects(inputfile, "\n\n", "\n ", ":");
+    var inp = readChunkyObjects(inputfile, "\n\n", "\n ", ":", talloc);
+    defer {
+        for (inp) |*e| {
+            e.deinit();
+        }
+        talloc.free(inp);
+    }
     try assertEq(@as(usize, 213), part1(inp));
     try assertEq(@as(usize, 147), part2(inp));
 }
@@ -158,8 +182,21 @@ fn part2(inp: anytype) usize {
     return c;
 }
 
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
+    var scan = readChunkyObjects(inp, "\n\n", "\n ", ":", halloc);
+    defer {
+        for (scan) |*e| {
+            e.deinit();
+        }
+        halloc.free(scan);
+    }
+    var p1 = part1(scan);
+    var p2 = part2(scan);
+    if (!bench) {
+        try print("Part 1: {}\nPart 2: {}\n", .{p1, p2});
+    }
+}
+
 pub fn main() anyerror!void {
-    var scan = readChunkyObjects(input(), "\n\n", "\n ", ":");
-    try print("Part1: {}\n", .{part1(scan)});
-    try print("Part2: {}\n", .{part2(scan)});
+    try benchme(input(), aoc);
 }

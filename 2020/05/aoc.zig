@@ -1,10 +1,14 @@
 usingnamespace @import("aoc-lib.zig");
 
 test "examples" {
-    try assertEq(@as(usize, 820), part1(readLines(test1file)));
-    try assertEq(@as(usize, 0), part2(readLines(test1file)));
-    try assertEq(@as(usize, 947), part1(readLines(inputfile)));
-    try assertEq(@as(usize, 636), part2(readLines(inputfile)));
+    var t1 = readLines(test1file, talloc);
+    defer talloc.free(t1);
+    try assertEq(@as(usize, 820), part1(t1));
+    try assertEq(@as(usize, 0), part2(t1, talloc));
+    var ti = readLines(inputfile, talloc);
+    defer talloc.free(ti);
+    try assertEq(@as(usize, 947), part1(ti));
+    try assertEq(@as(usize, 636), part2(ti, talloc));
 }
 
 fn seat(dir: []const u8) usize {
@@ -36,7 +40,7 @@ fn part1(inp: anytype) usize {
     return m;
 }
 
-fn part2(inp: anytype) usize {
+fn part2(inp: anytype, alloc: *Allocator) usize {
     var plan = AutoHashMap(usize, bool).init(alloc);
     defer plan.deinit();
     for (inp) |dir| {
@@ -51,8 +55,16 @@ fn part2(inp: anytype) usize {
     return 0;
 }
 
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
+    var plan = readLines(inp, halloc);
+    defer halloc.free(plan);
+    var p1 = part1(plan);
+    var p2 = part2(plan, halloc);
+    if (!bench) {
+        try print("Part 1: {}\nPart 2: {}\n", .{p1, p2});
+    }
+}
+
 pub fn main() anyerror!void {
-    var plan = readLines(input());
-    try print("Part1: {}\n", .{part1(plan)});
-    try print("Part2: {}\n", .{part2(plan)});
+    try benchme(input(), aoc);
 }

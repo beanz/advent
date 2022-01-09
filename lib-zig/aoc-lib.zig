@@ -2,13 +2,14 @@ pub const std = @import("std");
 pub const Args = std.process.args;
 
 // mem
-pub const alloc = std.heap.page_allocator;
-pub const free = alloc.free;
+pub const halloc = std.heap.page_allocator;
+pub const hfree = halloc.free;
 pub const dupe = std.mem.dupe;
 pub const copy = std.mem.copy;
 pub const memset = std.mem.set;
 pub const Allocator = std.mem.Allocator;
 pub const ArenaAllocator = std.heap.ArenaAllocator;
+pub const talloc = std.testing.allocator;
 
 // sort
 pub const sort = std.sort;
@@ -49,8 +50,8 @@ pub fn input() []const u8 {
     var args = Args();
     _ = args.skip();
     var res: []const u8 = inputfile;
-    if (args.next(alloc)) |arg1| {
-        free(arg1 catch unreachable);
+    if (args.next(halloc)) |arg1| {
+        halloc.free(arg1 catch unreachable);
         res = test1file;
     }
     return res;
@@ -91,8 +92,23 @@ pub fn DEBUG() i32 {
     return i;
 }
 
-pub fn readInts(inp: anytype, T: type) []T {
+pub fn Ints(inp: anytype, T: type, alloc: *Allocator) anyerror![]T {
     var ints = ArrayList(T).init(alloc);
+    var it = std.mem.tokenize(inp, ":, \n");
+    while (it.next()) |is| {
+        if (is.len == 0) {
+            break;
+        }
+        const i = std.fmt.parseInt(T, is, 10) catch {
+            continue;
+        };
+        try ints.append(i);
+    }
+    return ints.toOwnedSlice();
+}
+
+pub fn readInts(inp: anytype, T: type) []T {
+    var ints = ArrayList(T).init(halloc);
     var it = std.mem.tokenize(inp, ":, \n");
     while (it.next()) |is| {
         if (is.len == 0) {
@@ -106,7 +122,7 @@ pub fn readInts(inp: anytype, T: type) []T {
     return ints.toOwnedSlice();
 }
 
-pub fn readLines(inp: anytype) [][]const u8 {
+pub fn readLines(inp: anytype, alloc: *Allocator) [][]const u8 {
     var lines = ArrayList([]const u8).init(alloc);
     var lit = std.mem.split(inp, "\n");
     while (lit.next()) |line| {
@@ -118,8 +134,8 @@ pub fn readLines(inp: anytype) [][]const u8 {
     return lines.toOwnedSlice();
 }
 
-pub fn readChunks(inp: anytype) [][]u8 {
-    var chunks = ArrayList([]u8).init(alloc);
+pub fn readChunks(inp: anytype, alloc: *Allocator) [][]const u8 {
+    var chunks = ArrayList([]const u8).init(alloc);
     var cit = std.mem.split(inp, "\n\n");
     while (cit.next()) |chunk| {
         if (chunk.len == 0) {
@@ -134,7 +150,7 @@ pub fn readChunks(inp: anytype) [][]u8 {
     return chunks.toOwnedSlice();
 }
 
-pub fn readChunkyObjects(inp: anytype, chunkSep: []const u8, recordSep: []const u8, fieldSep: []const u8) [](StringHashMap([]const u8)) {
+pub fn readChunkyObjects(inp: anytype, chunkSep: []const u8, recordSep: []const u8, fieldSep: []const u8, alloc: *Allocator) [](StringHashMap([]const u8)) {
     var report = ArrayList(StringHashMap([]const u8)).init(alloc);
     var cit = split(inp, chunkSep);
     while (cit.next()) |chunk| {
@@ -226,8 +242,8 @@ pub fn prettyLines(lines: [][]const u8) void {
 }
 
 pub fn BENCH() bool {
-    const is_bench = @import("std").process.getEnvVarOwned(alloc, "AoC_BENCH") catch return false;
-    alloc.free(is_bench);
+    const is_bench = @import("std").process.getEnvVarOwned(halloc, "AoC_BENCH") catch return false;
+    halloc.free(is_bench);
     return true;
 }
 

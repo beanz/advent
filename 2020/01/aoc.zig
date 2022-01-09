@@ -1,48 +1,57 @@
 usingnamespace @import("aoc-lib.zig");
 
 test "examples" {
-    var report = readInts(test1file, i64);
-    defer free(report);
-    try assertEq(@as(i64, 514579), part1(report));
-    try assertEq(@as(i64, 241861950), part2(report));
-    var report2 = readInts(inputfile, i64);
-    defer free(report2);
-    try assertEq(@as(i64, 41979), part1(report2));
-    try assertEq(@as(i64, 193416912), part2(report2));
+    var report = try Ints(test1file, u16, talloc);
+    defer talloc.free(report);
+    var p = try parts(report, talloc);
+    try assertEq(@as(u64, 514579), p[0]);
+    try assertEq(@as(u64, 241861950), p[1]);
+    var report2 = try Ints(inputfile, u16, talloc);
+    defer talloc.free(report2);
+    var pi = try parts(report2, talloc);
+    try assertEq(@as(usize, 41979), pi[0]);
+    try assertEq(@as(usize, 193416912), pi[1]);
 }
 
-fn part1(exp: []const i64) i64 {
-    var i: usize = 0;
-    while (i < exp.len) : (i += 1) {
-        var j: usize = i;
-        while (j < exp.len) : (j += 1) {
-            if (exp[i] + exp[j] == 2020) {
-                return exp[i] * exp[j];
-            }
+
+fn parts(exp: []const u16, allocator: *Allocator) anyerror![2]u64 {
+    var products = std.AutoHashMap(u16, u64).init(allocator);
+    defer products.deinit();
+    var seen = std.AutoHashMap(u16, bool).init(allocator);
+    defer seen.deinit();
+    var p1 : u64 = 0;
+    for (exp) |n| {
+        var rem = 2020-n;
+        if (seen.contains(rem)) {
+            p1 = @as(u64, n) * rem;
+        }
+        var it = seen.iterator();
+        while (it.next()) |e| {
+            try products.put(n + e.key_ptr.*, n * @as(u64, e.key_ptr.*));
+        }
+        try seen.put(n, true);
+    }
+    for (exp) |n| {
+        if (n > 2020) {
+            continue;
+        }
+        var rem = 2020-n;
+        if (products.get(rem)) |p| {
+            return [2]u64{p1, n * p};
         }
     }
-    return 0;
+    unreachable;
 }
 
-fn part2(exp: []const i64) i64 {
-    var i: usize = 0;
-    while (i < exp.len) : (i += 1) {
-        var j: usize = i;
-        while (j < exp.len) : (j += 1) {
-            var k: usize = i;
-            while (k < exp.len) : (k += 1) {
-                if (exp[i] + exp[j] + exp[k] == 2020) {
-                    return exp[i] * exp[j] * exp[k];
-                }
-            }
-        }
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
+    var report = try Ints(inp, u16, halloc);
+    defer hfree(report);
+    var p = try parts(report, halloc);
+    if (!bench) {
+        try print("Part 1: {}\nPart 2: {}\n", .{p[0], p[1]});
     }
-    return 0;
 }
 
 pub fn main() anyerror!void {
-    var report = readInts(input(), i64);
-    defer free(report);
-    try print("Part1: {}\n", .{part1(report)});
-    try print("Part2: {}\n", .{part2(report)});
+    try benchme(input(), aoc);
 }
