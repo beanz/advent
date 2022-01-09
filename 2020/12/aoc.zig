@@ -23,7 +23,7 @@ const Direction = struct {
     dy: i64,
 
     pub fn newFromCompass(c: u8) !*Direction {
-        var d = try alloc.create(Direction);
+        var d = try halloc.create(Direction);
         switch (c) {
             'N' => {
                 d.dx = 0;
@@ -95,11 +95,12 @@ const Nav = struct {
     ship: Point,
     dir: *Direction,
     wp: Point,
+    alloc: *Allocator,
     debug: bool,
 
-    pub fn fromInput(inp: [][]const u8, allocator: *Allocator) !*Nav {
+    pub fn fromInput(inp: [][]const u8, alloc: *Allocator) !*Nav {
         var l = inp.len;
-        var inst = try allocator.alloc(Inst, l);
+        var inst = try alloc.alloc(Inst, l);
         var nav = try alloc.create(Nav);
         for (inp) |line, i| {
             const n = try parseUnsigned(usize, line[1..], 10);
@@ -111,7 +112,13 @@ const Nav = struct {
         nav.dir = try Direction.newFromCompass('E');
         nav.wp = Point{ .x = 10, .y = -1 };
         nav.debug = false;
+        nav.alloc = alloc;
         return nav;
+    }
+
+    pub fn deinit(self: *Nav) void {
+        self.alloc.free(self.inst);
+        self.alloc.destroy(self);
     }
 
     pub fn Part1(self: *Nav) usize {
@@ -213,29 +220,41 @@ const Nav = struct {
     }
 };
 
-fn part1(in: [][]const u8) usize {
+fn part1(in: [][]const u8, alloc: *Allocator) usize {
     var nav = Nav.fromInput(in, alloc) catch unreachable;
+    defer nav.deinit();
     return nav.Part1();
 }
 
-fn part2(in: [][]const u8) usize {
+fn part2(in: [][]const u8, alloc: *Allocator) usize {
     var nav = Nav.fromInput(in, alloc) catch unreachable;
+    defer nav.deinit();
     return nav.Part2();
 }
 
 test "examples" {
-    const test1 = readLines(test1file);
-    const inp = readLines(inputfile);
+    const test1 = readLines(test1file, talloc);
+    defer talloc.free(test1);
+    const inp = readLines(inputfile, talloc);
+    defer talloc.free(inp);
 
-    try assertEq(@as(usize, 25), part1(test1));
-    try assertEq(@as(usize, 286), part2(test1));
+    try assertEq(@as(usize, 25), part1(test1, talloc));
+    try assertEq(@as(usize, 286), part2(test1, talloc));
 
-    try assertEq(@as(usize, 759), part1(inp));
-    try assertEq(@as(usize, 45763), part2(inp));
+    try assertEq(@as(usize, 759), part1(inp, talloc));
+    try assertEq(@as(usize, 45763), part2(inp, talloc));
+}
+
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
+    const lines = readLines(inp, halloc);
+    defer halloc.free(lines);
+    var p1 = part1(lines, halloc);
+    var p2 = part2(lines, halloc);
+    if (!bench) {
+        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+    }
 }
 
 pub fn main() anyerror!void {
-    const lines = readLines(input());
-    try print("Part1: {}\n", .{part1(lines)});
-    try print("Part2: {}\n", .{part2(lines)});
+    try benchme(input(), aoc);
 }

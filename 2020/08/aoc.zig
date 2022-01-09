@@ -8,9 +8,10 @@ const HH = struct {
     code: []Inst,
     ip: isize = 0,
     acc: i64 = 0,
+    alloc: *Allocator,
 
-    pub fn fromInput(inp: anytype, allocator: *Allocator) !*HH {
-        var code = try allocator.alloc(Inst, inp.len);
+    pub fn fromInput(inp: anytype, alloc: *Allocator) !*HH {
+        var code = try alloc.alloc(Inst, inp.len);
         var hh = try alloc.create(HH);
         for (inp) |line, ip| {
             var it = split(line, " ");
@@ -37,12 +38,18 @@ const HH = struct {
         hh.code = code;
         hh.ip = 0;
         hh.acc = 0;
+        hh.alloc = alloc;
         return hh;
     }
 
-    pub fn clone(self: *HH, allocator: *Allocator) !*HH {
-        var code = try allocator.alloc(Inst, self.code.len);
-        var hh = try alloc.create(HH);
+    pub fn deinit(self: *HH) void {
+        self.alloc.free(self.code);
+        self.alloc.destroy(self);
+    }
+
+    pub fn clone(self: *HH) !*HH {
+        var code = try self.alloc.alloc(Inst, self.code.len);
+        var hh = try self.alloc.create(HH);
         for (self.code) |inst, ip| {
             code[ip].op = inst.op;
             code[ip].arg = inst.arg;
@@ -50,6 +57,7 @@ const HH = struct {
         hh.code = code;
         hh.ip = 0;
         hh.acc = 0;
+        hh.alloc = self.alloc;
         return hh;
     }
 
@@ -59,7 +67,8 @@ const HH = struct {
     }
 
     pub fn run(self: *HH) void {
-        var seen = AutoHashMap(isize, bool).init(alloc);
+        var seen = AutoHashMap(isize, bool).init(self.alloc);
+        defer seen.deinit();
         while (self.ip < self.code.len) : (self.ip += 1) {
             if (seen.contains(self.ip)) {
                 break;
@@ -91,26 +100,31 @@ const HH = struct {
 };
 
 test "examples" {
-    const test1 = readLines(test1file);
-    const inp = readLines(inputfile);
+    const test1 = readLines(test1file, talloc);
+    defer talloc.free(test1);
+    const inp = readLines(inputfile, talloc);
+    defer talloc.free(inp);
 
-    try assertEq(@as(i64, 5), part1(test1));
-    try assertEq(@as(i64, 8), part2(test1));
+    try assertEq(@as(i64, 5), part1(test1, talloc));
+    try assertEq(@as(i64, 8), part2(test1, talloc));
 
-    try assertEq(@as(i64, 1614), part1(inp));
-    try assertEq(@as(i64, 1260), part2(inp));
+    try assertEq(@as(i64, 1614), part1(inp, talloc));
+    try assertEq(@as(i64, 1260), part2(inp, talloc));
 }
 
-fn part1(inp: anytype) i64 {
+fn part1(inp: anytype, alloc: *Allocator) i64 {
     var hh = HH.fromInput(inp, alloc) catch unreachable;
+    defer hh.deinit();
     hh.run();
     return hh.acc;
 }
 
-fn part2(inp: anytype) i64 {
+fn part2(inp: anytype, alloc: *Allocator) i64 {
     var hh = HH.fromInput(inp, alloc) catch unreachable;
+    defer hh.deinit();
     for (hh.code) |inst, ip| {
-        var mhh = hh.clone(alloc) catch unreachable;
+        var mhh = hh.clone() catch unreachable;
+        defer mhh.deinit();
         if (!mhh.fixOp(ip)) {
             continue;
         }
@@ -122,8 +136,16 @@ fn part2(inp: anytype) i64 {
     return 0;
 }
 
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
+    var spec = readLines(inp, halloc);
+    defer halloc.free(spec);
+    var p1 = part1(spec, halloc);
+    var p2 = part2(spec, halloc);
+    if (!bench) {
+        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+    }
+}
+
 pub fn main() anyerror!void {
-    var spec = readLines(input());
-    try print("Part1: {}\n", .{part1(spec)});
-    try print("Part2: {}\n", .{part2(spec)});
+    try benchme(input(), aoc);
 }

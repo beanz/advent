@@ -1,7 +1,8 @@
 usingnamespace @import("aoc-lib.zig");
 
-fn part1(in: [][]const u8) usize {
+fn part1(in: [][]const u8, alloc: *Allocator) usize {
     var mem = AutoHashMap(usize, usize).init(alloc);
+    defer mem.deinit();
     var mask0: usize = undefined;
     var mask1: usize = undefined;
     for (in) |line| {
@@ -38,8 +39,9 @@ fn part1(in: [][]const u8) usize {
     return sum;
 }
 
-fn part2(in: [][]const u8) usize {
+fn part2(in: [][]const u8, alloc: *Allocator) usize {
     var mem = AutoHashMap(usize, usize).init(alloc);
+    defer mem.deinit();
     var mask1: usize = undefined;
     var maskx: usize = undefined;
     for (in) |line| {
@@ -64,6 +66,7 @@ fn part2(in: [][]const u8) usize {
             //warn("addr={} value={}\n", .{ addr, val });
             addr |= mask1;
             var addrs = ArrayList(usize).init(alloc);
+            defer addrs.deinit();
             addrs.append(addr) catch unreachable;
             var m: usize = (1 << 35);
             while (m >= 1) : (m >>= 1) {
@@ -91,20 +94,31 @@ fn part2(in: [][]const u8) usize {
 }
 
 test "examples" {
-    const test1 = readLines(test1file);
-    const test2 = readLines(test2file);
-    const inp = readLines(inputfile);
+    const test1 = readLines(test1file, talloc);
+    defer talloc.free(test1);
+    const test2 = readLines(test2file, talloc);
+    defer talloc.free(test2);
+    const inp = readLines(inputfile, talloc);
+    defer talloc.free(inp);
 
-    try assertEq(@as(usize, 165), part1(test1));
-    try assertEq(@as(usize, 51), part1(test2));
-    try assertEq(@as(usize, 4297467072083), part1(inp));
+    try assertEq(@as(usize, 165), part1(test1, talloc));
+    try assertEq(@as(usize, 51), part1(test2, talloc));
+    try assertEq(@as(usize, 4297467072083), part1(inp, talloc));
 
-    try assertEq(@as(usize, 208), part2(test2));
-    try assertEq(@as(usize, 5030603328768), part2(inp));
+    try assertEq(@as(usize, 208), part2(test2, talloc));
+    try assertEq(@as(usize, 5030603328768), part2(inp, talloc));
+}
+
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
+    const lines = readLines(inp, halloc);
+    defer halloc.free(lines);
+    var p1 = part1(lines, halloc);
+    var p2 = part2(lines, halloc);
+    if (!bench) {
+        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+    }
 }
 
 pub fn main() anyerror!void {
-    const lines = readLines(input());
-    try print("Part1: {}\n", .{part1(lines)});
-    try print("Part2: {}\n", .{part2(lines)});
+    try benchme(input(), aoc);
 }

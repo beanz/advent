@@ -1,6 +1,6 @@
 usingnamespace @import("aoc-lib.zig");
 
-fn part1(in: [][]const u8) u64 {
+fn part1(in: [][]const u8, alloc: *Allocator) u64 {
     const dt = parseUnsigned(u64, in[0], 10) catch unreachable;
     var min: u64 = maxInt(u64);
     var mbus: u64 = undefined;
@@ -57,10 +57,12 @@ fn chinese(la: ArrayList(i64), ln: ArrayList(i64)) i64 {
     return x;
 }
 
-fn part2(in: [][]const u8) i64 {
+fn part2(in: [][]const u8, alloc: *Allocator) i64 {
     var bit = split(in[1], ",");
     var a = ArrayList(i64).init(alloc);
+    defer a.deinit();
     var n = ArrayList(i64).init(alloc);
+    defer n.deinit();
     var i: i64 = 0;
     while (bit.next()) |ts| {
         defer {
@@ -78,33 +80,48 @@ fn part2(in: [][]const u8) i64 {
 }
 
 test "examples" {
-    const test1 = readLines(test1file);
-    const test2 = readLines(test2file);
-    const test3 = readLines(test3file);
-    const test4 = readLines(test4file);
-    const test5 = readLines(test5file);
-    const test6 = readLines(test6file);
-    const inp = readLines(inputfile);
+    const test1 = readLines(test1file, talloc);
+    defer talloc.free(test1);
+    const test2 = readLines(test2file, talloc);
+    defer talloc.free(test2);
+    const test3 = readLines(test3file, talloc);
+    defer talloc.free(test3);
+    const test4 = readLines(test4file, talloc);
+    defer talloc.free(test4);
+    const test5 = readLines(test5file, talloc);
+    defer talloc.free(test5);
+    const test6 = readLines(test6file, talloc);
+    defer talloc.free(test6);
+    const inp = readLines(inputfile, talloc);
+    defer talloc.free(inp);
 
-    try assertEq(@as(u64, 295), part1(test1));
-    try assertEq(@as(u64, 130), part1(test2));
-    try assertEq(@as(u64, 295), part1(test3));
-    try assertEq(@as(u64, 295), part1(test4));
-    try assertEq(@as(u64, 295), part1(test5));
-    try assertEq(@as(u64, 47), part1(test6));
-    try assertEq(@as(u64, 3035), part1(inp));
+    try assertEq(@as(u64, 295), part1(test1, talloc));
+    try assertEq(@as(u64, 130), part1(test2, talloc));
+    try assertEq(@as(u64, 295), part1(test3, talloc));
+    try assertEq(@as(u64, 295), part1(test4, talloc));
+    try assertEq(@as(u64, 295), part1(test5, talloc));
+    try assertEq(@as(u64, 47), part1(test6, talloc));
+    try assertEq(@as(u64, 3035), part1(inp, talloc));
 
-    try assertEq(@as(i64, 1068781), part2(test1));
-    try assertEq(@as(i64, 3417), part2(test2));
-    try assertEq(@as(i64, 754018), part2(test3));
-    try assertEq(@as(i64, 779210), part2(test4));
-    try assertEq(@as(i64, 1261476), part2(test5));
-    try assertEq(@as(i64, 1202161486), part2(test6));
-    try assertEq(@as(i64, 725169163285238), part2(inp));
+    try assertEq(@as(i64, 1068781), part2(test1, talloc));
+    try assertEq(@as(i64, 3417), part2(test2, talloc));
+    try assertEq(@as(i64, 754018), part2(test3, talloc));
+    try assertEq(@as(i64, 779210), part2(test4, talloc));
+    try assertEq(@as(i64, 1261476), part2(test5, talloc));
+    try assertEq(@as(i64, 1202161486), part2(test6, talloc));
+    try assertEq(@as(i64, 725169163285238), part2(inp, talloc));
+}
+
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
+    const lines = readLines(inp, halloc);
+    defer halloc.free(lines);
+    var p1 = part1(lines, halloc);
+    var p2 = part2(lines, halloc);
+    if (!bench) {
+        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+    }
 }
 
 pub fn main() anyerror!void {
-    const lines = readLines(input());
-    try print("Part1: {}\n", .{part1(lines)});
-    try print("Part2: {}\n", .{part2(lines)});
+    try benchme(input(), aoc);
 }

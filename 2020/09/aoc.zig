@@ -1,8 +1,10 @@
 usingnamespace @import("aoc-lib.zig");
 
 test "examples" {
-    const test1 = readInts(test1file, i64);
-    const inp = readInts(inputfile, i64);
+    const test1 = try Ints(test1file, i64, talloc);
+    defer talloc.free(test1);
+    const inp = try Ints(inputfile, i64, talloc);
+    defer talloc.free(inp);
 
     try assertEq(@as(i64, 127), part1(test1, 5));
     try assertEq(@as(i64, 62), part2(test1, 127));
@@ -57,9 +59,16 @@ fn part2(nums: []const i64, p1: i64) i64 {
     return 0;
 }
 
-pub fn main() anyerror!void {
-    var nums = readInts(input(), i64);
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
+    var nums = try Ints(inp, i64, halloc);
+    defer halloc.free(nums);
     var p1 = part1(nums, 25);
-    try print("Part1: {}\n", .{p1});
-    try print("Part2: {}\n", .{part2(nums, p1)});
+    var p2 = part2(nums, p1);
+    if (!bench) {
+        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+    }
+}
+
+pub fn main() anyerror!void {
+    try benchme(input(), aoc);
 }

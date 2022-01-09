@@ -1,26 +1,32 @@
 usingnamespace @import("aoc-lib.zig");
 
 test "examples" {
-    const test1 = readLines(test1file);
-    const test2 = readLines(test2file);
-    const inp = readLines(inputfile);
+    const test1 = readLines(test1file, talloc);
+    defer talloc.free(test1);
+    const test2 = readLines(test2file, talloc);
+    defer talloc.free(test2);
+    const inp = readLines(inputfile, talloc);
+    defer talloc.free(inp);
 
-    var map = Map.fromInput(test1, alloc) catch unreachable;
+    var map = Map.fromInput(test1, talloc) catch unreachable;
     try assertEq(@as(usize, 71), map.RunOnce(4, false));
     try assertEq(@as(usize, 20), map.RunOnce(4, false));
+    map.deinit();
 
-    map = Map.fromInput(test2, alloc) catch unreachable;
+    map = Map.fromInput(test2, talloc) catch unreachable;
     try assertEq(@as(usize, 29), map.RunOnce(4, false));
+    map.deinit();
 
-    map = Map.fromInput(inp, alloc) catch unreachable;
+    map = Map.fromInput(inp, talloc) catch unreachable;
+    defer map.deinit();
     try assertEq(@as(usize, 7906), map.RunOnce(4, false));
     try assertEq(@as(usize, 148), map.RunOnce(4, false));
 
-    try assertEq(@as(usize, 37), part1(test1));
-    try assertEq(@as(usize, 26), part2(test1));
+    try assertEq(@as(usize, 37), part1(test1, talloc));
+    try assertEq(@as(usize, 26), part2(test1, talloc));
 
-    try assertEq(@as(usize, 2481), part1(inp));
-    try assertEq(@as(usize, 2227), part2(inp));
+    try assertEq(@as(usize, 2481), part1(inp, talloc));
+    try assertEq(@as(usize, 2227), part2(inp, talloc));
 }
 
 const Map = struct {
@@ -35,17 +41,19 @@ const Map = struct {
     map: []SeatState,
     new: []SeatState,
     changes: usize,
+    alloc: *Allocator,
 
-    pub fn fromInput(inp: [][]const u8, allocator: *Allocator) !*Map {
+    pub fn fromInput(inp: [][]const u8, alloc: *Allocator) !*Map {
         var h = inp.len;
         var w = inp[0].len;
-        var map = try allocator.alloc(SeatState, h * w);
-        var new = try allocator.alloc(SeatState, h * w);
+        var map = try alloc.alloc(SeatState, h * w);
+        var new = try alloc.alloc(SeatState, h * w);
         var m = try alloc.create(Map);
         m.map = map;
         m.new = new;
         m.h = h;
         m.w = w;
+        m.alloc = alloc;
         for (inp) |line, y| {
             for (line) |s, x| {
                 if (s == 'L') {
@@ -59,6 +67,12 @@ const Map = struct {
             }
         }
         return m;
+    }
+
+    pub fn deinit(self: *Map) void {
+        self.alloc.free(self.map);
+        self.alloc.free(self.new);
+        self.alloc.destroy(self);
     }
 
     pub fn SetSeat(self: *Map, x: isize, y: isize, state: SeatState) void {
@@ -161,18 +175,28 @@ const Map = struct {
     }
 };
 
-fn part1(in: [][]const u8) usize {
+fn part1(in: [][]const u8, alloc: *Allocator) usize {
     var map = Map.fromInput(in, alloc) catch unreachable;
+    defer map.deinit();
     return map.Run(4, false);
 }
 
-fn part2(in: [][]const u8) usize {
+fn part2(in: [][]const u8, alloc: *Allocator) usize {
     var map = Map.fromInput(in, alloc) catch unreachable;
+    defer map.deinit();
     return map.Run(5, true);
 }
 
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
+    const lines = readLines(inp, halloc);
+    defer halloc.free(lines);
+    var p1 = part1(lines, halloc);
+    var p2 = part2(lines, halloc);
+    if (!bench) {
+        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+    }
+}
+
 pub fn main() anyerror!void {
-    const lines = readLines(input());
-    try print("Part1: {}\n", .{part1(lines)});
-    try print("Part2: {}\n", .{part2(lines)});
+    try benchme(input(), aoc);
 }
