@@ -192,7 +192,7 @@ pub fn stringLessThan(c: void, a: []const u8, b: []const u8) bool {
     return a[i] < b[i];
 }
 
-pub fn rotateLines(lines: [][]const u8) [][]const u8 {
+pub fn rotateLinesNonSymmetric(lines: [][]const u8, alloc: *Allocator) [][]u8 {
     const end = lines.len - 1;
     var tmp = alloc.alloc([]u8, lines[0].len) catch unreachable;
     var i: usize = 0;
@@ -210,6 +210,22 @@ pub fn rotateLines(lines: [][]const u8) [][]const u8 {
         i += 1;
     }
     return tmp;
+}
+
+pub fn rotateLines(lines: [][]u8) void {
+    const l = lines.len;
+    assertEq(l, lines[0].len) catch unreachable;
+    var i: usize = 0;
+    while (i < l) : (i += 1) {
+        var j = i;
+        while (j < l-i-1) : (j += 1) {
+            var tmp = lines[i][j];
+            lines[i][j] = lines[l-j-1][i];
+            lines[l-j-1][i] = lines[l-i-1][l-j-1];
+            lines[l-i-1][l-j-1] = lines[j][l-i-1];
+            lines[j][l-i-1] = tmp;
+        }
+    }
 }
 
 pub fn reverseLines(lines: [][]const u8) void {

@@ -8,9 +8,11 @@ const Menu = struct {
     allergens: StringHashMap(AutoHashMap(usize, bool)),
     ingredients: StringHashMap(AutoHashMap(usize, bool)),
     possible: StringHashMap(StringHashMap(bool)),
+    alloc: *Allocator,
 
-    pub fn init(in: [][]const u8) !*Menu {
+    pub fn init(in: [][]const u8, alloc: *Allocator) !*Menu {
         var self = try alloc.create(Menu);
+        self.alloc = alloc;
         self.allergens = StringHashMap(AutoHashMap(usize, bool)).init(alloc);
         self.ingredients = StringHashMap(AutoHashMap(usize, bool)).init(alloc);
         self.possible = StringHashMap(StringHashMap(bool)).init(alloc);
@@ -50,6 +52,25 @@ const Menu = struct {
         return self;
     }
 
+    pub fn deinit(m: *Menu) void {
+        var ita = m.allergens.iterator();
+        while (ita.next()) |e| {
+            e.value_ptr.*.deinit();
+        }
+        m.allergens.deinit();
+        var iti = m.ingredients.iterator();
+        while (iti.next()) |e| {
+            e.value_ptr.*.deinit();
+        }
+        m.ingredients.deinit();
+        var itp = m.possible.iterator();
+        while (itp.next()) |e| {
+            e.value_ptr.*.deinit();
+        }
+        m.possible.deinit();
+        m.alloc.destroy(m);
+    }
+
     pub fn Part1(m: *Menu) usize {
         var c: usize = 0;
         var it = m.ingredients.iterator();
@@ -67,7 +88,8 @@ const Menu = struct {
     }
 
     pub fn Part2(m: *Menu) []const u8 {
-        var resList = ArrayList(Result).init(alloc);
+        var resList = ArrayList(Result).init(m.alloc);
+        defer resList.deinit();
         var resLength: usize = 0;
         while (m.possible.count() > 0) {
             var it = m.possible.iterator();
@@ -85,6 +107,7 @@ const Menu = struct {
                     while (pit.next()) |pe| {
                         _ = pe.value_ptr.remove(all);
                     }
+                    allergens.deinit();
                 }
             }
         }
@@ -93,7 +116,7 @@ const Menu = struct {
         if (resLength == 0) {
             return "";
         }
-        var rs = alloc.alloc(u8, resLength) catch unreachable;
+        var rs = m.alloc.alloc(u8, resLength) catch unreachable;
         var i: usize = 0;
         for (res) |r| {
             copy(u8, rs[i..], r.ing);
@@ -106,23 +129,40 @@ const Menu = struct {
 };
 
 test "examples" {
-    const test1 = readLines(test1file);
-    const inp = readLines(inputfile);
+    const test1 = readLines(test1file, talloc);
+    defer talloc.free(test1);
+    const inp = readLines(inputfile, talloc);
+    defer talloc.free(inp);
 
-    var mt = Menu.init(test1) catch unreachable;
+    var mt = Menu.init(test1, talloc) catch unreachable;
+    defer mt.deinit();
     try assertEq(@as(usize, 5), mt.Part1());
     var rt = "mxmxvkd,sqjhc,fvjkl";
-    try assert(std.mem.eql(u8, rt, mt.Part2()));
+    var resTest = mt.Part2();
+    defer talloc.free(resTest);
+    try assert(std.mem.eql(u8, rt, resTest));
 
-    var m = Menu.init(inp) catch unreachable;
+    var m = Menu.init(inp, talloc) catch unreachable;
+    defer m.deinit();
     try assertEq(@as(usize, 2874), m.Part1());
     var r = "gfvrr,ndkkq,jxcxh,bthjz,sgzr,mbkbn,pkkg,mjbtz";
-    try assert(std.mem.eql(u8, r, m.Part2()));
+    var res = m.Part2();
+    defer talloc.free(res);
+    try assert(std.mem.eql(u8, r, res));
+}
+
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
+    const lines = readLines(inp, halloc);
+    defer halloc.free(lines);
+    var m = try Menu.init(lines, halloc);
+    defer m.deinit();
+    var p1 = m.Part1();
+    var p2 = m.Part2();
+    if (!bench) {
+        try print("Part 1: {}\nPart 2: {s}\n", .{ p1, p2 });
+    }
 }
 
 pub fn main() anyerror!void {
-    const lines = readLines(input());
-    var m = try Menu.init(lines);
-    try print("Part1: {}\n", .{m.Part1()});
-    try print("Part2: {s}\n", .{m.Part2()});
+    try benchme(input(), aoc);
 }

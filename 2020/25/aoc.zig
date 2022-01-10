@@ -34,7 +34,7 @@ fn expMod(ia: u64, ib: u64, m: u64) u64 {
     return c;
 }
 
-pub fn Part1(s: [][]const u8) !u64 {
+pub fn part1(s: [][]const u8) !u64 {
     const cardPub = try parseUnsigned(u64, s[0], 10);
     const doorPub = try parseUnsigned(u64, s[1], 10);
     const ls = loopSize(cardPub);
@@ -42,17 +42,26 @@ pub fn Part1(s: [][]const u8) !u64 {
 }
 
 test "part1" {
-    const test1 = readLines(test1file);
-    const inp = readLines(inputfile);
+    const test1 = readLines(test1file, talloc);
+    defer talloc.free(test1);
+    const inp = readLines(inputfile, talloc);
+    defer talloc.free(inp);
 
-    const rt = try Part1(test1);
+    const rt = try part1(test1);
     try assertEq(@as(usize, 14897079), rt);
-    const r = try Part1(inp);
+    const r = try part1(inp);
     try assertEq(@as(usize, 9714832), r);
 }
 
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
+    const lines = readLines(inp, halloc);
+    defer halloc.free(lines);
+    var p1 = part1(lines);
+    if (!bench) {
+        try print("Part 1: {}\n", .{ p1 });
+    }
+}
+
 pub fn main() anyerror!void {
-    const lines = readLines(input());
-    const res = try Part1(lines);
-    try print("Part1: {}\n", .{res});
+    try benchme(input(), aoc);
 }

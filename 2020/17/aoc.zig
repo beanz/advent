@@ -8,6 +8,7 @@ const Map = struct {
     new: [MAX * MAX * MAX * MAX]bool,
     w: i8,
     w2: i8,
+    alloc: *Allocator,
     debug: bool,
 
     const NB = [_]i8{ -1, 0, 1 };
@@ -16,8 +17,9 @@ const Map = struct {
         return @intCast(usize, x) + MAX * (@intCast(usize, y) + MAX * (@intCast(usize, z) + MAX * @intCast(usize, q)));
     }
 
-    pub fn fromInput(inp: [][]const u8, allocator: *Allocator) !*Map {
+    pub fn fromInput(inp: [][]const u8, alloc: *Allocator) !*Map {
         var m = try alloc.create(Map);
+        m.alloc = alloc;
         memset(bool, m.cur[0..], false);
         memset(bool, m.new[0..], false);
         var size: i8 = @intCast(i8, inp.len);
@@ -37,6 +39,9 @@ const Map = struct {
         return m;
     }
 
+    pub fn deinit(self: *Map) void {
+        self.alloc.destroy(self);
+    }
     pub fn Print(self: *Map, iter: i8, part2: bool) void {
         var xystart: i8 = OFF - (1 + self.w2 + iter);
         var xyend: i8 = OFF + (2 + self.w2 + iter);
@@ -176,27 +181,44 @@ const Map = struct {
 };
 
 test "part1" {
-    const test0 = readLines(test0file);
-    const test1 = readLines(test1file);
-    const inp = readLines(inputfile);
+    const test0 = readLines(test0file, talloc);
+    defer talloc.free(test0);
+    const test1 = readLines(test1file, talloc);
+    defer talloc.free(test1);
+    const inp = readLines(inputfile, talloc);
+    defer talloc.free(inp);
 
-    var t1m = Map.fromInput(test1, alloc) catch unreachable;
+    var t1m = Map.fromInput(test1, talloc) catch unreachable;
     try assertEq(@as(usize, 112), try t1m.Part1());
+    t1m.deinit();
 
-    t1m = Map.fromInput(test1, alloc) catch unreachable;
+    t1m = Map.fromInput(test1, talloc) catch unreachable;
+    defer t1m.deinit();
     try assertEq(@as(usize, 848), try t1m.Part2());
 
-    var m = Map.fromInput(inp, alloc) catch unreachable;
+    var m = Map.fromInput(inp, talloc) catch unreachable;
     try assertEq(@as(usize, 209), try m.Part1());
+    m.deinit();
 
-    m = Map.fromInput(inp, alloc) catch unreachable;
+    m = Map.fromInput(inp, talloc) catch unreachable;
+    defer m.deinit();
     try assertEq(@as(usize, 1492), try m.Part2());
 }
 
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
+    const lines = readLines(inp, halloc);
+    defer halloc.free(lines);
+    var m = try Map.fromInput(lines, halloc);
+    var p1 = m.Part1();
+    m.deinit();
+    m = try Map.fromInput(lines, halloc);
+    defer m.deinit();
+    var p2 = m.Part2();
+    if (!bench) {
+        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+    }
+}
+
 pub fn main() anyerror!void {
-    const lines = readLines(input());
-    var m = try Map.fromInput(lines, alloc);
-    try print("Part1: {}\n", .{m.Part1()});
-    m = try Map.fromInput(lines, alloc);
-    try print("Part2: {}\n", .{m.Part2()});
+    try benchme(input(), aoc);
 }

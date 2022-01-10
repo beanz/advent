@@ -17,6 +17,7 @@ const Mess = struct {
     tickets: ArrayList(Ticket),
     err: i64,
     onlyDepart: bool,
+    alloc: *Allocator,
     debug: bool,
 
     fn bit(v: i64) i64 {
@@ -48,7 +49,7 @@ const Mess = struct {
         return count;
     }
 
-    pub fn fromInput(inp: [][]const u8, allocator: *Allocator) !*Mess {
+    pub fn fromInput(inp: [][]const u8, alloc: *Allocator) !*Mess {
         var m = try alloc.create(Mess);
         m.fields = StringHashMap(*Field).init(alloc);
         m.err = 0;
@@ -69,12 +70,12 @@ const Mess = struct {
             f.max2 = try parseInt(i64, range2it.next().?, 10);
             try m.fields.put(name, f);
         }
-        var our: Ticket = readInts(inp[1], i64);
+        var our: Ticket = try Ints(inp[1], i64, alloc);
         lit = split(inp[2], "\n");
         _ = lit.next().?;
         var tickets = ArrayList(Ticket).init(alloc);
         while (lit.next()) |line| {
-            var ticket = readInts(line, i64);
+            var ticket = try Ints(line, i64, alloc);
             var validTicket = true;
             for (ticket) |v| {
                 var validField = false;
@@ -92,15 +93,33 @@ const Mess = struct {
             }
             if (validTicket) {
                 try tickets.append(ticket);
+            } else {
+                alloc.free(ticket);
             }
         }
         m.tickets = tickets;
         m.our = our;
+        m.alloc = alloc;
         return m;
     }
 
+    pub fn deinit(self: *Mess) void {
+        self.alloc.free(self.our);
+        for (self.tickets.items) |t| {
+            self.alloc.free(t);
+        }
+        self.tickets.deinit();
+        var it = self.fields.iterator();
+        while (it.next()) |f| {
+            self.alloc.destroy(f.value_ptr.*);
+        }
+        self.fields.deinit();
+        self.alloc.destroy(self);
+    }
+
     pub fn Solve(self: *Mess) !i64 {
-        var possible = StringHashMap(i64).init(alloc);
+        var possible = StringHashMap(i64).init(self.alloc);
+        defer possible.deinit();
         var cfit = self.fields.iterator();
         while (cfit.next()) |entry| {
             try possible.put(entry.key_ptr.*, 0);
@@ -173,16 +192,22 @@ test "count1s" {
 }
 
 test "examples" {
-    const test1 = readChunks(test1file);
-    const test2 = readChunks(test2file);
-    const inp = readChunks(inputfile);
+    const test1 = readChunks(test1file, talloc);
+    defer talloc.free(test1);
+    const test2 = readChunks(test2file, talloc);
+    defer talloc.free(test2);
+    const inp = readChunks(inputfile, talloc);
+    defer talloc.free(inp);
 
-    var t1m = Mess.fromInput(test1, alloc) catch unreachable;
+    var t1m = Mess.fromInput(test1, talloc) catch unreachable;
+    defer t1m.deinit();
     try assertEq(@as(i64, 71), t1m.err);
-    var inpm = Mess.fromInput(inp, alloc) catch unreachable;
+    var inpm = Mess.fromInput(inp, talloc) catch unreachable;
+    defer inpm.deinit();
     try assertEq(@as(i64, 21980), inpm.err);
 
-    var t2m = Mess.fromInput(test2, alloc) catch unreachable;
+    var t2m = Mess.fromInput(test2, talloc) catch unreachable;
+    defer t2m.deinit();
     t2m.onlyDepart = false;
     const t2a = t2m.Solve() catch unreachable;
     try assertEq(@as(i64, 1716), t2a);
@@ -190,19 +215,28 @@ test "examples" {
     try assertEq(@as(i64, 1439429522627), impa);
 }
 
-pub fn main() anyerror!void {
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
     var args = Args();
-    const arg0 = args.next(alloc).?;
+    const arg0 = args.next(halloc).?;
     var chunks: [][]const u8 = undefined;
     var onlyDepart = true;
-    if (args.next(alloc)) |_| {
-        chunks = readChunks(test2file);
+    if (args.next(halloc)) |_| {
+        chunks = readChunks(test2file, halloc);
         onlyDepart = false;
     } else {
-        chunks = readChunks(inputfile);
+        chunks = readChunks(inputfile, halloc);
     }
-    var m = try Mess.fromInput(chunks, alloc);
+    defer halloc.free(chunks);
+    var m = try Mess.fromInput(chunks, halloc);
+    defer m.deinit();
     m.onlyDepart = onlyDepart;
-    try print("Part1: {}\n", .{m.err});
-    try print("Part2: {}\n", .{m.Solve()});
+    var p1 = m.err;
+    var p2 = m.Solve();
+    if (!bench) {
+        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+    }
+}
+
+pub fn main() anyerror!void {
+    try benchme(input(), aoc);
 }

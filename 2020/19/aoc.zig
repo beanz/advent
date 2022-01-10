@@ -9,9 +9,10 @@ const Matcher = struct {
 
     rules: AutoHashMap(usize, Rule),
     values: [][]const u8,
+    alloc: *Allocator,
     debug: bool,
 
-    pub fn init(in: [][]const u8) !*Matcher {
+    pub fn init(in: [][]const u8, alloc: *Allocator) !*Matcher {
         var rs = split(in[0], "\n");
         var r = AutoHashMap(usize, Rule).init(alloc);
         while (rs.next()) |l| {
@@ -24,10 +25,12 @@ const Matcher = struct {
             } else {
                 //warn("OR rule {}\n", .{def});
                 var os = split(def, " | ");
-                var opt = ArrayList([]usize).init(alloc);
+                var opt = ArrayList([]usize).init(halloc); // use alloc
+                defer opt.deinit();
                 while (os.next()) |o| {
                     var ovs = split(o, " ");
-                    var ov = ArrayList(usize).init(alloc);
+                    var ov = ArrayList(usize).init(halloc); // use alloc
+                    defer ov.deinit();
                     while (ovs.next()) |vs| {
                         const v = try parseUnsigned(usize, vs, 10);
                         try ov.append(v);
@@ -44,9 +47,28 @@ const Matcher = struct {
             try vl.append(v);
         }
         var self = try alloc.create(Matcher);
+        self.alloc = alloc;
         self.rules = r;
         self.values = vl.toOwnedSlice();
         return self;
+    }
+
+    pub fn deinit(self: *Matcher) void {
+        var it =  self.rules.iterator();
+        //while (it.next()) |r| {
+        //    switch (r.value_ptr.*) {
+        //        .opt => |*opt| {
+        //            for (opt.*) |*e| {
+        //                self.alloc.free(e.*);
+        //            }
+        //        },
+        //        .str => {
+        //        }
+        //    }
+        //}
+        self.rules.deinit();
+        self.alloc.free(self.values);
+        self.alloc.destroy(self);
     }
 
     pub fn MatchAux(m: *Matcher, v: []const u8, i: usize, todo: *SegmentedList(usize, 32)) bool {
@@ -78,7 +100,8 @@ const Matcher = struct {
             },
             .opt => |*opt| {
                 for (opt.*) |rs| {
-                    var todo_n = &SegmentedList(usize, 32).init(alloc);
+                    var todo_n = &SegmentedList(usize, 32).init(m.alloc);
+                    defer todo_n.deinit();
                     var k: usize = 0;
                     while (k < todo.count()) : (k += 1) {
                         todo_n.push(todo.at(k).*) catch unreachable;
@@ -98,7 +121,7 @@ const Matcher = struct {
     }
 
     pub fn Match(m: *Matcher, v: []const u8) bool {
-        var todo = &SegmentedList(usize, 32).init(alloc);
+        var todo = &SegmentedList(usize, 32).init(m.alloc);
         todo.push(0) catch unreachable;
         const res = m.MatchAux(v, 0, todo);
         return res;
@@ -128,26 +151,43 @@ const Matcher = struct {
 };
 
 test "examples" {
-    const test0 = readChunks(test0file);
-    const test1 = readChunks(test1file);
-    const test2 = readChunks(test2file);
-    const inp = readChunks(inputfile);
+    const test0 = readChunks(test0file, talloc);
+    defer talloc.free(test0);
+    const test1 = readChunks(test1file, talloc);
+    defer talloc.free(test1);
+    const test2 = readChunks(test2file, talloc);
+    defer talloc.free(test2);
+    const inp = readChunks(inputfile, talloc);
+    defer talloc.free(inp);
 
-    var m = try Matcher.init(test0);
+    var m = try Matcher.init(test0, talloc);
     try assertEq(@as(usize, 1), m.Part1());
-    m = try Matcher.init(test1);
+    m.deinit();
+    m = try Matcher.init(test1, talloc);
     try assertEq(@as(usize, 1), m.Part1());
-    m = try Matcher.init(test2);
+    m.deinit();
+    m = try Matcher.init(test2, talloc);
     try assertEq(@as(usize, 2), m.Part1());
-    m = try Matcher.init(inp);
+    m.deinit();
+    m = try Matcher.init(inp, talloc);
     try assertEq(@as(usize, 285), m.Part1());
-    m = try Matcher.init(inp);
+    m.deinit();
+    m = try Matcher.init(inp, talloc);
+    defer m.deinit();
     try assertEq(@as(usize, 412), m.Part2());
 }
 
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
+    const chunks = readChunks(input(), halloc);
+    defer halloc.free(chunks);
+    var m = try Matcher.init(chunks, halloc);
+    var p1 = m.Part1();
+    var p2 = m.Part2();
+    if (!bench) {
+        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+    }
+}
+
 pub fn main() anyerror!void {
-    const chunks = readChunks(input());
-    var m = try Matcher.init(chunks);
-    try print("Part1: {}\n", .{m.Part1()});
-    try print("Part2: {}\n", .{m.Part2()});
+    try benchme(input(), aoc);
 }

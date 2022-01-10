@@ -2,27 +2,38 @@ usingnamespace @import("aoc-lib.zig");
 
 const Tile = struct {
     num: usize,
-    lines: [][]const u8,
+    lines: [][]u8,
     width: usize,
     top: u10,
     right: u10,
     bottom: u10,
     left: u10,
+    alloc: *Allocator,
 
-    pub fn init(chunk: []const u8, allocator: *Allocator) !*Tile {
-        var s = try allocator.create(Tile);
+    pub fn init(chunk: []const u8, alloc: *Allocator) !*Tile {
+        var s = try alloc.create(Tile);
+        s.alloc = alloc;
         var lit = split(chunk, "\n");
         var first = lit.next().?;
         s.num = parseUnsigned(usize, first[5..9], 10) catch unreachable;
-        var ls = ArrayList([]const u8).init(allocator);
+        var ls = ArrayList([]u8).init(alloc);
         defer ls.deinit();
         while (lit.next()) |line| {
-            try ls.append(line);
+            var x = try alloc.dupe(u8, line);
+            try ls.append(x);
         }
         s.lines = ls.toOwnedSlice();
         s.width = s.lines.len;
         s.calc_edges();
         return s;
+    }
+
+    pub fn deinit(s: *Tile) void {
+        for (s.lines) |_, i| {
+            s.alloc.free(s.lines[i]);
+        }
+        s.alloc.free(s.lines);
+        s.alloc.destroy(s);
     }
 
     pub fn flip(s: *Tile) void {
@@ -31,7 +42,7 @@ const Tile = struct {
     }
 
     pub fn rotate(s: *Tile) void {
-        s.lines = rotateLines(s.lines);
+        rotateLines(s.lines);
         s.calc_edges();
     }
 
@@ -64,7 +75,8 @@ const Tile = struct {
 };
 
 test "tile" {
-    var t = try Tile.init("Tile 1951:\n.#.\n.##\n#.#", alloc);
+    var t = try Tile.init("Tile 1951:\n.#.\n.##\n#.#", talloc);
+    defer t.deinit();
     try assertEq(@as(usize, 1951), t.num);
     try assertEq(@as(u10, 2), t.top);
     try assertEq(@as(u10, 3), t.right);
@@ -111,16 +123,18 @@ const Water = struct {
     edges: AutoHashMap(usize, ArrayList(usize)),
     starter: usize,
     width: usize,
+    alloc: *Allocator,
     debug: bool,
 
-    pub fn init(in: [][]const u8, allocator: *Allocator) !*Water {
-        var s = try allocator.create(Water);
+    pub fn init(in: [][]const u8, alloc: *Allocator) !*Water {
+        var s = try alloc.create(Water);
+        s.alloc = alloc;
         s.debug = false;
-        s.tiles = AutoHashMap(usize, *Tile).init(allocator);
-        s.edges = AutoHashMap(usize, ArrayList(usize)).init(allocator);
+        s.tiles = AutoHashMap(usize, *Tile).init(alloc);
+        s.edges = AutoHashMap(usize, ArrayList(usize)).init(alloc);
         s.starter = 0;
         for (in) |chunk| {
-            var tile = try Tile.init(chunk, allocator);
+            var tile = try Tile.init(chunk, alloc);
             try s.tiles.put(tile.num, tile);
             for ([_]u10{ tile.top, tile.right, tile.bottom, tile.left }) |e| {
                 const ce = CanonicalEdge(e);
@@ -134,6 +148,20 @@ const Water = struct {
         }
 
         return s;
+    }
+
+    pub fn deinit(s: *Water) void {
+        var it = s.tiles.iterator();
+        while (it.next()) |e| {
+            e.value_ptr.*.deinit();
+        }
+        s.tiles.deinit();
+        var eit = s.edges.iterator();
+        while (eit.next()) |e| {
+            e.value_ptr.*.deinit();
+        }
+        s.edges.deinit();
+        s.alloc.destroy(s);
     }
 
     pub fn EdgeTileCount(s: *Water, e: u10) usize {
@@ -261,8 +289,8 @@ const Water = struct {
     }
 
     pub fn Image(s: *Water) [][]const u8 {
-        var layout = alloc.alloc(usize, s.tiles.count()) catch unreachable;
-        defer alloc.free(layout);
+        var layout = s.alloc.alloc(usize, s.tiles.count()) catch unreachable;
+        defer s.alloc.free(layout);
         if (s.starter == 0) {
             _ = s.Part1();
         }
@@ -293,12 +321,12 @@ const Water = struct {
         }
         var tl = t.width - 2;
         var nl = s.width * tl;
-        var res = alloc.alloc([]u8, nl) catch unreachable;
+        var res = s.alloc.alloc([]u8, nl) catch unreachable;
         var irow: usize = 0;
         while (irow < s.width) : (irow += 1) {
             var trow: usize = 0;
             while (trow < t.width - 2) : (trow += 1) {
-                res[irow * tl + trow] = alloc.alloc(u8, nl) catch unreachable;
+                res[irow * tl + trow] = s.alloc.alloc(u8, nl) catch unreachable;
                 var icol: usize = 0;
                 while (icol < s.width) : (icol += 1) {
                     var tt = s.tiles.get(layout[irow * s.width + icol]) orelse unreachable;
@@ -314,13 +342,20 @@ const Water = struct {
 
     pub fn Part2(s: *Water) usize {
         var image = s.Image();
+        defer {
+            for (image) |_, j| {
+                s.alloc.free(image[j]);
+            }
+            s.alloc.free(image);
+        }
         if (s.debug) {
             for (image) |l| {
                 warn("{s}\n", .{l});
             }
             warn("\n", .{});
         }
-        const monster = readLines(@embedFile("monster.txt"));
+        const monster = readLines(@embedFile("monster.txt"), s.alloc);
+        defer s.alloc.free(monster);
         const mh = monster.len;
         const mw = monster[0].len;
         var monsterSize: usize = countCharsInLines(monster, '#');
@@ -361,7 +396,14 @@ const Water = struct {
             if (i == 3) {
                 reverseLines(image);
             } else {
-                image = rotateLines(image);
+                var old = image;
+                defer {
+                    for (old) |_, j| {
+                        s.alloc.free(old[j]);
+                    }
+                    s.alloc.free(old);
+                }
+                image = rotateLinesNonSymmetric(image, s.alloc);
             }
         }
         var c: usize = countCharsInLines(image, '#');
@@ -370,29 +412,46 @@ const Water = struct {
 };
 
 test "part1" {
-    const test1 = readChunks(test1file);
-    const inp = readChunks(inputfile);
+    const test1 = readChunks(test1file, talloc);
+    defer talloc.free(test1);
+    const inp = readChunks(inputfile, talloc);
+    defer talloc.free(inp);
 
-    var wt = try Water.init(test1, alloc);
+    var wt = try Water.init(test1, talloc);
+    defer wt.deinit();
     try assertEq(@as(usize, 20899048083289), wt.Part1());
 
-    var w = try Water.init(inp, alloc);
+    var w = try Water.init(inp, talloc);
+    defer w.deinit();
     try assertEq(@as(usize, 17712468069479), w.Part1());
 }
 
 test "part2" {
-    const test1 = readChunks(test1file);
-    const inp = readChunks(inputfile);
-    var wt = try Water.init(test1, alloc);
+    const test1 = readChunks(test1file, talloc);
+    defer talloc.free(test1);
+    const inp = readChunks(inputfile, talloc);
+    defer talloc.free(inp);
+    var wt = try Water.init(test1, talloc);
+    defer wt.deinit();
     try assertEq(@as(usize, 273), wt.Part2());
 
-    var w = try Water.init(inp, alloc);
+    var w = try Water.init(inp, talloc);
+    defer w.deinit();
     try assertEq(@as(usize, 2173), w.Part2());
 }
 
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
+    const chunks = readChunks(inp, halloc);
+    defer halloc.free(chunks);
+    var w = try Water.init(chunks, halloc);
+    defer w.deinit();
+    var p1 = w.Part1();
+    var p2 = w.Part2();
+    if (!bench) {
+        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+    }
+}
+
 pub fn main() anyerror!void {
-    const chunks = readChunks(input());
-    var w = try Water.init(chunks, alloc);
-    try print("Part1: {}\n", .{w.Part1()});
-    try print("Part2: {}\n", .{w.Part2()});
+    try benchme(input(), aoc);
 }

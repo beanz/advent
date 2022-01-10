@@ -93,13 +93,18 @@ const HexLife = struct {
         qmax: i8,
         rmin: i8,
         rmax: i8,
-        pub fn init(allocator: *Allocator) !*BB {
-            var s = try allocator.create(BB);
+        alloc: *Allocator,
+        pub fn init(alloc: *Allocator) !*BB {
+            var s = try alloc.create(BB);
+            s.alloc = alloc;
             s.qmin = maxInt(i8);
             s.qmax = minInt(i8);
             s.rmin = maxInt(i8);
             s.rmax = minInt(i8);
             return s;
+        }
+        pub fn deinit(s: *BB) void {
+            s.alloc.destroy(s);
         }
         pub fn reset(s: *BB) void {
             s.qmin = maxInt(i8);
@@ -123,12 +128,14 @@ const HexLife = struct {
         }
     };
     init: AutoHashMap(usize, State),
+    alloc: *Allocator,
     debug: bool,
 
-    pub fn init(in: [][]const u8, allocator: *Allocator) !*HexLife {
-        var s = try allocator.create(HexLife);
+    pub fn init(in: [][]const u8, alloc: *Allocator) !*HexLife {
+        var s = try alloc.create(HexLife);
+        s.alloc = alloc;
         s.debug = false;
-        s.init = AutoHashMap(usize, State).init(allocator);
+        s.init = AutoHashMap(usize, State).init(alloc);
         for (in) |line| {
             var ht = HexTileFromString(line);
             if (s.init.contains(ht)) {
@@ -140,23 +147,32 @@ const HexLife = struct {
         return s;
     }
 
-    pub fn Part1(s: *HexLife) usize {
+    pub fn deinit(s: *HexLife) void {
+        s.init.deinit();
+        s.alloc.destroy(s);
+    }
+
+    pub fn part1(s: *HexLife) usize {
         return s.init.count();
     }
 
-    pub fn Part2(s: *HexLife, days: usize) usize {
-        var cur = AutoHashMap(usize, State).init(alloc);
-        var cur_bb = BB.init(alloc) catch unreachable;
+    pub fn part2(s: *HexLife, days: usize) usize {
+        var cur = AutoHashMap(usize, State).init(s.alloc);
+        defer cur.deinit();
+        var cur_bb = BB.init(s.alloc) catch unreachable;
+        defer cur_bb.deinit();
         var it = s.init.iterator();
         while (it.next()) |e| {
             var ht = e.key_ptr.*;
             cur.put(ht, .black) catch unreachable;
             cur_bb.Update(Q(ht), R(ht));
         }
-        var next = AutoHashMap(usize, State).init(alloc);
+        var next = AutoHashMap(usize, State).init(s.alloc);
+        defer next.deinit();
         var day: usize = 1;
         var bc: usize = 0;
-        var next_bb = BB.init(alloc) catch unreachable;
+        var next_bb = BB.init(s.alloc) catch unreachable;
+        defer next_bb.deinit();
         while (day <= days) : (day += 1) {
             bc = 0;
             var q = cur_bb.qmin - 1;
@@ -204,32 +220,49 @@ const HexLife = struct {
 };
 
 test "hex life part1" {
-    const test1 = readLines(test1file);
-    const inp = readLines(inputfile);
+    const test1 = readLines(test1file, talloc);
+    defer talloc.free(test1);
+    const inp = readLines(inputfile, talloc);
+    defer talloc.free(inp);
 
-    var gt = try HexLife.init(test1, alloc);
-    try assertEq(@as(usize, 10), gt.Part1());
-    var g = try HexLife.init(inp, alloc);
-    try assertEq(@as(usize, 307), g.Part1());
+    var gt = try HexLife.init(test1, talloc);
+    defer gt.deinit();
+    try assertEq(@as(usize, 10), gt.part1());
+    var g = try HexLife.init(inp, talloc);
+    defer g.deinit();
+    try assertEq(@as(usize, 307), g.part1());
 }
 
 test "hex life part2" {
-    const test1 = readLines(test1file);
-    const inp = readLines(inputfile);
+    const test1 = readLines(test1file, talloc);
+    defer talloc.free(test1);
+    const inp = readLines(inputfile, talloc);
+    defer talloc.free(inp);
 
-    var gt = try HexLife.init(test1, alloc);
-    var g = try HexLife.init(inp, alloc);
+    var gt = try HexLife.init(test1, talloc);
+    defer gt.deinit();
+    var g = try HexLife.init(inp, talloc);
+    defer g.deinit();
 
-    try assertEq(@as(usize, 15), gt.Part2(1));
-    try assertEq(@as(usize, 12), gt.Part2(2));
-    try assertEq(@as(usize, 37), gt.Part2(10));
-    try assertEq(@as(usize, 2208), gt.Part2(100));
-    try assertEq(@as(usize, 3787), g.Part2(100));
+    try assertEq(@as(usize, 15), gt.part2(1));
+    try assertEq(@as(usize, 12), gt.part2(2));
+    try assertEq(@as(usize, 37), gt.part2(10));
+    try assertEq(@as(usize, 2208), gt.part2(100));
+    try assertEq(@as(usize, 3787), g.part2(100));
+}
+
+fn aoc(inp: []const u8, bench: bool) anyerror!void {
+    const lines = readLines(inp, halloc);
+    defer halloc.free(lines);
+    var g = try HexLife.init(lines, halloc);
+    defer g.deinit();
+    var p1 = g.part1();
+    var p2 = g.part2(100);
+    if (!bench) {
+        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+    }
 }
 
 pub fn main() anyerror!void {
-    const lines = readLines(input());
-    var g = try HexLife.init(lines, alloc);
-    try print("Part1: {}\n", .{g.Part1()});
-    try print("Part2: {}\n", .{g.Part2(100)});
+    try benchme(input(), aoc);
 }
