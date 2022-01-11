@@ -1,32 +1,33 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
 test "examples" {
-    const test1 = readLines(test1file, talloc);
-    defer talloc.free(test1);
-    const test2 = readLines(test2file, talloc);
-    defer talloc.free(test2);
-    const inp = readLines(inputfile, talloc);
-    defer talloc.free(inp);
+    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    defer aoc.talloc.free(test1);
+    const test2 = aoc.readLines(aoc.talloc, aoc.test2file);
+    defer aoc.talloc.free(test2);
+    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    defer aoc.talloc.free(inp);
 
-    var map = Map.fromInput(test1, talloc) catch unreachable;
-    try assertEq(@as(usize, 71), map.RunOnce(4, false));
-    try assertEq(@as(usize, 20), map.RunOnce(4, false));
+    var map = Map.fromInput(aoc.talloc, test1) catch unreachable;
+    try aoc.assertEq(@as(usize, 71), map.RunOnce(4, false));
+    try aoc.assertEq(@as(usize, 20), map.RunOnce(4, false));
     map.deinit();
 
-    map = Map.fromInput(test2, talloc) catch unreachable;
-    try assertEq(@as(usize, 29), map.RunOnce(4, false));
+    map = Map.fromInput(aoc.talloc, test2) catch unreachable;
+    try aoc.assertEq(@as(usize, 29), map.RunOnce(4, false));
     map.deinit();
 
-    map = Map.fromInput(inp, talloc) catch unreachable;
+    map = Map.fromInput(aoc.talloc, inp) catch unreachable;
     defer map.deinit();
-    try assertEq(@as(usize, 7906), map.RunOnce(4, false));
-    try assertEq(@as(usize, 148), map.RunOnce(4, false));
+    try aoc.assertEq(@as(usize, 7906), map.RunOnce(4, false));
+    try aoc.assertEq(@as(usize, 148), map.RunOnce(4, false));
 
-    try assertEq(@as(usize, 37), part1(test1, talloc));
-    try assertEq(@as(usize, 26), part2(test1, talloc));
+    try aoc.assertEq(@as(usize, 37), part1(aoc.talloc, test1));
+    try aoc.assertEq(@as(usize, 26), part2(aoc.talloc, test1));
 
-    try assertEq(@as(usize, 2481), part1(inp, talloc));
-    try assertEq(@as(usize, 2227), part2(inp, talloc));
+    try aoc.assertEq(@as(usize, 2481), part1(aoc.talloc, inp));
+    try aoc.assertEq(@as(usize, 2227), part2(aoc.talloc, inp));
 }
 
 const Map = struct {
@@ -41,9 +42,9 @@ const Map = struct {
     map: []SeatState,
     new: []SeatState,
     changes: usize,
-    alloc: *Allocator,
+    alloc: std.mem.Allocator,
 
-    pub fn fromInput(inp: [][]const u8, alloc: *Allocator) !*Map {
+    pub fn fromInput(alloc: std.mem.Allocator, inp: [][]const u8) !*Map {
         var h = inp.len;
         var w = inp[0].len;
         var map = try alloc.alloc(SeatState, h * w);
@@ -76,7 +77,7 @@ const Map = struct {
     }
 
     pub fn SetSeat(self: *Map, x: isize, y: isize, state: SeatState) void {
-        self.new[absCast(y) * self.w + absCast(x)] = state;
+        self.new[std.math.absCast(y) * self.w + std.math.absCast(x)] = state;
     }
 
     pub fn Swap(self: *Map) void {
@@ -89,7 +90,7 @@ const Map = struct {
         if (x < 0 or x > self.w - 1 or y < 0 or y > self.h - 1) {
             return .none_outside;
         }
-        return self.map[absCast(y) * self.w + absCast(x)];
+        return self.map[std.math.absCast(y) * self.w + std.math.absCast(x)];
     }
 
     pub fn Next(self: *Map, x: isize, y: isize, group: usize, sight: bool) SeatState {
@@ -125,17 +126,17 @@ const Map = struct {
             while (x < self.w) : (x += 1) {
                 switch (self.Seat(x, y)) {
                     .empty => {
-                        print("{}", .{"L"}) catch unreachable;
+                        aoc.print("{}", .{"L"}) catch unreachable;
                     },
                     .occupied => {
-                        print("{}", .{"#"}) catch unreachable;
+                        aoc.print("{}", .{"#"}) catch unreachable;
                     },
                     else => {
-                        print("{}", .{"."}) catch unreachable;
+                        aoc.print("{}", .{"."}) catch unreachable;
                     },
                 }
             }
-            print("\n", .{}) catch unreachable;
+            aoc.print("\n", .{}) catch unreachable;
         }
     }
 
@@ -175,28 +176,28 @@ const Map = struct {
     }
 };
 
-fn part1(in: [][]const u8, alloc: *Allocator) usize {
-    var map = Map.fromInput(in, alloc) catch unreachable;
+fn part1(alloc: std.mem.Allocator, in: [][]const u8) usize {
+    var map = Map.fromInput(alloc, in) catch unreachable;
     defer map.deinit();
     return map.Run(4, false);
 }
 
-fn part2(in: [][]const u8, alloc: *Allocator) usize {
-    var map = Map.fromInput(in, alloc) catch unreachable;
+fn part2(alloc: std.mem.Allocator, in: [][]const u8) usize {
+    var map = Map.fromInput(alloc, in) catch unreachable;
     defer map.deinit();
     return map.Run(5, true);
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
-    const lines = readLines(inp, halloc);
-    defer halloc.free(lines);
-    var p1 = part1(lines, halloc);
-    var p2 = part2(lines, halloc);
+fn day11(inp: []const u8, bench: bool) anyerror!void {
+    const lines = aoc.readLines(aoc.halloc, inp);
+    defer aoc.halloc.free(lines);
+    var p1 = part1(aoc.halloc, lines);
+    var p2 = part2(aoc.halloc, lines);
     if (!bench) {
-        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day11);
 }

@@ -1,22 +1,21 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
 const HH = struct {
     pub const Op = enum(u8) { acc, jmp, nop };
-    const Inst = struct {
-        op: Op, arg: i64
-    };
+    const Inst = struct { op: Op, arg: i64 };
     code: []Inst,
     ip: isize = 0,
     acc: i64 = 0,
-    alloc: *Allocator,
+    alloc: std.mem.Allocator,
 
-    pub fn fromInput(inp: anytype, alloc: *Allocator) !*HH {
+    pub fn fromInput(inp: anytype, alloc: std.mem.Allocator) !*HH {
         var code = try alloc.alloc(Inst, inp.len);
         var hh = try alloc.create(HH);
         for (inp) |line, ip| {
-            var it = split(line, " ");
+            var it = std.mem.split(u8, line, " ");
             const opstr = it.next().?;
-            const arg = try parseInt(i64, it.next().?, 10);
+            const arg = try aoc.parseInt(i64, it.next().?, 10);
             var op: Op = undefined;
             switch (opstr[0]) {
                 'a' => {
@@ -62,19 +61,19 @@ const HH = struct {
     }
 
     pub fn reset(self: *HH) void {
-        hh.ip = 0;
-        hh.acc = 0;
+        self.ip = 0;
+        self.acc = 0;
     }
 
     pub fn run(self: *HH) void {
-        var seen = AutoHashMap(isize, bool).init(self.alloc);
+        var seen = std.AutoHashMap(isize, bool).init(self.alloc);
         defer seen.deinit();
         while (self.ip < self.code.len) : (self.ip += 1) {
             if (seen.contains(self.ip)) {
                 break;
             }
             seen.put(self.ip, true) catch unreachable;
-            const inst = self.code[absCast(self.ip)];
+            const inst = self.code[std.math.absCast(self.ip)];
             switch (inst.op) {
                 Op.acc => {
                     self.acc += inst.arg;
@@ -100,29 +99,29 @@ const HH = struct {
 };
 
 test "examples" {
-    const test1 = readLines(test1file, talloc);
-    defer talloc.free(test1);
-    const inp = readLines(inputfile, talloc);
-    defer talloc.free(inp);
+    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    defer aoc.talloc.free(test1);
+    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    defer aoc.talloc.free(inp);
 
-    try assertEq(@as(i64, 5), part1(test1, talloc));
-    try assertEq(@as(i64, 8), part2(test1, talloc));
+    try aoc.assertEq(@as(i64, 5), part1(aoc.talloc, test1));
+    try aoc.assertEq(@as(i64, 8), part2(aoc.talloc, test1));
 
-    try assertEq(@as(i64, 1614), part1(inp, talloc));
-    try assertEq(@as(i64, 1260), part2(inp, talloc));
+    try aoc.assertEq(@as(i64, 1614), part1(aoc.talloc, inp));
+    try aoc.assertEq(@as(i64, 1260), part2(aoc.talloc, inp));
 }
 
-fn part1(inp: anytype, alloc: *Allocator) i64 {
+fn part1(alloc: std.mem.Allocator, inp: anytype) i64 {
     var hh = HH.fromInput(inp, alloc) catch unreachable;
     defer hh.deinit();
     hh.run();
     return hh.acc;
 }
 
-fn part2(inp: anytype, alloc: *Allocator) i64 {
+fn part2(alloc: std.mem.Allocator, inp: anytype) i64 {
     var hh = HH.fromInput(inp, alloc) catch unreachable;
     defer hh.deinit();
-    for (hh.code) |inst, ip| {
+    for (hh.code) |_, ip| {
         var mhh = hh.clone() catch unreachable;
         defer mhh.deinit();
         if (!mhh.fixOp(ip)) {
@@ -136,16 +135,16 @@ fn part2(inp: anytype, alloc: *Allocator) i64 {
     return 0;
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
-    var spec = readLines(inp, halloc);
-    defer halloc.free(spec);
-    var p1 = part1(spec, halloc);
-    var p2 = part2(spec, halloc);
+fn day08(inp: []const u8, bench: bool) anyerror!void {
+    var spec = aoc.readLines(aoc.halloc, inp);
+    defer aoc.halloc.free(spec);
+    var p1 = part1(aoc.halloc, spec);
+    var p2 = part2(aoc.halloc, spec);
     if (!bench) {
-        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day08);
 }

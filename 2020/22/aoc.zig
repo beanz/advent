@@ -1,41 +1,42 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
 const fmtSliceHexLower = std.fmt.fmtSliceHexLower;
 
 const Game = struct {
     d1: []u8,
     d2: []u8,
-    alloc: *Allocator,
+    alloc: std.mem.Allocator,
     debug: bool,
 
-    pub fn init(in: [][]const u8, alloc: *Allocator) !*Game {
+    pub fn init(alloc: std.mem.Allocator, in: [][]const u8) !*Game {
         var self = try alloc.create(Game);
         var l: usize = 0;
-        var it = split(in[0], "\n");
+        var it = std.mem.split(u8, in[0], "\n");
         while (it.next()) |_| {
             l += 1;
         }
         l -= 1;
         self.d1 = try alloc.alloc(u8, l);
-        it = split(in[0], "\n");
+        it = std.mem.split(u8, in[0], "\n");
         _ = it.next();
         var i: usize = 0;
         while (it.next()) |line| {
-            self.d1[i] = try parseUnsigned(u8, line, 10);
+            self.d1[i] = try std.fmt.parseUnsigned(u8, line, 10);
             i += 1;
         }
         l = 0;
-        it = split(in[1], "\n");
+        it = std.mem.split(u8, in[1], "\n");
         while (it.next()) |_| {
             l += 1;
         }
         l -= 1;
         self.d2 = try alloc.alloc(u8, l);
-        it = split(in[1], "\n");
+        it = std.mem.split(u8, in[1], "\n");
         _ = it.next();
         i = 0;
         while (it.next()) |line| {
-            self.d2[i] = try parseUnsigned(u8, line, 10);
+            self.d2[i] = try std.fmt.parseUnsigned(u8, line, 10);
             i += 1;
         }
         self.alloc = alloc;
@@ -65,13 +66,13 @@ const Game = struct {
 
     pub fn copyd(all: anytype, d: []u8) []u8 {
         var result = all.alloc(u8, d.len) catch unreachable;
-        copy(u8, result[0..], d);
+        std.mem.copy(u8, result[0..], d);
         return result;
     }
 
     pub fn append(all: anytype, d: []u8, a: u8, b: u8) []u8 {
         var result = all.alloc(u8, d.len + 2) catch unreachable;
-        copy(u8, result[0..], d);
+        std.mem.copy(u8, result[0..], d);
         result[d.len] = a;
         result[d.len + 1] = b;
         all.free(d);
@@ -80,14 +81,14 @@ const Game = struct {
 
     pub fn tail(all: anytype, d: []u8) []u8 {
         var result = all.alloc(u8, d.len - 1) catch unreachable;
-        copy(u8, result[0..], d[1..d.len]);
+        std.mem.copy(u8, result[0..], d[1..d.len]);
         all.free(d);
         return result;
     }
 
     pub fn subdeck(all: anytype, d: []u8, c: u8) []u8 {
         var result = all.alloc(u8, c) catch unreachable;
-        copy(u8, result[0..], d[0..c]);
+        std.mem.copy(u8, result[0..], d[0..c]);
         return result;
     }
 
@@ -97,21 +98,20 @@ const Game = struct {
 
     pub fn Combat(g: *Game, in: [2][]u8, part2: bool) Result {
         var round: usize = 1;
-        var arenaAllocator = ArenaAllocator.init(g.alloc);
+        var arenaAllocator = std.heap.ArenaAllocator.init(g.alloc);
         defer arenaAllocator.deinit();
-        var arena = &arenaAllocator.allocator;
+        var arena = arenaAllocator.allocator();
         var d = [2][]u8{ copyd(arena, in[0]), copyd(arena, in[1]) };
-        var seen = AutoHashMap(usize, bool).init(arena);
+        var seen = std.AutoHashMap(usize, bool).init(arena);
         defer seen.deinit();
-        var first = true;
         while (d[0].len > 0 and d[1].len > 0) {
             if (g.debug) {
-                warn("{}: d1={x} d2={x}\n", .{ round, fmtSliceHexLower(d[0]), fmtSliceHexLower(d[1]) });
+                std.debug.print("{}: d1={x} d2={x}\n", .{ round, fmtSliceHexLower(d[0]), fmtSliceHexLower(d[1]) });
             }
             const k = key(d[0], d[1]);
             if (seen.contains(k)) {
                 if (g.debug) {
-                    warn("{}: p1! (seen)\n", .{round});
+                    std.debug.print("{}: p1! (seen)\n", .{round});
                 }
                 return Result{ .player = 0, .deck = copyd(g.alloc, d[0]) };
             }
@@ -120,7 +120,7 @@ const Game = struct {
             d[0] = tail(arena, d[0]);
             d[1] = tail(arena, d[1]);
             if (g.debug) {
-                warn("{}: c1={} c2={}\n", .{ round, c[0], c[1] });
+                std.debug.print("{}: c1={} c2={}\n", .{ round, c[0], c[1] });
             }
             var w: usize = 0;
             if (part2 and d[0].len >= c[0] and d[1].len >= c[1]) {
@@ -131,7 +131,7 @@ const Game = struct {
                 defer arena.free(sd[0]);
                 defer arena.free(sd[1]);
                 if (g.debug) {
-                    warn("{}: subgame\n", .{round});
+                    std.debug.print("{}: subgame\n", .{round});
                 }
                 const subres = g.Combat(sd, part2);
                 w = subres.player;
@@ -140,19 +140,19 @@ const Game = struct {
                 w = if (c[0] > c[1]) 0 else 1;
             }
             if (g.debug) {
-                warn("{}: p{}!\n", .{ round, w + 1 });
+                std.debug.print("{}: p{}!\n", .{ round, w + 1 });
             }
             d[w] = append(arena, d[w], c[w], c[1 - w]);
             round += 1;
         }
         if (d[0].len > 0) {
             if (g.debug) {
-                warn("p1!\n", .{});
+                std.debug.print("p1!\n", .{});
             }
             return Result{ .player = 0, .deck = copyd(g.alloc, d[0]) };
         } else {
             if (g.debug) {
-                warn("p2!\n", .{});
+                std.debug.print("p2!\n", .{});
             }
             return Result{ .player = 1, .deck = copyd(g.alloc, d[1]) };
         }
@@ -174,69 +174,69 @@ const Game = struct {
 };
 
 test "seen" {
-    const test1 = readChunks(test1file, talloc);
-    defer talloc.free(test1);
-    const inp = readChunks(inputfile, talloc);
-    defer talloc.free(inp);
+    const test1 = aoc.readChunks(aoc.talloc, aoc.test1file);
+    defer aoc.talloc.free(test1);
+    const inp = aoc.readChunks(aoc.talloc, aoc.inputfile);
+    defer aoc.talloc.free(inp);
 
-    var seen = AutoHashMap(usize, bool).init(talloc);
+    var seen = std.AutoHashMap(usize, bool).init(aoc.talloc);
     defer seen.deinit();
 
-    var g1 = try Game.init(test1, talloc);
+    var g1 = try Game.init(aoc.talloc, test1);
     defer g1.deinit();
     var k1 = Game.key(g1.d1, g1.d2);
     var k2 = Game.key(g1.d2, g1.d1);
-    try assertEq(false, seen.contains(k1));
-    try assertEq(false, seen.contains(k2));
+    try aoc.assertEq(false, seen.contains(k1));
+    try aoc.assertEq(false, seen.contains(k2));
     try seen.put(k1, true);
-    try assertEq(true, seen.contains(k1));
-    try assertEq(false, seen.contains(k2));
+    try aoc.assertEq(true, seen.contains(k1));
+    try aoc.assertEq(false, seen.contains(k2));
     try seen.put(k2, true);
-    try assertEq(true, seen.contains(k1));
-    try assertEq(true, seen.contains(k2));
+    try aoc.assertEq(true, seen.contains(k1));
+    try aoc.assertEq(true, seen.contains(k2));
 
-    var g = try Game.init(inp, talloc);
+    var g = try Game.init(aoc.talloc, inp);
     defer g.deinit();
     k1 = Game.key(g.d1, g.d2);
     k2 = Game.key(g.d2, g.d1);
-    try assertEq(false, seen.contains(k1));
-    try assertEq(false, seen.contains(k2));
+    try aoc.assertEq(false, seen.contains(k1));
+    try aoc.assertEq(false, seen.contains(k2));
     try seen.put(k1, true);
-    try assertEq(true, seen.contains(k1));
-    try assertEq(false, seen.contains(k2));
+    try aoc.assertEq(true, seen.contains(k1));
+    try aoc.assertEq(false, seen.contains(k2));
     try seen.put(k2, true);
-    try assertEq(true, seen.contains(k1));
-    try assertEq(true, seen.contains(k2));
+    try aoc.assertEq(true, seen.contains(k1));
+    try aoc.assertEq(true, seen.contains(k2));
 }
 
 test "examples" {
-    const test1 = readChunks(test1file, talloc);
-    defer talloc.free(test1);
-    const inp = readChunks(inputfile, talloc);
-    defer talloc.free(inp);
+    const test1 = aoc.readChunks(aoc.talloc, aoc.test1file);
+    defer aoc.talloc.free(test1);
+    const inp = aoc.readChunks(aoc.talloc, aoc.inputfile);
+    defer aoc.talloc.free(inp);
 
-    var g1 = try Game.init(test1, talloc);
+    var g1 = try Game.init(aoc.talloc, test1);
     defer g1.deinit();
-    try assertEq(@as(usize, 306), g1.Part1());
-    try assertEq(@as(usize, 291), g1.Part2());
-    var g2 = try Game.init(inp, talloc);
+    try aoc.assertEq(@as(usize, 306), g1.Part1());
+    try aoc.assertEq(@as(usize, 291), g1.Part2());
+    var g2 = try Game.init(aoc.talloc, inp);
     defer g2.deinit();
-    try assertEq(@as(usize, 32856), g2.Part1());
-    try assertEq(@as(usize, 33805), g2.Part2());
+    try aoc.assertEq(@as(usize, 32856), g2.Part1());
+    try aoc.assertEq(@as(usize, 33805), g2.Part2());
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
-    const chunks = readChunks(inp, halloc);
-    defer halloc.free(chunks);
-    var g = try Game.init(chunks, halloc);
+fn day22(inp: []const u8, bench: bool) anyerror!void {
+    const chunks = aoc.readChunks(aoc.halloc, inp);
+    defer aoc.halloc.free(chunks);
+    var g = try Game.init(aoc.halloc, chunks);
     defer g.deinit();
     var p1 = g.Part1();
     var p2 = g.Part2();
     if (!bench) {
-        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day22);
 }

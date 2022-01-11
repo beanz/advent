@@ -1,18 +1,27 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
 const Cup = struct {
     val: usize,
     cw: *Cup,
     ccw: *Cup,
-    alloc: *Allocator,
+    alloc: std.mem.Allocator,
 
-    pub fn init(val: usize, alloc: *Allocator) *Cup {
+    pub fn init(alloc: std.mem.Allocator, val: usize) *Cup {
         var self = alloc.create(Cup) catch unreachable;
         self.val = val;
         self.cw = self;
         self.ccw = self;
         self.alloc = alloc;
         return self;
+    }
+
+    pub fn deinit(c: *Cup) void {
+        var n = c.cw;
+        while (n != c) : (n = n.cw) {
+            c.alloc.destroy(n);
+        }
+        c.alloc.destroy(c);
     }
 
     pub fn insertAfter(c: *Cup, new: *Cup) void {
@@ -74,36 +83,36 @@ const Cup = struct {
 };
 
 test "cup" {
-    var c1 = Cup.init(1, talloc);
-    try assertEq(@as(usize, 1), c1.val);
-    try assertEq(c1, c1.cw);
-    try assertEq(c1, c1.ccw);
-    var c2 = Cup.init(2, talloc);
-    try assertEq(@as(usize, 2), c2.val);
-    try assertEq(c2, c2.cw);
-    try assertEq(c2, c2.ccw);
+    var c1 = Cup.init(aoc.halloc, 1);
+    try aoc.assertEq(@as(usize, 1), c1.val);
+    try aoc.assertEq(c1, c1.cw);
+    try aoc.assertEq(c1, c1.ccw);
+    var c2 = Cup.init(aoc.halloc, 2);
+    try aoc.assertEq(@as(usize, 2), c2.val);
+    try aoc.assertEq(c2, c2.cw);
+    try aoc.assertEq(c2, c2.ccw);
     c1.insertAfter(c2);
-    try assertEq(c2, c1.cw);
-    try assertEq(c2, c1.ccw);
-    try assertEq(c1, c2.cw);
-    try assertEq(c1, c2.ccw);
+    try aoc.assertEq(c2, c1.cw);
+    try aoc.assertEq(c2, c1.ccw);
+    try aoc.assertEq(c1, c2.cw);
+    try aoc.assertEq(c1, c2.ccw);
     var i: usize = 3;
     var c = c2;
     while (i < 10) : (i += 1) {
-        c.insertAfter(Cup.init(arena, i));
+        c.insertAfter(Cup.init(aoc.halloc, i));
         c = c.cw;
     }
-    try assertStrEq("123456789", c1.string());
-    try assertStrEq("23456789", c1.part1string());
-    try assertStrEq("67891234", c2.cw.cw.cw.part1string());
+    try aoc.assertStrEq("123456789", c1.string());
+    try aoc.assertStrEq("23456789", c1.part1string());
+    try aoc.assertStrEq("67891234", c2.cw.cw.cw.part1string());
 }
 
 const Game = struct {
     init: []u8,
-    alloc: *Allocator,
+    alloc: std.mem.Allocator,
     debug: bool,
 
-    pub fn init(in: [][]const u8, alloc: *Allocator) !*Game {
+    pub fn init(alloc: std.mem.Allocator, in: [][]const u8) !*Game {
         var self = try alloc.create(Game);
         self.alloc = alloc;
         self.debug = true;
@@ -123,20 +132,20 @@ const Game = struct {
 
     pub fn play(g: *Game, moves: usize, max: usize) *Cup {
         var map = g.alloc.alloc(*Cup, max + 1) catch unreachable; // ignore 0
-        var cur = Cup.init(g.init[0], g.alloc);
+        var cur = Cup.init(g.alloc, g.init[0]);
         map[g.init[0]] = cur;
         var last = cur;
         var i: usize = 1;
         while (i < g.init.len) : (i += 1) {
             var v = g.init[i];
-            var n = Cup.init(v, g.alloc);
+            var n = Cup.init(g.alloc, v);
             map[v] = n;
             last.insertAfter(n);
             last = n;
         }
         i = 10;
         while (i <= max) : (i += 1) {
-            var n = Cup.init(i, g.alloc);
+            var n = Cup.init(g.alloc, i);
             map[i] = n;
             last.insertAfter(n);
             last = n;
@@ -176,52 +185,60 @@ const Game = struct {
 };
 
 test "part1" {
-    const test1 = readLines(test1file);
-    const inp = readLines(inputfile);
+    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    defer aoc.talloc.free(test1);
+    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    defer aoc.talloc.free(inp);
 
-    var gt = Game.init(test1);
-    try assertStrEq("25467389", gt.part1(0));
-    try assertStrEq("54673289", gt.part1(1));
-    try assertStrEq("92658374", gt.part1(10));
-    try assertStrEq("67384529", gt.part1(100));
-    var g = Game.init(inp);
-    try assertStrEq("92736584", g.part1(10));
-    try assertStrEq("63598274", g.part1(50));
-    try assertStrEq("46978532", g.part1(100));
+    var gt = try Game.init(aoc.halloc, test1);
+    defer gt.deinit();
+    try aoc.assertStrEq("25467389", gt.part1(0));
+    try aoc.assertStrEq("54673289", gt.part1(1));
+    try aoc.assertStrEq("92658374", gt.part1(10));
+    try aoc.assertStrEq("67384529", gt.part1(100));
+    var g = try Game.init(aoc.halloc, inp);
+    defer g.deinit();
+    try aoc.assertStrEq("92736584", g.part1(10));
+    try aoc.assertStrEq("63598274", g.part1(50));
+    try aoc.assertStrEq("46978532", g.part1(100));
 }
 
 test "part2" {
-    const test1 = readLines(test1file);
-    const inp = readLines(inputfile);
+    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    defer aoc.talloc.free(test1);
+    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    defer aoc.talloc.free(inp);
 
-    var gt = Game.init(test1);
-    try assertEq(@as(usize, 136), gt.part2(30, 20));
-    try assertEq(@as(usize, 54), gt.part2(100, 20));
-    try assertEq(@as(usize, 42), gt.part2(1000, 20));
-    try assertEq(@as(usize, 285), gt.part2(10000, 20));
-    try assertEq(@as(usize, 285), gt.part2(10001, 20));
-    try assertEq(@as(usize, 12), gt.part2(10, 1000000));
-    try assertEq(@as(usize, 12), gt.part2(100, 1000000));
-    try assertEq(@as(usize, 126), gt.part2(1000000, 1000000));
-    try assertEq(@as(usize, 32999175), gt.part2(2000000, 1000000));
-    try assertEq(@as(usize, 149245887792), gt.part2(10000000, 1000000));
+    var gt = try Game.init(aoc.halloc, test1);
+    defer gt.deinit();
+    try aoc.assertEq(@as(usize, 136), gt.part2(30, 20));
+    try aoc.assertEq(@as(usize, 54), gt.part2(100, 20));
+    try aoc.assertEq(@as(usize, 42), gt.part2(1000, 20));
+    try aoc.assertEq(@as(usize, 285), gt.part2(10000, 20));
+    try aoc.assertEq(@as(usize, 285), gt.part2(10001, 20));
+    try aoc.assertEq(@as(usize, 12), gt.part2(10, 1000000));
+    try aoc.assertEq(@as(usize, 12), gt.part2(100, 1000000));
+    try aoc.assertEq(@as(usize, 126), gt.part2(1000000, 1000000));
+    try aoc.assertEq(@as(usize, 32999175), gt.part2(2000000, 1000000));
+    try aoc.assertEq(@as(usize, 149245887792), gt.part2(10000000, 1000000));
 
-    var g = Game.init(inp);
-    try assertEq(@as(usize, 163035127721), g.part2(10000000, 1000000));
+    var g = try Game.init(aoc.halloc, inp);
+    defer g.deinit();
+    try aoc.assertEq(@as(usize, 163035127721), g.part2(10000000, 1000000));
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
-    const lines = readLines(inp, halloc);
-    defer halloc.free(lines);
-    var g = try Game.init(lines, halloc);
+fn day23(inp: []const u8, bench: bool) anyerror!void {
+    const lines = aoc.readLines(aoc.halloc, inp);
+    defer aoc.halloc.free(lines);
+    var g = try Game.init(aoc.halloc, lines);
     defer g.deinit();
     var p1 = g.part1(100);
     var p2 = g.part2(10000000, 1000000);
     if (!bench) {
-        try print("Part 1: {s}\nPart 2: {}\n", .{ p1, p2 });
+        try aoc.print("Part 1: {s}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day23);
 }

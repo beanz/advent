@@ -1,22 +1,23 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
 test "examples" {
-    try assertEq(@as(usize, 2), part1(test1file));
-    try assertEq(@as(usize, 1), part2(test1file));
-    try assertEq(@as(usize, 454), part1(inputfile));
-    try assertEq(@as(usize, 649), part2(inputfile));
+    try aoc.assertEq(@as(usize, 2), part1(aoc.test1file));
+    try aoc.assertEq(@as(usize, 1), part2(aoc.test1file));
+    try aoc.assertEq(@as(usize, 454), part1(aoc.inputfile));
+    try aoc.assertEq(@as(usize, 649), part2(aoc.inputfile));
 }
 
 fn part1(inp: anytype) usize {
-    var lit = split(inp, "\n");
+    var lit = std.mem.split(u8, inp, "\n");
     var c: usize = 0;
     while (lit.next()) |line| {
         if (line.len == 0) {
             break;
         }
-        var fit = tokenize(line, "- :");
-        const n1 = parseInt(i64, fit.next().?, 10) catch unreachable;
-        const n2 = parseInt(i64, fit.next().?, 10) catch unreachable;
+        var fit = std.mem.tokenize(u8, line, "- :");
+        const n1 = std.fmt.parseInt(i64, fit.next().?, 10) catch unreachable;
+        const n2 = std.fmt.parseInt(i64, fit.next().?, 10) catch unreachable;
         const ch = (fit.next().?)[0];
         const str = fit.next().?;
         var cc: i64 = 0;
@@ -33,15 +34,15 @@ fn part1(inp: anytype) usize {
 }
 
 fn part2(inp: anytype) usize {
-    var lit = split(inp, "\n");
+    var lit = std.mem.split(u8, inp, "\n");
     var c: usize = 0;
     while (lit.next()) |line| {
         if (line.len == 0) {
             break;
         }
-        var fit = tokenize(line, "- :");
-        const n1 = parseUnsigned(usize, fit.next().?, 10) catch unreachable;
-        const n2 = parseUnsigned(usize, fit.next().?, 10) catch unreachable;
+        var fit = std.mem.tokenize(u8, line, "- :");
+        const n1 = std.fmt.parseUnsigned(usize, fit.next().?, 10) catch unreachable;
+        const n2 = std.fmt.parseUnsigned(usize, fit.next().?, 10) catch unreachable;
         const ch = (fit.next().?)[0];
         const str = fit.next().?;
         var cc: i64 = 0;
@@ -59,15 +60,14 @@ fn part2(inp: anytype) usize {
     return c;
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
-    const in = input();
-    var p1 = part1(in);
-    var p2 = part2(in);
+fn day02(inp: []const u8, bench: bool) anyerror!void {
+    var p1 = part1(inp);
+    var p2 = part2(inp);
     if (!bench) {
-        try print("Part 1: {}\nPart 2: {}\n", .{p1, p2});
+        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day02);
 }

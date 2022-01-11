@@ -1,39 +1,32 @@
-pub const std = @import("std");
-pub const Args = std.process.args;
+const std = @import("std");
+const Args = std.process.args;
 
 // mem
 pub const halloc = std.heap.page_allocator;
-pub const hfree = halloc.free;
-pub const dupe = std.mem.dupe;
-pub const copy = std.mem.copy;
-pub const memset = std.mem.set;
-pub const Allocator = std.mem.Allocator;
-pub const ArenaAllocator = std.heap.ArenaAllocator;
 pub const talloc = std.testing.allocator;
 
 // sort
 pub const sort = std.sort;
-pub fn i64LessThan(c: void, a: i64, b: i64) bool {
+pub fn i64LessThan(_: void, a: i64, b: i64) bool {
     return a < b;
 }
 
-pub fn i64GreaterThan(c: void, a: i64, b: i64) bool {
+pub fn i64GreaterThan(_: void, a: i64, b: i64) bool {
     return a > b;
 }
 
-pub fn usizeLessThan(c: void, a: usize, b: usize) bool {
+pub fn usizeLessThan(_: void, a: usize, b: usize) bool {
     return a < b;
 }
 
-pub fn usizeGreaterThan(c: void, a: usize, b: usize) bool {
+pub fn usizeGreaterThan(_: void, a: usize, b: usize) bool {
     return a > b;
 }
 
 // io
 pub const out = &std.io.getStdOut().writer();
 pub const print = out.print;
-pub const debug = std.debug;
-pub const warn = debug.warn;
+
 pub const inputfile = @embedFile("input.txt");
 pub const test0file = @embedFile("test0.txt");
 pub const test1file = @embedFile("test1.txt");
@@ -69,32 +62,26 @@ pub const math = std.math;
 pub const minInt = math.minInt;
 pub const maxInt = math.maxInt;
 
-// data
-pub const ArrayList = std.ArrayList;
-pub const StringHashMap = std.StringHashMap;
-pub const AutoHashMap = std.AutoHashMap;
-pub const Stack = std.atomic.Stack;
-
 // test
 pub const assert = std.testing.expect;
 pub const assertEq = std.testing.expectEqual;
 pub fn assertStrEq(exp: []const u8, act: []const u8) anyerror!void {
     if (!std.mem.eql(u8, exp, act)) {
-        warn("expected, '{s}' but was '{s}'\n", .{ exp, act });
+        std.debug.print("expected, '{s}' but was '{s}'\n", .{ exp, act });
     }
     try assert(std.mem.eql(u8, exp, act));
 }
 
 pub fn DEBUG() i32 {
-    const debuglevel = @import("std").process.getEnvVarOwned(alloc, "AoC_DEBUG") catch return 0;
+    const debuglevel = @import("std").process.getEnvVarOwned(halloc, "AoC_DEBUG") catch return 0;
     const i = parseInt(i32, debuglevel, 10) catch return 0;
-    alloc.free(debuglevel);
+    halloc.free(debuglevel);
     return i;
 }
 
-pub fn Ints(inp: anytype, T: type, alloc: *Allocator) anyerror![]T {
-    var ints = ArrayList(T).init(alloc);
-    var it = std.mem.tokenize(inp, ":, \n");
+pub fn Ints(alloc: std.mem.Allocator, comptime T: type, inp: anytype) anyerror![]T {
+    var ints = std.ArrayList(T).init(alloc);
+    var it = std.mem.tokenize(u8, inp, ":, \n");
     while (it.next()) |is| {
         if (is.len == 0) {
             break;
@@ -107,24 +94,9 @@ pub fn Ints(inp: anytype, T: type, alloc: *Allocator) anyerror![]T {
     return ints.toOwnedSlice();
 }
 
-pub fn readInts(inp: anytype, T: type) []T {
-    var ints = ArrayList(T).init(halloc);
-    var it = std.mem.tokenize(inp, ":, \n");
-    while (it.next()) |is| {
-        if (is.len == 0) {
-            break;
-        }
-        const i = std.fmt.parseInt(T, is, 10) catch {
-            continue;
-        };
-        ints.append(i) catch unreachable;
-    }
-    return ints.toOwnedSlice();
-}
-
-pub fn readLines(inp: anytype, alloc: *Allocator) [][]const u8 {
-    var lines = ArrayList([]const u8).init(alloc);
-    var lit = std.mem.split(inp, "\n");
+pub fn readLines(alloc: std.mem.Allocator, inp: anytype) [][]const u8 {
+    var lines = std.ArrayList([]const u8).init(alloc);
+    var lit = std.mem.split(u8, inp, "\n");
     while (lit.next()) |line| {
         if (line.len == 0) {
             break;
@@ -134,9 +106,9 @@ pub fn readLines(inp: anytype, alloc: *Allocator) [][]const u8 {
     return lines.toOwnedSlice();
 }
 
-pub fn readChunks(inp: anytype, alloc: *Allocator) [][]const u8 {
-    var chunks = ArrayList([]const u8).init(alloc);
-    var cit = std.mem.split(inp, "\n\n");
+pub fn readChunks(alloc: std.mem.Allocator, inp: anytype) [][]const u8 {
+    var chunks = std.ArrayList([]const u8).init(alloc);
+    var cit = std.mem.split(u8, inp, "\n\n");
     while (cit.next()) |chunk| {
         if (chunk.len == 0) {
             break;
@@ -150,20 +122,20 @@ pub fn readChunks(inp: anytype, alloc: *Allocator) [][]const u8 {
     return chunks.toOwnedSlice();
 }
 
-pub fn readChunkyObjects(inp: anytype, chunkSep: []const u8, recordSep: []const u8, fieldSep: []const u8, alloc: *Allocator) [](StringHashMap([]const u8)) {
-    var report = ArrayList(StringHashMap([]const u8)).init(alloc);
-    var cit = split(inp, chunkSep);
+pub fn readChunkyObjects(alloc: std.mem.Allocator, inp: anytype, chunkSep: []const u8, recordSep: []const u8, fieldSep: []const u8) [](std.StringHashMap([]const u8)) {
+    var report = std.ArrayList(std.StringHashMap([]const u8)).init(alloc);
+    var cit = split(u8, inp, chunkSep);
     while (cit.next()) |chunk| {
         if (chunk.len == 0) {
             break;
         }
-        var map = StringHashMap([]const u8).init(alloc);
-        var fit = tokenize(chunk, recordSep);
+        var map = std.StringHashMap([]const u8).init(alloc);
+        var fit = tokenize(u8, chunk, recordSep);
         while (fit.next()) |field| {
             if (field.len == 0) {
                 break;
             }
-            var kvit = split(field, fieldSep);
+            var kvit = split(u8, field, fieldSep);
             const k = kvit.next().?;
             const v = kvit.next().?;
             map.put(k, v) catch unreachable;
@@ -181,7 +153,7 @@ pub fn minc(m: anytype, k: anytype) void {
     }
 }
 
-pub fn stringLessThan(c: void, a: []const u8, b: []const u8) bool {
+pub fn stringLessThan(_: void, a: []const u8, b: []const u8) bool {
     var i: usize = 0;
     while (i < a.len and i < b.len and a[i] == b[i]) {
         i += 1;
@@ -192,7 +164,7 @@ pub fn stringLessThan(c: void, a: []const u8, b: []const u8) bool {
     return a[i] < b[i];
 }
 
-pub fn rotateLinesNonSymmetric(lines: [][]const u8, alloc: *Allocator) [][]u8 {
+pub fn rotateLinesNonSymmetric(alloc: std.mem.Allocator, lines: [][]const u8) [][]u8 {
     const end = lines.len - 1;
     var tmp = alloc.alloc([]u8, lines[0].len) catch unreachable;
     var i: usize = 0;
@@ -218,12 +190,12 @@ pub fn rotateLines(lines: [][]u8) void {
     var i: usize = 0;
     while (i < l) : (i += 1) {
         var j = i;
-        while (j < l-i-1) : (j += 1) {
+        while (j < l - i - 1) : (j += 1) {
             var tmp = lines[i][j];
-            lines[i][j] = lines[l-j-1][i];
-            lines[l-j-1][i] = lines[l-i-1][l-j-1];
-            lines[l-i-1][l-j-1] = lines[j][l-i-1];
-            lines[j][l-i-1] = tmp;
+            lines[i][j] = lines[l - j - 1][i];
+            lines[l - j - 1][i] = lines[l - i - 1][l - j - 1];
+            lines[l - i - 1][l - j - 1] = lines[j][l - i - 1];
+            lines[j][l - i - 1] = tmp;
         }
     }
 }
@@ -253,7 +225,7 @@ pub fn countCharsInLines(lines: [][]const u8, findCh: u8) usize {
 
 pub fn prettyLines(lines: [][]const u8) void {
     for (lines) |line| {
-        warn("{}\n", .{line});
+        std.debug.print("{}\n", .{line});
     }
 }
 
@@ -272,7 +244,7 @@ pub fn benchme(inp: []const u8, call: fn (in: []const u8, bench: bool) anyerror!
         try call(inp, is_bench);
         it += 1;
         elapsed = @import("std").time.nanoTimestamp() - start;
-        if (!is_bench or elapsed > 500000000) {
+        if (!is_bench or elapsed > 1000000000) {
             break;
         }
     }

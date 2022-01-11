@@ -1,14 +1,15 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
 test "examples" {
-    const map = readLines(test1file, talloc);
-    defer talloc.free(map);
-    try assertEq(@as(usize, 7), part1(map));
-    try assertEq(@as(usize, 336), part2(map));
-    const map2 = readLines(inputfile, talloc);
-    defer talloc.free(map2);
-    try assertEq(@as(usize, 169), part1(map2));
-    try assertEq(@as(usize, 7560370818), part2(map2));
+    const map = aoc.readLines(aoc.talloc, aoc.test1file);
+    defer aoc.talloc.free(map);
+    try aoc.assertEq(@as(usize, 7), part1(map));
+    try aoc.assertEq(@as(usize, 336), part2(map));
+    const map2 = aoc.readLines(aoc.talloc, aoc.inputfile);
+    defer aoc.talloc.free(map2);
+    try aoc.assertEq(@as(usize, 169), part1(map2));
+    try aoc.assertEq(@as(usize, 7560370818), part2(map2));
 }
 
 fn isTree(map: [][]const u8, x: usize, y: usize) bool {
@@ -45,16 +46,16 @@ fn part2(map: [][]const u8) usize {
     return p;
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
-    const map = readLines(inp, halloc);
-    defer halloc.free(map);
+fn day03(inp: []const u8, bench: bool) anyerror!void {
+    const map = aoc.readLines(aoc.halloc, inp);
+    defer aoc.halloc.free(map);
     var p1 = part1(map);
     var p2 = part2(map);
     if (!bench) {
-        try print("Part 1: {}\nPart 2: {}\n", .{p1, p2});
+        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day03);
 }

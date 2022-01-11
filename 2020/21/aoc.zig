@@ -1,34 +1,33 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
 const Menu = struct {
-    const Result = struct {
-        all: []const u8, ing: []const u8
-    };
+    const Result = struct { all: []const u8, ing: []const u8 };
 
-    allergens: StringHashMap(AutoHashMap(usize, bool)),
-    ingredients: StringHashMap(AutoHashMap(usize, bool)),
-    possible: StringHashMap(StringHashMap(bool)),
-    alloc: *Allocator,
+    allergens: std.StringHashMap(std.AutoHashMap(usize, bool)),
+    ingredients: std.StringHashMap(std.AutoHashMap(usize, bool)),
+    possible: std.StringHashMap(std.StringHashMap(bool)),
+    alloc: std.mem.Allocator,
 
-    pub fn init(in: [][]const u8, alloc: *Allocator) !*Menu {
+    pub fn init(alloc: std.mem.Allocator, in: [][]const u8) !*Menu {
         var self = try alloc.create(Menu);
         self.alloc = alloc;
-        self.allergens = StringHashMap(AutoHashMap(usize, bool)).init(alloc);
-        self.ingredients = StringHashMap(AutoHashMap(usize, bool)).init(alloc);
-        self.possible = StringHashMap(StringHashMap(bool)).init(alloc);
+        self.allergens = std.StringHashMap(std.AutoHashMap(usize, bool)).init(alloc);
+        self.ingredients = std.StringHashMap(std.AutoHashMap(usize, bool)).init(alloc);
+        self.possible = std.StringHashMap(std.StringHashMap(bool)).init(alloc);
 
         for (in) |line, i| {
-            var ls = split(line, " (contains ");
+            var ls = std.mem.split(u8, line, " (contains ");
             const ingstr = ls.next().?;
-            var ings = split(ingstr, " ");
+            var ings = std.mem.split(u8, ingstr, " ");
             while (ings.next()) |ing| {
-                var e = try self.ingredients.getOrPutValue(ing, AutoHashMap(usize, bool).init(alloc));
+                var e = try self.ingredients.getOrPutValue(ing, std.AutoHashMap(usize, bool).init(alloc));
                 try e.value_ptr.put(i, true);
             }
             var allstr = ls.next().?;
-            var alls = split(allstr[0 .. allstr.len - 1], ", ");
+            var alls = std.mem.split(u8, allstr[0 .. allstr.len - 1], ", ");
             while (alls.next()) |all| {
-                var e = try self.allergens.getOrPutValue(all, AutoHashMap(usize, bool).init(alloc));
+                var e = try self.allergens.getOrPutValue(all, std.AutoHashMap(usize, bool).init(alloc));
                 try e.value_ptr.put(i, true);
             }
         }
@@ -44,7 +43,7 @@ const Menu = struct {
                     }
                 }
                 if (maybeThisAllergen) {
-                    var e = try self.possible.getOrPutValue(ingentry.key_ptr.*, StringHashMap(bool).init(alloc));
+                    var e = try self.possible.getOrPutValue(ingentry.key_ptr.*, std.StringHashMap(bool).init(alloc));
                     try e.value_ptr.put(allentry.key_ptr.*, true);
                 }
             }
@@ -84,11 +83,11 @@ const Menu = struct {
     }
 
     fn resultLessThan(c: void, a: Result, b: Result) bool {
-        return stringLessThan(c, a.all, b.all);
+        return aoc.stringLessThan(c, a.all, b.all);
     }
 
     pub fn Part2(m: *Menu) []const u8 {
-        var resList = ArrayList(Result).init(m.alloc);
+        var resList = std.ArrayList(Result).init(m.alloc);
         defer resList.deinit();
         var resLength: usize = 0;
         while (m.possible.count() > 0) {
@@ -99,7 +98,7 @@ const Menu = struct {
                 if (allergens.count() == 1) {
                     var allit = allergens.iterator();
                     const all = allit.next().?.key_ptr.*;
-                    //warn("{} is {}\n", .{ ing, all });
+                    //std.debug.print("{} is {}\n", .{ ing, all });
                     resList.append(Result{ .all = all, .ing = ing }) catch unreachable;
                     resLength += ing.len + 1;
                     _ = m.possible.remove(ing);
@@ -112,14 +111,14 @@ const Menu = struct {
             }
         }
         var res = resList.items;
-        sort.sort(Result, res, {}, resultLessThan);
+        std.sort.sort(Result, res, {}, resultLessThan);
         if (resLength == 0) {
             return "";
         }
         var rs = m.alloc.alloc(u8, resLength) catch unreachable;
         var i: usize = 0;
         for (res) |r| {
-            copy(u8, rs[i..], r.ing);
+            std.mem.copy(u8, rs[i..], r.ing);
             i += r.ing.len;
             rs[i] = ',';
             i += 1;
@@ -129,40 +128,40 @@ const Menu = struct {
 };
 
 test "examples" {
-    const test1 = readLines(test1file, talloc);
-    defer talloc.free(test1);
-    const inp = readLines(inputfile, talloc);
-    defer talloc.free(inp);
+    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    defer aoc.talloc.free(test1);
+    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    defer aoc.talloc.free(inp);
 
-    var mt = Menu.init(test1, talloc) catch unreachable;
+    var mt = Menu.init(aoc.talloc, test1) catch unreachable;
     defer mt.deinit();
-    try assertEq(@as(usize, 5), mt.Part1());
+    try aoc.assertEq(@as(usize, 5), mt.Part1());
     var rt = "mxmxvkd,sqjhc,fvjkl";
     var resTest = mt.Part2();
-    defer talloc.free(resTest);
-    try assert(std.mem.eql(u8, rt, resTest));
+    defer aoc.talloc.free(resTest);
+    try aoc.assert(std.mem.eql(u8, rt, resTest));
 
-    var m = Menu.init(inp, talloc) catch unreachable;
+    var m = Menu.init(aoc.talloc, inp) catch unreachable;
     defer m.deinit();
-    try assertEq(@as(usize, 2874), m.Part1());
+    try aoc.assertEq(@as(usize, 2874), m.Part1());
     var r = "gfvrr,ndkkq,jxcxh,bthjz,sgzr,mbkbn,pkkg,mjbtz";
     var res = m.Part2();
-    defer talloc.free(res);
-    try assert(std.mem.eql(u8, r, res));
+    defer aoc.talloc.free(res);
+    try aoc.assert(std.mem.eql(u8, r, res));
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
-    const lines = readLines(inp, halloc);
-    defer halloc.free(lines);
-    var m = try Menu.init(lines, halloc);
+fn day21(inp: []const u8, bench: bool) anyerror!void {
+    const lines = aoc.readLines(aoc.halloc, inp);
+    defer aoc.halloc.free(lines);
+    var m = try Menu.init(aoc.halloc, lines);
     defer m.deinit();
     var p1 = m.Part1();
     var p2 = m.Part2();
     if (!bench) {
-        try print("Part 1: {}\nPart 2: {s}\n", .{ p1, p2 });
+        try aoc.print("Part 1: {}\nPart 2: {s}\n", .{ p1, p2 });
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day21);
 }

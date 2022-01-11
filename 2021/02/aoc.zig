@@ -1,4 +1,5 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
 fn parts(inp: []const u8) [2]u64 {
     var x1: u64 = 0;
@@ -37,22 +38,22 @@ fn parts(inp: []const u8) [2]u64 {
 }
 
 test "examples" {
-    var t = parts(test1file);
-    try assertEq(@as(u64, 150), t[0]);
-    try assertEq(@as(u64, 900), t[1]);
+    var t = parts(aoc.test1file);
+    try aoc.assertEq(@as(u64, 150), t[0]);
+    try aoc.assertEq(@as(u64, 900), t[1]);
 
-    var ti = parts(inputfile);
-    try assertEq(@as(u64, 1714950), ti[0]);
-    try assertEq(@as(u64, 1281977850), ti[1]);
+    var ti = parts(aoc.inputfile);
+    try aoc.assertEq(@as(u64, 1714950), ti[0]);
+    try aoc.assertEq(@as(u64, 1281977850), ti[1]);
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
+fn day02(inp: []const u8, bench: bool) anyerror!void {
     var p = parts(inp);
     if (!bench) {
-        try print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
+        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day02);
 }

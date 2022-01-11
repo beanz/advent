@@ -1,4 +1,5 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
 const Mess = struct {
     const Field = struct {
@@ -12,12 +13,12 @@ const Mess = struct {
         }
     };
     const Ticket = []const i64;
-    fields: StringHashMap(*Field),
+    fields: std.StringHashMap(*Field),
     our: Ticket,
-    tickets: ArrayList(Ticket),
+    tickets: std.ArrayList(Ticket),
     err: i64,
     onlyDepart: bool,
-    alloc: *Allocator,
+    alloc: std.mem.Allocator,
     debug: bool,
 
     fn bit(v: i64) i64 {
@@ -49,33 +50,32 @@ const Mess = struct {
         return count;
     }
 
-    pub fn fromInput(inp: [][]const u8, alloc: *Allocator) !*Mess {
+    pub fn fromInput(alloc: std.mem.Allocator, inp: [][]const u8) !*Mess {
         var m = try alloc.create(Mess);
-        m.fields = StringHashMap(*Field).init(alloc);
+        m.fields = std.StringHashMap(*Field).init(alloc);
         m.err = 0;
         m.onlyDepart = true;
         m.debug = false;
-        var i: usize = 0;
-        var lit = split(inp[0], "\n");
+        var lit = std.mem.split(u8, inp[0], "\n");
         while (lit.next()) |line| {
             var f = try alloc.create(Field);
-            var sit = split(line, ": ");
+            var sit = std.mem.split(u8, line, ": ");
             const name = sit.next().?;
-            var sit2 = split(sit.next().?, " or ");
-            var range1it = split(sit2.next().?, "-");
-            f.min1 = try parseInt(i64, range1it.next().?, 10);
-            f.max1 = try parseInt(i64, range1it.next().?, 10);
-            var range2it = split(sit2.next().?, "-");
-            f.min2 = try parseInt(i64, range2it.next().?, 10);
-            f.max2 = try parseInt(i64, range2it.next().?, 10);
+            var sit2 = std.mem.split(u8, sit.next().?, " or ");
+            var range1it = std.mem.split(u8, sit2.next().?, "-");
+            f.min1 = try std.fmt.parseInt(i64, range1it.next().?, 10);
+            f.max1 = try std.fmt.parseInt(i64, range1it.next().?, 10);
+            var range2it = std.mem.split(u8, sit2.next().?, "-");
+            f.min2 = try std.fmt.parseInt(i64, range2it.next().?, 10);
+            f.max2 = try std.fmt.parseInt(i64, range2it.next().?, 10);
             try m.fields.put(name, f);
         }
-        var our: Ticket = try Ints(inp[1], i64, alloc);
-        lit = split(inp[2], "\n");
+        var our: Ticket = try aoc.Ints(alloc, i64, inp[1]);
+        lit = std.mem.split(u8, inp[2], "\n");
         _ = lit.next().?;
-        var tickets = ArrayList(Ticket).init(alloc);
+        var tickets = std.ArrayList(Ticket).init(alloc);
         while (lit.next()) |line| {
-            var ticket = try Ints(line, i64, alloc);
+            var ticket = try aoc.Ints(alloc, i64, line);
             var validTicket = true;
             for (ticket) |v| {
                 var validField = false;
@@ -118,7 +118,7 @@ const Mess = struct {
     }
 
     pub fn Solve(self: *Mess) !i64 {
-        var possible = StringHashMap(i64).init(self.alloc);
+        var possible = std.StringHashMap(i64).init(self.alloc);
         defer possible.deinit();
         var cfit = self.fields.iterator();
         while (cfit.next()) |entry| {
@@ -139,7 +139,7 @@ const Mess = struct {
                 }
                 if (valid == target) {
                     if (self.debug) {
-                        warn("found {s} at {} ({})\n", .{ name, col, col });
+                        std.debug.print("found {s} at {} ({})\n", .{ name, col, col });
                     }
                     var bm = possible.get(name).?;
                     bm |= bit(@intCast(i64, col));
@@ -159,9 +159,9 @@ const Mess = struct {
                 if (cols != 0 and count1s(cols) == 1) {
                     progress = true;
                     var c: i64 = find1bit(cols);
-                    var ourVal = self.our[absCast(c)];
+                    var ourVal = self.our[std.math.absCast(c)];
                     if (self.debug) {
-                        warn("definite {s} is {} ({})\n", .{ name, c, ourVal });
+                        std.debug.print("definite {s} is {} ({})\n", .{ name, c, ourVal });
                     }
                     if (name[0] == 'd' and name[1] == 'e' or !self.onlyDepart) {
                         p *= ourVal;
@@ -178,7 +178,7 @@ const Mess = struct {
                 }
             }
             if (!progress) {
-                warn("no progress made\n", .{});
+                std.debug.print("no progress made\n", .{});
                 std.os.exit(0);
             }
         }
@@ -186,57 +186,57 @@ const Mess = struct {
 };
 
 test "count1s" {
-    try assertEq(@as(i64, 1), Mess.count1s(@as(i64, 1)));
-    try assertEq(@as(i64, 2), Mess.count1s(@as(i64, 3)));
-    try assertEq(@as(i64, 2), Mess.count1s(@as(i64, 6)));
+    try aoc.assertEq(@as(i64, 1), Mess.count1s(@as(i64, 1)));
+    try aoc.assertEq(@as(i64, 2), Mess.count1s(@as(i64, 3)));
+    try aoc.assertEq(@as(i64, 2), Mess.count1s(@as(i64, 6)));
 }
 
 test "examples" {
-    const test1 = readChunks(test1file, talloc);
-    defer talloc.free(test1);
-    const test2 = readChunks(test2file, talloc);
-    defer talloc.free(test2);
-    const inp = readChunks(inputfile, talloc);
-    defer talloc.free(inp);
+    const test1 = aoc.readChunks(aoc.talloc, aoc.test1file);
+    defer aoc.talloc.free(test1);
+    const test2 = aoc.readChunks(aoc.talloc, aoc.test2file);
+    defer aoc.talloc.free(test2);
+    const inp = aoc.readChunks(aoc.talloc, aoc.inputfile);
+    defer aoc.talloc.free(inp);
 
-    var t1m = Mess.fromInput(test1, talloc) catch unreachable;
+    var t1m = Mess.fromInput(aoc.talloc, test1) catch unreachable;
     defer t1m.deinit();
-    try assertEq(@as(i64, 71), t1m.err);
-    var inpm = Mess.fromInput(inp, talloc) catch unreachable;
+    try aoc.assertEq(@as(i64, 71), t1m.err);
+    var inpm = Mess.fromInput(aoc.talloc, inp) catch unreachable;
     defer inpm.deinit();
-    try assertEq(@as(i64, 21980), inpm.err);
+    try aoc.assertEq(@as(i64, 21980), inpm.err);
 
-    var t2m = Mess.fromInput(test2, talloc) catch unreachable;
+    var t2m = Mess.fromInput(aoc.talloc, test2) catch unreachable;
     defer t2m.deinit();
     t2m.onlyDepart = false;
     const t2a = t2m.Solve() catch unreachable;
-    try assertEq(@as(i64, 1716), t2a);
+    try aoc.assertEq(@as(i64, 1716), t2a);
     const impa = inpm.Solve() catch unreachable;
-    try assertEq(@as(i64, 1439429522627), impa);
+    try aoc.assertEq(@as(i64, 1439429522627), impa);
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
-    var args = Args();
-    const arg0 = args.next(halloc).?;
+fn day16(_: []const u8, bench: bool) anyerror!void {
+    var args = std.process.args();
+    _ = args.next(aoc.halloc).? catch true;
     var chunks: [][]const u8 = undefined;
     var onlyDepart = true;
-    if (args.next(halloc)) |_| {
-        chunks = readChunks(test2file, halloc);
+    if (args.next(aoc.halloc)) |_| {
+        chunks = aoc.readChunks(aoc.halloc, aoc.test2file);
         onlyDepart = false;
     } else {
-        chunks = readChunks(inputfile, halloc);
+        chunks = aoc.readChunks(aoc.halloc, aoc.inputfile);
     }
-    defer halloc.free(chunks);
-    var m = try Mess.fromInput(chunks, halloc);
+    defer aoc.halloc.free(chunks);
+    var m = try Mess.fromInput(aoc.halloc, chunks);
     defer m.deinit();
     m.onlyDepart = onlyDepart;
     var p1 = m.err;
     var p2 = m.Solve();
     if (!bench) {
-        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day16);
 }

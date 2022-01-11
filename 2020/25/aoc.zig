@@ -1,4 +1,5 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
 fn loopSize(t: u64) u64 {
     var p: u64 = 1;
@@ -13,10 +14,10 @@ fn loopSize(t: u64) u64 {
 }
 
 test "loop size" {
-    try assertEq(@as(u64, 8), loopSize(5764801));
-    try assertEq(@as(u64, 11), loopSize(17807724));
-    try assertEq(@as(u64, 13467729), loopSize(9033205));
-    try assertEq(@as(u64, 3020524), loopSize(9281649));
+    try aoc.assertEq(@as(u64, 8), loopSize(5764801));
+    try aoc.assertEq(@as(u64, 11), loopSize(17807724));
+    try aoc.assertEq(@as(u64, 13467729), loopSize(9033205));
+    try aoc.assertEq(@as(u64, 3020524), loopSize(9281649));
 }
 
 fn expMod(ia: u64, ib: u64, m: u64) u64 {
@@ -35,33 +36,33 @@ fn expMod(ia: u64, ib: u64, m: u64) u64 {
 }
 
 pub fn part1(s: [][]const u8) !u64 {
-    const cardPub = try parseUnsigned(u64, s[0], 10);
-    const doorPub = try parseUnsigned(u64, s[1], 10);
+    const cardPub = try std.fmt.parseUnsigned(u64, s[0], 10);
+    const doorPub = try std.fmt.parseUnsigned(u64, s[1], 10);
     const ls = loopSize(cardPub);
     return expMod(doorPub, ls, 20201227);
 }
 
 test "part1" {
-    const test1 = readLines(test1file, talloc);
-    defer talloc.free(test1);
-    const inp = readLines(inputfile, talloc);
-    defer talloc.free(inp);
+    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    defer aoc.talloc.free(test1);
+    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    defer aoc.talloc.free(inp);
 
     const rt = try part1(test1);
-    try assertEq(@as(usize, 14897079), rt);
+    try aoc.assertEq(@as(usize, 14897079), rt);
     const r = try part1(inp);
-    try assertEq(@as(usize, 9714832), r);
+    try aoc.assertEq(@as(usize, 9714832), r);
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
-    const lines = readLines(inp, halloc);
-    defer halloc.free(lines);
+fn day25(inp: []const u8, bench: bool) anyerror!void {
+    const lines = aoc.readLines(aoc.halloc, inp);
+    defer aoc.halloc.free(lines);
     var p1 = part1(lines);
     if (!bench) {
-        try print("Part 1: {}\n", .{ p1 });
+        try aoc.print("Part 1: {}\n", .{p1});
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day25);
 }

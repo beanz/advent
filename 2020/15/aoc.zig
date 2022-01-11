@@ -1,9 +1,10 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
-fn calc(nums: []const usize, maxTurn: usize, alloc: *Allocator) usize {
+fn calc(alloc: std.mem.Allocator, nums: []const usize, maxTurn: usize) usize {
     var lastSeen = alloc.alloc(usize, maxTurn) catch unreachable;
     defer alloc.free(lastSeen);
-    memset(usize, lastSeen, 0);
+    std.mem.set(usize, lastSeen, 0);
     var n: usize = undefined;
     var p: usize = undefined;
     var t: usize = 1;
@@ -26,61 +27,61 @@ fn calc(nums: []const usize, maxTurn: usize, alloc: *Allocator) usize {
     return n;
 }
 
-fn part1(in: []const usize, alloc: *Allocator) usize {
-    return calc(in, 2020, alloc);
+fn part1(alloc: std.mem.Allocator, in: []const usize) usize {
+    return calc(alloc, in, 2020);
 }
 
-fn part2(in: []const usize, alloc: *Allocator) usize {
-    return calc(in, 30000000, alloc);
+fn part2(alloc: std.mem.Allocator, in: []const usize) usize {
+    return calc(alloc, in, 30000000);
 }
 
 test "examples" {
-    const test1 = try Ints(test1file, usize, talloc);
-    defer talloc.free(test1);
-    const test2 = try Ints(test2file, usize, talloc);
-    defer talloc.free(test2);
-    const test3 = try Ints(test3file, usize, talloc);
-    defer talloc.free(test3);
-    const test4 = try Ints(test4file, usize, talloc);
-    defer talloc.free(test4);
-    const test5 = try Ints(test5file, usize, talloc);
-    defer talloc.free(test5);
-    const test6 = try Ints(test6file, usize, talloc);
-    defer talloc.free(test6);
-    const test7 = try Ints(test7file, usize, talloc);
-    defer talloc.free(test7);
-    const inp = try Ints(inputfile, usize, talloc);
-    defer talloc.free(inp);
+    const test1 = try aoc.Ints(aoc.talloc, usize, aoc.test1file);
+    defer aoc.talloc.free(test1);
+    const test2 = try aoc.Ints(aoc.talloc, usize, aoc.test2file);
+    defer aoc.talloc.free(test2);
+    const test3 = try aoc.Ints(aoc.talloc, usize, aoc.test3file);
+    defer aoc.talloc.free(test3);
+    const test4 = try aoc.Ints(aoc.talloc, usize, aoc.test4file);
+    defer aoc.talloc.free(test4);
+    const test5 = try aoc.Ints(aoc.talloc, usize, aoc.test5file);
+    defer aoc.talloc.free(test5);
+    const test6 = try aoc.Ints(aoc.talloc, usize, aoc.test6file);
+    defer aoc.talloc.free(test6);
+    const test7 = try aoc.Ints(aoc.talloc, usize, aoc.test7file);
+    defer aoc.talloc.free(test7);
+    const inp = try aoc.Ints(aoc.talloc, usize, aoc.inputfile);
+    defer aoc.talloc.free(inp);
 
-    try assertEq(@as(usize, 436), part1(test1, talloc));
-    try assertEq(@as(usize, 1), part1(test2, talloc));
-    try assertEq(@as(usize, 10), part1(test3, talloc));
-    try assertEq(@as(usize, 27), part1(test4, talloc));
-    try assertEq(@as(usize, 78), part1(test5, talloc));
-    try assertEq(@as(usize, 438), part1(test6, talloc));
-    try assertEq(@as(usize, 1836), part1(test7, talloc));
-    try assertEq(@as(usize, 260), part1(inp, talloc));
+    try aoc.assertEq(@as(usize, 436), part1(aoc.talloc, test1));
+    try aoc.assertEq(@as(usize, 1), part1(aoc.talloc, test2));
+    try aoc.assertEq(@as(usize, 10), part1(aoc.talloc, test3));
+    try aoc.assertEq(@as(usize, 27), part1(aoc.talloc, test4));
+    try aoc.assertEq(@as(usize, 78), part1(aoc.talloc, test5));
+    try aoc.assertEq(@as(usize, 438), part1(aoc.talloc, test6));
+    try aoc.assertEq(@as(usize, 1836), part1(aoc.talloc, test7));
+    try aoc.assertEq(@as(usize, 260), part1(aoc.talloc, inp));
 
-    try assertEq(@as(usize, 175594), part2(test1, talloc));
-    try assertEq(@as(usize, 2578), part2(test2, talloc));
-    try assertEq(@as(usize, 3544142), part2(test3, talloc));
-    try assertEq(@as(usize, 261214), part2(test4, talloc));
-    try assertEq(@as(usize, 6895259), part2(test5, talloc));
-    try assertEq(@as(usize, 18), part2(test6, talloc));
-    try assertEq(@as(usize, 362), part2(test7, talloc));
-    try assertEq(@as(usize, 950), part2(inp, talloc));
+    try aoc.assertEq(@as(usize, 175594), part2(aoc.talloc, test1));
+    try aoc.assertEq(@as(usize, 2578), part2(aoc.talloc, test2));
+    try aoc.assertEq(@as(usize, 3544142), part2(aoc.talloc, test3));
+    try aoc.assertEq(@as(usize, 261214), part2(aoc.talloc, test4));
+    try aoc.assertEq(@as(usize, 6895259), part2(aoc.talloc, test5));
+    try aoc.assertEq(@as(usize, 18), part2(aoc.talloc, test6));
+    try aoc.assertEq(@as(usize, 362), part2(aoc.talloc, test7));
+    try aoc.assertEq(@as(usize, 950), part2(aoc.talloc, inp));
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
-    const ints = try Ints(inp, usize, halloc);
-    defer halloc.free(ints);
-    var p1 = part1(ints, halloc);
-    var p2 = part2(ints, halloc);
+fn day15(inp: []const u8, bench: bool) anyerror!void {
+    const ints = try aoc.Ints(aoc.halloc, usize, inp);
+    defer aoc.halloc.free(ints);
+    var p1 = part1(aoc.halloc, ints);
+    var p2 = part2(aoc.halloc, ints);
     if (!bench) {
-        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day15);
 }

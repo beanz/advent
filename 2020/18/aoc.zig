@@ -1,4 +1,5 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
 const Operator = enum { plus, times };
 const Bracket = enum { open, close };
@@ -9,8 +10,8 @@ const Token = union(TokenType) {
     bracket: Bracket,
 };
 
-pub fn RPN(exp: []Token, alloc: *Allocator) usize {
-    var stack = ArrayList(usize).init(alloc);
+pub fn RPN(alloc: std.mem.Allocator, exp: []Token) usize {
+    var stack = std.ArrayList(usize).init(alloc);
     defer stack.deinit();
     for (exp) |t| {
         switch (t) {
@@ -29,18 +30,18 @@ pub fn RPN(exp: []Token, alloc: *Allocator) usize {
                 }
             },
             .bracket => {
-                debug.panic("brackets not allowed here", .{});
+                std.debug.panic("brackets not allowed here", .{});
             },
         }
     }
-    assertEq(@as(usize, 1), stack.items.len) catch unreachable;
+    aoc.assertEq(@as(usize, 1), stack.items.len) catch unreachable;
     return stack.items[stack.items.len - 1];
 }
 
-pub fn ShuntingYard(s: []const u8, isPart2: bool, alloc: *Allocator) []Token {
-    var output = ArrayList(Token).init(alloc);
+pub fn ShuntingYard(alloc: std.mem.Allocator, s: []const u8, isPart2: bool) []Token {
+    var output = std.ArrayList(Token).init(alloc);
     defer output.deinit();
-    var operator = ArrayList(Token).init(alloc);
+    var operator = std.ArrayList(Token).init(alloc);
     defer operator.deinit();
     var i: usize = 0;
     while (i < s.len) : (i += 1) {
@@ -106,37 +107,37 @@ pub fn ShuntingYard(s: []const u8, isPart2: bool, alloc: *Allocator) []Token {
     return output.toOwnedSlice();
 }
 
-pub fn Calc(s: []const u8, isPart2: bool, alloc: *Allocator) usize {
-    var sy = ShuntingYard(s, isPart2, alloc);
+pub fn Calc(alloc: std.mem.Allocator, s: []const u8, isPart2: bool) usize {
+    var sy = ShuntingYard(alloc, s, isPart2);
     defer alloc.free(sy);
-    return RPN(sy, alloc);
+    return RPN(alloc, sy);
 }
 
-pub fn part1(s: [][]const u8, alloc: *Allocator) usize {
+pub fn part1(alloc: std.mem.Allocator, s: [][]const u8) usize {
     var t: usize = 0;
     for (s) |l| {
-        t += Calc(l, false, alloc);
+        t += Calc(alloc, l, false);
     }
     return t;
 }
 
-pub fn part2(s: [][]const u8, alloc: *Allocator) usize {
+pub fn part2(alloc: std.mem.Allocator, s: [][]const u8) usize {
     var t: usize = 0;
     for (s) |l| {
-        t += Calc(l, true, alloc);
+        t += Calc(alloc, l, true);
     }
     return t;
 }
 
 test "RPN" {
     var exp = [1]Token{Token{ .operand = 2 }};
-    try assertEq(@as(usize, 2), RPN(exp[0..], talloc));
+    try aoc.assertEq(@as(usize, 2), RPN(aoc.talloc, exp[0..]));
     var exp3 = [3]Token{
         Token{ .operand = 2 },
         Token{ .operand = 3 },
         Token{ .operator = .plus },
     };
-    try assertEq(@as(usize, 5), RPN(exp3[0..], talloc));
+    try aoc.assertEq(@as(usize, 5), RPN(aoc.talloc, exp3[0..]));
     var exp5 = [5]Token{
         Token{ .operand = 3 },
         Token{ .operand = 4 },
@@ -144,67 +145,66 @@ test "RPN" {
         Token{ .operator = .times },
         Token{ .operator = .plus },
     };
-    try assertEq(@as(usize, 23), RPN(exp5[0..], talloc));
+    try aoc.assertEq(@as(usize, 23), RPN(aoc.talloc, exp5[0..]));
 }
 
 test "ShuntingYard" {
-    var exp = [1]Token{Token{ .operand = 2 }};
-    var sy = ShuntingYard("2 + 3", false, talloc);
-    defer talloc.free(sy);
-    try assertEq(@as(usize, 3), sy.len);
-    var sy2 = ShuntingYard("2 + 3", false, talloc);
-    defer talloc.free(sy2);
-    try assertEq(@as(usize, 5), RPN(sy2, talloc));
+    var sy = ShuntingYard(aoc.talloc, "2 + 3", false);
+    defer aoc.talloc.free(sy);
+    try aoc.assertEq(@as(usize, 3), sy.len);
+    var sy2 = ShuntingYard(aoc.talloc, "2 + 3", false);
+    defer aoc.talloc.free(sy2);
+    try aoc.assertEq(@as(usize, 5), RPN(aoc.talloc, sy2));
 }
 
 test "Calc" {
-    try assertEq(@as(usize, 9), Calc("9", false, talloc));
-    try assertEq(@as(usize, 5), Calc("2 + 3", false, talloc));
-    try assertEq(@as(usize, 6), Calc("2 * 3", false, talloc));
-    try assertEq(@as(usize, 9), Calc("1 + 2 * 3", false, talloc));
-    try assertEq(@as(usize, 6), Calc("(2 * 3)", false, talloc));
-    try assertEq(@as(usize, 9), Calc("(1 + 2) * 3", false, talloc));
-    try assertEq(@as(usize, 7), Calc("1 + (2 * 3)", false, talloc));
-    try assertEq(@as(usize, 71), Calc("1 + 2 * 3 + 4 * 5 + 6", false, talloc));
-    try assertEq(@as(usize, 51), Calc("1 + (2 * 3) + (4 * (5 + 6))", false, talloc));
-    try assertEq(@as(usize, 26), Calc("2 * 3 + (4 * 5)", false, talloc));
-    try assertEq(@as(usize, 437), Calc("5 + (8 * 3 + 9 + 3 * 4 * 3)", false, talloc));
-    try assertEq(@as(usize, 12240), Calc("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))", false, talloc));
-    try assertEq(@as(usize, 13632), Calc("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", false, talloc));
+    try aoc.assertEq(@as(usize, 9), Calc(aoc.talloc, "9", false));
+    try aoc.assertEq(@as(usize, 5), Calc(aoc.talloc, "2 + 3", false));
+    try aoc.assertEq(@as(usize, 6), Calc(aoc.talloc, "2 * 3", false));
+    try aoc.assertEq(@as(usize, 9), Calc(aoc.talloc, "1 + 2 * 3", false));
+    try aoc.assertEq(@as(usize, 6), Calc(aoc.talloc, "(2 * 3)", false));
+    try aoc.assertEq(@as(usize, 9), Calc(aoc.talloc, "(1 + 2) * 3", false));
+    try aoc.assertEq(@as(usize, 7), Calc(aoc.talloc, "1 + (2 * 3)", false));
+    try aoc.assertEq(@as(usize, 71), Calc(aoc.talloc, "1 + 2 * 3 + 4 * 5 + 6", false));
+    try aoc.assertEq(@as(usize, 51), Calc(aoc.talloc, "1 + (2 * 3) + (4 * (5 + 6))", false));
+    try aoc.assertEq(@as(usize, 26), Calc(aoc.talloc, "2 * 3 + (4 * 5)", false));
+    try aoc.assertEq(@as(usize, 437), Calc(aoc.talloc, "5 + (8 * 3 + 9 + 3 * 4 * 3)", false));
+    try aoc.assertEq(@as(usize, 12240), Calc(aoc.talloc, "5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))", false));
+    try aoc.assertEq(@as(usize, 13632), Calc(aoc.talloc, "((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", false));
 }
 
 test "Calc2" {
-    try assertEq(@as(usize, 231), Calc("1 + 2 * 3 + 4 * 5 + 6", true, talloc));
-    try assertEq(@as(usize, 51), Calc("1 + (2 * 3) + (4 * (5 + 6))", true, talloc));
-    try assertEq(@as(usize, 46), Calc("2 * 3 + (4 * 5)", true, talloc));
-    try assertEq(@as(usize, 1440), Calc("8 * 3 + 9 + 3 * 4 * 3", true, talloc));
-    try assertEq(@as(usize, 1445), Calc("5 + (8 * 3 + 9 + 3 * 4 * 3)", true, talloc));
-    try assertEq(@as(usize, 669060), Calc("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))", true, talloc));
-    try assertEq(@as(usize, 23340), Calc("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", true, talloc));
+    try aoc.assertEq(@as(usize, 231), Calc(aoc.talloc, "1 + 2 * 3 + 4 * 5 + 6", true));
+    try aoc.assertEq(@as(usize, 51), Calc(aoc.talloc, "1 + (2 * 3) + (4 * (5 + 6))", true));
+    try aoc.assertEq(@as(usize, 46), Calc(aoc.talloc, "2 * 3 + (4 * 5)", true));
+    try aoc.assertEq(@as(usize, 1440), Calc(aoc.talloc, "8 * 3 + 9 + 3 * 4 * 3", true));
+    try aoc.assertEq(@as(usize, 1445), Calc(aoc.talloc, "5 + (8 * 3 + 9 + 3 * 4 * 3)", true));
+    try aoc.assertEq(@as(usize, 669060), Calc(aoc.talloc, "5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))", true));
+    try aoc.assertEq(@as(usize, 23340), Calc(aoc.talloc, "((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", true));
 }
 
 test "examples" {
-    const test1 = readLines(test1file, talloc);
-    defer talloc.free(test1);
-    const inp = readLines(inputfile, talloc);
-    defer talloc.free(inp);
+    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    defer aoc.talloc.free(test1);
+    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    defer aoc.talloc.free(inp);
 
-    try assertEq(@as(usize, 26457), part1(test1, talloc));
-    try assertEq(@as(usize, 694173), part2(test1, talloc));
-    try assertEq(@as(usize, 510009915468), part1(inp, talloc));
-    try assertEq(@as(usize, 321176691637769), part2(inp, talloc));
+    try aoc.assertEq(@as(usize, 26457), part1(aoc.talloc, test1));
+    try aoc.assertEq(@as(usize, 694173), part2(aoc.talloc, test1));
+    try aoc.assertEq(@as(usize, 510009915468), part1(aoc.talloc, inp));
+    try aoc.assertEq(@as(usize, 321176691637769), part2(aoc.talloc, inp));
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
-    const lines = readLines(inp, halloc);
-    defer halloc.free(lines);
-    var p1 = part1(lines, halloc);
-    var p2 = part2(lines, halloc);
+fn day18(inp: []const u8, bench: bool) anyerror!void {
+    const lines = aoc.readLines(aoc.halloc, inp);
+    defer aoc.halloc.free(lines);
+    var p1 = part1(aoc.halloc, lines);
+    var p2 = part2(aoc.halloc, lines);
     if (!bench) {
-        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day18);
 }

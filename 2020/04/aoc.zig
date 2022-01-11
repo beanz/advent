@@ -1,68 +1,69 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
 test "validate year" {
-    try assert(validYear("2002", 1920, 2002));
-    try assert(!validYear("2003", 1920, 2002));
+    try aoc.assert(validYear("2002", 1920, 2002));
+    try aoc.assert(!validYear("2003", 1920, 2002));
 }
 
 test "validate height" {
-    try assert(validHeight("60in"));
-    try assert(validHeight("190cm"));
-    try assert(!validHeight("190in"));
-    try assert(!validHeight("190"));
+    try aoc.assert(validHeight("60in"));
+    try aoc.assert(validHeight("190cm"));
+    try aoc.assert(!validHeight("190in"));
+    try aoc.assert(!validHeight("190"));
 }
 
 test "validate hair color" {
-    try assert(validHairColor("#123abc"));
-    try assert(!validHairColor("#123abz"));
-    try assert(!validHairColor("123abc"));
+    try aoc.assert(validHairColor("#123abc"));
+    try aoc.assert(!validHairColor("#123abz"));
+    try aoc.assert(!validHairColor("123abc"));
 }
 
 test "validate eye color" {
-    try assert(validEyeColor("brn"));
-    try assert(!validEyeColor("wat"));
+    try aoc.assert(validEyeColor("brn"));
+    try aoc.assert(!validEyeColor("wat"));
 }
 
 test "examples" {
-    var test1 = readChunkyObjects(test1file, "\n\n", "\n ", ":", talloc);
+    var test1 = aoc.readChunkyObjects(aoc.talloc, aoc.test1file, "\n\n", "\n ", ":");
     defer {
         for (test1) |*e| {
             e.deinit();
         }
-        talloc.free(test1);
+        aoc.talloc.free(test1);
     }
-    try assertEq(@as(usize, 2), part1(test1));
-    try assertEq(@as(usize, 2), part2(test1));
+    try aoc.assertEq(@as(usize, 2), part1(test1));
+    try aoc.assertEq(@as(usize, 2), part2(test1));
 
-    var test2 = readChunkyObjects(test2file, "\n\n", "\n ", ":", talloc);
+    var test2 = aoc.readChunkyObjects(aoc.talloc, aoc.test2file, "\n\n", "\n ", ":");
     defer {
         for (test2) |*e| {
             e.deinit();
         }
-        talloc.free(test2);
+        aoc.talloc.free(test2);
     }
-    try assertEq(@as(usize, 4), part1(test2));
-    try assertEq(@as(usize, 0), part2(test2));
+    try aoc.assertEq(@as(usize, 4), part1(test2));
+    try aoc.assertEq(@as(usize, 0), part2(test2));
 
-    var test3 = readChunkyObjects(test3file, "\n\n", "\n ", ":", talloc);
+    var test3 = aoc.readChunkyObjects(aoc.talloc, aoc.test3file, "\n\n", "\n ", ":");
     defer {
         for (test3) |*e| {
             e.deinit();
         }
-        talloc.free(test3);
+        aoc.talloc.free(test3);
     }
-    try assertEq(@as(usize, 4), part1(test3));
-    try assertEq(@as(usize, 4), part2(test3));
+    try aoc.assertEq(@as(usize, 4), part1(test3));
+    try aoc.assertEq(@as(usize, 4), part2(test3));
 
-    var inp = readChunkyObjects(inputfile, "\n\n", "\n ", ":", talloc);
+    var inp = aoc.readChunkyObjects(aoc.talloc, aoc.inputfile, "\n\n", "\n ", ":");
     defer {
         for (inp) |*e| {
             e.deinit();
         }
-        talloc.free(inp);
+        aoc.talloc.free(inp);
     }
-    try assertEq(@as(usize, 213), part1(inp));
-    try assertEq(@as(usize, 147), part2(inp));
+    try aoc.assertEq(@as(usize, 213), part1(inp));
+    try aoc.assertEq(@as(usize, 147), part2(inp));
 }
 
 const fields = [_][]const u8{
@@ -88,7 +89,7 @@ fn part1(inp: anytype) usize {
 }
 
 fn validYear(ys: []const u8, min: i16, max: i16) bool {
-    const y = parseInt(i16, ys, 10) catch return false;
+    const y = std.fmt.parseInt(i16, ys, 10) catch return false;
     return y >= min and y <= max;
 }
 
@@ -98,7 +99,7 @@ fn validHeight(hs: []const u8) bool {
         return false;
     }
     const units = hs[l - 2 ..];
-    const n = parseInt(i16, hs[0 .. l - 2], 10) catch return false;
+    const n = std.fmt.parseInt(i16, hs[0 .. l - 2], 10) catch return false;
     if (units[0] == 'c' and units[1] == 'm') {
         if (n < 150 or n > 193) {
             return false;
@@ -149,13 +150,13 @@ fn validPID(pid: []const u8) bool {
     if (pid.len != 9) {
         return false;
     }
-    const n = parseInt(i64, pid, 10) catch return false;
+    _ = std.fmt.parseInt(i64, pid, 10) catch return false;
     return true;
 }
 
 fn part2(inp: anytype) usize {
     var c: usize = 0;
-    for (inp) |pp, i| {
+    for (inp) |pp| {
         if (!validYear(pp.get("byr") orelse "", 1920, 2002)) {
             continue;
         }
@@ -182,21 +183,21 @@ fn part2(inp: anytype) usize {
     return c;
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
-    var scan = readChunkyObjects(inp, "\n\n", "\n ", ":", halloc);
+fn day04(inp: []const u8, bench: bool) anyerror!void {
+    var scan = aoc.readChunkyObjects(aoc.halloc, inp, "\n\n", "\n ", ":");
     defer {
         for (scan) |*e| {
             e.deinit();
         }
-        halloc.free(scan);
+        aoc.halloc.free(scan);
     }
     var p1 = part1(scan);
     var p2 = part2(scan);
     if (!bench) {
-        try print("Part 1: {}\nPart 2: {}\n", .{p1, p2});
+        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day04);
 }

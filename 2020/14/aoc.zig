@@ -1,7 +1,8 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
-fn part1(in: [][]const u8, alloc: *Allocator) usize {
-    var mem = AutoHashMap(usize, usize).init(alloc);
+fn part1(alloc: std.mem.Allocator, in: [][]const u8) usize {
+    var mem = std.AutoHashMap(usize, usize).init(alloc);
     defer mem.deinit();
     var mask0: usize = undefined;
     var mask1: usize = undefined;
@@ -21,10 +22,10 @@ fn part1(in: [][]const u8, alloc: *Allocator) usize {
             mask0 ^= 0xfffffffff;
             //warn("1s mask = {}\n0s mask = {}\n", .{ mask1, mask0 });
         } else { // mem line
-            var vit = split(line, " = ");
+            var vit = std.mem.split(u8, line, " = ");
             const astr = vit.next().?;
-            var val = parseUnsigned(usize, vit.next().?, 10) catch unreachable;
-            const addr = parseUnsigned(usize, astr[4 .. astr.len - 1], 10) catch unreachable;
+            var val = std.fmt.parseUnsigned(usize, vit.next().?, 10) catch unreachable;
+            const addr = std.fmt.parseUnsigned(usize, astr[4 .. astr.len - 1], 10) catch unreachable;
             //warn("addr={} value={}\n", .{ addr, val });
             val &= mask0;
             val |= mask1;
@@ -39,8 +40,8 @@ fn part1(in: [][]const u8, alloc: *Allocator) usize {
     return sum;
 }
 
-fn part2(in: [][]const u8, alloc: *Allocator) usize {
-    var mem = AutoHashMap(usize, usize).init(alloc);
+fn part2(alloc: std.mem.Allocator, in: [][]const u8) usize {
+    var mem = std.AutoHashMap(usize, usize).init(alloc);
     defer mem.deinit();
     var mask1: usize = undefined;
     var maskx: usize = undefined;
@@ -59,13 +60,13 @@ fn part2(in: [][]const u8, alloc: *Allocator) usize {
             }
             //warn("1s mask = {}\nXs mask = {}\n", .{ mask1, maskx });
         } else { // mem line
-            var vit = split(line, " = ");
+            var vit = std.mem.split(u8, line, " = ");
             const astr = vit.next().?;
-            const val = parseUnsigned(usize, vit.next().?, 10) catch unreachable;
-            var addr = parseUnsigned(usize, astr[4 .. astr.len - 1], 10) catch unreachable;
+            const val = std.fmt.parseUnsigned(usize, vit.next().?, 10) catch unreachable;
+            var addr = std.fmt.parseUnsigned(usize, astr[4 .. astr.len - 1], 10) catch unreachable;
             //warn("addr={} value={}\n", .{ addr, val });
             addr |= mask1;
-            var addrs = ArrayList(usize).init(alloc);
+            var addrs = std.ArrayList(usize).init(alloc);
             defer addrs.deinit();
             addrs.append(addr) catch unreachable;
             var m: usize = (1 << 35);
@@ -94,31 +95,31 @@ fn part2(in: [][]const u8, alloc: *Allocator) usize {
 }
 
 test "examples" {
-    const test1 = readLines(test1file, talloc);
-    defer talloc.free(test1);
-    const test2 = readLines(test2file, talloc);
-    defer talloc.free(test2);
-    const inp = readLines(inputfile, talloc);
-    defer talloc.free(inp);
+    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    defer aoc.talloc.free(test1);
+    const test2 = aoc.readLines(aoc.talloc, aoc.test2file);
+    defer aoc.talloc.free(test2);
+    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    defer aoc.talloc.free(inp);
 
-    try assertEq(@as(usize, 165), part1(test1, talloc));
-    try assertEq(@as(usize, 51), part1(test2, talloc));
-    try assertEq(@as(usize, 4297467072083), part1(inp, talloc));
+    try aoc.assertEq(@as(usize, 165), part1(aoc.talloc, test1));
+    try aoc.assertEq(@as(usize, 51), part1(aoc.talloc, test2));
+    try aoc.assertEq(@as(usize, 4297467072083), part1(aoc.talloc, inp));
 
-    try assertEq(@as(usize, 208), part2(test2, talloc));
-    try assertEq(@as(usize, 5030603328768), part2(inp, talloc));
+    try aoc.assertEq(@as(usize, 208), part2(aoc.talloc, test2));
+    try aoc.assertEq(@as(usize, 5030603328768), part2(aoc.talloc, inp));
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
-    const lines = readLines(inp, halloc);
-    defer halloc.free(lines);
-    var p1 = part1(lines, halloc);
-    var p2 = part2(lines, halloc);
+fn day14(inp: []const u8, bench: bool) anyerror!void {
+    const lines = aoc.readLines(aoc.halloc, inp);
+    defer aoc.halloc.free(lines);
+    var p1 = part1(aoc.halloc, lines);
+    var p2 = part2(aoc.halloc, lines);
     if (!bench) {
-        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day14);
 }

@@ -1,4 +1,5 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
 pub fn HexTile(q: i8, r: i8) usize {
     return @intCast(usize, ((@intCast(i32, q) + 127) << 8) + (@intCast(i32, r) + 127));
@@ -64,26 +65,26 @@ pub fn HexTileFromString(m: []const u8) usize {
 
 test "hex tile" {
     var ht = HexTileFromString("sesenwnenenewseeswwswswwnenewsewsw");
-    try assertEq(@as(i8, -3), Q(ht));
-    try assertEq(@as(i8, -2), R(ht));
+    try aoc.assertEq(@as(i8, -3), Q(ht));
+    try aoc.assertEq(@as(i8, -2), R(ht));
     var n = HexTileNeighbours(ht);
-    try assertEq(@as(i8, -2), Q(n[0]));
-    try assertEq(@as(i8, -2), R(n[0]));
+    try aoc.assertEq(@as(i8, -2), Q(n[0]));
+    try aoc.assertEq(@as(i8, -2), R(n[0]));
 
-    try assertEq(@as(i8, -3), Q(n[1]));
-    try assertEq(@as(i8, -3), R(n[1]));
+    try aoc.assertEq(@as(i8, -3), Q(n[1]));
+    try aoc.assertEq(@as(i8, -3), R(n[1]));
 
-    try assertEq(@as(i8, -4), Q(n[2]));
-    try assertEq(@as(i8, -3), R(n[2]));
+    try aoc.assertEq(@as(i8, -4), Q(n[2]));
+    try aoc.assertEq(@as(i8, -3), R(n[2]));
 
-    try assertEq(@as(i8, -4), Q(n[3]));
-    try assertEq(@as(i8, -2), R(n[3]));
+    try aoc.assertEq(@as(i8, -4), Q(n[3]));
+    try aoc.assertEq(@as(i8, -2), R(n[3]));
 
-    try assertEq(@as(i8, -3), Q(n[4]));
-    try assertEq(@as(i8, -1), R(n[4]));
+    try aoc.assertEq(@as(i8, -3), Q(n[4]));
+    try aoc.assertEq(@as(i8, -1), R(n[4]));
 
-    try assertEq(@as(i8, -2), Q(n[5]));
-    try assertEq(@as(i8, -1), R(n[5]));
+    try aoc.assertEq(@as(i8, -2), Q(n[5]));
+    try aoc.assertEq(@as(i8, -1), R(n[5]));
 }
 
 const HexLife = struct {
@@ -93,24 +94,24 @@ const HexLife = struct {
         qmax: i8,
         rmin: i8,
         rmax: i8,
-        alloc: *Allocator,
-        pub fn init(alloc: *Allocator) !*BB {
+        alloc: std.mem.Allocator,
+        pub fn init(alloc: std.mem.Allocator) !*BB {
             var s = try alloc.create(BB);
             s.alloc = alloc;
-            s.qmin = maxInt(i8);
-            s.qmax = minInt(i8);
-            s.rmin = maxInt(i8);
-            s.rmax = minInt(i8);
+            s.qmin = std.math.maxInt(i8);
+            s.qmax = std.math.minInt(i8);
+            s.rmin = std.math.maxInt(i8);
+            s.rmax = std.math.minInt(i8);
             return s;
         }
         pub fn deinit(s: *BB) void {
             s.alloc.destroy(s);
         }
         pub fn reset(s: *BB) void {
-            s.qmin = maxInt(i8);
-            s.qmax = minInt(i8);
-            s.rmin = maxInt(i8);
-            s.rmax = minInt(i8);
+            s.qmin = std.math.maxInt(i8);
+            s.qmax = std.math.minInt(i8);
+            s.rmin = std.math.maxInt(i8);
+            s.rmax = std.math.minInt(i8);
         }
         pub fn Update(s: *BB, q: i8, r: i8) void {
             if (q < s.qmin) {
@@ -127,15 +128,15 @@ const HexLife = struct {
             }
         }
     };
-    init: AutoHashMap(usize, State),
-    alloc: *Allocator,
+    init: std.AutoHashMap(usize, State),
+    alloc: std.mem.Allocator,
     debug: bool,
 
-    pub fn init(in: [][]const u8, alloc: *Allocator) !*HexLife {
+    pub fn init(alloc: std.mem.Allocator, in: [][]const u8) !*HexLife {
         var s = try alloc.create(HexLife);
         s.alloc = alloc;
         s.debug = false;
-        s.init = AutoHashMap(usize, State).init(alloc);
+        s.init = std.AutoHashMap(usize, State).init(alloc);
         for (in) |line| {
             var ht = HexTileFromString(line);
             if (s.init.contains(ht)) {
@@ -157,7 +158,7 @@ const HexLife = struct {
     }
 
     pub fn part2(s: *HexLife, days: usize) usize {
-        var cur = AutoHashMap(usize, State).init(s.alloc);
+        var cur = std.AutoHashMap(usize, State).init(s.alloc);
         defer cur.deinit();
         var cur_bb = BB.init(s.alloc) catch unreachable;
         defer cur_bb.deinit();
@@ -167,7 +168,7 @@ const HexLife = struct {
             cur.put(ht, .black) catch unreachable;
             cur_bb.Update(Q(ht), R(ht));
         }
-        var next = AutoHashMap(usize, State).init(s.alloc);
+        var next = std.AutoHashMap(usize, State).init(s.alloc);
         defer next.deinit();
         var day: usize = 1;
         var bc: usize = 0;
@@ -198,7 +199,7 @@ const HexLife = struct {
                 }
             }
             if (s.debug) {
-                warn("Day {}: {} ({})\n", .{ day, bc, next.count() });
+                std.debug.print("Day {}: {} ({})\n", .{ day, bc, next.count() });
             }
             var tmp = cur;
             cur = next;
@@ -210,7 +211,7 @@ const HexLife = struct {
             next_bb.reset();
         }
         if (s.debug) {
-            warn("N: {} - {}  {} - {}\n", .{
+            std.debug.print("N: {} - {}  {} - {}\n", .{
                 cur_bb.qmin, cur_bb.qmax,
                 cur_bb.rmin, cur_bb.rmax,
             });
@@ -220,49 +221,49 @@ const HexLife = struct {
 };
 
 test "hex life part1" {
-    const test1 = readLines(test1file, talloc);
-    defer talloc.free(test1);
-    const inp = readLines(inputfile, talloc);
-    defer talloc.free(inp);
+    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    defer aoc.talloc.free(test1);
+    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    defer aoc.talloc.free(inp);
 
-    var gt = try HexLife.init(test1, talloc);
+    var gt = try HexLife.init(aoc.talloc, test1);
     defer gt.deinit();
-    try assertEq(@as(usize, 10), gt.part1());
-    var g = try HexLife.init(inp, talloc);
+    try aoc.assertEq(@as(usize, 10), gt.part1());
+    var g = try HexLife.init(aoc.talloc, inp);
     defer g.deinit();
-    try assertEq(@as(usize, 307), g.part1());
+    try aoc.assertEq(@as(usize, 307), g.part1());
 }
 
 test "hex life part2" {
-    const test1 = readLines(test1file, talloc);
-    defer talloc.free(test1);
-    const inp = readLines(inputfile, talloc);
-    defer talloc.free(inp);
+    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    defer aoc.talloc.free(test1);
+    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    defer aoc.talloc.free(inp);
 
-    var gt = try HexLife.init(test1, talloc);
+    var gt = try HexLife.init(aoc.talloc, test1);
     defer gt.deinit();
-    var g = try HexLife.init(inp, talloc);
+    var g = try HexLife.init(aoc.talloc, inp);
     defer g.deinit();
 
-    try assertEq(@as(usize, 15), gt.part2(1));
-    try assertEq(@as(usize, 12), gt.part2(2));
-    try assertEq(@as(usize, 37), gt.part2(10));
-    try assertEq(@as(usize, 2208), gt.part2(100));
-    try assertEq(@as(usize, 3787), g.part2(100));
+    try aoc.assertEq(@as(usize, 15), gt.part2(1));
+    try aoc.assertEq(@as(usize, 12), gt.part2(2));
+    try aoc.assertEq(@as(usize, 37), gt.part2(10));
+    try aoc.assertEq(@as(usize, 2208), gt.part2(100));
+    try aoc.assertEq(@as(usize, 3787), g.part2(100));
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
-    const lines = readLines(inp, halloc);
-    defer halloc.free(lines);
-    var g = try HexLife.init(lines, halloc);
+fn day24(inp: []const u8, bench: bool) anyerror!void {
+    const lines = aoc.readLines(aoc.halloc, inp);
+    defer aoc.halloc.free(lines);
+    var g = try HexLife.init(aoc.halloc, lines);
     defer g.deinit();
     var p1 = g.part1();
     var p2 = g.part2(100);
     if (!bench) {
-        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day24);
 }

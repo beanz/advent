@@ -1,14 +1,15 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
 test "examples" {
-    var t1 = readLines(test1file, talloc);
-    defer talloc.free(t1);
-    try assertEq(@as(usize, 820), part1(t1));
-    try assertEq(@as(usize, 0), part2(t1, talloc));
-    var ti = readLines(inputfile, talloc);
-    defer talloc.free(ti);
-    try assertEq(@as(usize, 947), part1(ti));
-    try assertEq(@as(usize, 636), part2(ti, talloc));
+    var t1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    defer aoc.talloc.free(t1);
+    try aoc.assertEq(@as(usize, 820), part1(t1));
+    try aoc.assertEq(@as(usize, 0), part2(aoc.talloc, t1));
+    var ti = aoc.readLines(aoc.talloc, aoc.inputfile);
+    defer aoc.talloc.free(ti);
+    try aoc.assertEq(@as(usize, 947), part1(ti));
+    try aoc.assertEq(@as(usize, 636), part2(aoc.talloc, ti));
 }
 
 fn seat(dir: []const u8) usize {
@@ -40,8 +41,8 @@ fn part1(inp: anytype) usize {
     return m;
 }
 
-fn part2(inp: anytype, alloc: *Allocator) usize {
-    var plan = AutoHashMap(usize, bool).init(alloc);
+fn part2(alloc: std.mem.Allocator, inp: anytype) usize {
+    var plan = std.AutoHashMap(usize, bool).init(alloc);
     defer plan.deinit();
     for (inp) |dir| {
         plan.put(seat(dir), true) catch {};
@@ -55,16 +56,16 @@ fn part2(inp: anytype, alloc: *Allocator) usize {
     return 0;
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
-    var plan = readLines(inp, halloc);
-    defer halloc.free(plan);
+fn day05(inp: []const u8, bench: bool) anyerror!void {
+    var plan = aoc.readLines(aoc.halloc, inp);
+    defer aoc.halloc.free(plan);
     var p1 = part1(plan);
-    var p2 = part2(plan, halloc);
+    var p2 = part2(aoc.halloc, plan);
     if (!bench) {
-        try print("Part 1: {}\nPart 2: {}\n", .{p1, p2});
+        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day05);
 }

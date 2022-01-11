@@ -1,18 +1,19 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
 const Diag = struct {
     bits: usize,
     maxbit: usize,
     nums: []usize,
-    allocator: *Allocator,
+    allocator: std.mem.Allocator,
 
-    pub fn fromInput(inp: anytype, allocator: *Allocator) !*Diag {
+    pub fn fromInput(allocator: std.mem.Allocator, inp: anytype) !*Diag {
         var nums = try allocator.alloc(usize, inp.len);
         var diag = try allocator.create(Diag);
         diag.bits = inp[0].len - 1;
         diag.maxbit = @intCast(usize, (@as(u64, 1) << @intCast(u6, diag.bits)));
         for (inp) |line, i| {
-            nums[i] = try parseUnsigned(usize, line, 2);
+            nums[i] = try std.fmt.parseUnsigned(usize, line, 2);
         }
         diag.nums = nums;
         diag.allocator = allocator;
@@ -84,31 +85,33 @@ const Diag = struct {
 };
 
 test "examples" {
-    const talloc = @import("std").testing.allocator;
-    const test1 = readLines(test1file);
-    const inp = readLines(inputfile);
+    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    defer aoc.talloc.free(test1);
+    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    defer aoc.talloc.free(inp);
 
-    var t = Diag.fromInput(test1, talloc) catch unreachable;
+    var t = Diag.fromInput(aoc.talloc, test1) catch unreachable;
     defer t.deinit();
-    var ti = Diag.fromInput(inp, talloc) catch unreachable;
+    var ti = Diag.fromInput(aoc.talloc, inp) catch unreachable;
     defer ti.deinit();
-    try assertEq(@as(usize, 198), t.part1());
-    try assertEq(@as(usize, 749376), ti.part1());
-    try assertEq(@as(usize, 230), t.part2());
-    try assertEq(@as(usize, 2372923), ti.part2());
+    try aoc.assertEq(@as(usize, 198), t.part1());
+    try aoc.assertEq(@as(usize, 749376), ti.part1());
+    try aoc.assertEq(@as(usize, 230), t.part2());
+    try aoc.assertEq(@as(usize, 2372923), ti.part2());
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
-    var lines = readLines(inp);
-    var diag = try Diag.fromInput(lines, alloc);
+fn day03(inp: []const u8, bench: bool) anyerror!void {
+    var lines = aoc.readLines(aoc.halloc, inp);
+    defer aoc.halloc.free(lines);
+    var diag = try Diag.fromInput(aoc.halloc, lines);
     defer diag.deinit();
     var p1 = diag.part1();
     var p2 = diag.part2();
     if (!bench) {
-        try print("Part1: {}\nPart2: {}\n", .{ p1, p2 });
+        try aoc.print("Part1: {}\nPart2: {}\n", .{ p1, p2 });
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day03);
 }

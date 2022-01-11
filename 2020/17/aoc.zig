@@ -1,4 +1,5 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
 const Map = struct {
     const MAX: usize = 22;
@@ -8,7 +9,7 @@ const Map = struct {
     new: [MAX * MAX * MAX * MAX]bool,
     w: i8,
     w2: i8,
-    alloc: *Allocator,
+    alloc: std.mem.Allocator,
     debug: bool,
 
     const NB = [_]i8{ -1, 0, 1 };
@@ -17,11 +18,11 @@ const Map = struct {
         return @intCast(usize, x) + MAX * (@intCast(usize, y) + MAX * (@intCast(usize, z) + MAX * @intCast(usize, q)));
     }
 
-    pub fn fromInput(inp: [][]const u8, alloc: *Allocator) !*Map {
+    pub fn fromInput(alloc: std.mem.Allocator, inp: [][]const u8) !*Map {
         var m = try alloc.create(Map);
         m.alloc = alloc;
-        memset(bool, m.cur[0..], false);
-        memset(bool, m.new[0..], false);
+        std.mem.set(bool, m.cur[0..], false);
+        std.mem.set(bool, m.new[0..], false);
         var size: i8 = @intCast(i8, inp.len);
         m.w = size;
         var s2: i8 = size >> 1;
@@ -58,22 +59,22 @@ const Map = struct {
             var z: i8 = zstart;
             while (z <= zend) : (z += 1) {
                 var y: i8 = xystart;
-                warn("q={} z={}\n", .{ q, z });
+                std.debug.print("q={} z={}\n", .{ q, z });
                 while (y <= xyend) : (y += 1) {
                     var x: i8 = xystart;
                     while (x <= xyend) : (x += 1) {
                         const cur = self.Get(x, y, z, q);
                         if (cur) {
-                            warn("#", .{});
+                            std.debug.print("#", .{});
                             self.Set(x, y, z, q);
                         } else {
-                            warn(".", .{});
+                            std.debug.print(".", .{});
                         }
                     }
-                    warn(" ({} {})\n", .{ y, index(11, y, z, q) });
+                    std.debug.print(" ({} {})\n", .{ y, index(11, y, z, q) });
                 }
             }
-            warn("\n", .{});
+            std.debug.print("\n", .{});
         }
     }
 
@@ -118,8 +119,7 @@ const Map = struct {
 
     pub fn Iter(self: *Map, iter: i8, part2: bool) usize {
         var n: usize = 0;
-        var a: usize = 0;
-        memset(bool, self.new[0..], false);
+        std.mem.set(bool, self.new[0..], false);
 
         var xystart: i8 = OFF - (1 + self.w2 + iter);
         var xyend: i8 = OFF + (2 + self.w2 + iter);
@@ -165,7 +165,7 @@ const Map = struct {
         while (i < 6) : (i += 1) {
             r = self.Iter(i, part2);
             if (self.debug) {
-                warn("Iter {}: {}\n", .{ i, r });
+                std.debug.print("Iter {}: {}\n", .{ i, r });
             }
         }
         return r;
@@ -181,44 +181,44 @@ const Map = struct {
 };
 
 test "part1" {
-    const test0 = readLines(test0file, talloc);
-    defer talloc.free(test0);
-    const test1 = readLines(test1file, talloc);
-    defer talloc.free(test1);
-    const inp = readLines(inputfile, talloc);
-    defer talloc.free(inp);
+    const test0 = aoc.readLines(aoc.talloc, aoc.test0file);
+    defer aoc.talloc.free(test0);
+    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    defer aoc.talloc.free(test1);
+    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    defer aoc.talloc.free(inp);
 
-    var t1m = Map.fromInput(test1, talloc) catch unreachable;
-    try assertEq(@as(usize, 112), try t1m.Part1());
+    var t1m = Map.fromInput(aoc.talloc, test1) catch unreachable;
+    try aoc.assertEq(@as(usize, 112), try t1m.Part1());
     t1m.deinit();
 
-    t1m = Map.fromInput(test1, talloc) catch unreachable;
+    t1m = Map.fromInput(aoc.talloc, test1) catch unreachable;
     defer t1m.deinit();
-    try assertEq(@as(usize, 848), try t1m.Part2());
+    try aoc.assertEq(@as(usize, 848), try t1m.Part2());
 
-    var m = Map.fromInput(inp, talloc) catch unreachable;
-    try assertEq(@as(usize, 209), try m.Part1());
+    var m = Map.fromInput(aoc.talloc, inp) catch unreachable;
+    try aoc.assertEq(@as(usize, 209), try m.Part1());
     m.deinit();
 
-    m = Map.fromInput(inp, talloc) catch unreachable;
+    m = Map.fromInput(aoc.talloc, inp) catch unreachable;
     defer m.deinit();
-    try assertEq(@as(usize, 1492), try m.Part2());
+    try aoc.assertEq(@as(usize, 1492), try m.Part2());
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
-    const lines = readLines(inp, halloc);
-    defer halloc.free(lines);
-    var m = try Map.fromInput(lines, halloc);
+fn day17(inp: []const u8, bench: bool) anyerror!void {
+    const lines = aoc.readLines(aoc.halloc, inp);
+    defer aoc.halloc.free(lines);
+    var m = try Map.fromInput(aoc.halloc, lines);
     var p1 = m.Part1();
     m.deinit();
-    m = try Map.fromInput(lines, halloc);
+    m = try Map.fromInput(aoc.halloc, lines);
     defer m.deinit();
     var p2 = m.Part2();
     if (!bench) {
-        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day17);
 }

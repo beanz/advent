@@ -1,23 +1,24 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
 test "examples" {
-    const test1 = readLines(test1file, talloc);
-    defer talloc.free(test1);
-    const test2 = readLines(test2file, talloc);
-    defer talloc.free(test2);
-    const inp = readLines(inputfile, talloc);
-    defer talloc.free(inp);
+    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    defer aoc.talloc.free(test1);
+    const test2 = aoc.readLines(aoc.talloc, aoc.test2file);
+    defer aoc.talloc.free(test2);
+    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    defer aoc.talloc.free(inp);
 
-    try assertEq(@as(usize, 4), part1(test1, talloc));
-    try assertEq(@as(usize, 0), part1(test2, talloc));
-    try assertEq(@as(usize, 112), part1(inp, talloc));
+    try aoc.assertEq(@as(usize, 4), part1(aoc.talloc, test1));
+    try aoc.assertEq(@as(usize, 0), part1(aoc.talloc, test2));
+    try aoc.assertEq(@as(usize, 112), part1(aoc.talloc, inp));
 
-    try assertEq(@as(usize, 32), part2(test1, talloc));
-    try assertEq(@as(usize, 126), part2(test2, talloc));
-    try assertEq(@as(usize, 6260), part2(inp, talloc));
+    try aoc.assertEq(@as(usize, 32), part2(aoc.talloc, test1));
+    try aoc.assertEq(@as(usize, 126), part2(aoc.talloc, test2));
+    try aoc.assertEq(@as(usize, 6260), part2(aoc.talloc, inp));
 }
 
-fn traverse1(m: StringHashMap(ArrayList([]const u8)), bag: []const u8, seen: *StringHashMap(bool)) void {
+fn traverse1(m: std.StringHashMap(std.ArrayList([]const u8)), bag: []const u8, seen: *std.StringHashMap(bool)) void {
     if (!m.contains(bag)) {
         return;
     }
@@ -27,9 +28,8 @@ fn traverse1(m: StringHashMap(ArrayList([]const u8)), bag: []const u8, seen: *St
     }
 }
 
-fn part1(inp: anytype, alloc: *Allocator) usize {
-    var c: usize = 0;
-    var map = StringHashMap(ArrayList([]const u8)).init(alloc);
+fn part1(alloc: std.mem.Allocator, inp: anytype) usize {
+    var map = std.StringHashMap(std.ArrayList([]const u8)).init(alloc);
     defer {
         var it = map.iterator();
         while (it.next()) |*e| {
@@ -38,28 +38,28 @@ fn part1(inp: anytype, alloc: *Allocator) usize {
         map.deinit();
     }
     for (inp) |line| {
-        var lit = split(line, " bags contain ");
+        var lit = std.mem.split(u8, line, " bags contain ");
         const bag = lit.next().?;
         const spec = lit.next().?;
         if (spec[0] == 'n' and spec[1] == 'o' and spec[2] == ' ') {
             continue;
         }
-        var sit = split(spec, ", ");
+        var sit = std.mem.split(u8, spec, ", ");
         while (sit.next()) |bags| {
-            var bit = split(bags, " ");
+            var bit = std.mem.split(u8, bags, " ");
             const ns = bit.next().?;
-            const n = parseUnsigned(usize, ns, 10);
+            _ = std.fmt.parseUnsigned(usize, ns, 10) catch unreachable;
             const b1 = bit.next().?;
             const b2 = bit.next().?;
-            var innerBag = halloc.alloc(u8, b1.len + b2.len + 1) catch unreachable;
-            copy(u8, innerBag[0..], b1);
+            var innerBag = aoc.halloc.alloc(u8, b1.len + b2.len + 1) catch unreachable;
+            std.mem.copy(u8, innerBag[0..], b1);
             innerBag[b1.len] = ' ';
-            copy(u8, innerBag[b1.len + 1 ..], b2);
-            const kv = map.getOrPutValue(innerBag, ArrayList([]const u8).init(alloc)) catch unreachable;
+            std.mem.copy(u8, innerBag[b1.len + 1 ..], b2);
+            const kv = map.getOrPutValue(innerBag, std.ArrayList([]const u8).init(alloc)) catch unreachable;
             kv.value_ptr.append(bag) catch unreachable;
         }
     }
-    var seen = StringHashMap(bool).init(alloc);
+    var seen = std.StringHashMap(bool).init(alloc);
     defer seen.deinit();
     traverse1(map, "shiny gold", &seen);
     return seen.count();
@@ -67,7 +67,7 @@ fn part1(inp: anytype, alloc: *Allocator) usize {
 
 const BS = struct { bag: []const u8, n: usize };
 
-fn traverse2(m: StringHashMap(ArrayList(BS)), bag: []const u8) usize {
+fn traverse2(m: std.StringHashMap(std.ArrayList(BS)), bag: []const u8) usize {
     var c: usize = 1;
     if (!m.contains(bag)) {
         return 1;
@@ -78,9 +78,8 @@ fn traverse2(m: StringHashMap(ArrayList(BS)), bag: []const u8) usize {
     return c;
 }
 
-fn part2(inp: anytype, alloc: *Allocator) usize {
-    var c: usize = 0;
-    var map = StringHashMap(ArrayList(BS)).init(alloc);
+fn part2(alloc: std.mem.Allocator, inp: anytype) usize {
+    var map = std.StringHashMap(std.ArrayList(BS)).init(alloc);
     defer {
         var it = map.iterator();
         while (it.next()) |*e| {
@@ -89,24 +88,24 @@ fn part2(inp: anytype, alloc: *Allocator) usize {
         map.deinit();
     }
     for (inp) |line| {
-        var lit = split(line, " bags contain ");
+        var lit = std.mem.split(u8, line, " bags contain ");
         const bag = lit.next().?;
         const spec = lit.next().?;
         if (spec[0] == 'n' and spec[1] == 'o' and spec[2] == ' ') {
             continue;
         }
-        var sit = split(spec, ", ");
+        var sit = std.mem.split(u8, spec, ", ");
         while (sit.next()) |bags| {
-            var bit = split(bags, " ");
+            var bit = std.mem.split(u8, bags, " ");
             const ns = bit.next().?;
-            const n = parseUnsigned(usize, ns, 10) catch unreachable;
+            const n = std.fmt.parseUnsigned(usize, ns, 10) catch unreachable;
             const b1 = bit.next().?;
             const b2 = bit.next().?;
-            var innerBag = halloc.alloc(u8, b1.len + b2.len + 1) catch unreachable;
-            copy(u8, innerBag[0..], b1);
+            var innerBag = aoc.halloc.alloc(u8, b1.len + b2.len + 1) catch unreachable;
+            std.mem.copy(u8, innerBag[0..], b1);
             innerBag[b1.len] = ' ';
-            copy(u8, innerBag[b1.len + 1 ..], b2);
-            const kv = map.getOrPutValue(bag, ArrayList(BS).init(alloc)) catch unreachable;
+            std.mem.copy(u8, innerBag[b1.len + 1 ..], b2);
+            const kv = map.getOrPutValue(bag, std.ArrayList(BS).init(alloc)) catch unreachable;
             var b = BS{ .bag = innerBag, .n = n };
             kv.value_ptr.append(b) catch unreachable;
         }
@@ -114,16 +113,16 @@ fn part2(inp: anytype, alloc: *Allocator) usize {
     return traverse2(map, "shiny gold") - 1;
 }
 
-fn aoc(inp: []const u8, bench: bool) anyerror!void {
-    var spec = readLines(inp, halloc);
-    defer halloc.free(spec);
-    var p1 = part1(spec, halloc);
-    var p2 = part2(spec, halloc);
+fn day07(inp: []const u8, bench: bool) anyerror!void {
+    var spec = aoc.readLines(aoc.halloc, inp);
+    defer aoc.halloc.free(spec);
+    var p1 = part1(aoc.halloc, spec);
+    var p2 = part2(aoc.halloc, spec);
     if (!bench) {
-        try print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 
 pub fn main() anyerror!void {
-    try benchme(input(), aoc);
+    try aoc.benchme(aoc.input(), day07);
 }
