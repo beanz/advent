@@ -2,54 +2,37 @@ const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
 fn parts(alloc: std.mem.Allocator, inp: []const u8) ![2]u16 {
-    var ch = aoc.readChunks(alloc, inp);
-    defer alloc.free(ch);
-    var calls = try aoc.Ints(alloc, u8, ch[0]);
+    var si = std.mem.indexOfScalar(u8, inp, @as(u8, '\n')) orelse unreachable;
+    var calls = try aoc.Ints(alloc, u8, inp[0..si]);
     defer alloc.free(calls);
-    var rounds = std.AutoHashMap(u8, u8).init(alloc);
-    defer rounds.deinit();
+    var rounds: [100]u8 = @splat(100, @as(u8, 101));
     for (calls) |v, i| {
-        try rounds.put(v, @intCast(u8, i));
+        rounds[v] = @intCast(u8, i);
     }
     var res = [2]u16{ 0, 0 };
     var first: u8 = 255;
     var last: u8 = 0;
-    var boardNum: usize = 1;
-    while (boardNum < ch.len) : (boardNum += 1) {
-        var board: [25]u8 = undefined;
-        var boardIt = std.mem.tokenize(u8, ch[boardNum], ":, \n");
-        var k: usize = 0;
-        while (boardIt.next()) |is| {
-            if (is.len == 0) {
-                break;
-            }
-            const n = std.fmt.parseInt(u8, is, 10) catch {
-                continue;
-            };
-            board[k] = n;
-            k += 1;
-        }
+    var boardInts = try aoc.Ints(alloc, u8, inp[si + 2 ..]);
+    defer alloc.free(boardInts);
+    var boardI: usize = 0;
+    while (boardI < boardInts.len) : (boardI += 25) {
+        var board = boardInts[boardI .. boardI + 25];
         var rl = [10]u8{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         for (board) |v, i| {
-            if (rounds.get(v)) |round| {
-                var r = i % 5;
-                var c = @divFloor(i, 5);
-                if (rl[r] < round) {
-                    rl[r] = round;
-                }
-                if (rl[c+5] < round) {
-                    rl[c+5] = round;
-                }
+            var round = rounds[v];
+            var r = i % 5;
+            var c = @divFloor(i, 5);
+            if (rl[r] < round) {
+                rl[r] = round;
+            }
+            if (rl[c + 5] < round) {
+                rl[c + 5] = round;
             }
         }
         var min = std.mem.min(u8, rl[0..]);
         var sc: u16 = 0;
         for (board) |v| {
-            if (rounds.get(v)) |round| {
-                if (round > min) {
-                    sc += @as(u16, v);
-                }
-            } else {
+            if (rounds[v] > min) {
                 sc += @as(u16, v);
             }
         }
@@ -74,64 +57,8 @@ test "parts" {
     try aoc.assertEq(@as(u16, 9020), t[1]);
 }
 
-fn partsN(alloc: std.mem.Allocator, inp: []const u8) ![2]u16 {
-    var si = std.mem.indexOfScalar(u8, inp, @as(u8, '\n')) orelse unreachable;
-    var calls = try aoc.Ints(alloc, u8, inp[0..si]);
-    defer alloc.free(calls);
-    var rounds : [100]u8 = @splat(100, @as(u8, 101));
-    for (calls) |v, i| {
-        rounds[v] = @intCast(u8, i);
-    }
-    var res = [2]u16{ 0, 0 };
-    var first: u8 = 255;
-    var last: u8 = 0;
-    var boardInts = try aoc.Ints(alloc, u8, inp[si+2..]);
-    defer alloc.free(boardInts);
-    var boardI: usize = 0;
-    while (boardI < boardInts.len) : (boardI += 25) {
-        var board = boardInts[boardI..boardI+25];
-        var rl = [10]u8{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        for (board) |v, i| {
-            var round = rounds[v];
-            var r = i % 5;
-            var c = @divFloor(i, 5);
-            if (rl[r] < round) {
-                rl[r] = round;
-            }
-            if (rl[c+5] < round) {
-                rl[c+5] = round;
-            }
-        }
-        var min = std.mem.min(u8, rl[0..]);
-        var sc: u16 = 0;
-        for (board) |v| {
-            if (rounds[v] > min) {
-                sc += @as(u16, v);
-            }
-        }
-        if (first > min) {
-            first = min;
-            res[0] = calls[min] * sc;
-        }
-        if (last < min) {
-            last = min;
-            res[1] = calls[min] * sc;
-        }
-    }
-    return res;
-}
-
-test "partsN" {
-    var t = try partsN(aoc.talloc, aoc.test1file);
-    try aoc.assertEq(@as(u16, 4512), t[0]);
-    try aoc.assertEq(@as(u16, 1924), t[1]);
-    t = try partsN(aoc.talloc, aoc.inputfile);
-    try aoc.assertEq(@as(u16, 63552), t[0]);
-    try aoc.assertEq(@as(u16, 9020), t[1]);
-}
-
 fn day04(inp: []const u8, bench: bool) anyerror!void {
-    var p = try partsN(aoc.halloc, inp);
+    var p = try parts(aoc.halloc, inp);
     if (!bench) {
         try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }
