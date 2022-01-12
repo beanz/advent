@@ -112,7 +112,7 @@ aoc-zig: aoc.zig aoc-lib.zig
 	zig build-exe --name $@ $<
 
 aoc-zig-rel: aoc.zig aoc-lib.zig
-	zig build-exe -O ReleaseSmall --name $@ $<
+	zig build-exe -O ReleaseFast --name $@ $<
 
 aoc-d: aoc.d
 	dmd -J. -of=$@ $<
