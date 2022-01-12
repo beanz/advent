@@ -109,3 +109,13 @@ func (p FP2) Rotate(rotation int) FP2 {
 		panic("invalid rotation")
 	}
 }
+
+func (p FP2) CW() FP2 {
+	x, y := p.XY()
+	return NewFP2(-y, x)
+}
+
+func (p FP2) CCW() FP2 {
+	x, y := p.XY()
+	return NewFP2(y, -x)
+}
