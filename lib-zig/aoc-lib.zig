@@ -94,6 +94,26 @@ pub fn Ints(alloc: std.mem.Allocator, comptime T: type, inp: anytype) anyerror![
     return ints.toOwnedSlice();
 }
 
+pub fn BoundedInts(comptime T: type, comptime expected: usize, inp: anytype) anyerror![]T {
+    var ints = try std.BoundedArray(T, expected).init(0);
+    var n: T = 0;
+    var num = false;
+    for (inp) |ch| {
+        if ('0' <= ch and ch <= '9') {
+            num = true;
+            n = n * 10 + @as(T, ch - '0');
+        } else if (num) {
+            try ints.append(n);
+            n = 0;
+            num = false;
+        }
+    }
+    if (num) {
+        try ints.append(n);
+    }
+    return ints.slice();
+}
+
 pub fn readLines(alloc: std.mem.Allocator, inp: anytype) [][]const u8 {
     var lines = std.ArrayList([]const u8).init(alloc);
     var lit = std.mem.split(u8, inp, "\n");

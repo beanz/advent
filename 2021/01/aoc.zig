@@ -2,19 +2,17 @@ const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
 test "examples" {
-    var scan = try aoc.Ints(aoc.talloc, i64, aoc.test1file);
-    defer aoc.talloc.free(scan);
-    try aoc.assertEq(@as(usize, 7), part1(scan));
-    try aoc.assertEq(@as(usize, 5), part2(scan));
-    var scan2 = try aoc.Ints(aoc.talloc, i64, aoc.inputfile);
-    defer aoc.talloc.free(scan2);
-    try aoc.assertEq(@as(usize, 1342), part1(scan2));
-    try aoc.assertEq(@as(usize, 1378), part2(scan2));
+    var pt = try parts(aoc.test1file);
+    try aoc.assertEq(@as(u32, 7), pt[0]);
+    try aoc.assertEq(@as(u32, 5), pt[1]);
+    var p = try parts(aoc.inputfile);
+    try aoc.assertEq(@as(u32, 1342), p[0]);
+    try aoc.assertEq(@as(u32, 1378), p[1]);
 }
 
-fn calc(exp: []const i64, n: usize) usize {
+fn calc(exp: []const u32, n: u32) u32 {
     var i: usize = n;
-    var c: usize = 0;
+    var c: u32 = 0;
     while (i < exp.len) : (i += 1) {
         if (exp[i - n] < exp[i]) {
             c += 1;
@@ -23,24 +21,39 @@ fn calc(exp: []const i64, n: usize) usize {
     return c;
 }
 
-fn part1(exp: []const i64) usize {
-    return calc(exp, 1);
-}
-
-fn part2(exp: []const i64) usize {
-    return calc(exp, 3);
+fn parts(inp: []const u8) ![2]u32 {
+    var exp = try aoc.BoundedInts(u32, 2048, inp);
+    return [2]u32{ calc(exp, 1), calc(exp, 3) };
 }
 
 fn day01(inp: []const u8, bench: bool) anyerror!void {
-    var scan = try aoc.Ints(aoc.halloc, i64, inp);
-    defer aoc.halloc.free(scan);
-    var p1 = part1(scan);
-    var p2 = part2(scan);
+    var p = try parts(inp);
     if (!bench) {
-        try aoc.print("Part1: {}\nPart2: {}\n", .{ p1, p2 });
+        try aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }
 }
 
 pub fn main() anyerror!void {
     try aoc.benchme(aoc.input(), day01);
+}
+
+test "vector" {
+    //var ex = [_]u32{
+    //    199, 200, 208, 210, 200, 207, 240, 269, 260, 263,
+    //};
+    var v1: std.meta.Vector(9, u32) = [_]u32{
+        199, 200, 208, 210, 200, 207, 240, 269, 260,
+    };
+    try aoc.print("v1={}\n", .{v1});
+    var v2: std.meta.Vector(9, u32) = [_]u32{
+        200, 208, 210, 200, 207, 240, 269, 260, 263,
+    };
+    try aoc.print("v2={}\n", .{v2});
+    var v3 = v1 < v2;
+    try aoc.print("v3={}\n", .{v3});
+    var zeros: std.meta.Vector(9, u16) = @splat(9, @as(u16, 0));
+    var ones: std.meta.Vector(9, u16) = @splat(9, @as(u16, 1));
+    var sel = @select(u16, v3, ones, zeros);
+    try aoc.print("sel={}\n", .{sel});
+    try aoc.assertEq(@as(u32, 7), @reduce(.Add, sel));
 }
