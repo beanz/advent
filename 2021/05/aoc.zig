@@ -1,126 +1,87 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
-const Diag = struct {
-    lines: [][]const isize,
-    p1: ?usize,
-    p2: ?usize,
+const X1: usize = 0;
+const Y1: usize = 1;
+const X2: usize = 2;
+const Y2: usize = 3;
 
-    const X1: usize = 0;
-    const Y1: usize = 1;
-    const X2: usize = 2;
-    const Y2: usize = 3;
-
-    fn parseLine(line: anytype, allocator: *Allocator) []const isize {
-        var nums = ArrayList(isize).init(allocator);
-        var it = tokenize(line, ", ->");
-        while (it.next()) |is| {
-            if (is.len == 0) {
+pub fn parts(inp: anytype) ![2]usize {
+    var b = try std.BoundedArray(u16, 2048).init(0);
+    var lines = try aoc.BoundedInts(u16, &b, inp);
+    var m1: [1048576]u2 = undefined;
+    std.mem.set(u2, m1[0..], 0);
+    var c1: usize = 0;
+    var m2: [1048576]u2 = undefined;
+    std.mem.set(u2, m2[0..], 0);
+    var c2: usize = 0;
+    var i: usize = 0;
+    while (i < lines.len) : (i += 4) {
+        var x1 = lines[i + X1];
+        var y1 = lines[i + Y1];
+        var x2 = lines[i + X2];
+        var y2 = lines[i + Y2];
+        var x = x1;
+        var y = y1;
+        var p1 = x1 == x2 or y1 == y2;
+        while (true) {
+            const k = @as(u32, x) + (@as(u32, y) * 1024);
+            switch (m2[k]) {
+                0 => {
+                    m2[k] = 1;
+                },
+                1 => {
+                    m2[k] = 2;
+                    c2 += 1;
+                },
+                else => {},
+            }
+            if (p1) {
+                switch (m1[k]) {
+                    0 => {
+                        m1[k] = 1;
+                    },
+                    1 => {
+                        m1[k] = 2;
+                        c1 += 1;
+                    },
+                    else => {},
+                }
+            }
+            if (x == x2 and y == y2) {
                 break;
             }
-            const n = std.fmt.parseInt(isize, is, 10) catch {
-                continue;
-            };
-            nums.append(n) catch unreachable;
-        }
-        return nums.toOwnedSlice();
-    }
-
-    pub fn fromInput(inp: anytype, allocator: *Allocator) !*Diag {
-        var lines = try allocator.alloc([]const isize, inp.len);
-        var diag = try alloc.create(Diag);
-        for (inp) |line, i| {
-            lines[i] = parseLine(line, allocator);
-        }
-        diag.lines = lines;
-        return diag;
-    }
-
-    fn lineLength(line: []const isize) isize {
-        const dx = line[X2] - line[X1];
-        const dy = line[Y2] - line[Y1];
-        const a = if (dx < 0) -dx else dx;
-        const b = if (dy < 0) -dy else dy;
-        return if (a > b) a else b;
-    }
-
-    fn inc(a: isize, b: isize) isize {
-        if (a == b) {
-            return 0;
-        } else if (a < b) {
-            return 1;
-        } else {
-            return -1;
-        }
-    }
-
-    pub fn calc(self: *Diag) void {
-        var m1 = AutoHashMap(isize, usize).init(alloc);
-        var c1: usize = 0;
-        var m2 = AutoHashMap(isize, usize).init(alloc);
-        var c2: usize = 0;
-        for (self.lines) |line| {
-            var x = line[X1];
-            var y = line[Y1];
-            var dx: isize = inc(line[X1], line[X2]);
-            var dy: isize = inc(line[Y1], line[Y2]);
-            var len = lineLength(line);
-            var i: usize = 0;
-            while (true) {
-                const k = x + y * (1 << 16);
-                m2.put(k, (m2.get(k) orelse 0) + 1) catch unreachable;
-                if (m2.get(k).? == 2) {
-                    c2 += 1;
-                }
-                if (line[X1] == line[X2] or line[Y1] == line[Y2]) {
-                    m1.put(k, (m1.get(k) orelse 0) + 1) catch unreachable;
-                    if (m1.get(k).? == 2) {
-                        c1 += 1;
-                    }
-                }
-                x += dx;
-                y += dy;
-                i += 1;
-                if (i > len) {
-                    break;
-                }
+            if (x1 < x2) {
+                x += 1;
+            } else if (x1 > x2) {
+                x -= 1;
+            }
+            if (y1 < y2) {
+                y += 1;
+            } else if (y1 > y2) {
+                y -= 1;
             }
         }
-        self.p1 = c1;
-        self.p2 = c2;
     }
-
-    pub fn part1(self: *Diag) usize {
-        if (self.p1) |p1| {
-            return p1;
-        }
-        self.calc();
-        return self.p1.?;
-    }
-
-    pub fn part2(self: *Diag) usize {
-        if (self.p2) |p2| {
-            return p2;
-        }
-        self.calc();
-        return self.p2.?;
-    }
-};
+    return [2]usize{ c1, c2 };
+}
 
 test "examples" {
-    const test1 = readLines(test1file);
-    const inp = readLines(inputfile);
+    var p = parts(aoc.test1file) catch unreachable;
+    try aoc.assertEq(@as(usize, 5), p[0]);
+    try aoc.assertEq(@as(usize, 12), p[1]);
+    var pi = parts(aoc.inputfile) catch unreachable;
+    try aoc.assertEq(@as(usize, 6005), pi[0]);
+    try aoc.assertEq(@as(usize, 23864), pi[1]);
+}
 
-    var t = Diag.fromInput(test1, alloc) catch unreachable;
-    try assertEq(@as(usize, 5), t.part1());
-    try assertEq(@as(usize, 12), t.part2());
-    var ti = Diag.fromInput(inp, alloc) catch unreachable;
-    try assertEq(@as(usize, 6005), ti.part1());
-    try assertEq(@as(usize, 23864), ti.part2());
+fn day05(inp: []const u8, bench: bool) anyerror!void {
+    var p = parts(inp) catch unreachable;
+    if (!bench) {
+        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
+    }
 }
 
 pub fn main() anyerror!void {
-    var inp = readLines(input());
-    var diag = try Diag.fromInput(inp, alloc);
-    try print("Part1: {}\n", .{diag.part1()});
-    try print("Part2: {}\n", .{diag.part2()});
+    try aoc.benchme(aoc.input(), day05);
 }

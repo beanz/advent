@@ -94,8 +94,7 @@ pub fn Ints(alloc: std.mem.Allocator, comptime T: type, inp: anytype) anyerror![
     return ints.toOwnedSlice();
 }
 
-pub fn BoundedInts(comptime T: type, comptime expected: usize, inp: anytype) anyerror![]T {
-    var ints = try std.BoundedArray(T, expected).init(0);
+pub fn BoundedInts(comptime T: type, b: anytype, inp: anytype) anyerror![]T {
     var n: T = 0;
     var num = false;
     for (inp) |ch| {
@@ -103,15 +102,15 @@ pub fn BoundedInts(comptime T: type, comptime expected: usize, inp: anytype) any
             num = true;
             n = n * 10 + @as(T, ch - '0');
         } else if (num) {
-            try ints.append(n);
+            try b.append(n);
             n = 0;
             num = false;
         }
     }
     if (num) {
-        try ints.append(n);
+        try b.append(n);
     }
-    return ints.slice();
+    return b.slice();
 }
 
 pub fn readLines(alloc: std.mem.Allocator, inp: anytype) [][]const u8 {
