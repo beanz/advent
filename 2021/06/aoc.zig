@@ -1,10 +1,7 @@
-const inputfile = @embedFile("input.txt");
-const test1file = @embedFile("test1.txt");
 const std = @import("std");
-const assertEq = std.testing.expectEqual;
-const print = std.io.getStdOut().writer().print;
+const aoc = @import("aoc-lib.zig");
 
-fn fish(in: []const u8, days: usize) usize {
+fn parts(in: []const u8, days1: usize, days2: usize) [2]usize {
     var f = [_]usize{ 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     for (in) |ch| {
         if (ch < '0') {
@@ -14,32 +11,48 @@ fn fish(in: []const u8, days: usize) usize {
     }
     var z: usize = 0;
     var d: usize = 0;
-    while (d < days) : (d += 1) {
+    while (d < days1) : (d += 1) {
         f[(z + 7) % 9] += f[z];
         z = (z + 1) % 9;
     }
-    var c: usize = 0;
+    var p1: usize = 0;
     for (f) |fc| {
-        c += fc;
+        p1 += fc;
     }
-    return c;
+    while (d < days2) : (d += 1) {
+        f[(z + 7) % 9] += f[z];
+        z = (z + 1) % 9;
+    }
+    var p2: usize = 0;
+    for (f) |fc| {
+        p2 += fc;
+    }
+    return [2]usize{ p1, p2 };
 }
 
 test "examples" {
-    try assertEq(@as(usize, 5), fish(test1file, 1));
-    try assertEq(@as(usize, 6), fish(test1file, 2));
-    try assertEq(@as(usize, 7), fish(test1file, 3));
-    try assertEq(@as(usize, 9), fish(test1file, 4));
-    try assertEq(@as(usize, 10), fish(test1file, 5));
-    try assertEq(@as(usize, 11), fish(test1file, 9));
-    try assertEq(@as(usize, 26), fish(test1file, 18));
-    try assertEq(@as(usize, 5934), fish(test1file, 80));
-    try assertEq(@as(usize, 26984457539), fish(test1file, 256));
-    try assertEq(@as(usize, 365131), fish(inputfile, 80));
-    try assertEq(@as(usize, 1650309278600), fish(inputfile, 256));
+    try aoc.assertEq(@as(usize, 5), parts(aoc.test1file, 1, 1)[0]);
+    try aoc.assertEq(@as(usize, 6), parts(aoc.test1file, 2, 2)[0]);
+    try aoc.assertEq(@as(usize, 7), parts(aoc.test1file, 3, 3)[0]);
+    try aoc.assertEq(@as(usize, 9), parts(aoc.test1file, 4, 4)[0]);
+    try aoc.assertEq(@as(usize, 10), parts(aoc.test1file, 5, 5)[0]);
+    try aoc.assertEq(@as(usize, 11), parts(aoc.test1file, 9, 9)[0]);
+    try aoc.assertEq(@as(usize, 26), parts(aoc.test1file, 18, 18)[0]);
+    var p = parts(aoc.test1file, 80, 256);
+    try aoc.assertEq(@as(usize, 5934), p[0]);
+    try aoc.assertEq(@as(usize, 26984457539), p[1]);
+    var pi = parts(aoc.inputfile, 80, 256);
+    try aoc.assertEq(@as(usize, 365131), pi[0]);
+    try aoc.assertEq(@as(usize, 1650309278600), pi[1]);
+}
+
+fn day06(inp: []const u8, bench: bool) anyerror!void {
+    var p = parts(inp, 80, 256);
+    if (!bench) {
+        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
+    }
 }
 
 pub fn main() anyerror!void {
-    try print("Part1: {}\n", .{fish(inputfile, 80)});
-    try print("Part2: {}\n", .{fish(inputfile, 256)});
+    try aoc.benchme(aoc.input(), day06);
 }
