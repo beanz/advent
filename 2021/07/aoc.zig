@@ -1,20 +1,21 @@
-usingnamespace @import("aoc-lib.zig");
+const std = @import("std");
+const aoc = @import("aoc-lib.zig");
 
 fn fuel1(a: usize, b: usize) usize {
-    return absCast(@intCast(isize, a) - @intCast(isize, b));
+    return aoc.absCast(@intCast(isize, a) - @intCast(isize, b));
 }
 
 test "fuel1" {
-    try assertEq(@as(usize, 14), fuel1(16, 2));
-    try assertEq(@as(usize, 1), fuel1(1, 2));
-    try assertEq(@as(usize, 0), fuel1(2, 2));
-    try assertEq(@as(usize, 2), fuel1(0, 2));
-    try assertEq(@as(usize, 2), fuel1(4, 2));
-    try assertEq(@as(usize, 0), fuel1(2, 2));
-    try assertEq(@as(usize, 5), fuel1(7, 2));
-    try assertEq(@as(usize, 1), fuel1(1, 2));
-    try assertEq(@as(usize, 0), fuel1(2, 2));
-    try assertEq(@as(usize, 12), fuel1(14, 2));
+    try aoc.assertEq(@as(usize, 14), fuel1(16, 2));
+    try aoc.assertEq(@as(usize, 1), fuel1(1, 2));
+    try aoc.assertEq(@as(usize, 0), fuel1(2, 2));
+    try aoc.assertEq(@as(usize, 2), fuel1(0, 2));
+    try aoc.assertEq(@as(usize, 2), fuel1(4, 2));
+    try aoc.assertEq(@as(usize, 0), fuel1(2, 2));
+    try aoc.assertEq(@as(usize, 5), fuel1(7, 2));
+    try aoc.assertEq(@as(usize, 1), fuel1(1, 2));
+    try aoc.assertEq(@as(usize, 0), fuel1(2, 2));
+    try aoc.assertEq(@as(usize, 12), fuel1(14, 2));
 }
 
 fn fuelsum1(p: usize, inp: []const usize) usize {
@@ -26,21 +27,17 @@ fn fuelsum1(p: usize, inp: []const usize) usize {
 }
 
 fn part1(inp: []usize) usize {
-    sort.sort(usize, inp, {}, usizeLessThan);
+    std.sort.sort(usize, inp, {}, aoc.usizeLessThan);
     return fuelsum1(inp[inp.len / 2], inp);
 }
 
 test "part1" {
-    var crabs = readInts(test1file, usize);
-    defer free(crabs);
-    var nums: []usize = dupe(alloc, usize, crabs) catch unreachable;
-    defer free(nums);
-    try assertEq(@as(usize, 37), part1(nums));
-    var crabs2 = readInts(inputfile, usize);
-    defer free(crabs2);
-    var nums2: []usize = dupe(alloc, usize, crabs2) catch unreachable;
-    defer free(nums2);
-    try assertEq(@as(usize, 336701), part1(nums2));
+    var crabs = try aoc.Ints(aoc.talloc, usize, aoc.test1file);
+    defer aoc.talloc.free(crabs);
+    try aoc.assertEq(@as(usize, 37), part1(crabs));
+    var crabs2 = try aoc.Ints(aoc.talloc, usize, aoc.inputfile);
+    defer aoc.talloc.free(crabs2);
+    try aoc.assertEq(@as(usize, 336701), part1(crabs2));
 }
 
 fn fuel2(a: usize, b: usize) usize {
@@ -72,21 +69,24 @@ fn part2(inp: []usize) usize {
 }
 
 test "part2" {
-    var crabs = readInts(test1file, usize);
-    defer free(crabs);
-    var nums: []usize = dupe(alloc, usize, crabs) catch unreachable;
-    defer free(nums);
-    try assertEq(@as(usize, 168), part2(nums));
-    var crabs2 = readInts(inputfile, usize);
-    defer free(crabs2);
-    var nums2: []usize = dupe(alloc, usize, crabs2) catch unreachable;
-    defer free(nums2);
-    try assertEq(@as(usize, 95167302), part2(nums2));
+    var crabs = try aoc.Ints(aoc.talloc, usize, aoc.test1file);
+    defer aoc.talloc.free(crabs);
+    try aoc.assertEq(@as(usize, 168), part2(crabs));
+    var crabs2 = try aoc.Ints(aoc.talloc, usize, aoc.inputfile);
+    defer aoc.talloc.free(crabs2);
+    try aoc.assertEq(@as(usize, 95167302), part2(crabs2));
+}
+
+fn day07(inp: []const u8, bench: bool) anyerror!void {
+    var crabs = try aoc.Ints(aoc.halloc, usize, inp);
+    defer aoc.halloc.free(crabs);
+    var p1 = part1(crabs);
+    var p2 = part2(crabs);
+    if (!bench) {
+        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+    }
 }
 
 pub fn main() anyerror!void {
-    var crabs = readInts(input(), usize);
-    defer free(crabs);
-    try print("Part1: {}\n", .{part1(crabs)});
-    try print("Part2: {}\n", .{part2(crabs)});
+    try aoc.benchme(aoc.input(), day07);
 }
