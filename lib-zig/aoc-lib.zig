@@ -113,6 +113,18 @@ pub fn BoundedInts(comptime T: type, b: anytype, inp: anytype) anyerror![]T {
     return b.slice();
 }
 
+pub fn splitToOwnedSlice(alloc: std.mem.Allocator, inp: []const u8, sep: []const u8) ![][]const u8 {
+    var bits = std.ArrayList([]const u8).init(alloc);
+    var it = std.mem.split(u8, inp, sep);
+    while (it.next()) |bit| {
+        if (bit.len == 0) {
+            break;
+        }
+        try bits.append(bit);
+    }
+    return bits.toOwnedSlice();
+}
+
 pub fn readLines(alloc: std.mem.Allocator, inp: anytype) [][]const u8 {
     var lines = std.ArrayList([]const u8).init(alloc);
     var lit = std.mem.split(u8, inp, "\n");
