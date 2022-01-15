@@ -73,7 +73,7 @@ func (pq *PQ) Pop() interface{} {
 }
 
 func (c *Cave) Solve() uint16 {
-	visited := make(map[uint32]struct{}, c.mw*c.mh)
+	visited := make([]bool, uint32(c.w)*uint32(c.h))
 	pq := make(PQ, 1, 10240)
 	pq[0] = &Rec{0, 0, 0}
 	heap.Init(&pq)
@@ -82,11 +82,11 @@ func (c *Cave) Solve() uint16 {
 		if cur.x == c.w-1 && cur.y == c.h-1 {
 			return cur.risk
 		}
-		vk := uint32(cur.x) + (uint32(cur.y) << 10)
-		if _, ok := visited[vk]; ok {
+		vk := uint32(cur.x) + uint32(cur.y)*uint32(c.w)
+		if visited[vk] {
 			continue
 		}
-		visited[vk] = struct{}{}
+		visited[vk] = true
 		if cur.x > 0 {
 			risk := cur.risk + c.Risk(cur.x-1, cur.y)
 			heap.Push(&pq, &Rec{cur.x - 1, cur.y, risk})
