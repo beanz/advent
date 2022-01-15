@@ -1,7 +1,5 @@
 require "aoc-lib.cr"
 
-inp = readinputlines()
-
 class HandHeld
   property ip : Int64
   property acc : Int64
@@ -53,7 +51,14 @@ class HandHeld
   end
 end
 
-hh = HandHeld.new(inp)
+input = {{ read_file("input.txt") }}
 
-print "Part 1: ", hh.part1(), "\n"
-print "Part 2: ", hh.part2(), "\n"
+benchme(input) do |inp, bench|
+  hh = HandHeld.new(inputlines(inp))
+  p1 = hh.part1()
+  p2 = hh.part2()
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

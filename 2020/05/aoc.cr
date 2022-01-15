@@ -1,13 +1,24 @@
 require "aoc-lib.cr"
 
-seat_ids = readinputlines().map do |x|
-  x.gsub(/([BFRL])/, {"B": 1, "F": 0, "R": 1, "L": 0}).to_i(2)
+def parts(inp) : {Int32, Int32}
+  seat_ids = inputlines(inp).map do |x|
+    x.gsub(/([BFRL])/, {"B": 1, "F": 0, "R": 1, "L": 0}).to_i(2)
+  end
+
+  max = seat_ids.max
+  min = seat_ids.min
+  sum = seat_ids.sum
+  exp = (min+max)*(1+max-min)//2
+  return max, exp-sum
 end
 
-max = seat_ids.max
-print "Part 1: ", max, "\n"
+input = {{ read_file("input.txt") }}
 
-min = seat_ids.min
-sum = seat_ids.sum
-exp = (min+max)*(1+max-min)//2
-print "Part 2: ", exp-sum, "\n"
+benchme(input) do |inp, bench|
+  p1, p2 = parts(inp)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end
+

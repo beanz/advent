@@ -13,23 +13,35 @@ fields = {
   "pid" => ->(x : String) { /^\d{9}$/.match(x) },
 }
 
-records = readinputchunkyrecords()
+def parts(inp, fields) : {Int32, Int32}
+  records = inputchunkyrecords(inp)
 
-c = 0
-records.each do |r|
-  valid = true
-  fields.each_key do |k|
-    valid = false if !r.has_key?(k)
+  c = 0
+  records.each do |r|
+    valid = true
+    fields.each_key do |k|
+      valid = false if !r.has_key?(k)
+    end
+    c+=1 if valid
   end
-  c+=1 if valid
-end
-print "Part 1: ", c, "\n"
-c = 0
-records.each do |r|
-  valid = true
-  fields.each_key do |k|
-    valid = false if !(r.has_key?(k) && fields[k].call(r[k]))
+  p1 = c
+  c = 0
+  records.each do |r|
+    valid = true
+    fields.each_key do |k|
+      valid = false if !(r.has_key?(k) && fields[k].call(r[k]))
+    end
+    c+=1 if valid
   end
-  c+=1 if valid
+  return p1, c
 end
-print "Part 2: ", c, "\n"
+
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  p1, p2 = parts(inp, fields)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

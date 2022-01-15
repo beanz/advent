@@ -3,6 +3,37 @@ This was borrowed from [adsmf's Advent of Code repo](https://github.com/adsmf/ad
 # Benchmarks
 The following are the benchmarks for the Go implementations of solutions for each day. The results are as measured by a `BenchmarkMain` benchmark in each solution.
 
+## Crystal
+ &nbsp;  | 2020
+ ---:  | ---: 
+Day 01 | 469µs
+Day 02 | 879µs
+Day 03 | 637µs
+Day 04 | 1.53ms
+Day 05 | 1.49ms
+Day 06 | **🔴 3.65ms**
+Day 07 | 1.62ms
+Day 08 | 1.15ms
+Day 09 | 388µs
+Day 10 | 23.7µs
+Day 11 | -
+Day 12 | -
+Day 13 | -
+Day 14 | -
+Day 15 | -
+Day 16 | -
+Day 17 | -
+Day 18 | -
+Day 19 | -
+Day 20 | -
+Day 21 | -
+Day 22 | -
+Day 23 | -
+Day 24 | -
+Day 25 | -
+*Total* | *11.8ms*
+
+
 ## Golang
  &nbsp;  | 2015 | 2016 | 2017 | 2018 | 2019 | 2020 | 2021
  ---:  | ---:  | ---:  | ---:  | ---:  | ---:  | ---:  | ---: 

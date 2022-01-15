@@ -1,7 +1,5 @@
 require "aoc-lib.cr"
 
-inp = readinputints()
-
 pre : Int64 = 25
 pre = 5 if istest?()
 
@@ -41,6 +39,15 @@ def part2(inp, target)
   return min + max
 end
 
-p1 = part1(inp, pre)
-print "Part 1: ", p1, "\n"
-print "Part 2: ", part2(inp, p1), "\n"
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  ints = inputlines(inp).map &.to_i64
+
+  p1 = part1(ints, pre)
+  p2 = part2(ints, p1)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

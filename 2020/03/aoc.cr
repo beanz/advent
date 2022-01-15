@@ -33,7 +33,20 @@ class Trees
   end
 end
 
-trees = Trees.new(readinputlines())
-print "Part 1: ", trees.calc(3, 1), "\n"
-slopes = [[1,1],[3,1],[5,1],[7,1],[1,2]]
-print "Part 2: ", slopes.map { |s| trees.calc(s[0],s[1]).to_i64 }.product, "\n"
+def parts(inp) : {Int32, Int64}
+  trees = Trees.new(readinputlines())
+  p1 = trees.calc(3, 1)
+  slopes = [[1,1],[3,1],[5,1],[7,1],[1,2]]
+  p2 = slopes.map { |s| trees.calc(s[0],s[1]).to_i64 }.product
+  return p1, p2
+end
+
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  p1, p2 = parts(inp)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

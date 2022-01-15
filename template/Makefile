@@ -3,7 +3,7 @@ YEAR=$(notdir $(patsubst %/,%,$(dir $(CURDIR))))
 HERE=$(YEAR)/$(DAY)
 
 CC=clang++-6.0
-CR_DIR=$(HOME)/Tmp/crystal-0.35.1-1
+CR_DIR=/usr
 CR_LIB=$(CR_DIR)/share/crystal/src:../../lib-cr
 CR=$(CR_DIR)/bin/crystal
 #NIM=$(HOME)/Tmp/nim-1.0.4/bin/nim

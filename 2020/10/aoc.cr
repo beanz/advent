@@ -1,8 +1,5 @@
 require "aoc-lib.cr"
 
-inp = readinputints().sort
-inp << inp[inp.size-1] + 3
-
 def part1(inp)
   c1 = 0
   c3 = 0
@@ -31,5 +28,17 @@ def part2(inp)
   return trib[2]
 end
 
-print "Part 1: ", part1(inp), "\n"
-print "Part 2: ", part2(inp), "\n"
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  ints = inputlines(inp).map &.to_i64
+  ints = ints.sort
+  ints << ints[ints.size-1] + 3
+
+  p1 = part1(ints)
+  p2 = part2(ints)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end
