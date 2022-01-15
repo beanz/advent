@@ -74,6 +74,7 @@ func (pq *PQ) Pop() interface{} {
 
 func (c *Cave) Solve() uint16 {
 	visited := make([]bool, uint32(c.w)*uint32(c.h))
+	visited[0] = true
 	pq := make(PQ, 1, 10240)
 	pq[0] = &Rec{0, 0, 0}
 	heap.Init(&pq)
@@ -83,23 +84,23 @@ func (c *Cave) Solve() uint16 {
 			return cur.risk
 		}
 		vk := uint32(cur.x) + uint32(cur.y)*uint32(c.w)
-		if visited[vk] {
-			continue
-		}
-		visited[vk] = true
-		if cur.x > 0 {
+		if cur.x > 0 && !visited[vk-1] {
+			visited[vk-1] = true
 			risk := cur.risk + c.Risk(cur.x-1, cur.y)
 			heap.Push(&pq, &Rec{cur.x - 1, cur.y, risk})
 		}
-		if cur.x < c.w-1 {
+		if cur.x < c.w-1 && !visited[vk+1] {
+			visited[vk+1] = true
 			risk := cur.risk + c.Risk(cur.x+1, cur.y)
 			heap.Push(&pq, &Rec{cur.x + 1, cur.y, risk})
 		}
-		if cur.y > 0 {
+		if cur.y > 0 && !visited[vk-uint32(c.w)] {
+			visited[vk-uint32(c.w)] = true
 			risk := cur.risk + c.Risk(cur.x, cur.y-1)
 			heap.Push(&pq, &Rec{cur.x, cur.y - 1, risk})
 		}
-		if cur.y < c.h-1 {
+		if cur.y < c.h-1 && !visited[vk+uint32(c.w)] {
+			visited[vk+uint32(c.w)] = true
 			risk := cur.risk + c.Risk(cur.x, cur.y+1)
 			heap.Push(&pq, &Rec{cur.x, cur.y + 1, risk})
 		}
