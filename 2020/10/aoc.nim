@@ -28,9 +28,15 @@ proc part2(inp : seq[int]) : int =
     trib.addLast(s * e)
   return trib.popLast
 
-var inp = readInputInts()
-inp.sort()
-inp.add(inp[inp.len-1] + 3)
+const input = staticRead"input.txt"
 
-echo "Part 1: ", part1(inp)
-echo "Part 2: ", part2(inp)
+benchme(input, proc (inp: string, bench: bool): void =
+  var ints = Ints(inp)
+  ints.sort()
+  ints.add(ints[ints.len-1] + 3)
+  let p1 = part1(ints)
+  let p2 = part2(ints)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

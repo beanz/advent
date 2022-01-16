@@ -1,7 +1,5 @@
 import aoclib, re
 
-var records = readInputChunkyRecords()
-
 proc inRange(x, mn:int, mx:int): bool =
   return mn <= x and x <= mx
 
@@ -19,23 +17,28 @@ var fields = {
   "pid": proc (x:string): bool = match(x, re"^\d{9}$"),
 }.toTable
 
-var p1:int64 = 0
-for r in records:
-  var valid = true
-  for k in fields.keys:
-    if not r.contains(k):
-      valid = false
-  if valid:
-    p1 += 1
-echo "Part 1: ", p1
+const input = staticRead"input.txt"
 
-var p2:int64 = 0
-for r in records:
-  var valid = true
-  for k, v in fields:
-    if not (r.contains(k) and v(r[k])):
-      valid = false
-  if valid:
-    p2 += 1
+benchme(input, proc (inp: string, bench: bool): void =
+  var records = ChunkyRecords(inp)
+  var p1:int64 = 0
+  for r in records:
+    var valid = true
+    for k in fields.keys:
+      if not r.contains(k):
+        valid = false
+    if valid:
+      p1 += 1
 
-echo "Part 2: ", p2
+  var p2:int64 = 0
+  for r in records:
+    var valid = true
+    for k, v in fields:
+      if not (r.contains(k) and v(r[k])):
+        valid = false
+    if valid:
+      p2 += 1
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

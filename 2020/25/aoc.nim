@@ -23,14 +23,18 @@ proc expMod(a : var uint, b : var uint, m : uint) : uint =
     b = b div 2
   return c
 
-var inp = readInputUInts()
-let cardPub = inp[0]
-var doorPub = inp[1]
-var ls = loopSize(cardPub)
+const input = staticRead"input.txt"
 
-if debug():
-  echo cardPub
-  echo doorPub
-  echo ls
-
-echo "Part 1: ", expMod(doorPub, ls, MODULUS)
+benchme(input, proc (inp: string, bench: bool): void =
+  var ints = Uints(inp)
+  let cardPub = ints[0]
+  var doorPub = ints[1]
+  var ls = loopSize(cardPub)
+  if debug():
+    echo cardPub
+    echo doorPub
+    echo ls
+  let p1 = expMod(doorPub, ls, MODULUS)
+  if not bench:
+    echo "Part 1: ", p1
+)

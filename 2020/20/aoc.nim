@@ -199,7 +199,13 @@ method part2(s: var Game) : int {.base.} =
       im = rotateStrings(im)
   return water - mchars
 
-var inp = readInputChunks()
-var g = initGame(inp)
-echo "Part 1: ", g.part1()
-echo "Part 2: ", g.part2()
+const input = staticRead"input.txt"
+
+benchme(input, proc (inp: string, bench: bool): void =
+  var g = initGame(Chunks(inp))
+  let p1 = g.part1()
+  let p2 = g.part2()
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

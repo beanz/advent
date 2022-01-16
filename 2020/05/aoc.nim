@@ -1,13 +1,19 @@
 import aoclib
 
-var inp = readInputLines()
-var seatIds = inp.map(x => mustParseBin(x.multiReplace({ "B": "1", "F": "0",
-                                                         "R": "1", "L": "0"
-                                                       })))
-var mx = max(seatIds)
-echo "Part 1: ", mx
+const input = staticRead"input.txt"
 
-var mn = min(seatIds)
-var expSum = (mn+mx)*(1+mx-mn) div 2
-var sum = sum(seatIds)
-echo "Part 2: ", expSum-sum
+benchme(input, proc (inp: string, bench: bool): void =
+  var ls = Lines(inp)
+  var seatIds = ls.map(x => mustParseBin(x.multiReplace({ "B": "1", "F": "0",
+                                                          "R": "1", "L": "0"
+  })))
+  var mx = max(seatIds)
+  let p1 = mx
+  var mn = min(seatIds)
+  var expSum = (mn+mx)*(1+mx-mn) div 2
+  var sum = sum(seatIds)
+  let p2 = expSum-sum
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

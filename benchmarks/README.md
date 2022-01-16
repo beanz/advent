@@ -66,34 +66,34 @@ Day 25 | 13.6µs | 179ms | 66.2ms | 21ms | 293ms | 46.1ms | 56.8ms
 
 
 ## Nim
- &nbsp;  | 2019
- ---:  | ---: 
-Day 01 | 15.9µs
-Day 02 | 9.47ms
-Day 03 | 32ms
-Day 04 | 83.2ms
-Day 05 | 87.5µs
-Day 06 | 91.4ms
-Day 07 | 7.67ms
-Day 08 | 29.1µs
-Day 09 | 13.8ms
-Day 10 | 29.7ms
-Day 11 | 5.01ms
-Day 12 | 435ms
-Day 13 | 30.6ms
-Day 14 | 7.99ms
-Day 15 | 30.2ms
-Day 16 | 689ms
-Day 17 | 4.1ms
-Day 18 | **🔴 1m8s**
-Day 19 | 115ms
-Day 20 | 867ms
-Day 21 | 20.8ms
-Day 22 | 48.1µs
-Day 23 | 15.7ms
-Day 24 | 51.7ms
-Day 25 | 202ms
-*Total* | *1m10.8s*
+ &nbsp;  | 2019 | 2020
+ ---:  | ---:  | ---: 
+Day 01 | 15.7µs | 522µs
+Day 02 | 9.3ms | 730µs
+Day 03 | 31.9ms | 122µs
+Day 04 | 86.2ms | 15.8ms
+Day 05 | 87.5µs | 316µs
+Day 06 | 91.4ms | 1.76ms
+Day 07 | 7.67ms | 2.46ms
+Day 08 | 29.1µs | 1.19ms
+Day 09 | 13.8ms | 1.59ms
+Day 10 | 29.7ms | 28.4µs
+Day 11 | 5.01ms | 36.5ms
+Day 12 | 435ms | 113µs
+Day 13 | 30.6ms | 24.9µs
+Day 14 | 7.99ms | 12.1ms
+Day 15 | 30.2ms | **🔴 837ms**
+Day 16 | 689ms | 1.57ms
+Day 17 | 4.1ms | 113ms
+Day 18 | **🔴 1m8s** | 1.2ms
+Day 19 | 115ms | 212ms
+Day 20 | 867ms | 5.44ms
+Day 21 | 20.8ms | 2.3ms
+Day 22 | 48.1µs | 324ms
+Day 23 | 15.7ms | **🔴 1.1s**
+Day 24 | 51.7ms | 181ms
+Day 25 | 202ms | 48.7ms
+*Total* | *1m10.8s* | *2.9s*
 
 
 ## Zig

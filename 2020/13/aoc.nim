@@ -43,8 +43,13 @@ proc part2(b : Buses) : int =
       t += period
   return offset
 
-var inp = readInputLines()
-var b = initBuses(inp)
+const input = staticRead"input.txt"
 
-echo "Part 1: ", b.part1()
-echo "Part 2: ", b.part2()
+benchme(input, proc (inp: string, bench: bool): void =
+  var b = initBuses(Lines(inp))
+  let p1 = b.part1()
+  let p2 = b.part2()
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

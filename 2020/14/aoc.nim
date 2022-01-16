@@ -102,8 +102,13 @@ method part2(s:Mem) : int64 {.base.} =
     res += v
   return res
 
-var inp = readInputLines()
-var m = initMem(inp)
+const input = staticRead"input.txt"
 
-echo "Part 1: ", m.part1()
-echo "Part 2: ", m.part2()
+benchme(input, proc (inp: string, bench: bool): void =
+  var m = initMem(Lines(inp))
+  let p1 = m.part1()
+  let p2 = m.part2()
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

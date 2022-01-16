@@ -28,11 +28,16 @@ proc part2(inp : seq[int], target : int) : int =
       si += 1
   return inp[si..ei].min + inp[si..ei].max
 
-var inp = readInputInts()
+const input = staticRead"input.txt"
 
-var pre = 25
-if isTest():
-  pre = 5
-var p1 = part1(inp, pre)
-echo "Part 1: ", p1
-echo "Part 2: ", part2(inp, p1)
+benchme(input, proc (inp: string, bench: bool): void =
+  var ints = Ints(inp)
+  var pre = 25
+  if isTest():
+    pre = 5
+  let p1 = part1(ints, pre)
+  let p2 = part2(ints, p1)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

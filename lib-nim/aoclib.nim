@@ -59,8 +59,27 @@ proc UInt8s*(c : string) : seq[uint8] =
 proc Int64s*(s: string): seq[int64] =
   return s.strip(chars = {'\n'}).split({'\n',' ', ','}).map(parseBiggestInt).mapIt(it.int64)
 
+proc Ints*(s: string): seq[int] =
+  return s.strip(chars = {'\n'}).split({'\n',' ', ','}).map(parseInt)
+
 proc Lines*(s: string): seq[string] =
   return s.strip(chars = {'\n'}).split("\n")
+
+proc Chunks*(s: string): seq[string] =
+  return s.strip(chars = {'\n'}).split("\n\n")
+
+proc ChunkyRecords*(s: string): seq[Table[string,string]] =
+  var inp: seq[Table[string,string]]
+  for chunk in Chunks(s):
+    var m = initTable[string,string]()
+    for v in chunk.split({'\n', ' '}):
+      var ss = v.split(':')
+      m[ss[0]] = ss[1]
+    inp.add(m)
+  return inp
+
+proc Lists*(s: string): seq[seq[string]] =
+  return Lines(s).map(l => l.split({'-',',',':',' '}))
 
 proc readLines*(file: string): seq[string] =
   var inp: seq[string]

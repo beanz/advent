@@ -106,7 +106,13 @@ proc part1(inp : seq[string]) : int =
 proc part2(inp : seq[string]) : int =
   return calc(inp, true)
 
-var inp = readInputLines()
+const input = staticRead"input.txt"
 
-echo "Part 1: ", part1(inp)
-echo "Part 2: ", part2(inp)
+benchme(input, proc (inp: string, bench: bool): void =
+  var l = Lines(inp)
+  let p1 = part1(l)
+  let p2 = part2(l)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

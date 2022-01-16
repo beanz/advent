@@ -70,9 +70,13 @@ method part2(s: var Game) : string {.base.} =
   res.sort((a, b) => cmp(a.all, b.all))
   return res.map(x => x.ing).join(",")
 
-var inp = readInputLines()
-var s = initGame(inp)
+const input = staticRead"input.txt"
 
-echo "Part 1: ", s.part1()
-echo "Part 2: ", s.part2()
-
+benchme(input, proc (inp: string, bench: bool): void =
+  var g = initGame(Lines(inp))
+  let p1 = g.part1()
+  let p2 = g.part2()
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

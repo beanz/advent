@@ -34,7 +34,13 @@ method part1(s:Game) : int {.base.} =
 method part2(s:Game) : int {.base.} =
   return s.calc(30000000)
 
-var inp = readInputInts()
-var g = initGame(inp)
-echo "Part 1: ", g.part1()
-echo "Part 2: ", g.part2()
+const input = staticRead"input.txt"
+
+benchme(input, proc (inp: string, bench: bool): void =
+  var g = initGame(Ints(inp))
+  let p1 = g.part1()
+  let p2 = g.part2()
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

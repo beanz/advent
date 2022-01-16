@@ -102,11 +102,15 @@ method part2(s: var Game, rounds : int) : int {.base.} =
   s.calc(rounds)
   return s.cups[1].cw * s.cups[s.cups[1].cw].cw
 
-var inp = readInputLines()[0]
-var g = initGame(inp, 9)
+const input = staticRead"input.txt"
 
-echo "Part 1: ", g.part1(100)
-
-g = initGame(inp, 1000000)
-
-echo "Part 2: ", g.part2(10000000)
+benchme(input, proc (inp: string, bench: bool): void =
+  var l = inp.strip(chars = {'\n'})
+  var g = initGame(l, 9)
+  let p1 = g.part1(100)
+  g = initGame(l, 1000000)
+  let p2 = g.part2(10000000)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

@@ -64,7 +64,13 @@ method part2(s: Nav) : int {.base.} =
       raise newException(ValueError, "invalid movement type: " & m.ch)
   return pos.manhattan
 
-var inp = readInputLines()
-var nav = initNav(inp)
-echo "Part 1: ", nav.part1()
-echo "Part 2: ", nav.part2()
+const input = staticRead"input.txt"
+
+benchme(input, proc (inp: string, bench: bool): void =
+  var nav = initNav(Lines(inp))
+  let p1 = nav.part1()
+  let p2 = nav.part2()
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

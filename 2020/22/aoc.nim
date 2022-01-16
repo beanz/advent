@@ -60,9 +60,13 @@ method part1(s: Game) : int {.base.} =
 method part2(s: Game) : int {.base.} =
   return s.play(true)
 
-var inp = readInputChunks()
-var s = initGame(inp)
+const input = staticRead"input.txt"
 
-echo "Part 1: ", s.part1()
-echo "Part 2: ", s.part2()
-
+benchme(input, proc (inp: string, bench: bool): void =
+  var g = initGame(Chunks(inp))
+  let p1 = g.part1()
+  let p2 = g.part2()
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

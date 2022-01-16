@@ -110,8 +110,14 @@ method part1(s: var Seats) : int {.base.} =
 method part2(s: var Seats) : int {.base.} =
   return s.run(5)
 
-var inp = readInputLines()
-var s = NewSeats(inp)
-echo "Part 1: ", s.part1()
-s = NewSeats(inp)
-echo "Part 2: ", s.part2()
+const input = staticRead"input.txt"
+
+benchme(input, proc (inp: string, bench: bool): void =
+  var s = NewSeats(Lines(inp))
+  let p1 = s.part1()
+  s = NewSeats(Lines(inp))
+  let p2 = s.part2()
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

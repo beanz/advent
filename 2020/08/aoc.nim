@@ -51,7 +51,13 @@ method part2(s: var HandHeld) : int {.base.} =
       s.prog[i] = (op: "jmp", arg: inst.arg)
   return s.acc
 
-var hh = NewHandHeld(readInputLines())
+const input = staticRead"input.txt"
 
-echo "Part 1: ", hh.part1()
-echo "Part 2: ", hh.part2()
+benchme(input, proc (inp: string, bench: bool): void =
+  var hh = NewHandHeld(Lines(inp))
+  let p1 = hh.part1()
+  let p2 = hh.part2()
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

@@ -1,7 +1,5 @@
 import aoclib
 
-var inp = readInputLines()
-
 type
   Trees = object
     tm: IntSet
@@ -29,9 +27,14 @@ proc traverse(s: Trees, sx:int, sy:int): int =
     x += sx
   return c
 
-var trees = NewTrees(inp)
+const input = staticRead"input.txt"
 
-echo "Part 1: ", trees.traverse(3,1)
-const slopes = @[[1,1],[3,1],[5,1],[7,1],[1,2]]
-var p2:int64 = slopes.map(x => trees.traverse(x[0], x[1])).foldl(a * b)
-echo "Part 2: ", p2
+benchme(input, proc (inp: string, bench: bool): void =
+  var trees = NewTrees(Lines(inp))
+  let p1 = trees.traverse(3,1)
+  const slopes = @[[1,1],[3,1],[5,1],[7,1],[1,2]]
+  var p2:int64 = slopes.map(x => trees.traverse(x[0], x[1])).foldl(a * b)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)
