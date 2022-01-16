@@ -22,6 +22,13 @@ if runTests():
   assert part1(@[int64(104),1125899906842624,99]) == "1125899906842624"
   echo "Tests PASSED"
 
-var prog = readInputInt64s()
-echo "Part 1: ", part1(prog)
-echo "Part 2: ", part2(prog)
+const input = staticRead"input.txt"
+
+benchme(input, proc (inp: string, bench: bool): void =
+  var prog = inp.strip(chars = {'\n'}).split(",").map(parseBiggestInt).mapIt(it.int64)
+  let p1 = part1(prog)
+  let p2 = part2(prog)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

@@ -1,7 +1,5 @@
 import aoclib, intcode, point
 
-var prog = readInputInt64s()
-
 type Ship = object
     wall : Table[Point, bool]
     bb : BoundingBox
@@ -72,7 +70,7 @@ proc part1(prog_c: seq[int64]): Ship =
                   osic: nil,
                   steps: 0)
   for dir in @["N", "S", "W", "E"]:
-    var nic = NewIntCode(prog, compassToInput(dir))
+    var nic = NewIntCode(prog_c, compassToInput(dir))
     search.addLast(Search(pos: Point(x: compassXOffset(dir),
                                      y: compassYOffset(dir)),
                           steps: 1,
@@ -114,7 +112,7 @@ proc part2(ship: var Ship): int64 =
                           steps: 1,
                           ic: nic))
   var visited = initTable[Point, bool]()
-  var maxSteps = -2147483648
+  var maxSteps = -2147483648'i64
   while len(search) > 0:
     var cur = search.popFirst
     var res = cur.ic.NextOutput()
@@ -138,6 +136,14 @@ proc part2(ship: var Ship): int64 =
                           ic: nic))
   return maxSteps
 
-var ship = part1(prog)
-echo "Part 1: ", ship.steps
-echo "Part 2: ", part2(ship)
+const input = staticRead"input.txt"
+
+benchme(input, proc (inp: string, bench: bool): void =
+  var prog = inp.strip(chars = {'\n'}).split(",").map(parseBiggestInt).mapIt(it.int64)
+  var ship = part1(prog)
+  let p1 = ship.steps
+  let p2 = part2(ship)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

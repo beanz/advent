@@ -70,6 +70,13 @@ if runTests():
   assert part2(readUInt8s("test2c.txt")) == "53553731"
   echo "Tests PASSED"
 
-var inp: seq[uint8] = readInputUInt8s()
-echo "Part 1: ", part1(inp, 100)
-echo "Part 2: ", part2(inp)
+const input = staticRead"input.txt"
+
+benchme(input, proc (inp: string, bench: bool): void =
+  var ints = UInt8s(inp)
+  let p1 = part1(ints, 100)
+  let p2 = part2(ints)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

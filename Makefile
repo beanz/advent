@@ -29,6 +29,7 @@ NIM_SRC=$(sort $(wildcard ????/??/aoc.nim))
 NIM_BIN=$(subst /aoc.nim,/aoc-nim,${NIM_SRC})
 NIM_LOG=$(subst /aoc.nim,/aoc-nim.log,${NIM_SRC})
 NIM_ERR=$(subst /aoc.nim,/aoc-nim.err,${NIM_SRC})
+NIM_BENCH=$(subst /aoc.nim,/aoc-nim.ns,${ZIG_SRC})
 
 CR_SRC=$(sort $(wildcard ????/??/aoc.cr))
 CR_BIN=$(subst /aoc.cr,/aoc-cr,${CR_SRC})
@@ -47,7 +48,7 @@ CC=g++-7
 CR_DIR=/usr
 CR_LIB=$(CR_DIR)/share/crystal/src:../../lib-cr
 CR=$(CR_DIR)/bin/crystal
-NIM=$(HOME)/Tmp/nim-1.4.2/bin/nim
+NIM=$(HOME)/Tmp/nim-1.6.2/bin/nim
 
 TIME=../../bin/time
 
@@ -121,6 +122,11 @@ aoc-rust/target/release/aoc-%: aoc-rust/src/bin/aoc-%.rs
 	$(NIM) c --opt:speed -d:release -p:$(dir $@)../../lib-nim $<
 	mv $(dir $@)/aoc $@
 
+%/aoc-nim-rel: %/aoc.nim
+	$(NIM) c --checks:off --assertions:off --opt:speed -d:release \
+	  -p:$(dir $@)../../lib-nim $<
+	mv $(dir $@)/aoc $@
+
 %/aoc-cr: %/aoc.cr
 	cd $(dir $@) && \
 	  CRYSTAL_PATH=$(CR_LIB) $(CR) build --debug \
@@ -177,6 +183,9 @@ aoc-rust/target/release/%.ns: aoc-rust/target/release/%
 	( cd $* && AoC_BENCH=1 ./$(notdir $<) | tee /dev/stderr ) >$@
 
 %/aoc-cr.ns: %/aoc-cr-rel
+	( cd $* && AoC_BENCH=1 ./$(notdir $<) | tee /dev/stderr ) >$@
+
+%/aoc-nim.ns: %/aoc-nim-rel
 	( cd $* && AoC_BENCH=1 ./$(notdir $<) | tee /dev/stderr ) >$@
 
 %/aoc-go.ns: %/aoc-go

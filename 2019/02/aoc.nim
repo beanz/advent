@@ -1,7 +1,5 @@
 import aoclib
 
-var prog: seq[int64] = readInputInt64s()
-
 proc part1(prog_c: seq[int64]): int64 =
   var prog: seq[int64]
   deepCopy(prog, prog_c)
@@ -51,8 +49,15 @@ proc part2(prog_c: seq[int64]): int64 =
 assert part1(@[int64(1),0,0,0,99]) == 2
 assert part1(@[int64(1),1,1,4,99,5,6,0,99]) == 30
 
-prog[1] = 12
-prog[2] = 2
-echo "Part 1: ", part1(prog)
+const input = staticRead"input.txt"
 
-echo "Part 2: ", part2(prog)
+benchme(input, proc (inp: string, bench: bool): void =
+  var prog = Int64s(inp)
+  prog[1] = 12
+  prog[2] = 2
+  let p1 = part1(prog)
+  let p2 = part2(prog)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

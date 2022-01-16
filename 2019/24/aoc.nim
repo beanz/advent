@@ -171,8 +171,13 @@ if runTests():
   assert part2(aoclib.readLines("input.txt"), 1) == 21
   assert part2(aoclib.readLines("input.txt"), 200) == 1970
 
-var inp = readInputLines()
+const input = staticRead"input.txt"
 
-echo "Part 1: ", part1(inp)
-
-echo "Part 2: ", part2(inp, 200)
+benchme(input, proc (inp: string, bench: bool): void =
+  var ls = Lines(inp)
+  let p1 = part1(ls)
+  let p2 = part2(ls, 200)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

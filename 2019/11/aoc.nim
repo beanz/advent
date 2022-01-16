@@ -56,6 +56,13 @@ proc part2(prog: seq[int64]): string =
     s.add('\n')
   return s
 
-var prog: seq[int64] = readInputInt64s()
-echo "Part 1: ", part1(prog)
-echo "Part 2:\n", part2(prog)
+const inputF = staticRead"input.txt"
+
+benchme(inputF, proc (inp: string, bench: bool): void =
+  var prog = inp.strip(chars = {'\n'}).split(",").map(parseBiggestInt).mapIt(it.int64)
+  let p1 = part1(prog)
+  let p2 = part2(prog)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2:\n", p2
+)

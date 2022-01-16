@@ -4,8 +4,6 @@ type Game = object
     orbits : Table[string, string]
     cache : Table[string, Table[string, int]]
 
-var inp = readInputLines()
-
 proc parse(inp: seq[string]) : Game =
   var g = Game()
   for l in inp:
@@ -53,7 +51,13 @@ var tg2 = parse(@["COM)B","B)C","C)D","D)E","E)F","B)G","G)H",
                   "D)I","E)J","J)K","K)L","K)YOU","I)SAN"])
 assert tg2.part2() == 4
 
-var g = parse(inp)
+const input = staticRead"input.txt"
 
-echo "Part 1: ", part1(g)
-echo "Part 2: ", part2(g)
+benchme(input, proc (inp: string, bench: bool): void =
+  var g = parse(Lines(inp))
+  let p1 = part1(g)
+  let p2 = part2(g)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

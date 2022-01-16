@@ -1,7 +1,5 @@
 import aoclib
 
-var inp = readInputLines()[0]
-
 proc part1(inp: string): int64 =
   var res = 0
   var min = 4294967295
@@ -30,5 +28,13 @@ proc part2(inp: string): string =
     res.add('\n')
   return res
 
-echo "Part 1: ", part1(inp)
-echo "Part 2:\n", part2(inp)
+const input = staticRead"input.txt"
+
+benchme(input, proc (inp: string, bench: bool): void =
+  var l = inp.strip(chars = {'\n'})
+  let p1 = part1(l)
+  let p2 = part2(l)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2:\n", p2
+)

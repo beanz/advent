@@ -20,6 +20,13 @@ proc part2(prog: seq[int64]): int64 =
   return  runscript(prog,
      "NOT B T\nNOT C J\nOR J T\nAND H T\nNOT A J\nOR T J\nAND D J\nRUN\n");
 
-var prog = readInputInt64s()
-echo "Part 1: ", part1(prog)
-echo "Part 2: ", part2(prog)
+const input = staticRead"input.txt"
+
+benchme(input, proc (inp: string, bench: bool): void =
+  var prog = inp.strip(chars = {'\n'}).split(",").map(parseBiggestInt).mapIt(it.int64)
+  let p1 = part1(prog)
+  let p2 = part2(prog)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

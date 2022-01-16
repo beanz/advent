@@ -1,7 +1,5 @@
 import aoclib
 
-var inp = readInputLines()
-
 type Input = object
   ch: string
   num: int64
@@ -45,7 +43,7 @@ method get_surplus(this : Factory, ch : string): int64 {.base.} =
 method use_surplus(this : var Factory,
                    ch : string, num : int64): void {.base.} =
   if not this.surplus.hasKey(ch):
-    this.surplus.add(ch, 0)
+    this.surplus[ch] = 0
   this.surplus[ch] -= num
 
 method produce(this : var Factory,
@@ -127,6 +125,13 @@ tf = NewFactory(readFile("test1e.txt"))
 assert tf.part1() == 2210736
 assert tf.part2() == 460664
 
-var f = NewFactory(inp)
-echo "Part 1: ", f.part1()
-echo "Part 2: ", f.part2()
+const input = staticRead"input.txt"
+
+benchme(input, proc (inp: string, bench: bool): void =
+  var f = NewFactory(Lines(inp))
+  let p1 = f.part1()
+  let p2 = f.part2()
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

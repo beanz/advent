@@ -55,9 +55,12 @@ method forward(g: Game, card : int64) : int64 {.base.} =
   var p = g.params()
   return (((p.a * card) + p.b) mod g.cards)
 
-var inp = readInputLines()
-var g = initGame(inp, 10007)
+const input = staticRead"input.txt"
 
-echo "Part 1: ", g.forward(2019)
-echo "Part 2: ", "needs bigint"
-
+benchme(input, proc (inp: string, bench: bool): void =
+  var g = initGame(Lines(inp), 10007)
+  let p1 = g.forward(2019)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", "needs bigint"
+)

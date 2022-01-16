@@ -13,8 +13,6 @@ proc fuelr(m: uint) : uint =
     result += uint(f)
     tm = uint(f)
 
-var masses = readInputUInts()
-
 proc part1(masses: seq[uint]): uint =
   result = foldl(masses, a + uint(fuel(b)), uint(0))
 
@@ -27,11 +25,18 @@ assert part1(@[uint(1969)]) == 654
 assert part1(@[uint(100756)]) == 33583
 assert part1(@[uint(12),14,1969,100756]) == 34241
 
-echo "Part 1: ", part1(masses)
-
 assert part2(@[uint(14)]) == 2
 assert part2(@[uint(1969)]) == 966
 assert part2(@[uint(100756)]) == 50346
 assert part2(@[uint(12),14,1969,100756]) == 51316
 
-echo "Part 2: ", part2(masses)
+const input = staticRead"input.txt"
+
+benchme(input, proc (inp: string, bench: bool): void =
+  var masses = UInts(inp)
+  let p1 = part1(masses)
+  let p2 = part2(masses)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

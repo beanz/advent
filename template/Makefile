@@ -7,7 +7,7 @@ CR_DIR=/usr
 CR_LIB=$(CR_DIR)/share/crystal/src:../../lib-cr
 CR=$(CR_DIR)/bin/crystal
 #NIM=$(HOME)/Tmp/nim-1.0.4/bin/nim
-NIM=$(HOME)/Tmp/nim-1.4.2/bin/nim
+NIM=$(HOME)/Tmp/nim-1.6.2/bin/nim
 
 ifneq (,$(wildcard main.go))
 ALL += aoc-go

@@ -60,5 +60,11 @@ proc part1(prog: seq[int64]): string =
         ic.AddInput(lastDir & "\n")
   return "error"
 
-var prog = readInputInt64s()
-echo "Part 1: ", part1(prog)
+const input = staticRead"input.txt"
+
+benchme(input, proc (inp: string, bench: bool): void =
+  var prog = inp.strip(chars = {'\n'}).split(",").map(parseBiggestInt).mapIt(it.int64)
+  let p1 = part1(prog)
+  if not bench:
+    echo "Part 1: ", p1
+)

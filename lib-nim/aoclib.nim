@@ -1,9 +1,36 @@
 import os, strutils, sequtils, intsets,
-       sugar, sequtils, tables, sets, parseutils, math, deques, algorithm,
+       sugar, tables, sets, parseutils, math, deques, algorithm,
        point, bitops, hashes, strformat, random
-export strutils, sequtils, intsets, sugar, sequtils,
-       tables, sets, parseutils, math, deques, algorithm, point, bitops,
-       hashes, strformat, random
+export strutils, sequtils, intsets,
+       sugar, tables, sets, parseutils, math, deques, algorithm,
+       point, bitops, hashes, strformat, random
+
+proc input*(embedded: string): string =
+  if paramCount() > 0:
+    return open(paramStr(1)).readAll()
+  else:
+    return embedded
+
+import std/[times, monotimes]
+
+proc bench*(): bool =
+  return getEnv("AoC_BENCH", "0") == "1"
+
+proc benchme*(embedded: string, fun: (string, bool) -> void): void =
+  let inp = input(embedded)
+  let start = getMonoTime()
+  let is_bench = bench()
+  let bench_time = initDuration(seconds = 1)
+  var iterations = 0'i64
+  while true:
+    fun(inp, is_bench)
+    iterations += 1
+    if not is_bench:
+      break
+    let elapsed = getMonoTime() - start
+    if elapsed > bench_time:
+      echo "bench ", iterations, " iterations in ", elapsed.inNanoseconds, "ns: ", elapsed.inNanoseconds.float64/iterations.float64, "ns"
+      break
 
 proc debug*(): bool =
   return getEnv("AoC_DEBUG", "0") == "1"
@@ -19,6 +46,21 @@ proc inputFile*(): string =
 
 proc isTest*(): bool =
   return inputFile() != "input.txt"
+
+proc UInts*(s: string): seq[uint] =
+  return s.strip(chars = {'\n'}).split({'\n',' ', ','}).map(parseUInt)
+
+proc UInt8s*(c : string) : seq[uint8] =
+  var s : seq[uint8]
+  for ch in c.strip(chars = {'\n'}):
+    s.add(cast[uint8](ch) - 48)
+  return s
+
+proc Int64s*(s: string): seq[int64] =
+  return s.strip(chars = {'\n'}).split({'\n',' ', ','}).map(parseBiggestInt).mapIt(it.int64)
+
+proc Lines*(s: string): seq[string] =
+  return s.strip(chars = {'\n'}).split("\n")
 
 proc readLines*(file: string): seq[string] =
   var inp: seq[string]

@@ -1,7 +1,5 @@
 import aoclib
 
-var inp = readInputLines()[0].split("-").map(parseBiggestInt)
-
 proc count(s: string, ch: char): int =
   var c = 0
   for i in 0..<s.len:
@@ -45,10 +43,17 @@ assert part1(@[int64(123789),123789]) == 0
 assert part1(@[int64(123444),123444]) == 1
 assert part1(@[int64(111122),111122]) == 1
 
-echo "Part 1: ", part1(inp)
-
 assert part2(@[int64(112233),112233]) == 1
 assert part2(@[int64(123444),123444]) == 0
 assert part2(@[int64(111122),111122]) == 1
 
-echo "Part 2: ", part2(inp)
+const input = staticRead"input.txt"
+
+benchme(input, proc (inp: string, bench: bool): void =
+  var ints = inp.strip(chars = {'\n'}).split("-").map(parseBiggestInt).mapIt(it.int64)
+  let p1 = part1(ints)
+  let p2 = part2(ints)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

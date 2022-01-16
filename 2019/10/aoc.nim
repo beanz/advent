@@ -133,8 +133,13 @@ if runTests():
   for i in countup(0, len(order)-1):
     assert ts.part2(i+1) == order[i]
 
-var inp = readInputLines()
-var space = NewSpace(inp)
+const input = staticRead"input.txt"
 
-echo "Part 1: ", space.part1()
-echo "Part 2: ", space.part2(200)
+benchme(input, proc (inp: string, bench: bool): void =
+  var space = NewSpace(Lines(inp))
+  let p1 = space.part1()
+  let p2 = space.part2(200)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

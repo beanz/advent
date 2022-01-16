@@ -76,6 +76,14 @@ if runTests():
   assert beam.squareFitsY(45) == 36
   assert beam.part2() == 360045
 
-var beam = NewBeam(readInputInt64s())
-echo "Part 1: ", beam.part1()
-echo "Part 2: ", beam.part2()
+const input = staticRead"input.txt"
+
+benchme(input, proc (inp: string, bench: bool): void =
+  var prog = inp.strip(chars = {'\n'}).split(",").map(parseBiggestInt).mapIt(it.int64)
+  var beam = NewBeam(prog)
+  let p1 = beam.part1()
+  let p2 = beam.part2()
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

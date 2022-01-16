@@ -65,6 +65,37 @@ Day 25 | 13.6µs | 179ms | 66.2ms | 21ms | 293ms | 46.1ms | 56.8ms
 *Total* | *12.8s* | *20.7s* | *3.96s* | *10s* | *2.89s* | *4.58s* | *2.05s*
 
 
+## Nim
+ &nbsp;  | 2019
+ ---:  | ---: 
+Day 01 | 15.9µs
+Day 02 | 9.47ms
+Day 03 | 32ms
+Day 04 | 83.2ms
+Day 05 | 87.5µs
+Day 06 | 91.4ms
+Day 07 | 7.67ms
+Day 08 | 29.1µs
+Day 09 | 13.8ms
+Day 10 | 29.7ms
+Day 11 | 5.01ms
+Day 12 | 435ms
+Day 13 | 30.6ms
+Day 14 | 7.99ms
+Day 15 | 30.2ms
+Day 16 | 689ms
+Day 17 | 4.1ms
+Day 18 | **🔴 1m8s**
+Day 19 | 115ms
+Day 20 | 867ms
+Day 21 | 20.8ms
+Day 22 | 48.1µs
+Day 23 | 15.7ms
+Day 24 | 51.7ms
+Day 25 | 202ms
+*Total* | *1m10.8s*
+
+
 ## Zig
  &nbsp;  | 2020 | 2021
  ---:  | ---:  | ---: 

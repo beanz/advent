@@ -30,7 +30,7 @@ proc tryPhase(prog: seq[int64], phase: seq[int64]): int64 =
 
 proc run(prog: seq[int64], minPhase: int64): int64 =
   var perm = @[minPhase, minPhase+1, minPhase+2, minPhase+3, minPhase+4]
-  var max = -2147483648
+  var max = -2147483648'i64
   while true:
     var thrust = tryPhase(prog, perm)
     if max < thrust:
@@ -59,6 +59,13 @@ assert part2(@[int64(3),52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,
                55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,
                99,0,0,0,0,10]) == 18216
 
-var prog = readInputInt64s()
-echo "Part 1: ", part1(prog)
-echo "Part 2: ", part2(prog)
+const input = staticRead"input.txt"
+
+benchme(input, proc (inp: string, bench: bool): void =
+  var prog = inp.strip(chars = {'\n'}).split(",").map(parseBiggestInt).mapIt(it.int64)
+  let p1 = part1(prog)
+  let p2 = part2(prog)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

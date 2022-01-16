@@ -159,8 +159,14 @@ method part2(r: var Rogue) : int =
     sum += r.find(start, quad)
   return sum
 
-var inp = readInputLines()
-var rogue = initRogue(inp)
-rogue.optimaze()
-echo "Part 1: ", rogue.part1()
-echo "Part 2: ", rogue.part2()
+const input = staticRead"input.txt"
+
+benchme(input, proc (inp: string, bench: bool): void =
+  var rogue = initRogue(Lines(inp))
+  rogue.optimaze()
+  let p1 = rogue.part1()
+  let p2 = rogue.part2()
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

@@ -145,9 +145,13 @@ if false:
   assert NewDonut(aoclib.readLines("input.txt")).part2() == 5912;
   echo "TESTS PASSED"
 
+const input = staticRead"input.txt"
 
-var inp = readInputLines()
-var donut = NewDonut(inp)
-#echo donut.String()
-echo "Part 1: ", donut.part1()
-echo "Part 2: ", donut.part2()
+benchme(input, proc (inp: string, bench: bool): void =
+  var donut = NewDonut(Lines(inp))
+  let p1 = donut.part1()
+  let p2 = donut.part2()
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)

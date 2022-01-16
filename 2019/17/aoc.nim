@@ -152,7 +152,14 @@ proc part2(prog: var seq[int64], scaff: Scaffold) : int64 =
   var output = ic.RunToHalt()
   return output.peekLast
 
-var prog = readInputInt64s()
-var scaff = part1(prog)
-echo "Part 1: ", scaff.alignmentSum()
-echo "Part 2: ", part2(prog, scaff)
+const input = staticRead"input.txt"
+
+benchme(input, proc (inp: string, bench: bool): void =
+  var prog = inp.strip(chars = {'\n'}).split(",").map(parseBiggestInt).mapIt(it.int64)
+  var scaff = part1(prog)
+  let p1 = scaff.alignmentSum()
+  let p2 = part2(prog, scaff)
+  if not bench:
+    echo "Part 1: ", p1
+    echo "Part 2: ", p2
+)
