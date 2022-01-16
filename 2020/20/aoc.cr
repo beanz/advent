@@ -244,8 +244,14 @@ end
 #print canonical_edge(210), " == 300\n"
 #print canonical_edge(791), " == 931\n"
 
-inp = readinputchunks()
-g = Game.new(inp)
+input = {{ read_file("input.txt") }}
 
-print "Part 1: ", g.part1(), "\n"
-print "Part 2: ", g.part2(), "\n"
+benchme(input) do |inp, bench|
+  g = Game.new(inputchunks(inp))
+  p1 = g.part1()
+  p2 = g.part2()
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

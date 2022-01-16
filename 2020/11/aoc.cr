@@ -124,11 +124,15 @@ class Seats
   end
 end
 
+input = {{ read_file("input.txt") }}
 
-inp = readinputlines()
-
-seats = Seats.new(inp)
-print "Part 1: ", seats.run(4), "\n"
-
-seats = Seats.new(inp)
-print "Part 2: ", seats.run(5), "\n"
+benchme(input) do |inp, bench|
+  seats = Seats.new(inputlines(inp))
+  p1 = seats.run(4)
+  seats = Seats.new(inputlines(inp))
+  p2 = seats.run(5)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

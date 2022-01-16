@@ -35,8 +35,14 @@ class Game
   end
 end
 
-inp = readinputints()
-g = Game.new(inp)
+input = {{ read_file("input.txt") }}
 
-print "Part 1: ", g.part1(), "\n"
-print "Part 2: ", g.part2(), "\n"
+benchme(input) do |inp, bench|
+  g = Game.new(inp.split(",").map &.to_i64)
+  p1 = g.part1()
+  p2 = g.part2()
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

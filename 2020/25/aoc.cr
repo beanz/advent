@@ -28,11 +28,16 @@ def exp_mod(a, b, m)
   return c
 end
 
-inp = readinputints()
-card_pub = inp[0].to_u64
-door_pub = inp[1].to_u64
-ls = loop_size(card_pub)
-print ls, "\n" if debug()
-p1 = exp_mod(door_pub, ls, Modulus)
+input = {{ read_file("input.txt") }}
 
-print "Part 1: ", p1, "\n"
+benchme(input) do |inp, bench|
+  ints = inputlines(inp).map &.to_u64
+  card_pub = ints[0]
+  door_pub = ints[1]
+  ls = loop_size(card_pub)
+  print ls, "\n" if debug()
+  p1 = exp_mod(door_pub, ls, Modulus)
+  if !bench
+    print "Part 1: ", p1, "\n"
+  end
+end

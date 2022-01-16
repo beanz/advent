@@ -102,8 +102,14 @@ class Mem
   end
 end
 
-inp = readinputlines()
-mem = Mem.new(inp)
+input = {{ read_file("input.txt") }}
 
-print "Part 1: ", mem.part1(), "\n"
-print "Part 2: ", mem.part2(), "\n"
+benchme(input) do |inp, bench|
+  mem = Mem.new(inputlines(inp))
+  p1 = mem.part1()
+  p2 = mem.part2()
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

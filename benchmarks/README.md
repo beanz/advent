@@ -11,27 +11,27 @@ Day 02 | 879µs
 Day 03 | 637µs
 Day 04 | 1.53ms
 Day 05 | 1.49ms
-Day 06 | **🔴 3.65ms**
+Day 06 | 3.65ms
 Day 07 | 1.62ms
 Day 08 | 1.15ms
 Day 09 | 388µs
 Day 10 | 23.7µs
-Day 11 | -
-Day 12 | -
-Day 13 | -
-Day 14 | -
-Day 15 | -
-Day 16 | -
-Day 17 | -
-Day 18 | -
-Day 19 | -
-Day 20 | -
-Day 21 | -
-Day 22 | -
-Day 23 | -
-Day 24 | -
-Day 25 | -
-*Total* | *11.8ms*
+Day 11 | 90.9ms
+Day 12 | 133µs
+Day 13 | 162µs
+Day 14 | 6.47ms
+Day 15 | 731ms
+Day 16 | 1.32ms
+Day 17 | 298ms
+Day 18 | 1.27ms
+Day 19 | 8.46ms
+Day 20 | 13.6ms
+Day 21 | 1.85ms
+Day 22 | 238ms
+Day 23 | 1.51s
+Day 24 | **🔴 12.5s**
+Day 25 | 48.1ms
+*Total* | *15.5s*
 
 
 ## Golang

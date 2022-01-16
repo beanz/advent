@@ -105,6 +105,14 @@ def part2(inp)
   return inp.map { |l| calc(l, true) }.sum
 end
 
-inp = readinputlines()
-print "Part 1: ", part1(inp), "\n"
-print "Part 2: ", part2(inp), "\n"
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  l = inputlines(inp)
+  p1 = part1(l)
+  p2 = part2(l)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

@@ -66,9 +66,14 @@ class Nav
   end
 end
 
-inp = readinputlines()
+input = {{ read_file("input.txt") }}
 
-nav = Nav.new(inp)
-
-print "Part 1: ", nav.part1(), "\n"
-print "Part 2: ", nav.part2(), "\n"
+benchme(input) do |inp, bench|
+  nav = Nav.new(inputlines(inp))
+  p1 = nav.part1()
+  p2 = nav.part2()
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end
