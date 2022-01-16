@@ -1,10 +1,4 @@
-masses = File.read("input.txt").rstrip("\n").split("\n").map &.to_i64
-
-def aeq(act, exp)
-  if act != exp
-    raise Exception.new("assert failed: #{act} != #{exp}")
-  end
-end
+require "aoc-lib.cr"
 
 def fuel(m)
   (m / 3).to_i64 - 2
@@ -37,11 +31,19 @@ aeq(part1([1969]), 654)
 aeq(part1([100756]), 33583)
 aeq(part1([12, 14, 1969, 100756]), 34241)
 
-print "Part1: ", part1(masses), "\n"
-
 aeq(part2([14]), 2)
 aeq(part2([1969]), 966)
 aeq(part2([100756]), 50346)
 aeq(part2([12, 14, 1969, 100756]), 51316)
 
-print "Part2: ", part2(masses), "\n"
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  masses = inputlines(inp).map &.to_i64
+  p1 = part1(masses)
+  p2 = part2(masses)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

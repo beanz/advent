@@ -1,10 +1,4 @@
-inp = File.read("input.txt").rstrip("\n").split("-").map &.to_i64
-
-def aeq(act, exp)
-  if act != exp
-    raise Exception.new("assert failed: #{act} != #{exp}")
-  end
-end
+require "aoc-lib.cr"
 
 def part1(inp)
   c = 0
@@ -48,10 +42,18 @@ aeq(part1([123789,123789]), 0)
 aeq(part1([123444,123444]), 1)
 aeq(part1([111122,111122]), 1)
 
-print "Part1: ", part1(inp), "\n"
-
 aeq(part2([112233,112233]), 1)
 aeq(part2([123444,123444]), 0)
 aeq(part2([111122,111122]), 1)
 
-print "Part2: ", part2(inp), "\n"
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  ints = inp.rstrip("\n").split("-").map &.to_i64
+  p1 = part1(ints)
+  p2 = part2(ints)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

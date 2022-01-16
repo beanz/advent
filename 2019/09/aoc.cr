@@ -1,6 +1,5 @@
+require "aoc-lib.cr"
 require "intcode.cr"
-
-prog = File.read("input.txt").rstrip("\n").split(",").map &.to_i64
 
 def run(prog, input)
   ic = IntCode.new(prog.clone)
@@ -33,5 +32,14 @@ if ENV.has_key?("AoC_TEST")
   print "TESTS PASSED\n"
 end
 
-print "Part1: ", part1(prog), "\n"
-print "Part2: ", part2(prog), "\n"
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  prog = inp.rstrip("\n").split(",").map &.to_i64
+  p1 = part1(prog)
+  p2 = part2(prog)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

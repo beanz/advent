@@ -1,10 +1,5 @@
+require "aoc-lib.cr"
 require "point.cr"
-
-def aeq(act, exp)
-  if act != exp
-    raise Exception.new("assert failed: #{act} != #{exp}")
-  end
-end
 
 struct Portal
   property exit : Point
@@ -164,17 +159,6 @@ def readlines(file)
   File.read(file).rstrip("\n").split("\n")
 end
 
-def readints(file)
-  File.read(file).rstrip("\n").split(",").map &.to_i64
-end
-
-file = "input.txt"
-if ARGV.size > 0
-  file = ARGV[0]
-end
-
-inp = readlines(file)
-
 if ENV.has_key?("AoC_TEST")
   aeq(Donut.new(readlines("test1a.txt")).part1(), 23)
   aeq(Donut.new(readlines("test1b.txt")).part1(), 58)
@@ -186,7 +170,14 @@ if ENV.has_key?("AoC_TEST")
   print "TESTS PASSED\n"
 end
 
-donut = Donut.new(inp)
-#print donut.string(), "\n";
-print "Part 1: ", donut.part1(), "\n";
-print "Part 2: ", donut.part2(), "\n";
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  donut = Donut.new(inputlines(inp))
+  p1 = donut.part1()
+  p2 = donut.part2()
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

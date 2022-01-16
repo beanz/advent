@@ -1,10 +1,4 @@
-inp = File.read_lines("input.txt")
-
-def aeq(act, exp)
-  if act != exp
-    raise Exception.new("assert failed: #{act} != #{exp}")
-  end
-end
+require "aoc-lib.cr"
 
 def path(w)
   points = Hash(Tuple(Int64, Int64), Int64).new
@@ -58,8 +52,12 @@ aeq(calc(["R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51",
 aeq(calc(["R75,D30,R83,U83,L12,D49,R71,U7,L72",
           "U62,R66,U55,R34,D71,R55,D58,R83"]), {159, 610})
 
-res = calc(inp)
+input = {{ read_file("input.txt") }}
 
-print "Part1: ", res[0], "\n"
-
-print "Part2: ", res[1], "\n"
+benchme(input) do |inp, bench|
+  res = calc(inputlines(inp))
+  if !bench
+    print "Part 1: ", res[0], "\n"
+    print "Part 2: ", res[1], "\n"
+  end
+end

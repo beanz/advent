@@ -1,10 +1,4 @@
-inp = File.read_lines("input.txt")
-
-def aeq(act, exp)
-  if act != exp
-    raise Exception.new("assert failed: #{act} != #{exp}")
-  end
-end
+require "aoc-lib.cr"
 
 class Game
   def initialize(inp)
@@ -55,18 +49,19 @@ class Game
   end
 end
 
-def part2(inp)
-  return 2
-end
-
-g = Game.new(inp)
-
 aeq(Game.new(["COM)B","B)C","C)D","D)E","E)F","B)G",
               "G)H","D)I","E)J","J)K","K)L"]).part1(), 42)
 aeq(Game.new(["COM)B","B)C","C)D","D)E","E)F","B)G","G)H",
               "D)I","E)J","J)K","K)L","K)YOU","I)SAN"]).part2(), 4)
 
+input = {{ read_file("input.txt") }}
 
-print "Part1: ", g.part1(), "\n"
-
-print "Part2: ", g.part2(), "\n"
+benchme(input) do |inp, bench|
+  g = Game.new(inputlines(inp))
+  p1 = g.part1()
+  p2 = g.part2()
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

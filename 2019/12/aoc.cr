@@ -1,3 +1,5 @@
+require "aoc-lib.cr"
+
 X = 0
 Y = 1
 Z = 2
@@ -113,25 +115,26 @@ def part2(moons)
   return cycle[X].lcm(cycle[Y]).lcm(cycle[Z])
 end
 
-def readfile(file)
-  File.read(file).rstrip("\n").split("\n").map do |l|
+def parse(s)
+  s.rstrip("\n").split("\n").map do |l|
     v = l.delete("<>=,xyz").split(" ").map &.to_i64
     Moon.new(v[0], v[1], v[2], 0, 0, 0)
   end
 end
 
-def aeq(act, exp)
-  if act != exp
-    raise Exception.new("assert failed: #{act} != #{exp}")
+aeq(part1(parse(File.read("test1a.txt")),10), 179)
+aeq(part1(parse(File.read("test1b.txt")),100), 1940)
+aeq(part2(parse(File.read("test1a.txt"))), 2772)
+aeq(part2(parse(File.read("test2.txt"))), 4686774924)
+
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  s = parse(inp)
+  p1 = part1(s, 1000)
+  p2 = part2(s)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
   end
 end
-
-aeq(part1(readfile("test1a.txt"),10), 179)
-aeq(part1(readfile("test1b.txt"),100), 1940)
-
-print "Part1: ", part1(readfile("input.txt"), 1000), "\n"
-
-aeq(part2(readfile("test1a.txt")), 2772)
-aeq(part2(readfile("test2.txt")), 4686774924)
-
-print "Part2: ", part2(readfile("input.txt")), "\n"

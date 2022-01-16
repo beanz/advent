@@ -1,11 +1,4 @@
-#require "intcode.cr"
-#require "point.cr"
-
-def aeq(act, exp)
-  if act != exp
-    raise Exception.new("assert failed: #{act} != #{exp}")
-  end
-end
+require "aoc-lib.cr"
 
 def bug(n, x, y)
   if (y < 0 || y >= 5 || x < 0 || x >= 5)
@@ -220,13 +213,6 @@ def readlines(file)
   File.read(file).rstrip("\n").split("\n")
 end
 
-file = "input.txt"
-if ARGV.size > 0
-  file = ARGV[0]
-end
-
-lines = readlines(file)
-
 if ENV.has_key?("AoC_TEST")
   aeq(part1(readlines("test.txt")), 2129920);
   aeq(part1(readlines("input.txt")), 6520863);
@@ -236,5 +222,14 @@ if ENV.has_key?("AoC_TEST")
   aeq(part2(readlines("input.txt"), 200), 1970);
 end
 
-print "Part1: ", part1(lines), "\n"
-print "Part2: ", part2(lines, 200), "\n"
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  lines = inputlines(inp)
+  p1 = part1(lines)
+  p2 = part2(lines, 200)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

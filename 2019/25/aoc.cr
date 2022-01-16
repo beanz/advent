@@ -102,6 +102,12 @@ def part1(prog : Array(Int64))
   end
 end
 
-inp = readinputints()
+input = {{ read_file("input.txt") }}
 
-print "Part 1: ", part1(inp), "\n"
+benchme(input) do |inp, bench|
+  prog = inp.rstrip("\n").split(",").map &.to_i64
+  p1 = part1(prog)
+  if !bench
+    print "Part 1: ", p1, "\n"
+  end
+end

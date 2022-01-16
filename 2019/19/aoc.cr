@@ -1,3 +1,4 @@
+require "aoc-lib.cr"
 require "intcode.cr"
 
 class Beam
@@ -84,7 +85,15 @@ class Beam
   end
 end
 
-prog = File.read("input.txt").rstrip("\n").split(",").map &.to_i64
-beam = Beam.new(prog);
-print "Part1: ", beam.part1(), "\n"
-print "Part2: ", beam.part2(), "\n"
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  prog = inp.rstrip("\n").split(",").map &.to_i64
+  beam = Beam.new(prog);
+  p1 = beam.part1()
+  p2 = beam.part2()
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

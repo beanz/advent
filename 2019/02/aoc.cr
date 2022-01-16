@@ -1,10 +1,4 @@
-prog = File.read("input.txt").rstrip("\n").split(",").map &.to_i64
-
-def aeq(act, exp)
-  if act != exp
-    raise Exception.new("assert failed: #{act} != #{exp}")
-  end
-end
+require "aoc-lib.cr"
 
 def part1(prog)
   ip = 0
@@ -56,13 +50,21 @@ def part2(prog_c)
   end
   return -1
 end
-orig_prog = prog.clone
 
 aeq(part1([1,0,0,0,99]), 2)
 aeq(part1([1,1,1,4,99,5,6,0,99]), 30)
 
-prog[1] = 12
-prog[2] = 2
-print "Part1: ", part1(prog), "\n"
+input = {{ read_file("input.txt") }}
 
-print "Part2: ", part2(orig_prog), "\n"
+benchme(input) do |inp, bench|
+  prog = inp.rstrip("\n").split(",").map &.to_i64
+  orig_prog = prog.clone
+  prog[1] = 12
+  prog[2] = 2
+  p1 = part1(prog)
+  p2 = part2(orig_prog)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

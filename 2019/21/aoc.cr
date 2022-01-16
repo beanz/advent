@@ -1,4 +1,4 @@
-require "input.cr"
+require "aoc-lib.cr"
 require "intcode.cr"
 
 def runscript(prog : Array(Int64), script)
@@ -27,13 +27,14 @@ def part2(prog)
      "NOT B T\nNOT C J\nOR J T\nAND H T\nNOT A J\nOR T J\nAND D J\nRUN\n");
 end
 
-file = "input.txt"
-if ARGV.size > 0
-  file = ARGV[0]
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  prog = inp.rstrip("\n").split(",").map &.to_i64
+  p1 = part1(prog)
+  p2 = part2(prog)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
 end
-
-inp = readints(file)
-print "Part 1: ", part1(inp), "\n"
-
-inp = readints(file)
-print "Part 2: ", part2(inp), "\n"

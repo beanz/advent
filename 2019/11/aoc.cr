@@ -1,3 +1,4 @@
+require "aoc-lib.cr"
 require "intcode.cr"
 require "point.cr"
 
@@ -71,12 +72,14 @@ def part2(prog)
   return s
 end
 
-def aeq(act, exp)
-  if act != exp
-    raise Exception.new("assert failed: #{act} != #{exp}")
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  prog = inp.rstrip("\n").split(",").map &.to_i64
+  p1 = part1(prog)
+  p2 = part2(prog)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2:\n", p2, "\n"
   end
 end
-
-prog = File.read("input.txt").rstrip("\n").split(",").map &.to_i64
-print "Part1: ", part1(prog), "\n"
-print "Part2:\n", part2(prog), "\n"

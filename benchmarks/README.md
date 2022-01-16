@@ -4,34 +4,34 @@ This was borrowed from [adsmf's Advent of Code repo](https://github.com/adsmf/ad
 The following are the benchmarks for the Go implementations of solutions for each day. The results are as measured by a `BenchmarkMain` benchmark in each solution.
 
 ## Crystal
- &nbsp;  | 2020
- ---:  | ---: 
-Day 01 | 469µs
-Day 02 | 879µs
-Day 03 | 637µs
-Day 04 | 1.53ms
-Day 05 | 1.49ms
-Day 06 | 3.65ms
-Day 07 | 1.62ms
-Day 08 | 1.15ms
-Day 09 | 388µs
-Day 10 | 23.7µs
-Day 11 | 90.9ms
-Day 12 | 133µs
-Day 13 | 162µs
-Day 14 | 6.47ms
-Day 15 | 731ms
-Day 16 | 1.32ms
-Day 17 | 298ms
-Day 18 | 1.27ms
-Day 19 | 8.46ms
-Day 20 | 13.6ms
-Day 21 | 1.85ms
-Day 22 | 238ms
-Day 23 | 1.51s
-Day 24 | **🔴 12.5s**
-Day 25 | 48.1ms
-*Total* | *15.5s*
+ &nbsp;  | 2019 | 2020
+ ---:  | ---:  | ---: 
+Day 01 | 23.5µs | 469µs
+Day 02 | 11.4ms | 879µs
+Day 03 | 45ms | 637µs
+Day 04 | 72.6ms | 1.53ms
+Day 05 | 123µs | 1.49ms
+Day 06 | 8.66ms | 3.65ms
+Day 07 | 16.2ms | 1.62ms
+Day 08 | 485µs | 1.15ms
+Day 09 | 119ms | 388µs
+Day 10 | 19.5ms | 23.7µs
+Day 11 | 30.1ms | 90.9ms
+Day 12 | 308ms | 133µs
+Day 13 | 267ms | 162µs
+Day 14 | 16ms | 6.47ms
+Day 15 | 59.5ms | 731ms
+Day 16 | 694ms | 1.32ms
+Day 17 | 25.2ms | 298ms
+Day 18 | **🔴 21.1s** | 1.27ms
+Day 19 | 553ms | 8.46ms
+Day 20 | 425ms | 13.6ms
+Day 21 | 132ms | 1.85ms
+Day 22 | 190µs | 238ms
+Day 23 | 81.3ms | 1.51s
+Day 24 | 97.5ms | **🔴 12.5s**
+Day 25 | 2.52s | 48.1ms
+*Total* | *26.6s* | *15.5s*
 
 
 ## Golang

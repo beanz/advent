@@ -1,7 +1,13 @@
+require "aoc-lib.cr"
+
 REP = [0, 1, 0, -1]
 
 def readinput(file)
-  return File.read(file).rstrip("\n").bytes().map do |c| c-48 end
+  return parse(File.read(file))
+end
+
+def parse(s)
+  s.rstrip("\n").bytes().map do |c| c-48 end
 end
 
 def calc1(s)
@@ -90,6 +96,14 @@ if ENV.has_key?("AoC_TEST")
   aeq(part2(readinput("test2c.txt")), "53553731")
 end
 
-inp = readinput("input.txt")
-print "Part 1: ", part1(inp, 100), "\n"
-print "Part 2: ", part2(inp), "\n"
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  g = parse(inp)
+  p1 = part1(g, 100)
+  p2 = part2(g)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

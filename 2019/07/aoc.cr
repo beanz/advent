@@ -1,12 +1,5 @@
+require "aoc-lib.cr"
 require "intcode.cr"
-
-prog = File.read("input.txt").rstrip("\n").split(",").map &.to_i64
-
-def aeq(act, exp)
-  if act != exp
-    raise Exception.new("assert failed: #{act} != #{exp}")
-  end
-end
 
 def tryPhase(prog, phase)
   u = Array(IntCode).new
@@ -74,5 +67,14 @@ aeq(part2([3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,
            -5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,
            53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10] of Int64), 18216)
 
-print "Part1: ", part1(prog), "\n"
-print "Part2: ", part2(prog), "\n"
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  prog = inp.rstrip("\n").split(",").map &.to_i64
+  p1 = part1(prog)
+  p2 = part2(prog)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

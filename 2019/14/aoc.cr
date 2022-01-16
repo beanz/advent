@@ -1,8 +1,4 @@
-def aeq(act, exp)
-  if act != exp
-    raise Exception.new("assert failed: #{act} != #{exp}")
-  end
-end
+require "aoc-lib.cr"
 
 struct Input
   property ch : String
@@ -126,29 +122,29 @@ class Factory
   end
 end
 
-def readfile(file)
+def parse_file(file)
   File.read(file).rstrip("\n").split("\n")
 end
 
-file = "input.txt"
-if ARGV.size > 0
-  file = ARGV[0]
+aeq(Factory.new(parse_file("test1a.txt")).part1(), 31)
+aeq(Factory.new(parse_file("test1b.txt")).part1(), 165)
+aeq(Factory.new(parse_file("test1c.txt")).part1(), 13312)
+aeq(Factory.new(parse_file("test1d.txt")).part1(), 180697)
+aeq(Factory.new(parse_file("test1e.txt")).part1(), 2210736)
+aeq(Factory.new(parse_file("test1a.txt")).part2(), 34482758620)
+aeq(Factory.new(parse_file("test1b.txt")).part2(), 6323777403)
+aeq(Factory.new(parse_file("test1c.txt")).part2(), 82892753)
+aeq(Factory.new(parse_file("test1d.txt")).part2(), 5586022)
+aeq(Factory.new(parse_file("test1e.txt")).part2(), 460664)
+
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  f = Factory.new(inputlines(inp))
+  p1 = f.part1()
+  p2 = f.part2()
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
 end
-
-inp = readfile(file)
-
-f = Factory.new(inp)
-
-aeq(Factory.new(readfile("test1a.txt")).part1(), 31)
-aeq(Factory.new(readfile("test1b.txt")).part1(), 165)
-aeq(Factory.new(readfile("test1c.txt")).part1(), 13312)
-aeq(Factory.new(readfile("test1d.txt")).part1(), 180697)
-aeq(Factory.new(readfile("test1e.txt")).part1(), 2210736)
-aeq(Factory.new(readfile("test1a.txt")).part2(), 34482758620)
-aeq(Factory.new(readfile("test1b.txt")).part2(), 6323777403)
-aeq(Factory.new(readfile("test1c.txt")).part2(), 82892753)
-aeq(Factory.new(readfile("test1d.txt")).part2(), 5586022)
-aeq(Factory.new(readfile("test1e.txt")).part2(), 460664)
-
-print "Part1: ", f.part1(), "\n"
-print "Part2: ", f.part2(), "\n"

@@ -7,8 +7,6 @@ lib LibGMP
   fun mpz_powm_sec = __gmpz_powm_sec(rop : MPZ*, base : MPZ*, exp : MPZ*, mod : MPZ*)
 end
 
-inp = readinputlines()
-
 # https://rosettacode.org/wiki/Modular_inverse#Crystal
 def modinv(a0, m0)
   return 1 if m0 == 1
@@ -121,8 +119,16 @@ class Game
   end
 end
 
-g = Game.new(inp, 10007)
-print "Part 1: ", g.forward(2019), "\n"
+input = {{ read_file("input.txt") }}
 
-g = Game.new(inp, 119315717514047)
-print "Part 2: ", g.backward(2020, 101741582076661), "\n"
+benchme(input) do |inp, bench|
+  lines = inputlines(inp)
+  g = Game.new(lines, 10007)
+  p1 = g.forward(2019)
+  g = Game.new(lines, 119315717514047)
+  p2 = g.backward(2020, 101741582076661)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

@@ -1,10 +1,4 @@
-inp = File.read("input.txt").rstrip("\n").chars()
-
-def aeq(act, exp)
-  if act != exp
-    raise Exception.new("assert failed: #{act} != #{exp}")
-  end
-end
+require "aoc-lib.cr"
 
 def part1(inp, w, h)
   layers = inp.in_groups_of(w*h)
@@ -37,5 +31,14 @@ end
 aeq(part1("0222112222120000".chars, 2, 2), 4)
 aeq(part2("0222112222120000".chars, 2, 2), " #\n# \n")
 
-print "Part1: ", part1(inp, 25, 6), "\n"
-print "Part2:\n", part2(inp, 25, 6), "\n"
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  chars = inp.rstrip("\n").chars()
+  p1 = part1(chars, 25, 6)
+  p2 = part2(chars, 25, 6)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2:\n", p2, "\n"
+  end
+end

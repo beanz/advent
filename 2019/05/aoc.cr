@@ -1,12 +1,5 @@
+require "aoc-lib.cr"
 require "intcode.cr"
-
-prog = File.read("input.txt").rstrip("\n").split(",").map &.to_i64
-
-def aeq(act, exp)
-  if act != exp
-    raise Exception.new("assert failed: #{act} != #{exp}")
-  end
-end
 
 def part1(prog)
   c = IntCode.new(prog.clone, 1)
@@ -59,5 +52,14 @@ aeq(part2([3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21,
           1105, 1, 46, 104, 999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105,
           1, 46, 98, 99] of Int64, 9), 1001)
 
-print "Part1: ", part1(prog), "\n"
-print "Part2: ", part2(prog, 5), "\n"
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  prog = inp.rstrip("\n").split(",").map &.to_i64
+  p1 = part1(prog)
+  p2 = part2(prog, 5)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

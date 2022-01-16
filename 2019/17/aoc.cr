@@ -1,7 +1,6 @@
+require "aoc-lib.cr"
 require "intcode.cr"
 require "point.cr"
-
-prog = File.read("input.txt").rstrip("\n").split(",").map &.to_i64
 
 class Scaffold
   property m
@@ -159,6 +158,15 @@ def part2(prog, scaff)
   return outp.last
 end
 
-scaff = part1(prog);
-print "Part1: ", scaff.alignmentSum(), "\n"
-print "Part2: ", part2(prog, scaff), "\n"
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  prog = inp.rstrip("\n").split(",").map &.to_i64
+  scaff = part1(prog);
+  p1 = scaff.alignmentSum()
+  p2 = part2(prog, scaff)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

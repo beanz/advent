@@ -1,12 +1,5 @@
+require "aoc-lib.cr"
 include Math
-
-inp = File.read("input.txt").rstrip("\n").split("\n")
-
-def aeq(act, exp)
-  if act != exp
-    raise Exception.new("assert failed: #{act} != #{exp}")
-  end
-end
 
 struct Asteroid
   property x, y
@@ -150,8 +143,14 @@ end
 
 #aeq(part1([1,0,0,0,99]), 1)
 
-g = Game.new(inp)
+input = {{ read_file("input.txt") }}
 
-print "Part1: ", g.part1(), "\n"
-
-print "Part2: ", g.part2(200), "\n"
+benchme(input) do |inp, bench|
+  g = Game.new(inputlines(inp))
+  p1 = g.part1()
+  p2 = g.part2(200)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

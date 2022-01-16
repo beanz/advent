@@ -1,3 +1,4 @@
+require "aoc-lib.cr"
 require "intcode.cr"
 
 def run(prog, infunc, outfunc)
@@ -52,8 +53,15 @@ def part2(prog)
   return score
 end
 
-prog = File.read("input.txt").rstrip("\n").split(",").map &.to_i64
-print "Part1: ", part1(prog), "\n"
+input = {{ read_file("input.txt") }}
 
-prog = File.read("input.txt").rstrip("\n").split(",").map &.to_i64
-print "Part2: ", part2(prog), "\n"
+benchme(input) do |inp, bench|
+  prog = inp.rstrip("\n").split(",").map &.to_i64
+  p1 = part1(prog)
+  prog = inp.rstrip("\n").split(",").map &.to_i64
+  p2 = part2(prog)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

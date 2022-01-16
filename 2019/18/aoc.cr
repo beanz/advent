@@ -1,4 +1,4 @@
-require "input.cr"
+require "aoc-lib.cr"
 require "point.cr"
 require "priority-queue"
 
@@ -208,13 +208,15 @@ class Rogue
   end
 end
 
-file = "input.txt"
-if ARGV.size > 0
-  file = ARGV[0]
-end
-lines = readlines(file)
+input = {{ read_file("input.txt") }}
 
-rogue = Rogue.new(lines)
-rogue.optimaze()
-print "Part1: ", rogue.part1(), "\n"
-print "Part2: ", rogue.part2(), "\n"
+benchme(input) do |inp, bench|
+  rogue = Rogue.new(inputlines(inp))
+  rogue.optimaze()
+  p1 = rogue.part1()
+  p2 = rogue.part2()
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

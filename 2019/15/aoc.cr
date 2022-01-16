@@ -1,3 +1,4 @@
+require "aoc-lib.cr"
 require "point.cr"
 require "intcode.cr"
 
@@ -169,7 +170,15 @@ def part2(ship)
   return max
 end
 
-prog = File.read("input.txt").rstrip("\n").split(",").map &.to_i64
-ship = part1(prog);
-print "Part1: ", ship.steps(), "\n"
-print "Part2: ", part2(ship), "\n"
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  prog = inp.rstrip("\n").split(",").map &.to_i64
+  ship = part1(prog)
+  p1 = ship.steps()
+  p2 = part2(ship)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end
