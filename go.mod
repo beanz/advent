@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/cznic/mathutil v0.0.0-20181122101859-297441e03548
+	github.com/erkkah/margaid v0.0.2
 	github.com/mxschmitt/golang-combinations v1.1.0
 	github.com/stretchr/testify v1.7.0
 	gonum.org/v1/gonum v0.9.3
