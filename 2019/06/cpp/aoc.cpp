@@ -7,7 +7,9 @@
 
 using namespace std;
 
-#define AIEQ(act,exp) { int a = act; if (a != exp) { throw std::runtime_error("assert: " + std::to_string(a) + " should equal " + std::to_string(exp)); } }
+#include "input.h"
+#include "assert.hpp"
+#include "input.hpp"
 
 typedef map<string,string> Orbits;
 typedef map<string,int> ParentDist;
@@ -74,20 +76,26 @@ int part2(Game* g) {
   return min;
 }
 
-int main() {
-  vector<string> inp;
-  string x;
-  while ((cin >> x) && cin.ignore()) {
-    inp.push_back(x);
-  }
+void tests() {
   AIEQ(part1(parse(vector<string>{
     "COM)B", "B)C", "C)D", "D)E", "E)F", "B)G", "G)H",
       "D)I", "E)J", "J)K", "K)L"})), 42);
   AIEQ(part2(parse(vector<string>{
     "COM)B", "B)C", "C)D", "D)E", "E)F", "B)G", "G)H",
     "D)I", "E)J", "J)K", "K)L", "K)YOU", "I)SAN"})), 4);
+}
 
-  auto g = parse(inp);
-  cout << "Part 1: " << part1(g) << "\n";
-  cout << "Part 2: " << part2(g) << "\n";
+void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
+  auto g = parse(lines(inp_len, inp));
+  auto p1 = part1(g);
+  auto p2 = part2(g);
+  if (!is_bench) {
+    cout << "Part 1: " << p1 << "\n";
+    cout << "Part 2: " << p2 << "\n";
+  }
+}
+
+int main(int argc, char **argv) {
+  if (is_test()) { tests(); }
+  benchme(argc, argv, input_txt_len, input_txt, run);
 }

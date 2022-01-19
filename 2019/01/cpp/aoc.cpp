@@ -5,7 +5,9 @@
 
 using namespace std;
 
-#define AIEQ(act,exp) { int a = act; if (a != exp) { throw std::runtime_error("assert: " + std::to_string(a) + " should equal " + std::to_string(exp)); } }
+#include "input.h"
+#include <input.hpp>
+#include <assert.hpp>
 
 int fuel(int m) {
   return m/3 - 2;
@@ -40,28 +42,32 @@ int part2(const vector<int> &masses) {
   return s;
 }
 
-int main() {
-  vector<int> masses;
-  int m;
-  cin >> m;
-  while (cin) {
-    masses.push_back(m);
-    cin >> m;
-  }
+void tests() {
   AIEQ(part1(vector<int>{12}), 2);
   AIEQ(part1(vector<int>{14}), 2);
   AIEQ(part1(vector<int>{1969}), 654);
   AIEQ(part1(vector<int>{100756}), 33583);
   AIEQ(part1(vector<int>{12,14,1969,100756}), 34241);
 
-  cout << "Part 1: " << part1(masses) << "\n";
-
   AIEQ(part2(vector<int>{12}), 2);
   AIEQ(part2(vector<int>{14}), 2);
   AIEQ(part2(vector<int>{1969}), 966);
   AIEQ(part2(vector<int>{100756}), 50346);
   AIEQ(part2(vector<int>{12,14,1969,100756}), 51316);
-
-  cout << "Part 2: " << part2(masses) << "\n";
 }
 
+void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
+  vector<int> masses = ints(inp_len, inp);
+  auto p1 = part1(masses);
+  auto p2 = part2(masses);
+
+  if (!is_bench) {
+    cout << "Part 1: " << p1 << "\n";
+    cout << "Part 2: " << p2 << "\n";
+  }
+}
+
+int main(int argc, char **argv) {
+  if (is_test()) { tests(); }
+  benchme(argc, argv, input_txt_len, input_txt, run);
+}

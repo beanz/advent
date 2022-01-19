@@ -2,11 +2,13 @@
 #include <iostream>
 #include <vector>
 #include <assert.h>
+
+using namespace std;
+
+#include "input.h"
 #include "assert.hpp"
 #include "input.hpp"
 #include "intcode.hpp"
-
-using namespace std;
 
 long part1(const vector<long> prog) {
   auto ic = new IntCode(&prog, 1);
@@ -20,16 +22,7 @@ long part2(const vector<long> prog, long input) {
   return out[0];
 }
 
-int main(int argc, char *argv[]) {
-  string file = "input.txt";
-  if (argc > 1) {
-    file = argv[1];
-  }
-  vector<long> prog = readints(file);
-  if (getenv("AoC_TEST")) {
-    //AIEQ((new Donut(readlines("test1a.txt")))->part1(), 23);
-  }
-
+void tests() {
   AIEQ(op_arity(1), 3);
   AIEQ(op_arity(2), 3);
   AIEQ(op_arity(3), 1);
@@ -68,7 +61,19 @@ int main(int argc, char *argv[]) {
           20, 1006, 20, 31, 1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20,
           1105, 1, 46, 104, 999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105,
           1, 46, 98, 99}, 9), 1001);
+}
 
-  cout << "Part 1: " << part1(prog) << "\n";
-  cout << "Part 2: " << part2(prog, 5) << "\n";
+void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
+  auto prog = longs(inp_len, inp);
+  auto p1 = part1(prog);
+  auto p2 = part2(prog, 5);
+  if (!is_bench) {
+    cout << "Part 1: " << p1 << "\n";
+    cout << "Part 2: " << p2 << "\n";
+  }
+}
+
+int main(int argc, char **argv) {
+  if (is_test()) { tests(); }
+  benchme(argc, argv, input_txt_len, input_txt, run);
 }

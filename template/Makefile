@@ -2,7 +2,7 @@ DAY=$(notdir $(CURDIR))
 YEAR=$(notdir $(patsubst %/,%,$(dir $(CURDIR))))
 HERE=$(YEAR)/$(DAY)
 
-CC=clang++-6.0
+CC=clang++-12
 CR_DIR=/usr
 CR_LIB=$(CR_DIR)/share/crystal/src:../../lib-cr
 CR=$(CR_DIR)/bin/crystal
@@ -42,12 +42,11 @@ ALL += aoc-nim
 CLEAN += aoc-nim
 HYPERFINE += aoc-nim-rel
 endif
-# TODO: fix cpp builds
-#ifneq (,$(wildcard cpp/aoc.cpp))
-#ALL += aoc-cpp
-#CLEAN += aoc-cpp
-#HYPERFINE += aoc-cpp
-#endif
+ifneq (,$(wildcard cpp/aoc.cpp))
+ALL += aoc-cpp
+CLEAN += aoc-cpp
+HYPERFINE += aoc-cpp-rel
+endif
 
 # TODO: fix rust builds
 RS_SRC=../../aoc-rust/src/bin/aoc-$(YEAR)-$(DAY).rs
@@ -87,8 +86,11 @@ hyperfine: ${HYPERFINE}
 input.txt:
 	aoc-dump
 
-aoc-cpp: cpp/aoc.cpp ../../lib-cpp/*.hpp
+aoc-cpp: cpp/aoc.cpp ../../lib-cpp/*.hpp cpp/input.h
 	$(CC) -I../../lib-cpp -o $@ $<
+
+cpp/input.h: input.txt
+	xxd -i $< $@
 
 aoc-cr: aoc.cr ../../lib-cr/*.cr
 	CRYSTAL_PATH=$(CR_LIB) $(CR) build -o aoc-cr aoc.cr

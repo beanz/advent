@@ -3,6 +3,37 @@ This was borrowed from [adsmf's Advent of Code repo](https://github.com/adsmf/ad
 # Benchmarks
 The following are the benchmarks for the Go implementations of solutions for each day. The results are as measured by a `BenchmarkMain` benchmark in each solution.
 
+## C++
+ &nbsp;  | 2019
+ ---:  | ---: 
+Day 01 | 2.48µs
+Day 02 | 1.18ms
+Day 03 | -
+Day 04 | 4.02ms
+Day 05 | 59.3µs
+Day 06 | 5.53µs
+Day 07 | 10.1ms
+Day 08 | 42.5µs
+Day 09 | 106ms
+Day 10 | -
+Day 11 | 26.8ms
+Day 12 | **🔴 531ms**
+Day 13 | **🔴 203ms**
+Day 14 | -
+Day 15 | 46.4ms
+Day 16 | -
+Day 17 | 32ms
+Day 18 | -
+Day 19 | -
+Day 20 | -
+Day 21 | -
+Day 22 | -
+Day 23 | -
+Day 24 | -
+Day 25 | -
+*Total* | *961ms*
+
+
 ## Crystal
  &nbsp;  | 2019 | 2020
  ---:  | ---:  | ---: 
@@ -48,7 +79,7 @@ Day 08 | 44.5µs | 8.25µs | 916µs | 357ms | 361µs | 3.78ms | 336µs
 Day 09 | 21.1ms | 25.5µs | 197µs | 620ms | 15.6ms | 15.6ms | 1.1ms
 Day 10 | 141ms | 7.94ms | 1.87ms | 2.14ms | 35.3ms | 125µs | 60.7µs
 Day 11 | 66.7ms | 53ms | 276µs | 91.7ms | 8.19ms | 98.3ms | 837µs
-Day 12 | 117ms | 7.43µs | 6.04ms | 2.65ms | 19.2ms | 244µs | 848µs
+Day 12 | 117ms | 7.43µs | 6.04ms | 2.65ms | 19.3ms | 244µs | 848µs
 Day 13 | 193ms | 176µs | 123ms | 6.87ms | 41.5ms | 15.4µs | 413µs
 Day 14 | 472µs | **🔴 12.5s** | 114ms | 545ms | 14.1ms | 22ms | 430µs
 Day 15 | 127ms | 59.8ms | **🔴 1.25s** | 809ms | 22.6ms | **🔴 1.25s** | 60.4ms
@@ -287,34 +318,34 @@ Day 25 | 21ms
 ![Graph for year 2018](y2018.svg)
 
 ## 2019
- &nbsp;  | Crystal | Golang | Nim
- ---:  | ---:  | ---:  | ---: 
-Day 01 | 23.5µs | 11.1µs | 15.7µs
-Day 02 | 11.4ms | 5.14ms | 9.3ms
-Day 03 | 45ms | 22.2ms | 31.9ms
-Day 04 | 72.6ms | 3.09ms | 86.2ms
-Day 05 | 123µs | 58.9µs | 87.5µs
-Day 06 | 8.66ms | 38.2ms | 91.4ms
-Day 07 | 16.2ms | 4.65ms | 7.67ms
-Day 08 | 485µs | 361µs | 29.1µs
-Day 09 | 119ms | 15.6ms | 13.8ms
-Day 10 | 19.5ms | 35.3ms | 29.7ms
-Day 11 | 30.1ms | 8.19ms | 5.01ms
-Day 12 | 308ms | 19.2ms | 435ms
-Day 13 | 267ms | 41.5ms | 30.6ms
-Day 14 | 16ms | 14.1ms | 7.99ms
-Day 15 | 59.5ms | 22.6ms | 30.2ms
-Day 16 | 694ms | **🔴 680ms** | 689ms
-Day 17 | 25.2ms | 5.97ms | 4.1ms
-Day 18 | **🔴 21.1s** | **🔴 881ms** | **🔴 1m8s**
-Day 19 | 553ms | 180ms | 115ms
-Day 20 | 425ms | 77.1ms | 867ms
-Day 21 | 132ms | 25.7ms | 20.8ms
-Day 22 | 190µs | 474µs | 48.1µs
-Day 23 | 81.3ms | 18.6ms | 15.7ms
-Day 24 | 97.5ms | 489ms | 51.7ms
-Day 25 | 2.52s | 293ms | 202ms
-*Total* | *26.6s* | *2.88s* | *1m10.8s*
+ &nbsp;  | C++ | Crystal | Golang | Nim
+ ---:  | ---:  | ---:  | ---:  | ---: 
+Day 01 | 2.48µs | 23.5µs | 11.1µs | 15.7µs
+Day 02 | 1.18ms | 11.4ms | 5.14ms | 9.3ms
+Day 03 | - | 45ms | 22.2ms | 31.9ms
+Day 04 | 4.02ms | 72.6ms | 3.09ms | 86.2ms
+Day 05 | 59.3µs | 123µs | 58.9µs | 87.5µs
+Day 06 | 5.53µs | 8.66ms | 38.2ms | 91.4ms
+Day 07 | 10.1ms | 16.2ms | 4.65ms | 7.67ms
+Day 08 | 42.5µs | 485µs | 361µs | 29.1µs
+Day 09 | 106ms | 119ms | 15.6ms | 13.8ms
+Day 10 | - | 19.5ms | 35.3ms | 29.7ms
+Day 11 | 26.8ms | 30.1ms | 8.19ms | 5.01ms
+Day 12 | **🔴 531ms** | 308ms | 19.3ms | 435ms
+Day 13 | **🔴 203ms** | 267ms | 41.5ms | 30.6ms
+Day 14 | - | 16ms | 14.1ms | 7.99ms
+Day 15 | 46.4ms | 59.5ms | 22.6ms | 30.2ms
+Day 16 | - | 694ms | **🔴 680ms** | 689ms
+Day 17 | 32ms | 25.2ms | 5.97ms | 4.1ms
+Day 18 | - | **🔴 21.1s** | **🔴 881ms** | **🔴 1m8s**
+Day 19 | - | 553ms | 180ms | 115ms
+Day 20 | - | 425ms | 77.1ms | 867ms
+Day 21 | - | 132ms | 25.7ms | 20.8ms
+Day 22 | - | 190µs | 474µs | 48.1µs
+Day 23 | - | 81.3ms | 18.6ms | 15.7ms
+Day 24 | - | 97.5ms | 489ms | 51.7ms
+Day 25 | - | 2.52s | 293ms | 202ms
+*Total* | *961ms* | *26.6s* | *2.88s* | *1m10.8s*
 
 ![Graph for year 2019](y2019.svg)
 

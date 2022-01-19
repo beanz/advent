@@ -6,11 +6,13 @@
 #include <limits>
 #include <assert.h>
 #include <sstream>
-#include "assert.hpp"
-#include "input.hpp"
-#include "intcode.hpp"
 
 using namespace std;
+
+#include "input.h"
+#include <input.hpp>
+#include <assert.hpp>
+#include "intcode.hpp"
 
 string pp_deque(const deque<long> v) {
   std::stringstream ss;
@@ -38,16 +40,7 @@ string part2(const vector<long>* prog) {
   return run(prog, 2);
 }
 
-int main(int argc, char *argv[]) {
-  string file = "input.txt";
-  if (argc > 1) {
-    file = argv[1];
-  }
-  vector<long> prog = readints(file);
-  if (getenv("AoC_TEST")) {
-    //AIEQ((new Donut(readlines("test1a.txt")))->part1(), 23);
-  }
-
+void tests() {
   auto tp = vector<long>{109,1,204,-1,1001,100,1,100,1008,100,16,101,
                         1006,101,0,99};
   ASEQ(run(&tp,1),
@@ -58,7 +51,19 @@ int main(int argc, char *argv[]) {
 
   tp = vector<long>{104,1125899906842624,99};
   ASEQ(run(&tp,1), "1125899906842624");
+}
 
-  cout << "Part 1: " << part1(&prog) << "\n";
-  cout << "Part 2: " << part2(&prog) << "\n";
+void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
+  auto prog = longs(inp_len, inp);
+  auto p1 = part1(&prog);
+  auto p2 = part2(&prog);
+  if (!is_bench) {
+    cout << "Part 1: " << p1 << "\n";
+    cout << "Part 2: " << p2 << "\n";
+  }
+}
+
+int main(int argc, char **argv) {
+  if (is_test()) { tests(); }
+  benchme(argc, argv, input_txt_len, input_txt, run);
 }

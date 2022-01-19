@@ -6,48 +6,59 @@
 
 using namespace std;
 
-#define AIEQ(act,exp) { int a = act; if (a != exp) { throw std::runtime_error("assert: " + std::to_string(a) + " should equal " + std::to_string(exp)); } }
+#include "input.h"
+#include <input.hpp>
+#include <assert.hpp>
 
-int main(int argc, char *argv[]) {
-  int w, h;
-  if (argc < 3) {
-    w = 25;
-    h = 6;
-  } else {
-    w = atoi(argv[1]);
-    h = atoi(argv[2]);
-  }
+void tests() {
+}
+
+void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
+  auto prog = longs(inp_len, inp);
+  int w = 25;
+  int h = 6;
   int l = w*h;
-  string line;
-  cin >> line;
   int min = std::numeric_limits<int>::max();
   int res = 0;
-  for (int i = 0; i < line.size(); i+=l) {
+  for (int i = 0; i < inp_len-1; i+=l) {
     int c[10] = {0,0,0};
     for (int j = 0; j < l; j++) {
-      c[line[i+j]-48]++;
+      c[inp[i+j]-48]++;
     }
     if (c[0] < min) {
       res = c[1]*c[2];
       min = c[0];
     }
   }
-  printf("Part 1: %d\n", res);
-
-  printf("Part 2:\n");
+  auto p1 = res;
+  char p2[(w+1)*h];
+  int i = 0;
   for (int y = 0; y < h; y++) {
     for (int x = 0; x < w; x++) {
-      for (int j = y*w+x; j < line.size(); j+=l) {
-        if (line[j] == '0') {
-          printf(" ");
+      for (int j = y*w+x; j < inp_len-1; j+=l) {
+        if (inp[j] == '0') {
+          p2[i] = ' ';
+          i++;
           break;
         }
-        if (line[j] == '1') {
-          printf("#");
+        if (inp[j] == '1') {
+          p2[i] = '#';
+          i++;
           break;
         }
       }
     }
-    printf("\n");
+    p2[i] = '\n';
+    i++;
   }
+
+  if (!is_bench) {
+    cout << "Part 1: " << p1 << "\n";
+    cout << "Part 2:\n" << p2 << "\n";
+  }
+}
+
+int main(int argc, char **argv) {
+  if (is_test()) { tests(); }
+  benchme(argc, argv, input_txt_len, input_txt, run);
 }

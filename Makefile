@@ -42,9 +42,11 @@ CPP_SRC=$(sort $(wildcard ????/??/cpp/aoc.cpp))
 CPP_BIN=$(subst /cpp/aoc.cpp,/aoc-cpp,${CPP_SRC})
 CPP_LOG=$(subst /cpp/aoc.cpp,/aoc-cpp.log,${CPP_SRC})
 CPP_ERR=$(subst /cpp/aoc.cpp,/aoc-cpp.err,${CPP_SRC})
+CPP_REL=$(subst /cpp/aoc.cpp,/aoc-cpp-rel,${CPP_SRC})
+CPP_BENCH=$(subst /cpp/aoc.cpp,/aoc-cpp.ns,${CPP_SRC})
 
-#CC=clang++-6.0
-CC=g++-7
+CC=clang++-12
+#CC=g++-7
 CR_DIR=/usr
 CR_LIB=$(CR_DIR)/share/crystal/src:../../lib-cr
 CR=$(CR_DIR)/bin/crystal
@@ -115,8 +117,14 @@ aoc-rust/target/release/aoc-%: aoc-rust/src/bin/aoc-%.rs
 %/aoc-go: %/main.go
 	cd $(dir $@) && go build -o aoc-go main.go
 
-%/aoc-cpp: %/cpp/aoc.cpp
+%/aoc-cpp: %/cpp/aoc.cpp %/cpp/input.h
 	$(CC) -I$(dir $@)../../lib-cpp -o $@ $<
+
+%/aoc-cpp-rel: %/cpp/aoc.cpp %/cpp/input.h
+	$(CC) -I$(dir $@)../../lib-cpp -O3 -o $@ $<
+
+%/cpp/input.h: %/input.txt
+	xxd -i $< $@
 
 %/aoc-nim: %/aoc.nim
 	$(NIM) c --opt:speed -d:release -p:$(dir $@)../../lib-nim $<
@@ -180,6 +188,9 @@ aoc-rust/target/release/%.ns: aoc-rust/target/release/%
 	     tee $(notdir $<).err ) 3>&1 1>&2
 
 %/aoc-zig.ns: %/aoc-zig-rel
+	( cd $* && AoC_BENCH=1 ./$(notdir $<) | tee /dev/stderr ) >$@
+
+%/aoc-cpp.ns: %/aoc-cpp-rel
 	( cd $* && AoC_BENCH=1 ./$(notdir $<) | tee /dev/stderr ) >$@
 
 %/aoc-cr.ns: %/aoc-cr-rel
