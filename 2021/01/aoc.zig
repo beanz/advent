@@ -22,7 +22,8 @@ fn calc(exp: []const u32, n: u32) u32 {
 }
 
 fn parts(inp: []const u8) ![2]u32 {
-    var exp = try aoc.BoundedInts(u32, 2048, inp);
+    var b = try std.BoundedArray(u32, 2048).init(0);
+    var exp = try aoc.BoundedInts(u32, &b, inp);
     return [2]u32{ calc(exp, 1), calc(exp, 3) };
 }
 
