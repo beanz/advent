@@ -1,15 +1,16 @@
 #include <stdio.h>
+#include <vector>
 #include <iostream>
 #include <sstream>
 #include <set>
 #include <map>
 #include <assert.h>
-#include "input.hpp"
-#include "assert.hpp"
 
 using namespace std;
 
-#define AIEQ(act,exp) { int a = act; if (a != exp) { throw std::runtime_error("assert: " + std::to_string(a) + " should equal " + std::to_string(exp)); } }
+#include "input.h"
+#include <input.hpp>
+#include <assert.hpp>
 
 string pp1(int n) {
   string s = "";
@@ -236,20 +237,26 @@ int part2(const vector<string> &lines, int min) {
   return count(m);
 }
 
-int main(int argc, char *argv[]) {
-  string file = "input.txt";
-  if (argc > 1) {
-    file = argv[1];
+void tests() {
+  AIEQ(part1(readlines("test.txt")), 2129920);
+  AIEQ(part1(readlines("input.txt")), 6520863);
+  AIEQ(part2(readlines("test.txt"), 1), 27);
+  AIEQ(part2(readlines("test.txt"), 10), 99);
+  AIEQ(part2(readlines("input.txt"), 1), 21);
+  AIEQ(part2(readlines("input.txt"), 200), 1970);
+}
+
+void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
+  vector<string> ln = lines(inp_len, inp);
+  auto p1 = part1(ln);
+  auto p2 = part2(ln, 200);
+  if (!is_bench) {
+    cout << "Part 1: " << p1 << "\n";
+    cout << "Part 2: " << p2 << "\n";
   }
-  vector<string> lines = readlines(file);
-  if (getenv("AoC_TEST")) {
-    AIEQ(part1(readlines("test.txt")), 2129920);
-    AIEQ(part1(readlines("input.txt")), 6520863);
-    AIEQ(part2(readlines("test.txt"), 1), 27);
-    AIEQ(part2(readlines("test.txt"), 10), 99);
-    AIEQ(part2(readlines("input.txt"), 1), 21);
-    AIEQ(part2(readlines("input.txt"), 200), 1970);
-  }
-  cout << "Part 1: " << part1(lines) << "\n";
-  cout << "Part 2: " << part2(lines, 200) << "\n";
+}
+
+int main(int argc, char **argv) {
+  if (is_test()) { tests(); }
+  benchme(argc, argv, input_txt_len, input_txt, run);
 }

@@ -44,11 +44,11 @@ func (moons *Moons) String() string {
 }
 
 func NewMoons(inp []byte) *Moons {
-    ints := FastSignedInts(inp, 12)
+	ints := FastSignedInts(inp, 12)
 	moons := Moons{}
-    for i := 0; i < len(ints); i += 3 {
+	for i := 0; i < len(ints); i += 3 {
 		moons = append(moons,
-            &Moon{ints[i+int(X)], ints[i+int(Y)], ints[i+int(Z)], 0, 0, 0})
+			&Moon{ints[i+int(X)], ints[i+int(Y)], ints[i+int(Z)], 0, 0, 0})
 	}
 	return &moons
 }
@@ -68,27 +68,27 @@ func (moons *Moons) Step(axis MoonField) {
 		for j := i + 1; j < len(*moons); j++ {
 			m1 := (*moons)[i]
 			m2 := (*moons)[j]
-            if m1[axis] > m2[axis] {
-                m1[VX+axis]--
-                m2[VX+axis]++
-            } else if m1[axis] < m2[axis] {
-                m1[VX+axis]++
-                m2[VX+axis]--
-            }
+			if m1[axis] > m2[axis] {
+				m1[VX+axis]--
+				m2[VX+axis]++
+			} else if m1[axis] < m2[axis] {
+				m1[VX+axis]++
+				m2[VX+axis]--
+			}
 		}
 	}
 	for _, m := range *moons {
-        m[axis] += m[VX+axis]
+		m[axis] += m[VX+axis]
 	}
 }
 
 func (moons *Moons) Part1(steps int) int {
 	//fmt.Printf("After 0 steps:\n%s\n", moons)
 	for step := 1; step <= steps; step++ {
-        var axis MoonField
-        for axis = 0; axis < 3; axis++ {
-            moons.Step(axis)
-        }
+		var axis MoonField
+		for axis = 0; axis < 3; axis++ {
+			moons.Step(axis)
+		}
 		//fmt.Printf("After %d steps:\n%s\n", step, moons)
 	}
 	s := 0
@@ -112,16 +112,16 @@ func (moons *Moons) Part2() int64 {
 	var axis MoonField
 	for axis = 0; axis < 3; axis++ {
 		initialState[axis] = moons.axis(axis)
-	    var steps int64
-	    for {
-            steps++
-            moons.Step(axis)
+		var steps int64
+		for {
+			steps++
+			moons.Step(axis)
 			if initialState[axis] == moons.axis(axis) &&
 				moons.axis(axis+3) == 0 {
 				// cycle found
 				//fmt.Printf("Found %d cycle at %d\n", axis, steps)
 				cycle[axis] = steps
-                break
+				break
 			}
 		}
 	}

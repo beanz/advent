@@ -9,6 +9,11 @@
 
 using namespace std;
 
+#include "input.h"
+#include <input.hpp>
+#include <assert.hpp>
+#include "intcode.hpp"
+
 const double PI = acos(-1);
 
 struct Asteroid {
@@ -173,18 +178,20 @@ public:
   }
 };
 
-#define AIEQ(act,exp) { int a = act; if (a != exp) { throw std::runtime_error("assert: " + std::to_string(a) + " should equal " + std::to_string(exp)); } }
+void tests() {
+}
 
-int main() {
-  vector<string> inp;
-  string x;
-  while ((cin >> x) && cin.ignore()) {
-    inp.push_back(x);
+void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
+  auto g = new Game(lines(inp_len, inp));
+  auto p1 = g->part1();
+  auto p2 = g->part2(200);
+  if (!is_bench) {
+    cout << "Part 1: " << p1 << "\n";
+    cout << "Part 2: " << p2 << "\n";
   }
-  auto g = new Game(inp);
+}
 
-  int res = g->part1();
-  cout << "Part 1: " << res << "\n";
-  res = g->part2(200);
-  cout << "Part 2: " << res << "\n";
+int main(int argc, char **argv) {
+  if (is_test()) { tests(); }
+  benchme(argc, argv, input_txt_len, input_txt, run);
 }

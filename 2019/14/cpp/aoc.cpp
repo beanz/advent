@@ -8,7 +8,9 @@
 
 using namespace std;
 
-#define AIEQ(act,exp) { long a = act; if (a != exp) { throw std::runtime_error("assert: " + std::to_string(a) + " should equal " + std::to_string(exp)); } }
+#include "input.h"
+#include <input.hpp>
+#include <assert.hpp>
 
 typedef string Chemical;
 
@@ -130,22 +132,7 @@ public:
   }
 };
 
-vector<string> readlines(string file) {
-  ifstream inf(file);
-  vector<string> lines;
-  string l;
-  while (getline(inf, l)) {
-    lines.push_back(l);
-  }
-  return lines;
-}
-
-int main() {
-  vector<string> lines;
-  string l;
-  while (getline(cin, l)) {
-    lines.push_back(l);
-  }
+void tests() {
   AIEQ((new Factory(readlines("test1a.txt")))->part1(), 31);
   AIEQ((new Factory(readlines("test1b.txt")))->part1(), 165);
   AIEQ((new Factory(readlines("test1c.txt")))->part1(), 13312);
@@ -156,8 +143,19 @@ int main() {
   AIEQ((new Factory(readlines("test1c.txt")))->part2(), 82892753);
   AIEQ((new Factory(readlines("test1d.txt")))->part2(), 5586022);
   AIEQ((new Factory(readlines("test1e.txt")))->part2(), 460664);
+}
 
-  auto f = new Factory(lines);
-  cout << "Part 1: " << f->part1() << "\n";
-  cout << "Part 2: " << f->part2() << "\n";
+void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
+  auto f = new Factory(lines(inp_len, inp));
+  auto p1 = f->part1();
+  auto p2 = f->part2();
+  if (!is_bench) {
+    cout << "Part 1: " << p1 << "\n";
+    cout << "Part 2: " << p2 << "\n";
+  }
+}
+
+int main(int argc, char **argv) {
+  if (is_test()) { tests(); }
+  benchme(argc, argv, input_txt_len, input_txt, run);
 }

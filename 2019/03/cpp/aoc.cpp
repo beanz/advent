@@ -9,7 +9,9 @@
 
 using namespace std;
 
-#define AIEQ(act,exp) { int a = act; if (a != exp) { throw std::runtime_error("assert: " + std::to_string(a) + " should equal " + std::to_string(exp)); } }
+#include "input.h"
+#include <input.hpp>
+#include <assert.hpp>
 
 typedef pair<int, int> point;
 typedef map<point,int> path;
@@ -84,14 +86,7 @@ auto calc(const vector<string> &lines) {
   return std::make_pair(dist, steps);
 }
 
-int main() {
-  vector<string> lines;
-  string l;
-  cin >> l;
-  while (cin) {
-    lines.push_back(l);
-    cin >> l;
-  }
+void tests() {
   AIEQ(calc(vector<string>{"R8,U5,L5,D3", "U7,R6,D4,L4"}).first, 6);
   AIEQ(calc(vector<string>{"R8,U5,L5,D3", "U7,R6,D4,L4"}).second, 30);
   AIEQ(calc(vector<string>{"R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51",
@@ -102,8 +97,17 @@ int main() {
           "U62,R66,U55,R34,D71,R55,D58,R83"}).first, 159);
   AIEQ(calc(vector<string>{"R75,D30,R83,U83,L12,D49,R71,U7,L72",
           "U62,R66,U55,R34,D71,R55,D58,R83"}).second, 610);
+}
 
-  auto res = calc(lines);
-  cout << "Part 1: " << res.first << "\n";
-  cout << "Part 2: " << res.second << "\n";
+void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
+  auto res = calc(lines(inp_len, inp));
+  if (!is_bench) {
+    cout << "Part 1: " << res.first << "\n";
+    cout << "Part 2: " << res.second << "\n";
+  }
+}
+
+int main(int argc, char **argv) {
+  if (is_test()) { tests(); }
+  benchme(argc, argv, input_txt_len, input_txt, run);
 }

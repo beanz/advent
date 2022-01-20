@@ -5,12 +5,13 @@
 #include <deque>
 #include <map>
 #include <assert.h>
-#include "point.hpp"
-#include "input.hpp"
 
 using namespace std;
 
-#define AIEQ(act,exp) { int a = act; if (a != exp) { throw std::runtime_error("assert: " + std::to_string(a) + " should equal " + std::to_string(exp)); } }
+#include "input.h"
+#include <input.hpp>
+#include <assert.hpp>
+#include "point.hpp"
 
 struct Portal {
   Point exit;
@@ -192,25 +193,26 @@ public:
   }
 };
 
-int main(int argc, char *argv[]) {
-  string file = "input.txt";
-  if (argc > 1) {
-    file = argv[1];
-  }
-  vector<string> inp = readlines(file);
-  if (getenv("AoC_TEST")) {
-    AIEQ((new Donut(readlines("test1a.txt")))->part1(), 23);
-    AIEQ((new Donut(readlines("test1b.txt")))->part1(), 58);
-    AIEQ((new Donut(readlines("input.txt")))->part1(), 482);
-    AIEQ((new Donut(readlines("test1a.txt")))->part2(), 26);
-    AIEQ((new Donut(readlines("test2a.txt")))->part2(), 396);
-    cout << "TESTS PASSED\n";
-  }
+void tests() {
+  AIEQ((new Donut(readlines("test1a.txt")))->part1(), 23);
+  AIEQ((new Donut(readlines("test1b.txt")))->part1(), 58);
+  AIEQ((new Donut(readlines("input.txt")))->part1(), 482);
+  AIEQ((new Donut(readlines("test1a.txt")))->part2(), 26);
+  AIEQ((new Donut(readlines("test2a.txt")))->part2(), 396);
+}
 
-  auto donut = new Donut(inp);
+void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
+  auto donut = new Donut(lines(inp_len, inp));
   // cout << donut << "\n";
-  auto res = donut->part1();
-  cout << "Part 1: " << res << "\n";
-  res = donut->part2();
-  cout << "Part 2: " << res << "\n";
+  auto p1 = donut->part1();
+  auto p2 = donut->part2();
+  if (!is_bench) {
+    cout << "Part 1: " << p1 << "\n";
+    cout << "Part 2: " << p2 << "\n";
+  }
+}
+
+int main(int argc, char **argv) {
+  if (is_test()) { tests(); }
+  benchme(argc, argv, input_txt_len, input_txt, run);
 }

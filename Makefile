@@ -91,7 +91,7 @@ go-test-fast: ${GO_SRC}
 benchmarks/README.md: benchmarks/README.template.md benchmarks/benchmarks.md
 	cat $^ > $@
 
-benchmarks/benchmarks.md: $(GO_BENCH) $(RS_BENCH) benchmarks/main.go
+benchmarks/benchmarks.md: $(GO_BENCH) $(RS_BENCH) $(CPP_BENCH) $(ZIG_BENCH) $(CR_BENCH) benchmarks/main.go
 	cd benchmarks && go run . ..
 
 

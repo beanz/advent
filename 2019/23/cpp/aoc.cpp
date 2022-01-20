@@ -7,11 +7,13 @@
 #include <limits>
 #include <assert.h>
 #include <sstream>
-#include "input.hpp"
-#include "intcode.hpp"
-#include "assert.hpp"
 
 using namespace std;
+
+#include "input.h"
+#include <input.hpp>
+#include <assert.hpp>
+#include "intcode.hpp"
 
 auto part1(vector<long> prog) {
   vector<IntCode*> ic;
@@ -83,15 +85,20 @@ auto part2(vector<long> prog) {
   }
 }
 
-int main(int argc, char *argv[]) {
-  string file = "input.txt";
-  if (argc > 1) {
-    file = argv[1];
+void tests() {
+}
+
+void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
+  auto prog = longs(inp_len, inp);
+  auto p1 = part1(prog);
+  auto p2 = part2(prog);
+  if (!is_bench) {
+    cout << "Part 1: " << p1 << "\n";
+    cout << "Part 2: " << p2 << "\n";
   }
-  vector<long> prog = readints(file);
-  if (getenv("AoC_TEST")) {
-    //AIEQ((new Donut(readlines("test1a.txt")))->part1(), 23);
-  }
-  cout << "Part 1: " << part1(prog) << "\n";
-  cout << "Part 2: " << part2(prog) << "\n";
+}
+
+int main(int argc, char **argv) {
+  if (is_test()) { tests(); }
+  benchme(argc, argv, input_txt_len, input_txt, run);
 }

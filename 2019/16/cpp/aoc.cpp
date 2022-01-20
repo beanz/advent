@@ -5,7 +5,9 @@
 
 using namespace std;
 
-#define AIEQ(act,exp) { int a = act; if (a != exp) { throw std::runtime_error("assert: " + std::to_string(a) + " should equal " + std::to_string(exp)); } }
+#include "input.h"
+#include <input.hpp>
+#include <assert.hpp>
 
 vector<char> calc(const vector<char> &s) {
   int REP[4] = {0, 1, 0, -1};
@@ -85,17 +87,23 @@ string part2(const vector<char> &inp) {
   return digits(inp10000, 8, 0);
 }
 
-int main() {
-  vector<char> inp;
-  string s;
-  cin >> s;
-  const char *cs = s.c_str();
-  for (size_t i = 0; i < s.size(); i++) {
-    inp.push_back(cs[i]-'0');
-  }
+void tests() {
+}
 
-  string res = part1(inp, 100);
-  cout << "Part 1: " << res << "\n";
-  res = part2(inp);
-  cout << "Part 2: " << res << "\n";
+void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
+  vector<char> chs;
+  for (int i = 0; i < inp_len; i++) {
+    chs.push_back(inp[i]-'0');
+  }
+  string p1 = part1(chs, 100);
+  auto p2 = part2(chs);
+  if (!is_bench) {
+    cout << "Part 1: " << p1 << "\n";
+    cout << "Part 2: " << p2 << "\n";
+  }
+}
+
+int main(int argc, char **argv) {
+  if (is_test()) { tests(); }
+  benchme(argc, argv, input_txt_len, input_txt, run);
 }

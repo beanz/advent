@@ -7,11 +7,13 @@
 #include <limits>
 #include <assert.h>
 #include <sstream>
-#include "input.hpp"
-#include "intcode.hpp"
-#include "assert.hpp"
 
 using namespace std;
+
+#include "input.h"
+#include <input.hpp>
+#include <assert.hpp>
+#include "intcode.hpp"
 
 string pp_deque(const deque<long> v) {
   std::stringstream ss;
@@ -124,16 +126,21 @@ public:
   }
 };
 
-int main(int argc, char *argv[]) {
-  string file = "input.txt";
-  if (argc > 1) {
-    file = argv[1];
-  }
-  vector<long> prog = readints(file);
-  if (getenv("AoC_TEST")) {
-    //AIEQ((new Donut(readlines("test1a.txt")))->part1(), 23);
-  }
+void tests() {
+}
+
+void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
+  auto prog = longs(inp_len, inp);
   auto beam = new Beam(&prog);
-  cout << "Part 1: " << beam->part1() << "\n";
-  cout << "Part 2: " << beam->part2() << "\n";
+  auto p1 = beam->part1();
+  auto p2 = beam->part2();
+  if (!is_bench) {
+    cout << "Part 1: " << p1 << "\n";
+    cout << "Part 2: " << p2 << "\n";
+  }
+}
+
+int main(int argc, char **argv) {
+  if (is_test()) { tests(); }
+  benchme(argc, argv, input_txt_len, input_txt, run);
 }

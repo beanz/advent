@@ -9,11 +9,13 @@
 #include <sstream>
 #include <boost/foreach.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
-#include "input.hpp"
-#include "assert.hpp"
 
 using namespace std;
 using namespace boost::multiprecision;
+
+#include "input.h"
+#include <input.hpp>
+#include <assert.hpp>
 
 // https://rosettacode.org/wiki/Modular_inverse#C.2B.2B
 int256_t modinv(int256_t a, int256_t b) {
@@ -146,18 +148,23 @@ public:
   }
 };
 
-int main(int argc, char *argv[]) {
-  string file = "input.txt";
-  if (argc > 1) {
-    file = argv[1];
-  }
-  vector<string> inp = readlines(file);
-  if (getenv("AoC_TEST")) {
-    //AIEQ((new Donut(readlines("test1a.txt")))->part1(), 23);
-  }
-  Game* game = new Game(inp, 10007);
-  cout << "Part 1: " << game->forward(2019) << "\n";
-  game = new Game(inp, 119315717514047);
+void tests() {
+}
+
+void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
+  vector<string> ln = lines(inp_len, inp);
+  Game* game = new Game(ln, 10007);
+  auto p1 = game->forward(2019);
+  game = new Game(ln, 119315717514047);
   int256_t rounds = 101741582076661;
-  cout << "Part 2: " << game->backward(2020, rounds) << "\n";
+  auto p2 = game->backward(2020, rounds);
+  if (!is_bench) {
+    cout << "Part 1: " << p1 << "\n";
+    cout << "Part 2: " << p2 << "\n";
+  }
+}
+
+int main(int argc, char **argv) {
+  if (is_test()) { tests(); }
+  benchme(argc, argv, input_txt_len, input_txt, run);
 }

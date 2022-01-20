@@ -7,14 +7,13 @@
 #include <limits>
 #include <assert.h>
 #include <sstream>
-#include "point.hpp"
-#include "input.hpp"
 
 using namespace std;
 
-#define AIEQ(act,exp) { int a = act; if (a != exp) { throw std::runtime_error("assert: " + std::to_string(a) + " should equal " + std::to_string(exp)); } }
-
-#define ASEQ(act,exp) { if (act != exp) { throw std::runtime_error("assert: " + act + " should equal " + exp); } }
+#include "input.h"
+#include <input.hpp>
+#include <assert.hpp>
+#include "point.hpp"
 
 typedef map<Point,bool> Map;
 typedef map<int,Point> Keys;
@@ -293,28 +292,31 @@ public:
   }
 };
 
-int main(int argc, char** argv) {
-  string file = "input.txt";
-  if (argc > 1) {
-    file = argv[1];
-  }
-  vector<string> lines = readlines(file);
+void tests() {
+  AIEQ((new Maze(readlines("test1a.txt")))->part1(), 8);
+  AIEQ((new Maze(readlines("test1b.txt")))->part1(), 86);
+  AIEQ((new Maze(readlines("test1c.txt")))->part1(), 132);
+  AIEQ((new Maze(readlines("test1d.txt")))->part1(), 136);
+  AIEQ((new Maze(readlines("test1e.txt")))->part1(), 81);
+  AIEQ((new Maze(readlines("test2a.txt")))->part2(), 8);
+  AIEQ((new Maze(readlines("test2b.txt")))->part2(), 24);
+  AIEQ((new Maze(readlines("test2c.txt")))->part2(), 32);
+  AIEQ((new Maze(readlines("test2d.txt")))->part2(), 72);
+}
 
-  if (getenv("AoC_TEST")) {
-    AIEQ((new Maze(readlines("test1a.txt")))->part1(), 8);
-    AIEQ((new Maze(readlines("test1b.txt")))->part1(), 86);
-    AIEQ((new Maze(readlines("test1c.txt")))->part1(), 132);
-    AIEQ((new Maze(readlines("test1d.txt")))->part1(), 136);
-    AIEQ((new Maze(readlines("test1e.txt")))->part1(), 81);
-    AIEQ((new Maze(readlines("test2a.txt")))->part2(), 8);
-    AIEQ((new Maze(readlines("test2b.txt")))->part2(), 24);
-    AIEQ((new Maze(readlines("test2c.txt")))->part2(), 32);
-    AIEQ((new Maze(readlines("test2d.txt")))->part2(), 72);
-    cout << "TESTS PASSED\n";
-  }
-  auto maze = new Maze(lines);
+void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
+  auto maze = new Maze(lines(inp_len, inp));
   maze->optimaze();
   //cout << maze->pp() << "\n";
-  cout << "Part 1: " << maze->part1() << "\n";
-  cout << "Part 2: " << maze->part2() << "\n";
+  auto p1 = maze->part1();
+  auto p2 = maze->part2();
+  if (!is_bench) {
+    cout << "Part 1: " << p1 << "\n";
+    cout << "Part 2: " << p2 << "\n";
+  }
+}
+
+int main(int argc, char **argv) {
+  if (is_test()) { tests(); }
+  benchme(argc, argv, input_txt_len, input_txt, run);
 }
