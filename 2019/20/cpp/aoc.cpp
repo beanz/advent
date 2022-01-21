@@ -15,7 +15,7 @@ using namespace std;
 
 struct Portal {
   Point exit;
-  string name;
+  uint16_t name;
   int level;
 };
 
@@ -23,7 +23,6 @@ struct Search {
   Point pos;
   int steps;
   int level;
-  string path;
 };
 
 struct VKey {
@@ -40,38 +39,42 @@ class Donut {
   BoundingBox* bb;
   Point start;
   Point exit;
-public:
-  Donut(vector<string> lines) {
+private:
+  void init(unsigned int inp_len, unsigned char *inp) {
     m = new map<Point,bool>();
     p = new map<Point,Portal>();
+    int i = 0;
+    while (inp[i] != '\n' && i < inp_len) {
+      i++;
+    }
+    int w = i+1;
+    int h = inp_len/w;
     bb = new BoundingBox();
     start = Point{-1, -1};
     exit = Point{-1, -1};
     bb->Add(Point{0,0});
-    bb->Add(Point{((int)lines[0].size())-1, ((int)lines.size())-1});
+    bb->Add(Point{w-2, h-1});
     auto isPortal = [&](int x, int y) {
-      return 'A' <= lines[y][x] && lines[y][x] <= 'Z';
+      return 'A' <= inp[y*w+x] && inp[y*w+x] <= 'Z';
     };
-    auto rp = new map<string,Point>();
+    auto rp = new map<uint16_t,Point>();
     auto addPortal = [&](Point pp, int bx, int by, char ch1, char ch2) {
-      string ch1s(1, ch1);
-      string ch2s(1, ch2);
-      string name = ch1s + ch2s;
+      uint16_t name = (ch1-'@')*27 + (ch2-'@');
       m->insert(make_pair(Point{bx,by}, true));
-      if (name == "AA") {
+      if (name == ('A'-'@')*27+('A'-'@')) {
         // printf("found start at %d,%d\n", pp.x, pp.y);
         start = pp;
         return;
       }
-      if (name == "ZZ") {
+      if (name == ('Z'-'@')*27+('Z'-'@')) {
         // printf("found exit at %d,%d\n", pp.x, pp.y);
         exit = pp;
         return;
       }
       int level = 1;
-      if (pp.y == bb->MinY()+2 ||
+      if (pp.y == 2 ||
           pp.y == bb->MaxY()-2 ||
-          pp.x == bb->MinX()+2 ||
+          pp.x == 2 ||
           pp.x == bb->MaxX()-2) {
         // outer portal
         level = -1;
@@ -93,22 +96,22 @@ public:
         (*rp)[name] = pp;
       }
     };
-    for (int y = 0; y < lines.size(); y++) {
-      for (int x = 0; x < lines[y].size(); x++) {
+    for (int y = 0; y < h; y++) {
+      for (int x = 0; x < w; x++) {
         auto p = Point{x,y};
-        if (lines[y][x] == '#') {
+        if (inp[y*w+x] == '#') {
           m->insert(make_pair(p,true));
-        } else if (lines[y][x] == '.') {
+        } else if (inp[y*w+x] == '.') {
           if (isPortal(x,y-2) && isPortal(x, y-1)) {
-            addPortal(p, x, y-1, lines[y-2][x], lines[y-1][x]);
+            addPortal(p, x, y-1, inp[(y-2)*w+x], inp[(y-1)*w+x]);
           } else if (isPortal(x, y+1) && isPortal(x, y+2)) {
-            addPortal(p, x, y+1, lines[y+1][x], lines[y+2][x]);
+            addPortal(p, x, y+1, inp[(y+1)*w+x], inp[(y+2)*w+x]);
           } else if (isPortal(x-2, y) &&
                      isPortal(x-1, y)) {
-            addPortal(p, x-1, y, lines[y][x-2], lines[y][x-1]);
+            addPortal(p, x-1, y, inp[y*w+x-2], inp[y*w+x-1]);
           } else if (isPortal(x+1, y) &&
                      isPortal(x+2, y)) {
-            addPortal(p, x+1, y, lines[y][x+1], lines[y][x+2]);
+            addPortal(p, x+1, y, inp[y*w+x+1], inp[y*w+x+2]);
           }
         }
       }
@@ -122,10 +125,17 @@ public:
     }
     delete rp;
   }
+public:
+  Donut(unsigned int inp_len, unsigned char *inp) {
+    init(inp_len, inp);
+  }
+  Donut(std::pair<unsigned char *, unsigned int> p) {
+    init(p.second, p.first);
+  }
   int search(bool recurse) {
     deque<Search> search;
     auto visited = new map<VKey,bool>();
-    search.push_back(Search{start, 0, 0, ""});
+    search.push_back(Search{start, 0, 0});
     while (search.size() > 0) {
       auto cur = search.front();
       search.pop_front();
@@ -138,9 +148,9 @@ public:
       }
       (*visited)[vkey] = true;
       // printf("Trying %d,%d @ %d (%d '%s')\n",
-      //        cur.pos.x, cur.pos.y, cur.level, cur.steps, cur.path.c_str());
+      //        cur.pos.x, cur.pos.y, cur.level, cur.steps);
       if (cur.level == 0 && cur.pos.x == exit.x && cur.pos.y == exit.y) {
-        // printf("  escaped %s\n", cur.path.c_str());
+        // printf("  escaped\n");
         return cur.steps;
       }
       auto elt = p->find(cur.pos);
@@ -153,13 +163,11 @@ public:
         // printf("  found %s to %d,%d, level %d\n",
         //        portal.name.c_str(), portal.exit.x, portal.exit.y, nlevel);
         if (nlevel >= 0) {
-          string npath =
-            (cur.path.size() > 0 ? (cur.path + " ") : "") + portal.name;
-          search.push_back(Search{portal.exit, cur.steps+1, nlevel, npath});
+          search.push_back(Search{portal.exit, cur.steps+1, nlevel});
         }
       }
       for (auto np : cur.pos.neighbours()) {
-        search.push_back(Search{np, cur.steps+1, cur.level, cur.path});
+        search.push_back(Search{np, cur.steps+1, cur.level});
       }
     }
     delete visited;
@@ -194,15 +202,15 @@ public:
 };
 
 void tests() {
-  AIEQ((new Donut(readlines("test1a.txt")))->part1(), 23);
-  AIEQ((new Donut(readlines("test1b.txt")))->part1(), 58);
-  AIEQ((new Donut(readlines("input.txt")))->part1(), 482);
-  AIEQ((new Donut(readlines("test1a.txt")))->part2(), 26);
-  AIEQ((new Donut(readlines("test2a.txt")))->part2(), 396);
+  AIEQ((new Donut(getfile("test1a.txt")))->part1(), 23);
+  AIEQ((new Donut(getfile("test1b.txt")))->part1(), 58);
+  AIEQ((new Donut(getfile("input.txt")))->part1(), 482);
+  AIEQ((new Donut(getfile("test1a.txt")))->part2(), 26);
+  AIEQ((new Donut(getfile("test2a.txt")))->part2(), 396);
 }
 
 void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
-  auto donut = new Donut(lines(inp_len, inp));
+  auto donut = new Donut(inp_len, inp);
   // cout << donut << "\n";
   auto p1 = donut->part1();
   auto p2 = donut->part2();

@@ -46,12 +46,12 @@ bool life(int n, int x, int y) {
   return c == 1 || (!bug(n, x, y) && c == 2);
 }
 
-int part1(const vector<string> &lines) {
+int part1(unsigned char* inp) {
   int i = 1;
   int n = 0;
   for (int y = 0; y < 5; y++) {
     for (int x = 0; x < 5; x++) {
-      if (lines[y][x] == '#') {
+      if (inp[y*6+x] == '#') {
         n += i;
       }
       i <<= 1;
@@ -194,12 +194,12 @@ int count(const Map &m) {
   return c;
 }
 
-int part2(const vector<string> &lines, int min) {
+int part2(unsigned char* inp, int min) {
   int i = 1;
   int n = 0;
   for (int y = 0; y < 5; y++) {
     for (int x = 0; x < 5; x++) {
-      if (lines[y][x] == '#') {
+      if (inp[y*6+x] == '#') {
         n += i;
       }
       i <<= 1;
@@ -238,18 +238,17 @@ int part2(const vector<string> &lines, int min) {
 }
 
 void tests() {
-  AIEQ(part1(readlines("test.txt")), 2129920);
-  AIEQ(part1(readlines("input.txt")), 6520863);
-  AIEQ(part2(readlines("test.txt"), 1), 27);
-  AIEQ(part2(readlines("test.txt"), 10), 99);
-  AIEQ(part2(readlines("input.txt"), 1), 21);
-  AIEQ(part2(readlines("input.txt"), 200), 1970);
+  AIEQ(part1(getfile("test.txt").first), 2129920);
+  AIEQ(part1(getfile("input.txt").first), 6520863);
+  AIEQ(part2(getfile("test.txt").first, 1), 27);
+  AIEQ(part2(getfile("test.txt").first, 10), 99);
+  AIEQ(part2(getfile("input.txt").first, 1), 21);
+  AIEQ(part2(getfile("input.txt").first, 200), 1970);
 }
 
 void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
-  vector<string> ln = lines(inp_len, inp);
-  auto p1 = part1(ln);
-  auto p2 = part2(ln, 200);
+  auto p1 = part1(inp);
+  auto p2 = part2(inp, 200);
   if (!is_bench) {
     cout << "Part 1: " << p1 << "\n";
     cout << "Part 2: " << p2 << "\n";

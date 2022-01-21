@@ -12,7 +12,19 @@ using namespace std;
 #include <input.hpp>
 #include <assert.hpp>
 
-typedef string Chemical;
+typedef unsigned int Chemical;
+
+Chemical scanChemical(unsigned char *s, size_t* i, size_t len) {
+  Chemical n = 0;
+  for (;*i < len; (*i)++) {
+    if ('A' <= s[*i] && s[*i] <= 'Z') {
+      n = 27*n + (Chemical)(s[*i]-'@');
+    } else {
+      break;
+    }
+  }
+  return n;
+}
 
 struct Input {
   Chemical ch;
@@ -28,9 +40,10 @@ typedef map<Chemical, long> Surplus;
 typedef map<Chemical, long> Total;
 typedef map<Chemical, Reaction> Reactions;
 
-auto quantity_chemical(string s) {
-  auto p = s.find(" ");
-  return make_pair(s.substr(p+1), stol(s.substr(0,p)));
+auto scanQuantityChemical(unsigned char *s, size_t* i, size_t len) {
+  long n = (long)scanUint(s, i, len);
+  (*i)++;
+  return Input{scanChemical(s, i, len), n};
 }
 
 class Factory {
@@ -38,28 +51,33 @@ class Factory {
   Surplus* surplus;
   Total* total;
 public:
-  Factory(const vector<string> &lines) {
+  Factory(unsigned char *inp, size_t len) {
     reactions = new Reactions();
     surplus = new Surplus();
     total = new Total();
-    for (auto line : lines) {
-      auto p = line.find(" => ");
-      auto inStr = line.substr(0,p);
-      auto outpair = quantity_chemical(line.substr(p+4));
-      string ch = outpair.first;
-      long num = outpair.second;
-      size_t cur, prev = 0;
+    size_t i = 0;
+    while (i < len) {
       vector<Input> inputs;
-      cur = inStr.find(", ");
-      while (cur != string::npos) {
-        auto inpair = quantity_chemical(inStr.substr(prev, cur-prev));
-        inputs.push_back(Input{inpair.first, inpair.second});
-        prev = cur + 2;
-        cur = inStr.find(", ", prev);
+      while ('0' <= inp[i] && inp[i] <= '9') {
+        auto qc = scanQuantityChemical(inp, &i, len);
+        inputs.push_back(qc);
+        if (inp[i] == ' ') {
+          break;
+        }
+        i += 2;
       }
-      auto inpair = quantity_chemical(inStr.substr(prev, cur-prev));
-      inputs.push_back(Input{inpair.first, inpair.second});
-      reactions->insert(make_pair(ch, Reaction{num, inputs}));
+      if (inp[i+1] != '=') {
+        printf("unexpected input at ' =>' got '%c%c'\n", inp[i], inp[i+1]);
+        exit(1);
+      }
+      i += 4;
+      auto out = scanQuantityChemical(inp, &i, len);
+      if (inp[i] != '\n') {
+        printf("unexpected input at EOL got '%c'\n", inp[i]);
+        exit(1);
+      }
+      i++;
+      reactions->insert(make_pair(out.ch, Reaction{out.num, inputs}));
     }
   }
   void reset() {
@@ -79,8 +97,11 @@ public:
     (*this->total)[ch] += num;
     return (*this->total)[ch];
   }
+
+  const long ORE = (('O'-'@')*27 + ('R'-'@'))*27+('E'-'@');
+  const long FUEL = ((('F'-'@')*27 + ('U'-'@'))*27+('E'-'@'))*27 + ('L'-'@');
   void requirements(Chemical ch, long needed) {
-    if (ch == "ORE") {
+    if (ch == ORE) {
       return;
     }
     auto r = (*this->reactions)[ch];
@@ -102,8 +123,8 @@ public:
     }
   }
   long ore_for(long num) {
-    requirements("FUEL", num);
-    return (*this->total)["ORE"];
+    requirements(FUEL, num);
+    return (*this->total)[ORE];
   }
   long part1() {
     return this->ore_for(1);
@@ -133,20 +154,25 @@ public:
 };
 
 void tests() {
-  AIEQ((new Factory(readlines("test1a.txt")))->part1(), 31);
-  AIEQ((new Factory(readlines("test1b.txt")))->part1(), 165);
-  AIEQ((new Factory(readlines("test1c.txt")))->part1(), 13312);
-  AIEQ((new Factory(readlines("test1d.txt")))->part1(), 180697);
-  AIEQ((new Factory(readlines("test1e.txt")))->part1(), 2210736);
-  AIEQ((new Factory(readlines("test1a.txt")))->part2(), 34482758620);
-  AIEQ((new Factory(readlines("test1b.txt")))->part2(), 6323777403);
-  AIEQ((new Factory(readlines("test1c.txt")))->part2(), 82892753);
-  AIEQ((new Factory(readlines("test1d.txt")))->part2(), 5586022);
-  AIEQ((new Factory(readlines("test1e.txt")))->part2(), 460664);
+  auto test1a = getfile("test1a.txt");
+  auto test1b = getfile("test1b.txt");
+  auto test1c = getfile("test1c.txt");
+  auto test1d = getfile("test1d.txt");
+  auto test1e = getfile("test1e.txt");
+  ALEQ((new Factory(test1a.first, test1a.second))->part1(), 31);
+  ALEQ((new Factory(test1b.first, test1b.second))->part1(), 165);
+  ALEQ((new Factory(test1c.first, test1c.second))->part1(), 13312);
+  ALEQ((new Factory(test1d.first, test1d.second))->part1(), 180697);
+  ALEQ((new Factory(test1e.first, test1e.second))->part1(), 2210736);
+  ALEQ((new Factory(test1a.first, test1a.second))->part2(), 34482758620);
+  ALEQ((new Factory(test1b.first, test1b.second))->part2(), 6323777403);
+  ALEQ((new Factory(test1c.first, test1c.second))->part2(), 82892753);
+  ALEQ((new Factory(test1d.first, test1d.second))->part2(), 5586022);
+  ALEQ((new Factory(test1e.first, test1e.second))->part2(), 460664);
 }
 
 void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
-  auto f = new Factory(lines(inp_len, inp));
+  auto f = new Factory(inp, inp_len);
   auto p1 = f->part1();
   auto p2 = f->part2();
   if (!is_bench) {

@@ -8,30 +8,30 @@ The following are the benchmarks for the Go implementations of solutions for eac
  ---:  | ---: 
 Day 01 | 2.48µs
 Day 02 | 1.18ms
-Day 03 | -
+Day 03 | 50.1ms
 Day 04 | 4.02ms
 Day 05 | 60µs
 Day 06 | 5.53µs
 Day 07 | 8.88ms
 Day 08 | 42.5µs
 Day 09 | 106ms
-Day 10 | -
+Day 10 | 39ms
 Day 11 | 26.8ms
 Day 12 | 531ms
 Day 13 | 205ms
-Day 14 | -
+Day 14 | 8.97ms
 Day 15 | 46.4ms
 Day 16 | 284ms
 Day 17 | 32ms
 Day 18 | **🔴 24.9s**
 Day 19 | 696ms
-Day 20 | -
+Day 20 | 501ms
 Day 21 | 162ms
 Day 22 | 4.55µs
 Day 23 | 97ms
-Day 24 | -
+Day 24 | 64.3ms
 Day 25 | 1.54s
-*Total* | *28.7s*
+*Total* | *29.3s*
 
 
 ## Crystal
@@ -322,30 +322,30 @@ Day 25 | 21ms
  ---:  | ---:  | ---:  | ---:  | ---: 
 Day 01 | 2.48µs | 23.5µs | 11.1µs | 15.7µs
 Day 02 | 1.18ms | 11.4ms | 5.14ms | 9.3ms
-Day 03 | - | 45ms | 22.2ms | 31.9ms
+Day 03 | 50.1ms | 45ms | 22.2ms | 31.9ms
 Day 04 | 4.02ms | 72.6ms | 3.09ms | 86.2ms
 Day 05 | 60µs | 123µs | 58.9µs | 87.5µs
 Day 06 | 5.53µs | 8.66ms | 38.2ms | 91.4ms
 Day 07 | 8.88ms | 16.2ms | 4.65ms | 7.67ms
 Day 08 | 42.5µs | 485µs | 361µs | 29.1µs
 Day 09 | 106ms | 119ms | 15.6ms | 13.8ms
-Day 10 | - | 19.5ms | 35.3ms | 29.7ms
+Day 10 | 39ms | 19.5ms | 35.3ms | 29.7ms
 Day 11 | 26.8ms | 30.1ms | 8.19ms | 5.01ms
 Day 12 | 531ms | 308ms | 19.5ms | 435ms
 Day 13 | 205ms | 267ms | 41.5ms | 30.6ms
-Day 14 | - | 16ms | 14.1ms | 7.99ms
+Day 14 | 8.97ms | 16ms | 14.1ms | 7.99ms
 Day 15 | 46.4ms | 59.5ms | 22.6ms | 30.2ms
 Day 16 | 284ms | 694ms | **🔴 680ms** | 689ms
 Day 17 | 32ms | 25.2ms | 5.97ms | 4.1ms
 Day 18 | **🔴 24.9s** | **🔴 21.1s** | **🔴 865ms** | **🔴 1m8s**
 Day 19 | 696ms | 553ms | 180ms | 115ms
-Day 20 | - | 425ms | 77.1ms | 867ms
+Day 20 | 501ms | 425ms | 77.1ms | 867ms
 Day 21 | 162ms | 132ms | 25.7ms | 20.8ms
 Day 22 | 4.55µs | 190µs | 474µs | 48.1µs
 Day 23 | 97ms | 81.3ms | 18.6ms | 15.7ms
-Day 24 | - | 97.5ms | 489ms | 51.7ms
+Day 24 | 64.3ms | 97.5ms | 489ms | 51.7ms
 Day 25 | 1.54s | 2.52s | 293ms | 202ms
-*Total* | *28.7s* | *26.6s* | *2.87s* | *1m10.8s*
+*Total* | *29.3s* | *26.6s* | *2.87s* | *1m10.8s*
 
 ![Graph for year 2019](y2019.svg)
 

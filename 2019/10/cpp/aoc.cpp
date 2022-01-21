@@ -65,23 +65,24 @@ class Game {
   Asteroid best;
   BlockersCache* blockers;
 public:
-  Game(const vector<string> &inp) {
+  Game(unsigned char* inp, size_t len) {
     asteroids = new Asteroids();
     blockers = new BlockersCache();
     int y = 0;
-    for (auto line : inp) {
-      int x = 0;
-      for (auto c : line) {
-        if (c == '#') {
-          asteroids->insert(make_pair(Asteroid{x, y}, true));
-        }
-        if (c == 'X') {
-          asteroids->insert(make_pair(Asteroid{x, y}, true));
-          best = Asteroid{x, y};
-        }
-        x += 1;
+    int x = 0;
+   LOOP:
+    for (auto i = 0; i < len; i++) {
+      if (inp[i] == '#') {
+        asteroids->insert(make_pair(Asteroid{x, y}, true));
+      } else if (inp[i] == 'X') {
+        asteroids->insert(make_pair(Asteroid{x, y}, true));
+        best = Asteroid{x, y};
+      } else if (inp[i] == '\n') {
+        y++;
+        x = 0;
+        continue;
       }
-      y += 1;
+      x += 1;
     }
   }
   auto num_blockers(Asteroid a1, Asteroid a2) {
@@ -182,7 +183,7 @@ void tests() {
 }
 
 void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
-  auto g = new Game(lines(inp_len, inp));
+  auto g = new Game(inp, inp_len);
   auto p1 = g->part1();
   auto p2 = g->part2(200);
   if (!is_bench) {

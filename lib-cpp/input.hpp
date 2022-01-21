@@ -14,18 +14,22 @@ bool is_test() {
   return (std::getenv("AoC_TEST") != NULL);
 }
 
+std::pair<unsigned char *, unsigned int> getfile(const char *name) {
+  struct stat st;
+  stat(name, &st);
+  size_t file_size = st.st_size;
+
+  auto f = open(name, O_RDONLY);
+  unsigned char* file_buf = (unsigned char*)mmap(0, file_size, PROT_READ, MAP_FILE|MAP_PRIVATE, f, 0);
+  // leaked! munmap(file_buf, file_size);
+  return std::make_pair(file_buf, (unsigned int)file_size);
+}
+
 std::pair<unsigned char *, unsigned int> input(int argc, char **argv) {
   if (argc < 2) {
     return std::make_pair(input_txt, input_txt_len);
   }
-  struct stat st;
-  stat(argv[1], &st);
-  size_t file_size = st.st_size;
-
-  auto f = open(argv[1], O_RDONLY);
-  unsigned char* file_buf = (unsigned char*)mmap(0, file_size, PROT_READ, MAP_FILE|MAP_PRIVATE, f, 0);
-  // leaked! munmap(file_buf, file_size);
-  return std::make_pair(file_buf, (unsigned int)file_size);
+  return getfile(argv[1]);
 }
 
 void benchme(int argc, char **argv, unsigned int input_txt_len, unsigned char* input_txt,
@@ -152,6 +156,19 @@ vector<long> longs(unsigned int inp_len, unsigned char *inp) {
      }
   }
   return ints;
+}
+
+
+unsigned int scanUint(unsigned char *s, size_t* i, size_t len) {
+  unsigned int n = 0;
+  for (;*i < len; (*i)++) {
+    if ('0' <= s[*i] && s[*i] <= '9') {
+      n = 10*n + (unsigned int)(s[*i]-'0');
+    } else {
+      break;
+    }
+  }
+  return n;
 }
 
 #include <fstream>
