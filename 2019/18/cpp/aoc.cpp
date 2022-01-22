@@ -2,11 +2,13 @@
 #include <iostream>
 #include <vector>
 #include <deque>
+#include <queue>
 #include <map>
 #include <algorithm>
 #include <limits>
 #include <assert.h>
 #include <sstream>
+#include <string.h>
 
 using namespace std;
 
@@ -33,12 +35,24 @@ struct Search1 {
   int key_set;
 };
 
+struct CompareSteps1 {
+    bool operator()(Search1 const& l, Search1 const& r) {
+        return l.steps > r.steps;
+    }
+};
+
 struct Search2 {
   vector<int> key;
   int steps;
   int num_keys;
   string path;
   int key_set;
+};
+
+struct CompareSteps2 {
+    bool operator()(Search2 const& l, Search2 const& r) {
+        return l.steps > r.steps;
+    }
 };
 
 inline int key_int(char ch) {
@@ -77,49 +91,57 @@ string visitkey2(Search2 cur) {
 }
 
 class Maze {
-  vector<string> m;
-  BoundingBox *bb;
+  unsigned char* m;
+  int w, h;
   Keys *keys;
   Point pos;
-public:
-
-  Maze(const vector<string> &lines) {
-    m = lines;
+private:
+  void init(unsigned int inp_len, unsigned char *inp) {
+    m = inp;
     keys = new Keys();
-    bb = new BoundingBox();
+    w = 0;
+    while (inp[w] != '\n' && w < inp_len) { w++; }
+    h = inp_len/(w+1);
+    w++; // need to account for newlines
     pos = Point{-1,-1};
-    bb->Add(Point{0,0});
-    bb->Add(Point{((int)lines[0].size())-1, ((int)lines.size())-1});
-    for (auto y = bb->MinY(); y <= bb->MaxY(); y++) {
-      for (auto x = bb->MinX(); x <= bb->MaxX(); x++) {
-        auto ch = lines[y][x];
+    for (auto y = 0; y < h; y++) {
+      for (auto x = 0; x < (w-1); x++) {
+        auto ch = inp[y*w+x];
         if (ch == '@') {
           pos = Point{x,y};
-          m[y][x] = '.';
+          m[y*w+x] = '.';
         } else if ('a' <= ch && ch <= 'z') {
           keys->insert(make_pair(key_int(ch), Point{x,y}));
         }
       }
     }
   }
-
+public:
+  Maze(unsigned int inp_len, unsigned char *inp) {
+    init(inp_len, inp);
+  }
+  Maze(std::pair<unsigned char *, unsigned int> p) {
+    unsigned char* inp = (unsigned char*)malloc(p.second);
+    memcpy(inp, p.first, p.second);
+    init(p.second, inp);
+  }
   auto optimaze() {
     int changes = 1;
     while (changes > 0) {
       changes = 0;
-      for (auto y = bb->MinY(); y <= bb->MaxY(); y++) {
-        for (auto x = bb->MinX(); x <= bb->MaxX(); x++) {
-          auto ch = m[y][x];
+      for (auto y = 0; y < h; y++) {
+        for (auto x = 0; x < (w-1); x++) {
+          auto ch = m[y*w+x];
           if (ch != '.' || (pos.x == x && pos.y == y)) {
             continue;
           }
-          int w = 0;
-          if (m[y][x-1] == '#') { w++; }
-          if (m[y][x+1] == '#') { w++; }
-          if (m[y-1][x] == '#') { w++; }
-          if (m[y+1][x] == '#') { w++; }
-          if (w > 2) {
-            m[y][x] = '#';
+          int wall = 0;
+          if (m[y*w+x-1] == '#') { wall++; }
+          if (m[y*w+x+1] == '#') { wall++; }
+          if (m[(y-1)*w+x] == '#') { wall++; }
+          if (m[(y+1)*w+x] == '#') { wall++; }
+          if (wall > 2) {
+            m[y*w+x] = '#';
             changes++;
           }
         }
@@ -128,12 +150,12 @@ public:
   }
   auto pp() {
     std::stringstream ss;
-    for (auto y = bb->MinY(); y <= bb->MaxY(); y++) {
-      for (auto x = bb->MinX(); x <= bb->MaxX(); x++) {
+    for (auto y = 0; y < h; y++) {
+      for (auto x = 0; x < (w-1); x++) {
         if (pos.x == x && pos.y == y) {
           ss << "@";
         } else {
-          ss << m[y][x];
+          ss << m[y*w+x];
         }
       }
       ss << "\n";
@@ -141,21 +163,22 @@ public:
     return ss.str();
   }
   auto find_paths(Point p, char kch) {
-    auto visited = new map<Point,bool>;
+    bool visited[81*81] = { 0 };
     auto res = new map<int,Search>;
     deque<Search> search;
     search.push_back(Search{p, 0, 0});
     while (search.size() > 0) {
       auto cur = search.front();
       search.pop_front();
-      auto ch = m[cur.pos.y][cur.pos.x];
+      auto cur_i = cur.pos.y*w+cur.pos.x;
+      auto ch = m[cur_i];
       if (ch == '#') {
         continue;
       }
-      if (visited->find(cur.pos) != visited->end()) {
+      if (visited[cur_i]) {
         continue;
       }
-      (*visited)[cur.pos] = true;
+      visited[cur_i] = true;
       if ('a' <= ch && ch <= 'z' and ch != kch) {
         res->insert(make_pair(key_int(ch),
                               Search{cur.pos, cur.steps, cur.needed}));
@@ -171,7 +194,6 @@ public:
       search.push_back(Search{
           Point{cur.pos.x, cur.pos.y+1}, cur.steps + 1, cur.needed});
     }
-    delete visited;
     return res;
   }
   int part1() {
@@ -182,19 +204,15 @@ public:
                               find_paths(k.second, int_key(k.first))));
     }
     int expected_keys = keys->size();
-    deque<Search1> search;
-    search.push_back(Search1{-1, 0, expected_keys, "", 0});
+    std::priority_queue<Search1, vector<Search1>, CompareSteps1> search;
+    search.push(Search1{-1, 0, expected_keys, "", 0});
     auto visited = new map<string,int>;
-    int min = numeric_limits<int>::max();
-    while (search.size() > 0) {
-      auto cur = search.front();
-      search.pop_front();
+    while (!search.empty()) {
+      auto cur = search.top();
+      search.pop();
       if (cur.num_keys == 0) {
         //printf("Found: %s %d\n", cur.path.c_str(), cur.steps);
-        if (cur.steps < min) {
-          min = cur.steps;
-        }
-        continue;
+        return cur.steps;
       }
       string vkey = visitkey(cur);
       auto elt = visited->find(vkey);
@@ -217,20 +235,20 @@ public:
         }
         int new_steps = cur.steps + p.second.steps;
         //printf("  adding %d (%c)\n", ink, int_key(ink));
-        search.push_back(Search1{
+        search.push(Search1{
             ink, new_steps, cur.num_keys-1,
               cur.path + int_key(ink), cur.key_set | ink});
       }
     }
     delete visited;
     delete paths;
-    return min;
+    return 0;
   }
   int part2() {
-    m[pos.y-1][pos.x] = '#';
-    m[pos.y][pos.x-1] = '#';
-    m[pos.y][pos.x+1] = '#';
-    m[pos.y+1][pos.x] = '#';
+    m[(pos.y-1)*w+pos.x] = '#';
+    m[pos.y*w+pos.x-1] = '#';
+    m[pos.y*w+pos.x+1] = '#';
+    m[(pos.y+1)*w+pos.x] = '#';
     vector<Paths> paths;
     for (auto off : {Point{-1,-1},Point{1,-1},Point{-1,1},Point{1,1}}) {
       auto start = Point{pos.x+off.x, pos.y+off.y};
@@ -243,19 +261,15 @@ public:
       paths.push_back(*p);
     }
     int expected_keys = keys->size();
-    deque<Search2> search;
-    search.push_back(Search2{{-1,-1,-1,-1}, 0, expected_keys, "", 0});
+    std::priority_queue<Search2, vector<Search2>, CompareSteps2> search;
+    search.push(Search2{{-1,-1,-1,-1}, 0, expected_keys, "", 0});
     auto visited = new map<string,int>;
-    int min = numeric_limits<int>::max();
-    while (search.size() > 0) {
-      auto cur = search.front();
-      search.pop_front();
+    while (!search.empty()) {
+      auto cur = search.top();
+      search.pop();
       if (cur.num_keys == 0) {
         //printf("Found: %s %d\n", cur.path.c_str(), cur.steps);
-        if (cur.steps < min) {
-          min = cur.steps;
-        }
-        continue;
+        return cur.steps;
       }
       string vkey = visitkey2(cur);
       auto elt = visited->find(vkey);
@@ -281,31 +295,31 @@ public:
           //printf("  adding %d (%c)\n", ink, int_key(ink));
           vector<int> new_key = cur.key;
           new_key[i] = ink;
-          search.push_back(Search2{
+          search.push(Search2{
               new_key, new_steps, cur.num_keys-1,
                 cur.path + int_key(ink), cur.key_set | ink});
         }
       }
     }
     delete visited;
-    return min;
+    return 0;
   }
 };
 
 void tests() {
-  AIEQ((new Maze(readlines("test1a.txt")))->part1(), 8);
-  AIEQ((new Maze(readlines("test1b.txt")))->part1(), 86);
-  AIEQ((new Maze(readlines("test1c.txt")))->part1(), 132);
-  AIEQ((new Maze(readlines("test1d.txt")))->part1(), 136);
-  AIEQ((new Maze(readlines("test1e.txt")))->part1(), 81);
-  AIEQ((new Maze(readlines("test2a.txt")))->part2(), 8);
-  AIEQ((new Maze(readlines("test2b.txt")))->part2(), 24);
-  AIEQ((new Maze(readlines("test2c.txt")))->part2(), 32);
-  AIEQ((new Maze(readlines("test2d.txt")))->part2(), 72);
+  AIEQ((new Maze(getfile("test1a.txt")))->part1(), 8);
+  AIEQ((new Maze(getfile("test1b.txt")))->part1(), 86);
+  AIEQ((new Maze(getfile("test1c.txt")))->part1(), 132);
+  AIEQ((new Maze(getfile("test1d.txt")))->part1(), 136);
+  AIEQ((new Maze(getfile("test1e.txt")))->part1(), 81);
+  AIEQ((new Maze(getfile("test2a.txt")))->part2(), 8);
+  AIEQ((new Maze(getfile("test2b.txt")))->part2(), 24);
+  AIEQ((new Maze(getfile("test2c.txt")))->part2(), 32);
+  AIEQ((new Maze(getfile("test2d.txt")))->part2(), 72);
 }
 
 void run(unsigned int inp_len, unsigned char* inp, bool is_bench) {
-  auto maze = new Maze(lines(inp_len, inp));
+  auto maze = new Maze(inp_len, inp);
   maze->optimaze();
   //cout << maze->pp() << "\n";
   auto p1 = maze->part1();
