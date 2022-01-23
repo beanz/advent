@@ -113,6 +113,32 @@ pub fn BoundedInts(comptime T: type, b: anytype, inp: anytype) anyerror![]T {
     return b.slice();
 }
 
+pub fn BoundedSignedInts(comptime T: type, b: anytype, inp: anytype) anyerror![]T {
+    var n: T = 0;
+    var m: T = 1;
+    var num = false;
+    for (inp) |ch| {
+        if (ch == '-') {
+            m = -1;
+            num = true;
+        } else if ('0' <= ch and ch <= '9') {
+            num = true;
+            n = n * 10 + @as(T, ch - '0');
+        } else if (num) {
+            try b.append(n * m);
+            n = 0;
+            m = 1;
+            num = false;
+        } else {
+            m = 1;
+        }
+    }
+    if (num) {
+        try b.append(n * m);
+    }
+    return b.slice();
+}
+
 pub fn splitToOwnedSlice(alloc: std.mem.Allocator, inp: []const u8, sep: []const u8) ![][]const u8 {
     var bits = std.ArrayList([]const u8).init(alloc);
     var it = std.mem.split(u8, inp, sep);
