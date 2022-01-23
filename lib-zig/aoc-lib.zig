@@ -283,3 +283,96 @@ pub fn benchme(inp: []const u8, call: fn (in: []const u8, bench: bool) anyerror!
         try print("bench {} iterations in {}ns: {}ns\n", .{ it, elapsed, @divTrunc(elapsed, it) });
     }
 }
+
+pub const ByteMap = struct {
+    m: []const u8,
+    w: usize,
+    h: usize,
+    alloc: std.mem.Allocator,
+
+    pub fn init(alloc: std.mem.Allocator, inp: []const u8) !*ByteMap {
+        var bm = try alloc.create(ByteMap);
+        bm.m = inp;
+        bm.alloc = alloc;
+        var w: usize = 0;
+        while (w < inp.len and inp[w] != '\n') : (w += 1) {}
+        bm.w = w + 1;
+        bm.h = inp.len / bm.w;
+        // try print("{} x {} = {}\n", .{ bm.w, bm.h, inp.len });
+        return bm;
+    }
+    pub fn deinit(self: *ByteMap) void {
+        self.alloc.destroy(self);
+    }
+    pub fn width(self: *ByteMap) usize {
+        return self.w - 1;
+    }
+    pub fn height(self: *ByteMap) usize {
+        return self.h;
+    }
+    pub fn size(self: *ByteMap) usize {
+        return (self.w - 1) * self.h;
+    }
+    pub fn indexToXY(self: *ByteMap, i: usize) [2]usize {
+        return [2]usize{ i % self.w, i / self.w };
+    }
+    pub fn xyToIndex(self: *ByteMap, x: usize, y: usize) usize {
+        return x + y * self.w;
+    }
+    pub fn contains(self: *ByteMap, i: usize) bool {
+        return i >= 0 and (i % self.w) < (self.w - 1) and i < self.w * self.h;
+    }
+    pub fn containsXY(self: *ByteMap, x: usize, y: usize) bool {
+        return x < self.w - 1 and y < self.h;
+    }
+    pub fn get(self: *ByteMap, i: usize) u8 {
+        return self.m[i];
+    }
+    pub fn getXY(self: *ByteMap, x: usize, y: usize) u8 {
+        return self.m[x + y * self.w];
+    }
+    pub fn set(self: *ByteMap, i: usize, v: u8) void {
+        self.m[i] = v;
+    }
+    pub fn setXY(self: *ByteMap, x: usize, y: usize, v: u8) void {
+        self.m[x + y * self.w] = v;
+    }
+    pub fn add(self: *ByteMap, i: usize, v: u8) void {
+        self.m[i] += v;
+    }
+    pub fn addXY(self: *ByteMap, x: usize, y: usize, v: u8) void {
+        self.m[x + y * self.w] += v;
+    }
+    pub fn visit(self: *ByteMap, call: fn (i: usize, v: u8) [2]u8) usize {
+        var changes: usize = 0;
+        var y: usize = 0;
+        while (y < self.h) : (y += 1) {
+            var x: usize = 0;
+            while (x < self.h - 1) : (x += 1) {
+                var i = x + y * self.w;
+                var res = call(i, self.m[i]);
+                if (res[1] != 0) {
+                    self.m[i] = res[0];
+                }
+            }
+        }
+        return changes;
+    }
+};
+
+test "bytemap" {
+    var bm = try ByteMap.init(talloc, "2199943210\n3987894921\n9856789892\n8767896789\n9899965678\n");
+    defer bm.deinit();
+    try assertEq(@as(usize, 10), bm.width());
+    try assertEq(@as(usize, 5), bm.height());
+    try assertEq(true, bm.containsXY(0, 0));
+    try assertEq(true, bm.contains(bm.xyToIndex(0, 0)));
+    try assertEq(true, bm.containsXY(9, 0));
+    try assertEq(true, bm.contains(bm.xyToIndex(9, 0)));
+    try assertEq(false, bm.containsXY(10, 0));
+    try assertEq(false, bm.contains(bm.xyToIndex(10, 0)));
+    try assertEq(true, bm.containsXY(0, 4));
+    try assertEq(true, bm.contains(bm.xyToIndex(0, 4)));
+    try assertEq(false, bm.containsXY(0, 5));
+    try assertEq(false, bm.contains(bm.xyToIndex(0, 5)));
+}
