@@ -89,8 +89,10 @@ test "parts" {
     try aoc.assertEq(@as(usize, 2914), r[1]);
 }
 
+var buf: [16 * 1024 * 1024]u8 = undefined;
 fn day15(inp: []const u8, bench: bool) anyerror!void {
-    var p = try parts(aoc.halloc, inp);
+    var alloc = std.heap.FixedBufferAllocator.init(&buf);
+    var p = try parts(alloc.allocator(), inp);
     if (!bench) {
         try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }
