@@ -47,6 +47,11 @@ ALL += aoc-cpp
 CLEAN += aoc-cpp
 HYPERFINE += aoc-cpp-rel
 endif
+ifneq (,$(wildcard aoc.hs))
+ALL += aoc-hs
+CLEAN += aoc-hs aoc-hs-rel
+HYPERFINE += aoc-hs-rel
+endif
 
 # TODO: fix rust builds
 RS_SRC=../../aoc-rust/src/bin/aoc-$(YEAR)-$(DAY).rs
@@ -97,6 +102,12 @@ aoc-cr: aoc.cr ../../lib-cr/*.cr
 
 aoc-cr-rel: aoc.cr
 	CRYSTAL_PATH=$(CR_LIB) $(CR) build --release --debug -o $@ $<
+
+aoc-hs: aoc.hs
+	ghc -o aoc-hs aoc.hs
+
+aoc-hs-rel: aoc.hs
+	ghc -O3 -o aoc-hs aoc.hs
 
 aoc-nim: aoc.nim ../../lib-nim/*.nim
 	$(NIM) c --path:../../lib-nim $<
