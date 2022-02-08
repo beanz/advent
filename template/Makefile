@@ -104,10 +104,10 @@ aoc-cr-rel: aoc.cr
 	CRYSTAL_PATH=$(CR_LIB) $(CR) build --release --debug -o $@ $<
 
 aoc-hs: aoc.hs
-	ghc -o aoc-hs aoc.hs
+	ghc -i ../../lib-hs/Utils.hs -o $@ $<
 
 aoc-hs-rel: aoc.hs
-	ghc -O3 -o aoc-hs aoc.hs
+	ghc -i ../../lib-hs/Utils.hs -O3 -o $@ $<
 
 aoc-nim: aoc.nim ../../lib-nim/*.nim
 	$(NIM) c --path:../../lib-nim $<

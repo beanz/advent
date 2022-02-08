@@ -185,7 +185,7 @@ func makeTable(benchmarks benchmarkData) string {
 		sb.WriteByte('\n')
 		sb.WriteByte('\n')
 
-        maxY = math.Min(maxY, 2000000000)
+		maxY = math.Min(maxY, 2000000000)
 		dayLabel := func(value float64) string {
 			return strconv.FormatFloat(value, 'f', 0, 64)
 		}
@@ -222,11 +222,11 @@ func makeTable(benchmarks benchmarkData) string {
 			panic(err)
 		}
 		diagram.Render(svg)
-        sb.WriteString("![Graph for year ")
-        sb.WriteString(year)
-        sb.WriteString("](y")
-        sb.WriteString(year)
-        sb.WriteString(".svg)\n")
+		sb.WriteString("![Graph for year ")
+		sb.WriteString(year)
+		sb.WriteString("](y")
+		sb.WriteString(year)
+		sb.WriteString(".svg)\n")
 	}
 
 	return sb.String()
@@ -241,6 +241,7 @@ func loadBenchmarks(dir string) (benchmarkData, error) {
 	language := map[string]string{
 		"go":  "Golang",
 		"cr":  "Crystal",
+		"hs":  "Haskell",
 		"zig": "Zig",
 		"cpp": "C++",
 		"nim": "Nim",
@@ -294,9 +295,16 @@ func (bm benchmarkData) readResult(file string, lang, year, day string) error {
 	multiplier := float64(1)
 	switch {
 	case len(result) > 3 && result[len(result)-2:] == "ns":
-		// rust result
+		// rust or haskell result
 		s := strings.Split(result, ": ")
-		result = s[1][:len(s[1])-2]
+		i := 0
+		if len(s) > 1 {
+			i = 1
+		}
+		result = s[i][:len(s[i])-2]
+	case len(result) > 3 && result[len(result)-2:] == "ms":
+		result = result[:len(result)-2]
+		multiplier = 1000000
 	case len(result) > 14 && result[:13] == "BenchmarkMain":
 		// go result
 		result = strings.Split(result[:len(result)-6], "\t")[2]

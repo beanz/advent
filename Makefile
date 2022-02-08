@@ -35,8 +35,15 @@ CR_SRC=$(sort $(wildcard ????/??/aoc.cr))
 CR_BIN=$(subst /aoc.cr,/aoc-cr,${CR_SRC})
 CR_LOG=$(subst /aoc.cr,/aoc-cr.log,${CR_SRC})
 CR_ERR=$(subst /aoc.cr,/aoc-cr.err,${CR_SRC})
-CR_REL=$(subst /aoc.cr,/aoc-cr-rel,${ZIG_SRC})
-CR_BENCH=$(subst /aoc.cr,/aoc-cr.ns,${ZIG_SRC})
+CR_REL=$(subst /aoc.cr,/aoc-cr-rel,${CR_SRC})
+CR_BENCH=$(subst /aoc.cr,/aoc-cr.ns,${CR_SRC})
+
+HS_SRC=$(sort $(wildcard ????/??/aoc.hs))
+HS_BIN=$(subst /aoc.hs,/aoc-hs,${HS_SRC})
+HS_LOG=$(subst /aoc.hs,/aoc-hs.log,${HS_SRC})
+HS_ERR=$(subst /aoc.hs,/aoc-hs.err,${HS_SRC})
+HS_REL=$(subst /aoc.hs,/aoc-hs-rel,${HS_SRC})
+HS_BENCH=$(subst /aoc.hs,/aoc-hs.ns,${HS_SRC})
 
 CPP_SRC=$(sort $(wildcard ????/??/cpp/aoc.cpp))
 CPP_BIN=$(subst /cpp/aoc.cpp,/aoc-cpp,${CPP_SRC})
@@ -91,7 +98,7 @@ go-test-fast: ${GO_SRC}
 benchmarks/README.md: benchmarks/README.template.md benchmarks/benchmarks.md
 	cat $^ > $@
 
-benchmarks/benchmarks.md: $(GO_BENCH) $(RS_BENCH) $(CPP_BENCH) $(ZIG_BENCH) $(CR_BENCH) benchmarks/main.go
+benchmarks/benchmarks.md: $(GO_BENCH) $(RS_BENCH) $(CPP_BENCH) $(ZIG_BENCH) $(CR_BENCH) $(HS_BENCH) benchmarks/main.go
 	cd benchmarks && go run . ..
 
 
@@ -145,6 +152,14 @@ aoc-rust/target/release/aoc-%: aoc-rust/src/bin/aoc-%.rs
 	  CRYSTAL_PATH=$(CR_LIB) $(CR) build --release \
 	  -o $(notdir $@) $(notdir $<)
 
+%/aoc-hs: %/aoc.hs
+	cd $(dir $@) && \
+	  ghc -i ../../lib-hs/Utils.hs -o $(notdir $@) $(notdir $<)
+
+%/aoc-hs-rel: %/aoc.hs
+	cd $(dir $@) && \
+	  ghc -i ../../lib-hs/Utils.hs -O3 -o $(notdir $@) $(notdir $<)
+
 %/aoc-zig: %/aoc.zig
 	cd $(dir $@) && zig build-exe --name $(notdir $@) $(notdir $<)
 
@@ -195,6 +210,9 @@ aoc-rust/target/release/%.ns: aoc-rust/target/release/%
 
 %/aoc-cr.ns: %/aoc-cr-rel
 	( cd $* && AoC_BENCH=1 ./$(notdir $<) | tee /dev/stderr ) >$@
+
+%/aoc-hs.ns: %/aoc-hs-rel
+	( cd $* && AoC_BENCH=1 ./$(notdir $<) | tee /dev/stderr | awk '/^time/ {print $$2 $$3}' ) >$@
 
 %/aoc-nim.ns: %/aoc-nim-rel
 	( cd $* && AoC_BENCH=1 ./$(notdir $<) | tee /dev/stderr ) >$@
