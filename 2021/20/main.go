@@ -3,8 +3,9 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	. "github.com/beanz/advent/lib-go"
 	"strings"
+
+	. "github.com/beanz/advent/lib-go"
 )
 
 //go:embed input.txt
