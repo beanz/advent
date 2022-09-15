@@ -52,12 +52,12 @@ CPP_ERR=$(subst /cpp/aoc.cpp,/aoc-cpp.err,${CPP_SRC})
 CPP_REL=$(subst /cpp/aoc.cpp,/aoc-cpp-rel,${CPP_SRC})
 CPP_BENCH=$(subst /cpp/aoc.cpp,/aoc-cpp.ns,${CPP_SRC})
 
-CC=clang++-12
+CC=clang++-14
 #CC=g++-7
 CR_DIR=/usr
 CR_LIB=$(CR_DIR)/share/crystal/src:../../lib-cr
 CR=$(CR_DIR)/bin/crystal
-NIM=$(HOME)/Tmp/nim-1.6.2/bin/nim
+NIM=$(HOME)/Tmp/nim-1.6.6/bin/nim
 
 TIME=../../bin/time
 
