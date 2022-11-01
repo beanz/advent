@@ -72,7 +72,7 @@ test "examples" {
 fn day10(inp: []const u8, bench: bool) anyerror!void {
     var p = try syntax(inp);
     if (!bench) {
-        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
+        aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }
 }
 

@@ -62,7 +62,7 @@ pub fn solve(alloc: std.mem.Allocator, bm: *aoc.ByteMap, dim: usize) !usize {
             if (x == w - 1 and y == h - 1) {
                 return d;
             }
-            // try aoc.print("{}: {},{} = {}\n", .{ vi, x, y, d });
+            // aoc.print("{}: {},{} = {}\n", .{ vi, x, y, d });
             if (x > 0) {
                 try add(bm, q, dist, x - 1, y, d, w);
             }
@@ -94,7 +94,7 @@ fn day15(inp: []const u8, bench: bool) anyerror!void {
     var alloc = std.heap.FixedBufferAllocator.init(&buf);
     var p = try parts(alloc.allocator(), inp);
     if (!bench) {
-        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
+        aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }
 }
 

@@ -235,7 +235,7 @@ fn day23(inp: []const u8, bench: bool) anyerror!void {
     var p1 = g.part1(100);
     var p2 = g.part2(10000000, 1000000);
     if (!bench) {
-        try aoc.print("Part 1: {s}\nPart 2: {}\n", .{ p1, p2 });
+        aoc.print("Part 1: {s}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 

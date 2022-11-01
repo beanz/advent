@@ -158,7 +158,7 @@ fn day21(inp: []const u8, bench: bool) anyerror!void {
     var p1 = m.Part1();
     var p2 = m.Part2();
     if (!bench) {
-        try aoc.print("Part 1: {}\nPart 2: {s}\n", .{ p1, p2 });
+        aoc.print("Part 1: {}\nPart 2: {s}\n", .{ p1, p2 });
     }
 }
 

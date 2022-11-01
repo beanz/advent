@@ -24,8 +24,8 @@ pub fn usizeGreaterThan(_: void, a: usize, b: usize) bool {
 }
 
 // io
-pub const out = &std.io.getStdOut().writer();
-pub const print = out.print;
+//pub const out = &std.io.getStdOut().writer();
+pub const print = &std.debug.print;
 
 pub const inputfile = @embedFile("input.txt");
 pub const test0file = @embedFile("test0.txt");
@@ -43,8 +43,7 @@ pub fn input() []const u8 {
     var args = Args();
     _ = args.skip();
     var res: []const u8 = inputfile;
-    if (args.next(halloc)) |arg1| {
-        halloc.free(arg1 catch unreachable);
+    if (args.next()) |_| {
         res = test1file;
     }
     return res;
@@ -292,7 +291,7 @@ pub fn BENCH() bool {
     return true;
 }
 
-pub fn benchme(inp: []const u8, call: fn (in: []const u8, bench: bool) anyerror!void) anyerror!void {
+pub fn benchme(inp: []const u8, comptime call: fn (in: []const u8, bench: bool) anyerror!void) anyerror!void {
     var it: i128 = 0;
     const is_bench = BENCH();
     var start = @import("std").time.nanoTimestamp();
@@ -306,7 +305,7 @@ pub fn benchme(inp: []const u8, call: fn (in: []const u8, bench: bool) anyerror!
         }
     }
     if (is_bench) {
-        try print("bench {} iterations in {}ns: {}ns\n", .{ it, elapsed, @divTrunc(elapsed, it) });
+        print("bench {} iterations in {}ns: {}ns\n", .{ it, elapsed, @divTrunc(elapsed, it) });
     }
 }
 

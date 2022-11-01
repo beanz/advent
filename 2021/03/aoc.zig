@@ -108,7 +108,7 @@ fn day03(inp: []const u8, bench: bool) anyerror!void {
     var p1 = diag.part1();
     var p2 = diag.part2();
     if (!bench) {
-        try aoc.print("Part1: {}\nPart2: {}\n", .{ p1, p2 });
+        aoc.print("Part1: {}\nPart2: {}\n", .{ p1, p2 });
     }
 }
 

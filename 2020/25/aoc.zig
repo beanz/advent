@@ -59,7 +59,7 @@ fn day25(inp: []const u8, bench: bool) anyerror!void {
     defer aoc.halloc.free(lines);
     var p1 = part1(lines);
     if (!bench) {
-        try aoc.print("Part 1: {}\n", .{p1});
+        aoc.print("Part 1: {}\n", .{p1});
     }
 }
 

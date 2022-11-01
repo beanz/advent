@@ -106,7 +106,7 @@ test "tile" {
 }
 
 fn CanonicalEdge(e: u10) u10 {
-    const r = @bitReverse(u10, e);
+    const r = @bitReverse(e);
     if (e < r) {
         return e;
     } else {
@@ -449,7 +449,7 @@ fn day20(inp: []const u8, bench: bool) anyerror!void {
     var p1 = w.Part1();
     var p2 = w.Part2();
     if (!bench) {
-        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+        aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 

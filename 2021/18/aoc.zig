@@ -77,7 +77,7 @@ const SFNum = struct {
             if (node.data.n <= 9) {
                 continue;
             }
-            //aoc.print("spliting [{}@{}]\n", .{ node.data.n, node.data.depth }) catch unreachable;
+            //aoc.print("spliting [{}@{}]\n", .{ node.data.n, node.data.depth });
             var down = node.data.n / 2;
             var up = node.data.n - down;
             node.data.n = down;
@@ -102,7 +102,7 @@ const SFNum = struct {
             if (second.data.depth != node.data.depth) {
                 continue;
             }
-            //aoc.print("exploding [{}@{}] and [{}@{}]\n", .{ node.data.n, node.data.depth, second.data.n, second.data.depth }) catch unreachable;
+            //aoc.print("exploding [{}@{}] and [{}@{}]\n", .{ node.data.n, node.data.depth, second.data.n, second.data.depth });
             if (node.prev) |prev| {
                 prev.data.n += node.data.n;
             }
@@ -140,21 +140,21 @@ const SFNum = struct {
     pub fn dump(sf: *SFNum) void {
         var it = sf.nums.first;
         while (it) |node| : (it = node.next) {
-            aoc.print("[{} @ {}] ", .{ node.data.n, node.data.depth }) catch unreachable;
+            aoc.print("[{} @ {}] ", .{ node.data.n, node.data.depth });
         }
-        aoc.print("\n", .{}) catch unreachable;
+        aoc.print("\n", .{});
     }
     pub fn magnitude(sf: *SFNum) usize {
         while (sf.nums.first.? != sf.nums.last.?) {
             var first = sf.nums.first.?;
             var second = first.next.?;
             while (first.data.depth != second.data.depth) {
-                //aoc.print("checking [{},{}] and [{},{}]\n", .{ first.data.depth, first.data.n, second.data.depth, second.data.n }) catch unreachable;
+                //aoc.print("checking [{},{}] and [{},{}]\n", .{ first.data.depth, first.data.n, second.data.depth, second.data.n });
                 first = second;
                 second = second.next.?;
             }
             var mag = 3 * first.data.n + 2 * second.data.n;
-            //aoc.print("found {} and {} => {}\n", .{ first.data.n, second.data.n, mag }) catch unreachable;
+            //aoc.print("found {} and {} => {}\n", .{ first.data.n, second.data.n, mag });
             first.data.n = mag;
             first.data.depth -= 1;
             sf.nums.remove(second);
@@ -185,7 +185,7 @@ test "magnitude" {
     for (tests) |tc| {
         var mt = try SFNum.fromInput(aoc.talloc, tc.data);
         defer mt.deinit();
-        try aoc.print("testing {s}\n", .{tc.data});
+        aoc.print("testing {s}\n", .{tc.data});
         try aoc.assertEq(tc.mag, mt.magnitude());
     }
 }
@@ -339,7 +339,7 @@ fn day(inp: []const u8, bench: bool) anyerror!void {
     var alloc = std.heap.FixedBufferAllocator.init(&buf);
     var p = try parts(alloc.allocator(), inp);
     if (!bench) {
-        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
+        aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }
 }
 

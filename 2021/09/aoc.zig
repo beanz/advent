@@ -37,7 +37,7 @@ fn flood(l: []u8, p: usize, w: usize, h: usize) anyerror!usize {
 fn pp(l: []u8, w: usize, h: usize) !void {
     var y: usize = 0;
     while (y < h) : (y += 1) {
-        try aoc.print("{s}", .{l[y * w .. (1 + y) * w]});
+        aoc.print("{s}", .{l[y * w .. (1 + y) * w]});
     }
 }
 
@@ -82,7 +82,7 @@ test "examples" {
 fn day09(inp: []const u8, bench: bool) anyerror!void {
     var p = try lava(aoc.halloc, inp);
     if (!bench) {
-        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
+        aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }
 }
 

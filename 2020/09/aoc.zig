@@ -66,7 +66,7 @@ fn day09(inp: []const u8, bench: bool) anyerror!void {
     var p1 = part1(nums, 25);
     var p2 = part2(nums, p1);
     if (!bench) {
-        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+        aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 

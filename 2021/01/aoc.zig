@@ -30,7 +30,7 @@ fn parts(inp: []const u8) ![2]u32 {
 fn day01(inp: []const u8, bench: bool) anyerror!void {
     var p = try parts(inp);
     if (!bench) {
-        try aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
+        aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }
 }
 
@@ -45,16 +45,16 @@ test "vector" {
     var v1: std.meta.Vector(9, u32) = [_]u32{
         199, 200, 208, 210, 200, 207, 240, 269, 260,
     };
-    try aoc.print("v1={}\n", .{v1});
+    aoc.print("v1={}\n", .{v1});
     var v2: std.meta.Vector(9, u32) = [_]u32{
         200, 208, 210, 200, 207, 240, 269, 260, 263,
     };
-    try aoc.print("v2={}\n", .{v2});
+    aoc.print("v2={}\n", .{v2});
     var v3 = v1 < v2;
-    try aoc.print("v3={}\n", .{v3});
+    aoc.print("v3={}\n", .{v3});
     var zeros: std.meta.Vector(9, u16) = @splat(9, @as(u16, 0));
     var ones: std.meta.Vector(9, u16) = @splat(9, @as(u16, 1));
     var sel = @select(u16, v3, ones, zeros);
-    try aoc.print("sel={}\n", .{sel});
+    aoc.print("sel={}\n", .{sel});
     try aoc.assertEq(@as(u32, 7), @reduce(.Add, sel));
 }

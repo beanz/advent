@@ -78,7 +78,7 @@ test "examples" {
 fn day05(inp: []const u8, bench: bool) anyerror!void {
     var p = parts(inp) catch unreachable;
     if (!bench) {
-        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
+        aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }
 }
 

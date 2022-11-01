@@ -215,7 +215,7 @@ fn day17(inp: []const u8, bench: bool) anyerror!void {
     defer m.deinit();
     var p2 = m.Part2();
     if (!bench) {
-        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+        aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 

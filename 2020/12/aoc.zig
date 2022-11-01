@@ -206,16 +206,16 @@ const Nav = struct {
 
     pub fn Print(self: *Nav) void {
         if (self.ship.x >= 0) {
-            aoc.print("{s} {}", .{ "east", std.math.absCast(self.ship.x) }) catch unreachable;
+            aoc.print("{s} {}", .{ "east", std.math.absCast(self.ship.x) });
         } else {
-            aoc.print("{s} {}", .{ "west", std.math.absCast(self.ship.x) }) catch unreachable;
+            aoc.print("{s} {}", .{ "west", std.math.absCast(self.ship.x) });
         }
         if (self.ship.y <= 0) {
-            aoc.print(" {s} {}", .{ "north", std.math.absCast(self.ship.y) }) catch unreachable;
+            aoc.print(" {s} {}", .{ "north", std.math.absCast(self.ship.y) });
         } else {
-            aoc.print(" {s} {}", .{ "south", std.math.absCast(self.ship.y) }) catch unreachable;
+            aoc.print(" {s} {}", .{ "south", std.math.absCast(self.ship.y) });
         }
-        aoc.print(" [{},{}]\n", .{ self.dir.dx, self.dir.dy }) catch unreachable;
+        aoc.print(" [{},{}]\n", .{ self.dir.dx, self.dir.dy });
     }
 };
 
@@ -250,7 +250,7 @@ fn day12(inp: []const u8, bench: bool) anyerror!void {
     var p1 = part1(aoc.halloc, lines);
     var p2 = part2(aoc.halloc, lines);
     if (!bench) {
-        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+        aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 

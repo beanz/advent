@@ -45,26 +45,26 @@ const Cave = struct {
         self.alloc.destroy(self);
     }
     pub fn solve(self: *Cave, start: u16, cseen: u16, cache: *std.AutoHashMap(usize, usize), p2: bool, twice: bool) anyerror!usize {
-        //try aoc.print("solving {b} {b}\n", .{ start, cseen });
+        //aoc.print("solving {b} {b}\n", .{ start, cseen });
         var seen = cseen;
         if (start == END) {
-            //try aoc.print("  found end\n", .{});
+            //aoc.print("  found end\n", .{});
             return 1;
         }
         if (self.lower & start != 0) {
             seen |= start;
         }
-        var k = ((@as(usize, @ctz(u16, start)) << 16) + seen) << 1;
+        var k = ((@as(usize, @ctz(start)) << 16) + seen) << 1;
         if (twice) {
             k += 1;
         }
         if (cache.get(k)) |v| {
-            //try aoc.print("  found in cache {}\n", .{v});
+            //aoc.print("  found in cache {}\n", .{v});
             return v;
         }
         var paths: usize = 0;
-        var neighbors = self.next[@ctz(u16, start)];
-        //try aoc.print("  neighbors: {b}\n", .{neighbors});
+        var neighbors = self.next[@ctz(start)];
+        //aoc.print("  neighbors: {b}\n", .{neighbors});
         var nb: u16 = 1;
         while (nb <= self.max) : (nb <<= 1) {
             if (nb & neighbors == 0) {
@@ -107,13 +107,13 @@ const Cave = struct {
         var start = try self.id(ids, s);
         var end = try self.id(ids, e);
         //aoc.print("would add path {s} {b} {} -> {s} {b} {}\n", .{
-        //    s, start, @ctz(u16, start), e, end, @ctz(u16, end),
+        //    s, start, @ctz(start), e, end, @ctz(end),
         //}) catch unreachable;
         if (end != START and start != END) { // don't add path to start
-            self.next[@ctz(u16, start)] |= end;
+            self.next[@ctz(start)] |= end;
         }
         if (start != START and end != END) { // don't add path to start
-            self.next[@ctz(u16, end)] |= start;
+            self.next[@ctz(end)] |= start;
         }
     }
 };
@@ -153,7 +153,7 @@ fn day12(inp: []const u8, bench: bool) anyerror!void {
     var p1 = try cave.part1();
     var p2 = try cave.part2();
     if (!bench) {
-        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+        aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 

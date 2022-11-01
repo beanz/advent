@@ -217,10 +217,10 @@ test "examples" {
 
 fn day16(_: []const u8, bench: bool) anyerror!void {
     var args = std.process.args();
-    _ = args.next(aoc.halloc).? catch true;
+    _ = args.next();
     var chunks: [][]const u8 = undefined;
     var onlyDepart = true;
-    if (args.next(aoc.halloc)) |_| {
+    if (args.next()) |_| {
         chunks = aoc.readChunks(aoc.halloc, aoc.test2file);
         onlyDepart = false;
     } else {
@@ -233,7 +233,7 @@ fn day16(_: []const u8, bench: bool) anyerror!void {
     var p1 = m.err;
     var p2 = m.Solve();
     if (!bench) {
-        try aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+        aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
 }
 

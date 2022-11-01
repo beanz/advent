@@ -127,7 +127,7 @@ fn day13(inp: []const u8, bench: bool) anyerror!void {
     var p1 = try paper.part1();
     var p2 = try paper.part2();
     if (!bench) {
-        try aoc.print("Part 1: {}\nPart 2:\n{s}\n", .{ p1, p2 });
+        aoc.print("Part 1: {}\nPart 2:\n{s}\n", .{ p1, p2 });
     }
 }
 
