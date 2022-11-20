@@ -59,7 +59,7 @@ const Map = struct {
             var z: i8 = zstart;
             while (z <= zend) : (z += 1) {
                 var y: i8 = xystart;
-                std.debug.print("q={} z={}\n", .{ q, z });
+                std.debug.print("q={!} z={!}\n", .{ q, z });
                 while (y <= xyend) : (y += 1) {
                     var x: i8 = xystart;
                     while (x <= xyend) : (x += 1) {
@@ -71,7 +71,7 @@ const Map = struct {
                             std.debug.print(".", .{});
                         }
                     }
-                    std.debug.print(" ({} {})\n", .{ y, index(11, y, z, q) });
+                    std.debug.print(" ({!} {!})\n", .{ y, index(11, y, z, q) });
                 }
             }
             std.debug.print("\n", .{});
@@ -165,7 +165,7 @@ const Map = struct {
         while (i < 6) : (i += 1) {
             r = self.Iter(i, part2);
             if (self.debug) {
-                std.debug.print("Iter {}: {}\n", .{ i, r });
+                std.debug.print("Iter {!}: {}\n", .{ i, r });
             }
         }
         return r;
@@ -215,7 +215,7 @@ fn day17(inp: []const u8, bench: bool) anyerror!void {
     defer m.deinit();
     var p2 = m.Part2();
     if (!bench) {
-        aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+        aoc.print("Part 1: {!}\nPart 2: {!}\n", .{ p1, p2 });
     }
 }
 

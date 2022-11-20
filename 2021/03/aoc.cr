@@ -1,9 +1,5 @@
 require "aoc-lib.cr"
 
-lines = readinputlines()
-bits = lines[0].size-1
-inp = lines.map do |x| x.to_i(2) end
-
 def part1(inp, bits)
   total = inp.size
   gamma = 0
@@ -65,5 +61,16 @@ def part2(inp, bits)
   return reduce(inp, bits, true) * reduce(inp, bits, false)
 end
 
-print "Part 1: ", part1(inp, bits), "\n"
-print "Part 2: ", part2(inp, bits), "\n"
+input = {{ read_file("input.txt") }}
+
+benchme(input) do |inp, bench|
+  lines = inputlines(inp)
+  bits = lines[0].size-1
+  inp = lines.map do |x| x.to_i(2) end
+  p1 = part1(inp, bits)
+  p2 = part2(inp, bits)
+  if !bench
+    print "Part 1: ", p1, "\n"
+    print "Part 2: ", p2, "\n"
+  end
+end

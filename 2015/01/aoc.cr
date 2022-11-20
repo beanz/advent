@@ -6,7 +6,8 @@ end
 
 def part2(s)
   f = 0
-  s.each_char_with_index do |ch, i|
+  i = 0
+  s.each_char do |ch|
     if ch == '('
       f += 1
     else
@@ -15,11 +16,18 @@ def part2(s)
         return i + 1
       end
     end
+    i += 1
   end
   return -1
 end
 
-inp = readinputlines()[0]
+input = {{ read_file("input.txt") }}
 
-print "Part1: ", part1(inp), "\n"
-print "Part2: ", part2(inp), "\n"
+benchme(input) do |inp, bench|
+  p1 = part1(inp)
+  p2 = part2(inp)
+  if !bench
+    print "part 1: ", p1, "\n"
+    print "part 2: ", p2, "\n"
+  end
+end

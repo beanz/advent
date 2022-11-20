@@ -302,6 +302,9 @@ func (bm benchmarkData) readResult(file string, lang, year, day string) error {
 			i = 1
 		}
 		result = s[i][:len(s[i])-2]
+	case len(result) > 4 && result[len(result)-3:] == "μs":
+		result = result[:len(result)-3]
+		multiplier = 1000
 	case len(result) > 3 && result[len(result)-2:] == "ms":
 		result = result[:len(result)-2]
 		multiplier = 1000000

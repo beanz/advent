@@ -203,7 +203,7 @@ aoc-rust/target/release/%.ns: aoc-rust/target/release/%
 	     tee $(notdir $<).err ) 3>&1 1>&2
 
 %/aoc-zig.ns: %/aoc-zig-rel
-	( cd $* && AoC_BENCH=1 ./$(notdir $<) | tee /dev/stderr ) >$@
+	( cd $* && AoC_BENCH=1 ./$(notdir $<) 2>&1 | tee /dev/stderr ) >$@
 
 %/aoc-cpp.ns: %/aoc-cpp-rel
 	( cd $* && AoC_BENCH=1 ./$(notdir $<) | tee /dev/stderr ) >$@

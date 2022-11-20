@@ -139,7 +139,7 @@ const Mess = struct {
                 }
                 if (valid == target) {
                     if (self.debug) {
-                        std.debug.print("found {s} at {} ({})\n", .{ name, col, col });
+                        std.debug.print("found {s} at {!} ({!})\n", .{ name, col, col });
                     }
                     var bm = possible.get(name).?;
                     bm |= bit(@intCast(i64, col));
@@ -161,7 +161,7 @@ const Mess = struct {
                     var c: i64 = find1bit(cols);
                     var ourVal = self.our[std.math.absCast(c)];
                     if (self.debug) {
-                        std.debug.print("definite {s} is {} ({})\n", .{ name, c, ourVal });
+                        std.debug.print("definite {s} is {!} ({!})\n", .{ name, c, ourVal });
                     }
                     if (name[0] == 'd' and name[1] == 'e' or !self.onlyDepart) {
                         p *= ourVal;
@@ -233,7 +233,7 @@ fn day16(_: []const u8, bench: bool) anyerror!void {
     var p1 = m.err;
     var p2 = m.Solve();
     if (!bench) {
-        aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
+        aoc.print("Part 1: {!}\nPart 2: {!}\n", .{ p1, p2 });
     }
 }
 
