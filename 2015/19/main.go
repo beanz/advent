@@ -3,7 +3,6 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	"math/rand"
 	"strings"
 
 	. "github.com/beanz/advent/lib-go"
@@ -31,7 +30,8 @@ func NewMach(in []string) *Mach {
 		sl := strings.Split(l, " => ")
 		r = append(r, Rule{find: sl[0], replace: sl[1]})
 	}
-	return &Mach{init: in[1][:len(in[1])-1], rules: r}
+	init := strings.TrimSuffix(in[1], "\n")
+	return &Mach{init: init, rules: r}
 }
 
 func (m *Mach) Part1() int {
@@ -52,48 +52,29 @@ func (m *Mach) Part1() int {
 	return len(res)
 }
 
-type Search struct {
-	s string
-	c int
-}
-
 func (m *Mach) Part2() int {
-	for {
-		s := m.init
-		c := 0
-		p := ""
-		for p != s {
-			p = s
-			for _, rule := range m.rules {
-				n := strings.Count(s, rule.replace)
-				if n == 0 {
-					continue
-				}
-				c += n
-				s = strings.Replace(s, rule.replace, rule.find, -1)
-				if s == "e" {
-					return c
-				}
-			}
+	upperCount := 0
+	yCount := 0
+	for _, r := range m.init {
+		if r < 'a' {
+			upperCount++
 		}
-		// try different order
-		for i := range m.rules {
-			j := rand.Intn(i + 1)
-			m.rules[i], m.rules[j] = m.rules[j], m.rules[i]
+		if r == 'Y' {
+			yCount++
 		}
 	}
-	return -1
+	rnCount := strings.Count(m.init, "Rn")
+	arCount := strings.Count(m.init, "Ar")
+	return upperCount - rnCount - arCount - 2*yCount - 1
 }
 
 func main() {
 	s := InputChunks(input)
 	m := NewMach(s)
 	p1 := m.Part1()
-	if !benchmark {
-		fmt.Printf("Part 1: %d\n", p1)
-	}
 	p2 := m.Part2()
 	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
 		fmt.Printf("Part 2: %d\n", p2)
 	}
 }

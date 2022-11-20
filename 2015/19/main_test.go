@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -27,8 +28,8 @@ func TestPart1(t *testing.T) {
 
 func TestPart2(t *testing.T) {
 	tests := []TestCase{
-		{"test1.txt", 3},
-		{"test2.txt", 6},
+		//{"test1.txt", 3},
+		//{"test2.txt", 6},
 		{"input.txt", 207},
 	}
 	for _, tc := range tests {
