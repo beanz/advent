@@ -300,15 +300,11 @@ pub fn isqrt(x: usize) -> usize {
     r as usize
 }
 
-use crypto::digest::Digest;
-use crypto::md5::Md5;
+use md5;
 
 pub fn md5sum(b: &[u8]) -> Box<[u8; 16]> {
-    let mut md5 = Md5::new();
-    md5.input(b);
-    let mut cs = [0; 16];
-    md5.result(&mut cs);
-    Box::new(cs)
+    let digest = md5::compute(b);
+    Box::new(digest.into())
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]

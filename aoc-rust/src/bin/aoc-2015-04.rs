@@ -1,17 +1,9 @@
-extern crate crypto;
-
-use crypto::digest::Digest;
-use crypto::md5::Md5;
-
 pub fn calc(l: &str) -> (usize, usize) {
-    let mut md5 = Md5::new();
     let mut p1: usize = 0;
     let mut num_str = aoc::NumStr::new(l.to_string());
     let mut i = 0;
     loop {
-        md5.input(num_str.bytes());
-        let mut cs = [0; 16];
-        md5.result(&mut cs);
+        let cs = aoc::md5sum(num_str.bytes());
         if cs[0] == 0 && cs[1] == 0 && (cs[2] & 0xf0 == 0) {
             if p1 == 0 {
                 p1 = i;
@@ -20,7 +12,6 @@ pub fn calc(l: &str) -> (usize, usize) {
                 break;
             }
         }
-        md5.reset();
         num_str.inc();
         i += 1;
     }

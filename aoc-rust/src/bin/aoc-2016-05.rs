@@ -1,8 +1,3 @@
-extern crate crypto;
-
-use crypto::digest::Digest;
-use crypto::md5::Md5;
-
 struct Gen {
     ns: aoc::NumStr,
 }
@@ -14,11 +9,8 @@ impl Gen {
         }
     }
     fn next(&mut self) -> String {
-        let mut md5 = Md5::new();
         loop {
-            md5.input(self.ns.bytes());
-            let mut cs = [0; 16];
-            md5.result(&mut cs);
+            let cs = aoc::md5sum(self.ns.bytes());
             if cs[0] == 0 && cs[1] == 0 && (cs[2] & 0xf0 == 0) {
                 self.ns.inc();
                 return cs
@@ -26,7 +18,6 @@ impl Gen {
                     .map(|x| format!("{:02x}", x))
                     .collect::<String>();
             }
-            md5.reset();
             self.ns.inc();
         }
     }
