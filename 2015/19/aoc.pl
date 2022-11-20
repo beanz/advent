@@ -14,7 +14,7 @@ use constant
   };
 
 my @parts = @{read_chunks(shift//"input.txt")};
-my $rules = parse_rules($parts[0]),
+my $rules = parse_rules($parts[0]);
 my $molecule = $parts[1];
 
 sub parse_rules {
