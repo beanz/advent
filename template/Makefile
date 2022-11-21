@@ -61,6 +61,7 @@ ifneq (,$(wildcard $(RS_SRC)))
 ALL += aoc-rs
 CLEAN += aoc-rs
 HYPERFINE += aoc-rs-rel
+TEST += test-rs
 endif
 
 ifneq (,$(wildcard aoc.jq))
@@ -211,6 +212,12 @@ aoc-rs-rel: $(RS_SRC)
 	  cargo build --release --bin "$(basename $(notdir $<))" ) && \
 	mv $(RS_REL) $@
 
+test-rs: $(RS_SRC)
+	( cd ../../aoc-rust && \
+	  cargo test --bin "$(basename $(notdir $<))" )
+
+clippy: $(RS_SRC)
+	( cd ../../aoc-rust && cargo clippy )
 
 template:
 	@if [ ! -e Makefile ]; then ln -s ../../template/Makefile . ; fi ; \
