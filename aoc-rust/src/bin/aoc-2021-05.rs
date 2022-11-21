@@ -39,7 +39,7 @@ struct Vents {
 impl Vents {
     fn new(inp: &[u8]) -> Vents {
         let mut lines: Vec<Line> = vec![];
-        let i16s = read_i16s(&inp);
+        let i16s = read_i16s(inp);
         for chunk in i16s.chunks(4) {
             lines.push(Line {
                 x1: chunk[0],

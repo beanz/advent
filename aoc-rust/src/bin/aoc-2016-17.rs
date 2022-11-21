@@ -41,7 +41,7 @@ fn search(inp: &str) -> (String, usize) {
         let cur = todo.pop_front().unwrap();
         //dbg!(&cur);
         if cur.pos == (3, 3) {
-            if p1 == None {
+            if p1.is_none() {
                 //println!("Reached end: {}", &cur.path);
                 p1 = Some(cur.path.to_owned());
             }

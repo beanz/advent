@@ -11,7 +11,7 @@ fn parts(inp: &str) -> (usize, String) {
     let mut max = vec![0, 0];
     let mut p1: Option<usize> = None;
     for l in chunks.next().unwrap().lines() {
-        let mut s = l.split("=");
+        let mut s = l.split('=');
         let fold: &[u8] = s.next().unwrap().as_bytes();
         let n = s.next().unwrap().parse::<usize>().unwrap();
         let axis = (fold[fold.len() - 1] - b'x') as usize;
@@ -26,7 +26,7 @@ fn parts(inp: &str) -> (usize, String) {
         }
         points = npoints;
         max[axis] = n;
-        if p1 == None {
+        if p1.is_none() {
             p1 = Some(points.len());
         }
     }

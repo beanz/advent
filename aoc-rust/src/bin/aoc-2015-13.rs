@@ -68,7 +68,7 @@ fn main() {
     aoc::benchme(|bench: bool| {
         let mut seats = Seats::new();
         for l in &inp {
-            seats.add(&l);
+            seats.add(l);
         }
         let p1 = seats.part1();
         let p2 = seats.part2();

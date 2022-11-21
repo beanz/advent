@@ -28,9 +28,9 @@ impl P3 {
         ((0xffff & self.i) as i32 - 32768) as i16
     }
     fn manhattan(&self, o: P3) -> usize {
-        ((self.x() - o.x()).abs() as usize)
-            + ((self.y() - o.y()).abs() as usize)
-            + ((self.z() - o.z()).abs() as usize)
+        ((self.x() - o.x()).unsigned_abs() as usize)
+            + ((self.y() - o.y()).unsigned_abs() as usize)
+            + ((self.z() - o.z()).unsigned_abs() as usize)
     }
     fn add(&self, o: P3) -> P3 {
         P3::new(self.x() + o.x(), self.y() + o.y(), self.z() + o.z())
@@ -122,9 +122,9 @@ impl Scanner {
             }
         }
         Scanner {
-            beacons: beacons,
+            beacons,
             position: None,
-            distances: distances,
+            distances,
         }
     }
 }
@@ -143,10 +143,8 @@ impl Solver {
                     scanners.push(Scanner::new(&inp[j..i]));
                     i += 1;
                     j = 0;
-                } else {
-                    if j == 0 {
-                        j = i + 1;
-                    }
+                } else if j == 0 {
+                    j = i + 1;
                 }
             }
             i += 1;
@@ -157,8 +155,8 @@ impl Solver {
     }
     fn compare_distances(&self, i: usize, j: usize) -> Vec<usize> {
         let mut res: Vec<usize> = vec![];
-        for (dist, _) in &self.scanners[i].distances {
-            if self.scanners[j].distances.contains_key(&dist) {
+        for dist in self.scanners[i].distances.keys() {
+            if self.scanners[j].distances.contains_key(dist) {
                 res.push(*dist);
             }
         }
@@ -230,7 +228,7 @@ impl Solver {
         let mut todo: Vec<usize> = vec![0];
         while let Some(i) = todo.pop() {
             for j in next.get(&i).unwrap() {
-                if self.scanners[*j].position == None {
+                if self.scanners[*j].position.is_none() {
                     self.align(i, *j);
                     todo.push(*j);
                     // println!(

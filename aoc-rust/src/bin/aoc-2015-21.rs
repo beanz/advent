@@ -1,27 +1,15 @@
 use itertools::*;
 
 #[derive(Debug, Clone, Copy)]
-enum Who {
-    Me,
-    Boss,
-}
-
-#[derive(Debug, Clone, Copy)]
 struct Fighter {
-    who: Who,
     hp: i32,
     damage: i32,
     armor: i32,
 }
 
 impl Fighter {
-    fn new(who: Who, hp: i32, damage: i32, armor: i32) -> Fighter {
-        Fighter {
-            who,
-            hp,
-            damage,
-            armor,
-        }
+    fn new(hp: i32, damage: i32, armor: i32) -> Fighter {
+        Fighter { hp, damage, armor }
     }
     fn attack(&self, opp: &Fighter) -> i32 {
         let a = self.damage - opp.armor;
@@ -41,8 +29,8 @@ impl Fighter {
 #[test]
 fn fighter_attack_works() {
     for tc in &[(5, 2, 3), (5, 10, 1), (7, 5, 2)] {
-        let me = Fighter::new(Who::Me, 0, tc.0, 0);
-        let boss = Fighter::new(Who::Boss, 0, 0, tc.1);
+        let me = Fighter::new(0, tc.0, 0);
+        let boss = Fighter::new(0, 0, tc.1);
         assert_eq!(
             me.attack(&boss),
             tc.2,
@@ -56,8 +44,8 @@ fn fighter_attack_works() {
 #[test]
 fn fighter_time_until_death_works() {
     for tc in &[(12, 2, 5, 4), (8, 5, 7, 4)] {
-        let me = Fighter::new(Who::Me, tc.0, 0, tc.1);
-        let boss = Fighter::new(Who::Boss, 0, tc.2, 0);
+        let me = Fighter::new(tc.0, 0, tc.1);
+        let boss = Fighter::new(0, tc.2, 0);
         assert_eq!(
             me.time_until_death(&boss),
             tc.3 as usize,
@@ -71,8 +59,8 @@ fn fighter_time_until_death_works() {
 
 #[test]
 fn fighter_battle_works() {
-    let me = Fighter::new(Who::Me, 8, 5, 5);
-    let boss = Fighter::new(Who::Boss, 12, 7, 2);
+    let me = Fighter::new(8, 5, 5);
+    let boss = Fighter::new(12, 7, 2);
     assert_eq!(me.beats(&boss), true, "boss is beaten");
 }
 
@@ -218,7 +206,7 @@ impl Battle {
         }
     }
     fn sim(&self) -> (usize, usize) {
-        let boss = Fighter::new(Who::Boss, 103, 9, 2);
+        let boss = Fighter::new(103, 9, 2);
         let mut min = std::usize::MAX;
         let mut max = std::usize::MIN;
         for w in self.weapons.iter().combinations(1) {
@@ -236,7 +224,7 @@ impl Battle {
                             armor: a.armor + b.armor,
                         },
                     );
-                    let me = Fighter::new(Who::Me, 100, e.damage, e.armor);
+                    let me = Fighter::new(100, e.damage, e.armor);
                     let victory = me.beats(&boss);
                     if victory && e.cost < min {
                         min = e.cost as usize

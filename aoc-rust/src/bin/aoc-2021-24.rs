@@ -60,15 +60,15 @@ impl Prog {
         }
         let mut stack: Vec<usize> = vec![];
         let mut constraint: Vec<Constraint> = vec![];
-        for i in 0..14 {
-            if div_z[i] != 1 {
+        for (i, dz) in div_z.iter().enumerate() {
+            if *dz != 1 {
                 let j = stack.pop().unwrap();
                 constraint.push(Constraint { i, j });
             } else {
                 stack.push(i);
             }
         }
-        if stack.len() != 0 {
+        if !stack.is_empty() {
             panic!("stack not empty; got length {}", stack.len());
         }
         if constraint.len() != 7 {
@@ -96,8 +96,8 @@ impl Prog {
             }
         }
         let mut n: i64 = 0;
-        for i in 0..14 {
-            n = n * 10 + ans[i];
+        for a in &ans {
+            n = n * 10 + a;
         }
         n
     }

@@ -34,13 +34,7 @@ fn max_score(deers: &[Deer], t: usize) -> usize {
         .iter()
         .map(|d| {
             (1..=t)
-                .map(|rt| {
-                    if d.dist(rt) == max_dist(deers, rt) {
-                        1
-                    } else {
-                        0
-                    }
-                })
+                .map(|rt| usize::from(d.dist(rt) == max_dist(deers, rt)))
                 .sum::<usize>()
         })
         .max()

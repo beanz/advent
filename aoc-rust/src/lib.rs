@@ -120,7 +120,7 @@ pub fn sum_valid_lines(
 ) -> usize {
     lines
         .iter()
-        .map(|x| if valid_line_fn(x) { 1 } else { 0 })
+        .map(|x| usize::from(valid_line_fn(x)))
         .sum()
 }
 
@@ -135,7 +135,7 @@ impl Point {
         Point { x, y }
     }
     pub fn manhattan(&self) -> usize {
-        self.x.abs() as usize + self.y.abs() as usize
+        self.x.unsigned_abs() + self.y.unsigned_abs()
     }
     pub fn mov(&mut self, ch: char) {
         match ch {
@@ -299,8 +299,6 @@ pub fn isqrt(x: usize) -> usize {
     }
     r as usize
 }
-
-use md5;
 
 pub fn md5sum(b: &[u8]) -> Box<[u8; 16]> {
     let digest = md5::compute(b);

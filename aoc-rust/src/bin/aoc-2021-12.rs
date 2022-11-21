@@ -32,14 +32,14 @@ impl Caves {
                 let (i, _) = nodes.insert_full(s);
                 i as u16
             };
-            if s.bytes().nth(0).expect("non-empty node") & 32 != 0 {
+            if s.as_bytes().first().expect("non-empty node") & 32 != 0 {
                 small |= 1 << si;
             }
             let ei = {
                 let (i, _) = nodes.insert_full(e);
                 i as u16
             };
-            if e.bytes().nth(0).expect("non-empty node") & 32 != 0 {
+            if e.as_bytes().first().expect("non-empty node") & 32 != 0 {
                 small |= 1 << ei;
             }
             graph[si as usize] |= 1 << ei;
@@ -89,13 +89,17 @@ impl Caves {
 
 #[test]
 fn solve_works() {
-    let c1 = Caves::new(&std::fs::read("../2021/12/test1.txt").expect("read error"));
+    let c1 =
+        Caves::new(&std::fs::read("../2021/12/test1.txt").expect("read error"));
     assert_eq!(c1.solve(c1.start, 0, false, false), 10);
-    let c2 = Caves::new(&std::fs::read("../2021/12/test2.txt").expect("read error"));
+    let c2 =
+        Caves::new(&std::fs::read("../2021/12/test2.txt").expect("read error"));
     assert_eq!(c2.solve(c2.start, 0, false, false), 19);
-    let c3 = Caves::new(&std::fs::read("../2021/12/test3.txt").expect("read error"));
+    let c3 =
+        Caves::new(&std::fs::read("../2021/12/test3.txt").expect("read error"));
     assert_eq!(c3.solve(c3.start, 0, false, false), 226);
-    let ci = Caves::new(&std::fs::read("../2021/12/input.txt").expect("read error"));
+    let ci =
+        Caves::new(&std::fs::read("../2021/12/input.txt").expect("read error"));
     assert_eq!(ci.solve(ci.start, 0, false, false), 4691);
     assert_eq!(c1.solve(c1.start, 0, true, false), 36);
     assert_eq!(c2.solve(c2.start, 0, true, false), 103);

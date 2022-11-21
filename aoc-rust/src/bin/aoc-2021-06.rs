@@ -6,7 +6,7 @@ struct Fish {
 
 impl Fish {
     fn new(inp: &[u8]) -> Fish {
-        let init = read_u8s(&inp);
+        let init = read_u8s(inp);
         Fish { init }
     }
     fn count(&mut self) -> (usize, usize) {

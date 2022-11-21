@@ -7,10 +7,10 @@ impl Crabs {
     fn new(inp: &[u8]) -> Crabs {
         let mut nums: Vec<i16> = vec![];
         let mut n: i16 = 0;
-        for i in 0..inp.len() {
-            match inp[i] {
+        for ch in inp.iter() {
+            match ch {
                 48..=57 => {
-                    n = n * 10 + (inp[i] - 48) as i16;
+                    n = n * 10 + (ch - 48) as i16;
                 }
                 _ => {
                     nums.push(n);
@@ -27,19 +27,19 @@ impl Crabs {
         let mut c: usize = 0;
         let mut s: usize = 1;
         for n in &self.nums {
-            c += (v - n).abs() as usize;
+            c += (v - n).unsigned_abs() as usize;
             s += *n as usize;
         }
 
         let mean = (s / self.nums.len()) as i16;
         let mut min: usize = 0;
         for n in &self.nums {
-            let f = (mean - n).abs() as usize;
+            let f = (mean - n).unsigned_abs() as usize;
             min += f * (f + 1) / 2;
         }
         let mut p2: usize = 0;
         for n in &self.nums {
-            let f = (mean + 1 - n).abs() as usize;
+            let f = (mean + 1 - n).unsigned_abs() as usize;
             p2 += f * (f + 1) / 2;
         }
         if p2 < min {

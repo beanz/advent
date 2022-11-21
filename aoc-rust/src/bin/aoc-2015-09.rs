@@ -56,7 +56,7 @@ fn main() {
     aoc::benchme(|bench: bool| {
         let mut routes = Routes::new();
         for l in &inp {
-            routes.add(&l);
+            routes.add(l);
         }
         let (p1, p2) = routes.minmax();
         if !bench {

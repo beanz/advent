@@ -53,7 +53,8 @@ fn part1_works() {
 }
 
 fn generator2(
-    gen: &mut Generator, div: usize,
+    gen: &mut Generator,
+    div: usize,
 ) -> impl Iterator<Item = usize> + '_ {
     gen.filter(move |a| (a % div) == 0)
 }

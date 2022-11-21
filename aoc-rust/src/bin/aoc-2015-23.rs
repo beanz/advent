@@ -38,7 +38,7 @@ impl Inst {
         };
         Inst { op, reg, off }
     }
-    fn run(&self, ip: &mut usize, reg: &mut Vec<usize>) {
+    fn run(&self, ip: &mut usize, reg: &mut [usize]) {
         match self.op {
             Op::Hlf => {
                 reg[self.reg] /= 2;

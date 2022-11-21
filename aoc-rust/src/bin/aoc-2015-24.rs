@@ -4,14 +4,13 @@ fn calc(sizes: &[usize], num_groups: usize) -> usize {
     let target = sizes.iter().sum::<usize>() / num_groups;
     let l = sizes.len();
     (1..l)
-        .map(|n| {
+        .flat_map(|n| {
             sizes
                 .iter()
                 .combinations(n)
                 .filter(|c| c.iter().copied().sum::<usize>() == target)
                 .map(|c| c.iter().copied().product())
         })
-        .flatten()
         .next()
         .unwrap()
 }

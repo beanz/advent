@@ -7,7 +7,7 @@ impl Segments {
     fn new(inp: &[u8]) -> Segments {
         let mut n: u8 = 0;
         for ch in inp {
-            n |= 1 << (ch - ('a' as u8));
+            n |= 1 << (ch - b'a');
         }
         Segments { n }
     }
@@ -201,7 +201,9 @@ impl Notes {
 
 #[test]
 fn parts_works() {
-    let n = Notes::new(b"be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe\n");
+    let n = Notes::new(
+        b"be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe\n",
+    );
     assert_eq!(n.part1(), 2, "part 1 test0");
     assert_eq!(n.part2(), 8394, "part 2 test0");
 }

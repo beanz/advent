@@ -1,7 +1,7 @@
 use aoc::Point;
 use std::collections::HashSet;
 
-pub fn calc(l: &String) -> (usize, Option<usize>) {
+pub fn calc(l: &str) -> (usize, Option<usize>) {
     let mut visited = HashSet::new();
     let mut p = Point::new(0, 0);
     let mut dir = Point::new(0, -1);
@@ -17,7 +17,7 @@ pub fn calc(l: &String) -> (usize, Option<usize>) {
         }
         for _ in 1..=mv[1..].parse::<usize>().unwrap() {
             p.movdir(dir, 1);
-            if visited.contains(&p) && p2 == None {
+            if visited.contains(&p) && p2.is_none() {
                 p2 = Some(p.manhattan());
             }
             visited.insert(p);

@@ -1,4 +1,4 @@
-fn calc(v: &mut Vec<usize>, num: usize, steps: usize) {
+fn calc(v: &mut [usize], num: usize, steps: usize) {
     let mut cur = 0;
     for n in 1..=num {
         for _ in 0..steps {

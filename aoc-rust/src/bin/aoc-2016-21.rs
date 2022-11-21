@@ -1,6 +1,6 @@
 use itertools::*;
 
-fn swap_by_index(s: &mut Vec<char>, i: usize, j: usize) {
+fn swap_by_index(s: &mut [char], i: usize, j: usize) {
     s.swap(i, j);
 }
 
@@ -11,7 +11,7 @@ fn swap_by_index_works() {
     assert_eq!(s, vec!['e', 'b', 'c', 'd', 'a'], "swap by index example");
 }
 
-fn swap_by_letter(s: &mut Vec<char>, c1: char, c2: char) {
+fn swap_by_letter(s: &mut [char], c1: char, c2: char) {
     for el in s.iter_mut() {
         if *el == c1 {
             *el = c2;
@@ -28,7 +28,7 @@ fn swap_by_letter_works() {
     assert_eq!(s, vec!['e', 'd', 'c', 'b', 'a'], "swap by letter example");
 }
 
-fn reverse_slice(s: &mut Vec<char>, i: usize, j: usize) {
+fn reverse_slice(s: &mut [char], i: usize, j: usize) {
     s[i..=j].reverse();
 }
 
@@ -39,7 +39,7 @@ fn reverse_slice_works() {
     assert_eq!(s, vec!['a', 'b', 'c', 'd', 'e'], "reverse example");
 }
 
-fn rotate(s: &mut Vec<char>, n: isize) {
+fn rotate(s: &mut [char], n: isize) {
     if n > 0 {
         s.rotate_left(n as usize);
     } else {
@@ -70,7 +70,7 @@ fn move_works() {
     assert_eq!(s, vec!['a', 'b', 'd', 'e', 'c'], "move example 2");
 }
 
-fn rotate_by_ch(s: &mut Vec<char>, c1: char) {
+fn rotate_by_ch(s: &mut [char], c1: char) {
     let mut i = 0;
     while s[i] != c1 {
         i += 1;

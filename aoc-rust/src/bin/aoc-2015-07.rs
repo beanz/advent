@@ -1,7 +1,9 @@
 use std::collections::HashMap;
 
 pub fn calc(
-    m: &HashMap<String, String>, cache: &mut HashMap<String, u16>, s: &str,
+    m: &HashMap<String, String>,
+    cache: &mut HashMap<String, u16>,
+    s: &str,
 ) -> u16 {
     if cache.contains_key(&s.to_string()) {
         return *cache.get(&s.to_string()).unwrap();

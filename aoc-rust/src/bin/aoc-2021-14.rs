@@ -73,7 +73,9 @@ impl Polymer {
 
 #[test]
 fn parts() {
-    let t1 = Polymer::new(&std::fs::read("../2021/14/test1.txt").expect("read error"));
+    let t1 = Polymer::new(
+        &std::fs::read("../2021/14/test1.txt").expect("read error"),
+    );
     let (tp1, tp2) = t1.parts();
     assert_eq!(tp1, 1588);
     assert_eq!(tp2, 2188189693529);

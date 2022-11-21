@@ -1,12 +1,12 @@
 mod elfcomp2016;
 
 fn part1(comp: &mut elfcomp2016::ElfComp2016) -> isize {
-    comp.run(&vec![]);
+    comp.run(&[]);
     comp.get_reg(b'a')
 }
 
 fn part2(comp: &mut elfcomp2016::ElfComp2016) -> isize {
-    comp.run(&vec![0, 0, 1, 0]);
+    comp.run(&[0, 0, 1, 0]);
     comp.get_reg(b'a')
 }
 

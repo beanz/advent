@@ -21,7 +21,7 @@ impl Octo<'_> {
     fn flash(&mut self, i: usize, x: isize, y: isize) -> usize {
         self.m[i] = b'/';
         let mut c = 1;
-        for (ox, oy) in vec![
+        for (ox, oy) in &[
             (-1, -1),
             (0, -1),
             (1, -1),
@@ -32,7 +32,11 @@ impl Octo<'_> {
             (1, 1),
         ] {
             let (nx, ny) = (x + ox, y + oy);
-            if nx < 0 || nx >= (self.w - 1) as isize || ny < 0 || ny >= self.h as isize {
+            if nx < 0
+                || nx >= (self.w - 1) as isize
+                || ny < 0
+                || ny >= self.h as isize
+            {
                 continue;
             }
             let ni = (ny as usize) * self.w + (nx as usize);

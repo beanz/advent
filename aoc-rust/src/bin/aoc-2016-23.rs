@@ -6,12 +6,12 @@ const EX1: [&str; 7] = [
 ];
 
 fn part1(comp: &mut elfcomp2016::ElfComp2016) -> isize {
-    comp.run(&vec![7]);
+    comp.run(&[7]);
     comp.get_reg(b'a')
 }
 
 fn part2(comp: &mut elfcomp2016::ElfComp2016) -> isize {
-    comp.run(&vec![12]);
+    comp.run(&[12]);
     comp.get_reg(b'a')
 }
 

@@ -27,10 +27,10 @@ impl Bingo {
         let mut calls: Vec<u8> = vec![];
         let mut n: u8 = 0;
         let mut j = 0;
-        for i in 0..inp.len() {
-            match inp[i] {
+        for (i, ch) in inp.iter().enumerate() {
+            match ch {
                 48..=57 => {
-                    n = (n * 10) + (inp[i] - 48);
+                    n = (n * 10) + (ch - 48);
                 }
                 44 => {
                     calls.push(n);
@@ -48,8 +48,7 @@ impl Bingo {
         let mut boards: Vec<Board> = vec![];
         let mut lookup: HashMap<u8, Vec<Location>> = HashMap::new();
 
-        let mut bnum = 0;
-        for chunk in u8s.chunks(25) {
+        for (bnum, chunk) in u8s.chunks(25).enumerate() {
             remaining += 1;
             let mut board = Board {
                 score: 0,
@@ -57,12 +56,11 @@ impl Bingo {
                 row_remaining: vec![5, 5, 5, 5, 5],
                 col_remaining: vec![5, 5, 5, 5, 5],
             };
-            for i in 0..chunk.len() {
-                let num = chunk[i];
+            for (i, num) in chunk.iter().enumerate() {
                 let r = i / 5;
                 let c = i % 5;
-                board.score += num as usize;
-                let le = lookup.entry(num).or_insert_with(Vec::new);
+                board.score += *num as usize;
+                let le = lookup.entry(*num).or_insert_with(Vec::new);
                 le.push(Location {
                     board: bnum,
                     row: r,
@@ -70,7 +68,6 @@ impl Bingo {
                 });
             }
             boards.push(board);
-            bnum += 1;
         }
 
         Bingo {
@@ -85,7 +82,7 @@ impl Bingo {
         let mut p2 = 0;
         let mut first = true;
         for call in &self.calls {
-            for nl in self.lookup.get(&call).unwrap() {
+            for nl in self.lookup.get(call).unwrap() {
                 let mut board = &mut self.boards[nl.board];
                 if board.won {
                     continue;

@@ -17,7 +17,7 @@ fn part1(l: &str) -> (usize, Vec<bool>) {
     (c, grid)
 }
 
-fn connected(p: (usize, usize), grid: &mut Vec<bool>) {
+fn connected(p: (usize, usize), grid: &mut [bool]) {
     let mut todo: VecDeque<(usize, usize)> = VecDeque::new();
     todo.push_front(p);
     while !todo.is_empty() {
@@ -45,7 +45,7 @@ fn connected(p: (usize, usize), grid: &mut Vec<bool>) {
     }
 }
 
-fn part2(grid: &mut Vec<bool>) -> usize {
+fn part2(grid: &mut [bool]) -> usize {
     let mut c = 0;
     for y in 0..128 {
         for x in 0..128 {

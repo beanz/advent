@@ -32,12 +32,8 @@ impl Mach {
         for r in &self.rules {
             let s = &self.init;
             for (i, _) in s.match_indices(&r.0) {
-                let n = format!(
-                    "{}{}{}",
-                    s[0..i].to_string(),
-                    r.1[..].to_string(),
-                    s[i + r.0.len()..].to_string()
-                );
+                let n =
+                    format!("{}{}{}", &s[0..i], &r.1[..], &s[i + r.0.len()..],);
                 res.insert(n);
             }
         }

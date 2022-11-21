@@ -37,8 +37,8 @@ impl Rect {
     fn rotate_row(&mut self, row: usize, by: usize) {
         self.disp[row].rotate_right(by);
     }
-    fn apply(&mut self, s: &String) {
-        let uints: Vec<usize> = aoc::uints::<usize>(&s).collect();
+    fn apply(&mut self, s: &str) {
+        let uints: Vec<usize> = aoc::uints::<usize>(s).collect();
         if s.starts_with("rect") {
             self.rect(uints[0], uints[1]);
         } else if s.starts_with("rotate col") {

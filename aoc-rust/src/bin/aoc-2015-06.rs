@@ -47,7 +47,7 @@ pub fn calc(lines: &[String]) -> (usize, usize) {
     }
     (
         p1.iter().filter(|&&i| i).count(),
-        p2.iter().map(|x| x.abs() as usize).sum(),
+        p2.iter().map(|x| x.unsigned_abs() as usize).sum(),
     )
 }
 

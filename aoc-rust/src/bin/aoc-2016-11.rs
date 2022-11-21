@@ -437,7 +437,7 @@ impl Solver {
             if list == "nothing relevant." {
                 continue;
             }
-            let items = list.split(" and ").map(|p| p.split(", ")).flatten();
+            let items = list.split(" and ").flat_map(|p| p.split(", "));
             for item in items {
                 let mut words = item.split(' ').skip(1);
                 let element = words.next().unwrap().split('-').next().unwrap();

@@ -9,15 +9,15 @@ impl Report {
         let mut nums: Vec<u16> = vec![];
         let mut n: u16 = 0;
         let mut bits: Option<usize> = None;
-        for i in 0..inp.len() {
-            match inp[i] {
+        for (i, ch) in inp.iter().enumerate() {
+            match ch {
                 48 | 49 => {
-                    n = (n << 1) + (inp[i] - 48) as u16;
+                    n = (n << 1) + (ch - 48) as u16;
                 }
                 10 => {
                     nums.push(n);
                     n = 0;
-                    if bits == None {
+                    if bits.is_none() {
                         bits = Some(i - 1);
                     }
                 }

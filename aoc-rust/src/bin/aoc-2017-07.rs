@@ -98,7 +98,7 @@ impl Tower {
             match has_odd {
                 None => (w + ws.iter().sum::<usize>(), None),
                 Some(odd) => {
-                    let not_odd = if odd == 0 { 1 } else { 0 };
+                    let not_odd = usize::from(odd == 0);
                     (
                         0,
                         Some(

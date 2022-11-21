@@ -96,7 +96,7 @@ where
         let (i, md5) = it.next().unwrap();
         let s = md5.string().bytes().collect::<Vec<u8>>();
         let triple = s.windows(3).find(|c| c[0] == c[1] && c[1] == c[2]);
-        if triple == None {
+        if triple.is_none() {
             continue;
         }
         let ch = triple.unwrap()[0];

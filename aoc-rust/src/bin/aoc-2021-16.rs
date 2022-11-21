@@ -23,7 +23,7 @@ impl Packet {
             }
             b.push(v);
         }
-        Packet { b: b, ibit: 0 }
+        Packet { b, ibit: 0 }
     }
     fn num(&mut self, n: usize) -> usize {
         let mut v: usize = 0;
@@ -52,27 +52,9 @@ impl Packet {
             1 => args.iter().product(),
             2 => *args.iter().min().unwrap(),
             3 => *args.iter().max().unwrap(),
-            5 => {
-                if args[0] > args[1] {
-                    1
-                } else {
-                    0
-                }
-            }
-            6 => {
-                if args[0] < args[1] {
-                    1
-                } else {
-                    0
-                }
-            }
-            7 => {
-                if args[0] == args[1] {
-                    1
-                } else {
-                    0
-                }
-            }
+            5 => usize::from(args[0] > args[1]),
+            6 => usize::from(args[0] < args[1]),
+            7 => usize::from(args[0] == args[1]),
             _ => panic!("invalid op"),
         }
     }

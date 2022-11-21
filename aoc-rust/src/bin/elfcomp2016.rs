@@ -234,8 +234,8 @@ impl ElfComp2016 {
         let inst: Vec<Inst> = inp.iter().map(|l| Inst::new(l)).collect();
         let opt = optimize(&inst);
         ElfComp2016 {
-            inst: inst,
-            opt: opt,
+            inst,
+            opt,
             ip: 0,
             reg: vec![0; 4],
         }
