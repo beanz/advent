@@ -110,6 +110,7 @@ func NewWater(in []string) *Water {
 	tiles := make(Tiles, len(in))
 	edges := make(Edges, len(in)*4)
 	for _, ch := range in {
+		ch = strings.TrimSuffix(ch, "\n")
 		tile := NewTile(ch)
 		tiles[tile.Num()] = tile
 		for _, s := range []string{tile.Top(), tile.Bottom(), tile.Left(), tile.Right()} {
@@ -220,7 +221,7 @@ func (w *Water) Image() []string {
 	if DEBUG() {
 		fmt.Printf("starting with %d\n %d", starter, starter)
 	}
-	res := [][]*Tile{[]*Tile{}}
+	res := [][]*Tile{{}}
 	i := 0
 	t := w.tiles[starter]
 	// rotating to correct orientation
