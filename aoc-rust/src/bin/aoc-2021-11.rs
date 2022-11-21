@@ -18,15 +18,24 @@ impl Octo<'_> {
         Octo { m: inp, w, h }
     }
 
-    fn flash(&mut self, i : usize, x : isize, y :isize) -> usize {
+    fn flash(&mut self, i: usize, x: isize, y: isize) -> usize {
         self.m[i] = b'/';
         let mut c = 1;
-        for (ox,oy) in vec![(-1,-1),(0,-1),(1,-1), (-1,0),(1,0),(-1,1),(0,1), (1,1)] {
-            let (nx, ny) = (x+ox, y+oy);
-            if nx < 0 || nx >= (self.w-1) as isize || ny < 0 || ny >= self.h as isize  {
+        for (ox, oy) in vec![
+            (-1, -1),
+            (0, -1),
+            (1, -1),
+            (-1, 0),
+            (1, 0),
+            (-1, 1),
+            (0, 1),
+            (1, 1),
+        ] {
+            let (nx, ny) = (x + ox, y + oy);
+            if nx < 0 || nx >= (self.w - 1) as isize || ny < 0 || ny >= self.h as isize {
                 continue;
             }
-            let ni = (ny as usize)*self.w + (nx as usize);
+            let ni = (ny as usize) * self.w + (nx as usize);
             if self.m[ni] == b'/' {
                 continue;
             }
@@ -39,15 +48,15 @@ impl Octo<'_> {
     }
     fn step(&mut self) -> usize {
         for i in 0..self.m.len() {
-          if self.m[i] == b'\n' {
+            if self.m[i] == b'\n' {
                 continue;
             }
-          self.m[i] += 1;
+            self.m[i] += 1;
         }
         let mut c = 0;
         for y in 0..self.h as isize {
-            for x in 0..(self.w-1) as isize {
-                let i = (y as usize)*self.w + (x as usize);
+            for x in 0..(self.w - 1) as isize {
+                let i = (y as usize) * self.w + (x as usize);
                 if self.m[i] > b'9' {
                     c += self.flash(i, x, y);
                 }
@@ -61,37 +70,37 @@ impl Octo<'_> {
         c
     }
 
-    fn parts(&mut self, max :usize) -> (usize, usize) {
-        let (mut flashes, mut steps) = (0,0);
+    fn parts(&mut self, max: usize) -> (usize, usize) {
+        let (mut flashes, mut steps) = (0, 0);
         loop {
             let c = self.step();
-            steps+=1;
+            steps += 1;
             if steps <= max {
                 flashes += c;
             }
-            if c == (self.w-1)*self.h {
+            if c == (self.w - 1) * self.h {
                 break;
             }
         }
-        (flashes,steps)
+        (flashes, steps)
     }
 }
 
 impl fmt::Display for Octo<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-            write!(f, "{}", str::from_utf8(self.m).unwrap())
+        write!(f, "{}", str::from_utf8(self.m).unwrap())
     }
 }
 
 #[test]
 fn step_works() {
-   // let mut inp: Vec<u8> = vec![];
-   // for ch in b"11111\n19991\n19191\n19991\n11111\n" {
-   //     inp.push(*ch);
-   // }
-   // let mut n = Octo::new(&mut inp);
-   // assert_eq!(n.step(), 9, "first example");
-   // assert_eq!(format!("{}", n), "34543\n40004\n50005\n40004\n34543\n");
+    // let mut inp: Vec<u8> = vec![];
+    // for ch in b"11111\n19991\n19191\n19991\n11111\n" {
+    //     inp.push(*ch);
+    // }
+    // let mut n = Octo::new(&mut inp);
+    // assert_eq!(n.step(), 9, "first example");
+    // assert_eq!(format!("{}", n), "34543\n40004\n50005\n40004\n34543\n");
     let mut inp2: Vec<u8> = vec![];
     for ch in b"5483143223\n2745854711\n5264556173\n6141336146\n6357385478\n4167524645\n2176841721\n6882881134\n4846848554\n5283751526\n" {
         inp2.push(*ch);
@@ -104,8 +113,7 @@ fn step_works() {
 }
 
 #[test]
-fn parts_works() {
-}
+fn parts_works() {}
 
 fn main() {
     aoc::benchme(|bench: bool| {
