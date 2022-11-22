@@ -6,8 +6,7 @@ CC=clang++-12
 CR_DIR=/usr
 CR_LIB=$(CR_DIR)/share/crystal/src:../../lib-cr
 CR=$(CR_DIR)/bin/crystal
-#NIM=$(HOME)/Tmp/nim-1.0.4/bin/nim
-NIM=$(HOME)/Tmp/nim-1.6.2/bin/nim
+NIM=$(HOME)/Tmp/nim-1.6.6/bin/nim
 
 ifneq (,$(wildcard main.go))
 ALL += aoc-go
@@ -195,7 +194,7 @@ check: ${ALL}
 	echo -n "$(HERE): " ; \
 	for f in $^ ; do \
 	  echo -n "$$f "; \
-	  ./$$f >$$TT/$$f.log \
+	  ./$$f >$$TT/$$f.log 2>&1 \
 	    && diff -audBbw $$GOLD $$TT/$$f.log >$$TT/$$f.diff \
 	    || ( echo ; echo $$f output differs ; cat $$TT/$$f.diff); \
 	done && \
