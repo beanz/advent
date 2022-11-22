@@ -9,7 +9,7 @@ import (
 func ExampleMain() {
 	main()
 	//Output:
-	// Part 1: 3974
+	// Part 1: 3987
 	// Part 2: 4500
 }
 
