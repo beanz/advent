@@ -35,8 +35,8 @@ impl Cave<'_> {
         let mut todo: Vec<Vec<Point>> = vec![vec![]; 20 * n];
         let risk = |p: Point| {
             let mut r = (self.m[p.x % self.w][p.y % self.h] - b'0') as usize;
-            r += p.x / self.w + p.y /self.h;
-            r = 1+((r-1)%9);
+            r += p.x / self.w + p.y / self.h;
+            r = 1 + ((r - 1) % 9);
             r
         };
         let add = |todo: &mut Vec<Vec<Point>>, d: &mut [usize], p: Point, pd: usize| {
