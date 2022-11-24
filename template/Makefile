@@ -215,6 +215,32 @@ test-rs: $(RS_SRC)
 	( cd ../../aoc-rust && \
 	  cargo test --bin "$(basename $(notdir $<))" )
 
+prof-rs: $(RS_SRC)
+	( cd ../../aoc-rust && \
+	  cargo flamegraph --bin "$(basename $(notdir $<))" \
+		   -o ../$(YEAR)/$(DAY)/flamegraph.svg \
+		   -- ../$(YEAR)/$(DAY)/input.txt )
+
+test-rs-cov: $(RS_SRC)
+	( cd ../../aoc-rust && \
+	  RUSTFLAGS="-C instrument-coverage" \
+		  cargo test --bin "$(basename $(notdir $<))" )
+	llvm-profdata merge -sparse ../../aoc-rust/default_*.profraw -o test.profdata
+	llvm-cov report \
+    --use-color \
+		--ignore-filename-regex='/.cargo/registry' \
+		--ignore-filename-regex='src/lib.rs' \
+    --instr-profile=test.profdata \
+    --object ../../aoc-rust/target/debug/deps/aoc_$(YEAR)_$(DAY)-????????????????
+	llvm-cov show \
+    --use-color \
+		--ignore-filename-regex='/.cargo/registry' \
+		--ignore-filename-regex='src/lib.rs' \
+    --instr-profile=test.profdata \
+    --object ../../aoc-rust/target/debug/deps/aoc_$(YEAR)_$(DAY)-???????????????? \
+    --show-instantiations --show-line-counts-or-regions \
+    --Xdemangler=rustfilt
+
 clippy: $(RS_SRC)
 	( cd ../../aoc-rust && cargo clippy )
 

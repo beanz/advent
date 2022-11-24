@@ -17,3 +17,6 @@ rand = "^0.8"
 mod_exp = "1.0.1"
 md5 = "0.7.0"
 indexmap = "1.9.2"
+
+[profile.release]
+debug = true
