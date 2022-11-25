@@ -1,3 +1,4 @@
+use ahash::{AHasher, RandomState};
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
@@ -19,7 +20,7 @@ struct Bingo {
     calls: Vec<u8>,
     boards: Vec<Board>,
     remaining: u8,
-    lookup: HashMap<u8, Vec<Location>>,
+    lookup: HashMap<u8, Vec<Location>, RandomState>,
 }
 
 impl Bingo {
@@ -29,14 +30,14 @@ impl Bingo {
         let mut j = 0;
         for (i, ch) in inp.iter().enumerate() {
             match ch {
-                48..=57 => {
+                b'0'..=b'9' => {
                     n = (n * 10) + (ch - 48);
                 }
-                44 => {
+                b',' => {
                     calls.push(n);
                     n = 0;
                 }
-                10 => {
+                b'\n' => {
                     j = i;
                     break;
                 }
@@ -46,7 +47,7 @@ impl Bingo {
         let u8s = read_u8s(&inp[j..inp.len()]);
         let mut remaining: u8 = 0;
         let mut boards: Vec<Board> = vec![];
-        let mut lookup: HashMap<u8, Vec<Location>> = HashMap::new();
+        let mut lookup: HashMap<u8, Vec<Location>, RandomState> = HashMap::default();
 
         for (bnum, chunk) in u8s.chunks(25).enumerate() {
             remaining += 1;
@@ -90,9 +91,7 @@ impl Bingo {
                 board.score -= *call as usize;
                 board.row_remaining[nl.row] -= 1;
                 board.col_remaining[nl.col] -= 1;
-                if board.row_remaining[nl.row] != 0
-                    && board.col_remaining[nl.col] != 0
-                {
+                if board.row_remaining[nl.row] != 0 && board.col_remaining[nl.col] != 0 {
                     continue;
                 }
                 board.won = true;
