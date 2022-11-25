@@ -1,4 +1,4 @@
-use ahash::{AHasher, RandomState};
+use ahash::RandomState;
 use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]

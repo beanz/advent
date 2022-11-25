@@ -247,12 +247,17 @@ fn part2lookup(pp1: u8, pp2: u8) -> usize {
     LOOKUP[(pp1 as usize) * 11 + pp2 as usize]
 }
 
+fn parts(inp: &[u8]) -> (u32, usize) {
+    let nums = u8s(&inp);
+    let p1 = part1(nums[1], nums[3]);
+    let p2 = part2lookup(nums[1], nums[3]);
+    (p1, p2)
+}
+
 fn main() {
     let inp = std::fs::read(aoc::input_file()).expect("read error");
     aoc::benchme(|bench: bool| {
-        let nums = u8s(&inp);
-        let p1 = part1(nums[1], nums[3]);
-        let p2 = part2lookup(nums[1], nums[3]);
+        let (p1, p2) = parts(&inp);
         if !bench {
             println!("Part 1: {}", p1);
             println!("Part 2: {}", p2);
@@ -261,15 +266,7 @@ fn main() {
 }
 
 #[test]
-fn part1_works() {
-    let ex: Vec<String> =
-        EX.iter().map(|x| x.to_string()).collect::<Vec<String>>();
-    assert_eq!(part1(&ex), 150, "part 1 test");
-}
-
-#[test]
-fn part2_works() {
-    let ex: Vec<String> =
-        EX.iter().map(|x| x.to_string()).collect::<Vec<String>>();
-    assert_eq!(part2(&ex), 900, "part 2 test");
+fn parts_works() {
+    let ex = std::fs::read("../2021/21/test1.txt").expect("read error");
+    assert_eq!(parts(&ex), (739785, 444356092776315), "parts test");
 }
