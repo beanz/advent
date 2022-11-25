@@ -9,8 +9,8 @@ impl Crabs {
         let mut n: i16 = 0;
         for ch in inp.iter() {
             match ch {
-                48..=57 => {
-                    n = n * 10 + (ch - 48) as i16;
+                b'0'..=b'9' => {
+                    n = n * 10 + (ch - b'0') as i16;
                 }
                 _ => {
                     nums.push(n);
