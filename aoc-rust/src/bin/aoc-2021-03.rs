@@ -11,10 +11,10 @@ impl Report {
         let mut bits: Option<usize> = None;
         for (i, ch) in inp.iter().enumerate() {
             match ch {
-                48 | 49 => {
-                    n = (n << 1) + (ch - 48) as u16;
+                b'0' | b'1' => {
+                    n = (n << 1) + (ch - b'0') as u16;
                 }
-                10 => {
+                b'\n' => {
                     nums.push(n);
                     n = 0;
                     if bits.is_none() {

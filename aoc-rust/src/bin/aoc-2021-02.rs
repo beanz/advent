@@ -1,73 +1,52 @@
-fn part1(inp: &[String]) -> isize {
+fn parts(inp: &[u8]) -> (isize, isize) {
     let mut x: isize = 0;
     let mut y: isize = 0;
-    for l in inp {
-        let lb: &[u8] = l.as_bytes();
-        match lb[0] {
-            102 => x += (lb[8] - 48) as isize,
-            117 => y -= (lb[3] - 48) as isize,
-            100 => y += (lb[5] - 48) as isize,
-            _ => (),
-        }
-    }
-    x * y
-}
-
-fn part2(inp: &[String]) -> isize {
-    let mut x: isize = 0;
+    let mut x2: isize = 0;
     let mut a: isize = 0;
-    let mut y: isize = 0;
-    for l in inp {
-        let lb: &[u8] = l.as_bytes();
-        match lb[0] {
-            102 => {
-                let n = (lb[8] - 48) as isize;
+    let mut y2: isize = 0;
+    let mut i = 0;
+    while i < inp.len() {
+        match inp[i] {
+            b'f' => {
+                let n = (inp[i + 8] - b'0') as isize;
                 x += n;
-                y += n * a;
+                x2 += n;
+                y2 += n * a;
+                i += 10;
             }
-            117 => a -= (lb[3] - 48) as isize,
-            100 => a += (lb[5] - 48) as isize,
+            b'u' => {
+                let n = (inp[i + 3] - b'0') as isize;
+                y -= n;
+                a -= n;
+                i += 5;
+            }
+            b'd' => {
+                let n = (inp[i + 5] - b'0') as isize;
+                y += n;
+                a += n;
+                i += 7;
+            }
             _ => (),
         }
     }
-    x * y
+    (x * y, x2 * y2)
 }
 
 fn main() {
-    let inp = aoc::black_box(aoc::input_lines());
-    let mut res = 0;
+    let inp = std::fs::read(aoc::input_file()).expect("read error");
     aoc::benchme(|bench: bool| {
-        let p1 = part1(&inp);
-        let p2 = part2(&inp);
+        let (p1, p2) = parts(&inp);
         if !bench {
             println!("Part 1: {}", p1);
             println!("Part 2: {}", p2);
         }
-        res += p1;
-        res += p2;
     })
 }
 
-#[allow(dead_code)]
-const EX: [&str; 6] = [
-    "forward 5",
-    "down 5",
-    "forward 8",
-    "up 3",
-    "down 8",
-    "forward 2",
-];
-
 #[test]
-fn part1_works() {
-    let ex: Vec<String> =
-        EX.iter().map(|x| x.to_string()).collect::<Vec<String>>();
-    assert_eq!(part1(&ex), 150, "part 1 test");
-}
-
-#[test]
-fn part2_works() {
-    let ex: Vec<String> =
-        EX.iter().map(|x| x.to_string()).collect::<Vec<String>>();
-    assert_eq!(part2(&ex), 900, "part 2 test");
+fn parts_works() {
+    let ex = std::fs::read("../2021/02/test1.txt").expect("read");
+    let (p1, p2) = parts(&ex);
+    assert_eq!(p1, 150, "part 1 test");
+    assert_eq!(p2, 900, "part 2 test");
 }

@@ -217,7 +217,7 @@ test-rs: $(RS_SRC)
 
 prof-rs: $(RS_SRC)
 	( cd ../../aoc-rust && \
-	  cargo flamegraph --bin "$(basename $(notdir $<))" \
+	  AoC_BENCH=1 cargo flamegraph --bin "$(basename $(notdir $<))" \
 		   -o ../$(YEAR)/$(DAY)/flamegraph.svg \
 		   -- ../$(YEAR)/$(DAY)/input.txt ; \
 		rm -f perf.data* )
