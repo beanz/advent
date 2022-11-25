@@ -1,27 +1,19 @@
 use std::fmt;
 
-struct Trench {
-    sc: Vec<Vec<u8>>,
+struct Trench<'a> {
+    sc: &'a mut [u8],
     w: usize,
     h: usize,
 }
 
-impl Trench {
+impl Trench<'_> {
     fn new(inp: &mut [u8]) -> Trench {
         let mut w = 0;
         while w < inp.len() && inp[w] != b'\n' {
             w += 1;
         }
         let h = inp.len() / (w + 1);
-        let mut sc: Vec<Vec<u8>> = vec![];
-        for y in 0..h {
-            let mut row: Vec<u8> = vec![];
-            for x in 0..w {
-                row.push(inp[x + y * (w + 1)]);
-            }
-            sc.push(row);
-        }
-        Trench { sc, w, h }
+        Trench { sc: inp, w, h }
     }
     fn part(&mut self) -> usize {
         for steps in 1.. {
@@ -31,26 +23,31 @@ impl Trench {
         }
         0
     }
+    #[inline(always)]
+    fn sc_index(&self, x: usize, y: usize) -> usize {
+        x + y * (self.w + 1)
+    }
     fn step(&mut self) -> usize {
         let mut c = self.east();
         for x in 0..self.w {
-            let mut mh = self.h - 1;
-            let mut y = 0;
-            if self.sc[mh][x] == b'v' && self.sc[0][x] == b'.' {
+            let mut mhi = x + (self.w + 1) * (self.h - 1);
+            let mut i = x;
+            if self.sc[mhi] == b'v' && self.sc[x] == b'.' {
                 c += 1;
-                self.sc[0][x] = b'v';
-                self.sc[mh][x] = b'.';
-                mh -= 1;
-                y += 1;
+                self.sc[x] = b'v';
+                self.sc[mhi] = b'.';
+                mhi -= self.w + 1;
+                i += self.w + 1;
             }
-            while y < mh {
-                if self.sc[y][x] == b'v' && self.sc[y + 1][x] == b'.' {
+            while i < mhi {
+                let ni = i + (self.w + 1);
+                if self.sc[i] == b'v' && self.sc[ni] == b'.' {
                     c += 1;
-                    self.sc[y + 1][x] = b'v';
-                    self.sc[y][x] = b'.';
-                    y += 1;
+                    self.sc[ni] = b'v';
+                    self.sc[i] = b'.';
+                    i = ni;
                 }
-                y += 1;
+                i += self.w + 1;
             }
         }
         c
@@ -58,34 +55,34 @@ impl Trench {
     fn east(&mut self) -> usize {
         let mut c = 0;
         for y in 0..self.h {
-            let mut mw = self.w - 1;
-            let mut x = 0;
-            if self.sc[y][mw] == b'>' && self.sc[y][0] == b'.' {
+            let mut i = self.sc_index(0, y);
+            let mut mw = i + self.w - 1;
+            if self.sc[mw] == b'>' && self.sc[i] == b'.' {
                 c += 1;
-                self.sc[y][0] = b'>';
-                self.sc[y][mw] = b'.';
+                self.sc[i] = b'>';
+                self.sc[mw] = b'.';
                 mw -= 1;
-                x += 1;
+                i += 1;
             }
-            while x < mw {
-                if self.sc[y][x] == b'>' && self.sc[y][x + 1] == b'.' {
+            while i < mw {
+                if self.sc[i] == b'>' && self.sc[i + 1] == b'.' {
                     c += 1;
-                    self.sc[y][x + 1] = b'>';
-                    self.sc[y][x] = b'.';
-                    x += 1;
+                    self.sc[i + 1] = b'>';
+                    self.sc[i] = b'.';
+                    i += 1;
                 }
-                x += 1;
+                i += 1;
             }
         }
         c
     }
 }
 
-impl fmt::Display for Trench {
+impl fmt::Display for Trench<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for y in 0..self.h {
             for x in 0..self.w {
-                write!(f, "{}", self.sc[y][x] as char)?;
+                write!(f, "{}", self.sc[self.sc_index(x, y)] as char)?;
             }
             write!(f, "\n")?;
         }
