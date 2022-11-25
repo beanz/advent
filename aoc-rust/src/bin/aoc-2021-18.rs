@@ -15,7 +15,7 @@ struct SnailFish {
 
 impl SnailFish {
     fn new(inp: &[u8]) -> SnailFish {
-        let mut sf: Vec<SFToken> = vec![];
+        let mut sf: Vec<SFToken> = Vec::with_capacity(64);
         let mut n: usize = 0;
         let mut is_num = false;
         for ch in inp {
@@ -52,7 +52,7 @@ impl SnailFish {
         SnailFish { sf }
     }
     fn new_vec(inp: &[u8]) -> Vec<SnailFish> {
-        let mut sfs: Vec<SnailFish> = vec![];
+        let mut sfs: Vec<SnailFish> = Vec::with_capacity(100);
         let mut start: usize = 0;
         for i in 0..inp.len() {
             if inp[i] == 10 {
