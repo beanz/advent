@@ -20,28 +20,28 @@ impl SnailFish {
         let mut is_num = false;
         for ch in inp {
             match (ch, is_num) {
-                (48..=57, true) => n = n * 10 + (ch - 48) as usize,
-                (48..=57, false) => {
-                    n = n * 10 + (ch - 48) as usize;
+                (b'0'..=b'9', true) => n = n * 10 + (ch - b'0') as usize,
+                (b'0'..=b'9', false) => {
+                    n = n * 10 + (ch - b'0') as usize;
                     is_num = true;
                 }
-                (93, true) => {
+                (b']', true) => {
                     sf.push(SFToken::Num(n));
                     sf.push(SFToken::Close);
                     n = 0;
                     is_num = false;
                 }
-                (93, false) => {
+                (b']', false) => {
                     sf.push(SFToken::Close);
                 }
-                (91, false) => sf.push(SFToken::Open),
-                (44, true) => {
+                (b'[', false) => sf.push(SFToken::Open),
+                (b',', true) => {
                     sf.push(SFToken::Num(n));
                     sf.push(SFToken::Comma);
                     n = 0;
                     is_num = false;
                 }
-                (44, false) => {
+                (b',', false) => {
                     sf.push(SFToken::Comma);
                 }
                 _ => {
@@ -75,8 +75,7 @@ impl SnailFish {
                 (SFToken::Open, _) => level += 1,
                 (SFToken::Close, _) => level -= 1,
                 (SFToken::Comma, 0) => {
-                    return 3 * self.maghelper(s + 1, i)
-                        + 2 * self.maghelper(i + 1, e - 1);
+                    return 3 * self.maghelper(s + 1, i) + 2 * self.maghelper(i + 1, e - 1);
                 }
                 _ => {}
             }
