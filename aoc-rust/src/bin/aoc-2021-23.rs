@@ -1,3 +1,5 @@
+use rustc_hash::FxHashSet;
+
 #[derive(Debug, Clone, Copy, Hash, PartialEq)]
 enum Pod {
     Empty,
@@ -269,7 +271,7 @@ impl Board {
     }
     fn solve(&self) -> usize {
         let mut todo = Queue::new();
-        let mut seen = std::collections::HashSet::new();
+        let mut seen = FxHashSet::default();
         todo.insert(self.clone());
 
         while let Some(b) = todo.next() {
