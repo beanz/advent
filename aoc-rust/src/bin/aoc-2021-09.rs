@@ -17,7 +17,8 @@ impl Lava<'_> {
 
     fn parts(&mut self) -> (usize, usize) {
         let mut risk = 0;
-        let mut sizes: Vec<usize> = vec![];
+        let mut sizes: Vec<usize> = Vec::with_capacity(512);
+        let mut todo: Vec<usize> = Vec::with_capacity(512);
         for ch in b'0'..b'9' {
             for i in 0..self.m.len() {
                 if self.m[i] != ch {
@@ -25,7 +26,7 @@ impl Lava<'_> {
                 }
                 risk += (self.m[i] - b'0') as usize + 1;
                 let mut size = 0;
-                let mut todo: Vec<usize> = vec![i];
+                todo.push(i);
                 while !todo.is_empty() {
                     let ti = todo.pop().expect("todo empty");
                     if self.m[ti] == b'9' {
@@ -48,15 +49,14 @@ impl Lava<'_> {
                         todo.push(ti + self.w)
                     }
                 }
+                todo.clear();
                 sizes.push(size);
             }
         }
         sizes.sort();
         (
             risk,
-            sizes[sizes.len() - 3]
-                * sizes[sizes.len() - 2]
-                * sizes[sizes.len() - 1],
+            sizes[sizes.len() - 3] * sizes[sizes.len() - 2] * sizes[sizes.len() - 1],
         )
     }
 }
