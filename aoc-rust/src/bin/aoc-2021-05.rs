@@ -96,8 +96,8 @@ fn read_i16s(inp: &[u8]) -> Vec<i16> {
     let mut is_num = false;
     for ch in inp {
         match (ch, is_num) {
-            (48..=57, true) => n = n * 10 + (ch - 48) as i16,
-            (48..=57, false) => {
+            (b'0'..=b'9', true) => n = n * 10 + (ch - b'0') as i16,
+            (b'0'..=b'9', false) => {
                 n = (ch - 48) as i16;
                 is_num = true;
             }
