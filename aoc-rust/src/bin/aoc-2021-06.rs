@@ -53,9 +53,9 @@ fn read_u8s(inp: &[u8]) -> Vec<u8> {
     let mut is_num = false;
     for ch in inp {
         match (ch, is_num) {
-            (48..=57, true) => n = n * 10 + (ch - 48),
-            (48..=57, false) => {
-                n = ch - 48;
+            (b'0'..=b'9', true) => n = n * 10 + (ch - b'0'),
+            (b'0'..=b'9', false) => {
+                n = ch - b'0';
                 is_num = true;
             }
             (_, true) => {
