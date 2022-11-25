@@ -1,59 +1,42 @@
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
-struct Segments {
-    n: u8,
-}
+type Segments = u8;
 
-impl Segments {
-    fn new(inp: &[u8]) -> Segments {
-        let mut n: u8 = 0;
-        for ch in inp {
-            n |= 1 << (ch - b'a');
-        }
-        Segments { n }
-    }
-    fn digit(&self) -> u8 {
-        match self.n {
-            119 => 0,
-            36 => 1,
-            93 => 2,
-            109 => 3,
-            46 => 4,
-            107 => 5,
-            123 => 6,
-            37 => 7,
-            127 => 8,
-            111 => 9,
-            _ => panic!("invalid digit"),
-        }
+fn digit(n: Segments) -> u8 {
+    match n {
+        119 => 0,
+        36 => 1,
+        93 => 2,
+        109 => 3,
+        46 => 4,
+        107 => 5,
+        123 => 6,
+        37 => 7,
+        127 => 8,
+        111 => 9,
+        _ => panic!("invalid digit"),
     }
 }
 
 #[test]
 fn parts_segments() {
-    let s = Segments::new(b"cf");
-    assert_eq!(s.digit(), 1, "segments digit");
-    assert_eq!(s.n, 36, "segments encoding");
-    let s = Segments::new(b"abdfg");
-    assert_eq!(s.digit(), 5, "segments digit");
-    assert_eq!(s.n, 107, "segments encoding");
+    let s = 4 | 32;
+    assert_eq!(digit(s), 1, "segments digit");
+    let s = 1 | 2 | 8 | 32 | 64;
+    assert_eq!(digit(s), 5, "segments digit");
 }
 
 struct Entry {
-    output: Vec<Segments>,
-    pattern_of_len: Vec<Vec<Segments>>,
-    output_of_len: Vec<Vec<Segments>>,
+    output: [Segments; 4],
+    pattern_of_len: [u8; 8],
 }
 
 impl Entry {
-    fn solution(&self) -> Vec<u8> {
-        let cf = self.pattern_of_len[2][0].n;
-        let acf = self.pattern_of_len[3][0].n;
-        let bcdf = self.pattern_of_len[4][0].n;
-        let abcdefg = self.pattern_of_len[7][0].n;
+    fn solution(&self) -> (u8, u8, u8, u8, u8, u8, u8) {
+        let cf = self.pattern_of_len[2];
+        let acf = self.pattern_of_len[3];
+        let bcdf = self.pattern_of_len[4];
+        let abcdefg = self.pattern_of_len[7];
         let a = acf ^ cf;
-        let abfg = self.pattern_of_len[6][0].n
-            ^ self.pattern_of_len[6][1].n
-            ^ self.pattern_of_len[6][2].n;
+        let abfg = self.pattern_of_len[6];
         let cde = abcdefg ^ abfg;
         let c = cde & cf;
         let f = cf ^ c;
@@ -63,139 +46,113 @@ impl Entry {
         let de = cde ^ c;
         let d = bcdf & de;
         let e = de ^ d;
-        vec![a, b, c, d, e, f, g]
+        (a, b, c, d, e, f, g)
     }
 }
 
 struct Notes {
     entries: Vec<Entry>,
+    output_len_2_3_4_7: usize,
 }
 
 impl Notes {
     fn new(inp: &[u8]) -> Notes {
-        let mut entries: Vec<Entry> = vec![];
-        let mut pl: Vec<Vec<Segments>> = vec![
-            vec![],
-            vec![],
-            vec![],
-            vec![],
-            vec![],
-            vec![],
-            vec![],
-            vec![],
-        ];
-        let mut os: Vec<Segments> = vec![];
-        let mut ol: Vec<Vec<Segments>> = vec![
-            vec![],
-            vec![],
-            vec![],
-            vec![],
-            vec![],
-            vec![],
-            vec![],
-            vec![],
-        ];
-        let mut j: usize = 0;
+        let mut entries: Vec<Entry> = Vec::with_capacity(200);
+        let mut pattern_of_len: [u8; 8] = [0; 8];
+        let mut output: [Segments; 4] = [0; 4];
+        let mut output_i = 0;
+        let mut output_len_2_3_4_7 = 0;
         let mut state = true;
-        let mut word = false;
+        let mut n: u8 = 0;
+        let mut l: usize = 0;
 
         for i in 0..inp.len() {
             match inp[i] {
-                97..=103 => {
-                    if !word {
-                        j = i;
-                        word = true
-                    }
+                b'a'..=b'g' => {
+                    l += 1;
+                    n |= 1 << (inp[i] - b'a');
                 }
-                32 => {
-                    if word {
-                        let s = Segments::new(&inp[j..i]);
-                        let l = i - j;
+                b' ' => {
+                    if l != 0 {
                         if state {
-                            pl[l].push(s);
+                            pattern_of_len[l] ^= n;
                         } else {
-                            os.push(s);
-                            ol[l].push(s);
+                            output[output_i] = n;
+                            output_i += 1;
+                            if l == 2 || l == 3 || l == 4 || l == 7 {
+                                output_len_2_3_4_7 += 1;
+                            }
                         }
-                        word = false;
+                        n = 0;
+                        l = 0;
                     }
                 }
-                124 => {
+                b'|' => {
                     state = false;
                 }
-                10 => {
-                    if word {
-                        let s = Segments::new(&inp[j..i]);
-                        let l = i - j;
-                        if state {
-                            pl[l].push(s);
-                        } else {
-                            os.push(s);
-                            ol[l].push(s);
+                b'\n' => {
+                    if l != 0 {
+                        output[output_i] = n;
+                        output_i = 0;
+                        if l == 2 || l == 3 || l == 4 || l == 7 {
+                            output_len_2_3_4_7 += 1;
                         }
-                        word = false;
+                        n = 0;
+                        l = 0;
                     }
                     entries.push(Entry {
-                        pattern_of_len: pl,
-                        output: os,
-                        output_of_len: ol,
+                        output,
+                        pattern_of_len,
                     });
                     state = true;
-                    pl = vec![
-                        vec![],
-                        vec![],
-                        vec![],
-                        vec![],
-                        vec![],
-                        vec![],
-                        vec![],
-                        vec![],
-                    ];
-                    os = vec![];
-                    ol = vec![
-                        vec![],
-                        vec![],
-                        vec![],
-                        vec![],
-                        vec![],
-                        vec![],
-                        vec![],
-                        vec![],
-                    ];
+                    pattern_of_len = [0; 8];
+                    output = [0; 4];
                 }
                 _ => panic!("parse error"),
             }
         }
-        Notes { entries }
+        Notes {
+            entries,
+            output_len_2_3_4_7,
+        }
     }
 
     fn part1(&self) -> usize {
-        let mut c = 0;
-        for e in &self.entries {
-            c += e.output_of_len[2].len()
-                + e.output_of_len[3].len()
-                + e.output_of_len[4].len()
-                + e.output_of_len[7].len();
-        }
-        c
+        self.output_len_2_3_4_7
     }
     fn part2(&self) -> usize {
-        let mut c = 0;
-        for e in &self.entries {
-            let sol = e.solution();
+        let mut total = 0;
+        for ent in &self.entries {
+            let (a, b, c, d, e, f, g) = ent.solution();
             let mut n = 0;
-            for w in &e.output {
+            for w in &ent.output {
                 let mut cvt = 0;
-                for (i, v) in sol.iter().enumerate() {
-                    if (w.n & v) != 0 {
-                        cvt |= 1 << i;
-                    }
+                if (w & a) != 0 {
+                    cvt |= 1;
                 }
-                n = n * 10 + (Segments { n: cvt }.digit() as usize);
+                if (w & b) != 0 {
+                    cvt |= 2;
+                }
+                if (w & c) != 0 {
+                    cvt |= 4;
+                }
+                if (w & d) != 0 {
+                    cvt |= 8;
+                }
+                if (w & e) != 0 {
+                    cvt |= 16;
+                }
+                if (w & f) != 0 {
+                    cvt |= 32;
+                }
+                if (w & g) != 0 {
+                    cvt |= 64;
+                }
+                n = n * 10 + (digit(cvt) as usize);
             }
-            c += n;
+            total += n;
         }
-        c
+        total
     }
 }
 
