@@ -16,7 +16,7 @@ HYPERFINE += aoc-go
 endif
 ifneq (,$(wildcard aoc.pl))
 ALL += aoc.pl
-HYPERFINE += aoc.pl
+#HYPERFINE += aoc.pl
 TEST += test-pl
 endif
 ifneq (,$(wildcard aoc.zig))
