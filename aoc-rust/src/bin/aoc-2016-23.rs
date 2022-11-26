@@ -1,4 +1,4 @@
-mod elfcomp2016;
+use aoc::elfcomp2016;
 
 #[allow(dead_code)]
 const EX1: [&str; 7] = [
@@ -17,8 +17,7 @@ fn part2(comp: &mut elfcomp2016::ElfComp2016) -> isize {
 
 #[test]
 fn part1_works() {
-    let e: Vec<String> =
-        EX1.iter().map(|x| x.to_string()).collect::<Vec<String>>();
+    let e: Vec<String> = EX1.iter().map(|x| x.to_string()).collect::<Vec<String>>();
     let mut comp = elfcomp2016::ElfComp2016::new(&e);
     assert_eq!(part1(&mut comp), 3, "part 1 example");
 }

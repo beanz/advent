@@ -1,3 +1,5 @@
+pub mod elfcomp2016;
+
 use std::env;
 use std::fmt;
 use std::fs;
@@ -115,13 +117,8 @@ pub fn sum_lines(lines: &[String], line_fn: fn(l: &str) -> usize) -> usize {
     lines.iter().map(|x| line_fn(x)).sum()
 }
 
-pub fn sum_valid_lines(
-    lines: &[String], valid_line_fn: fn(l: &str) -> bool,
-) -> usize {
-    lines
-        .iter()
-        .map(|x| usize::from(valid_line_fn(x)))
-        .sum()
+pub fn sum_valid_lines(lines: &[String], valid_line_fn: fn(l: &str) -> bool) -> usize {
+    lines.iter().map(|x| usize::from(valid_line_fn(x))).sum()
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
@@ -330,9 +327,7 @@ impl HexFlatTop {
         self.r
     }
     pub fn distance(&self, o: &HexFlatTop) -> usize {
-        ((self.q - o.q).abs()
-            + (self.q + self.r - o.q - o.r).abs()
-            + (self.r - o.r).abs()) as usize
+        ((self.q - o.q).abs() + (self.q + self.r - o.q - o.r).abs() + (self.r - o.r).abs()) as usize
             / 2
     }
     pub fn mov(&mut self, dir: &str) {
