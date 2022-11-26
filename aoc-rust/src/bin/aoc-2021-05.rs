@@ -8,21 +8,22 @@ struct Line {
     y2: i16,
 }
 
+use std::cmp::Ordering;
+
 impl Line {
     fn norm(&self) -> (i16, i16) {
-        let mut nx = 0;
-        let mut ny = 0;
-        if self.x1 > self.x2 {
-            nx = -1;
-        } else if self.x1 < self.x2 {
-            nx = 1;
-        }
-        if self.y1 > self.y2 {
-            ny = -1;
-        } else if self.y1 < self.y2 {
-            ny = 1;
-        }
-        (nx, ny)
+        (
+            match self.x1.cmp(&self.x2) {
+                Ordering::Greater => -1,
+                Ordering::Less => 1,
+                _ => 0,
+            },
+            match self.y1.cmp(&self.y2) {
+                Ordering::Greater => -1,
+                Ordering::Less => 1,
+                _ => 0,
+            },
+        )
     }
 }
 

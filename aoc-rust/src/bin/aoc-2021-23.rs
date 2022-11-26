@@ -306,7 +306,7 @@ impl std::fmt::Display for Board {
         for i in 11..15 {
             write!(f, "{}#", self.state[i])?;
         }
-        write!(f, "##\n")?;
+        writeln!(f, "##")?;
         let mut i = 15;
         while i < self.state.len() {
             write!(f, "  #")?;
@@ -314,7 +314,7 @@ impl std::fmt::Display for Board {
                 write!(f, "{}#", self.state[i])?;
                 i += 1;
             }
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
         write!(f, "  #########\nCost: {}", self.cost)?;
         Ok(())
@@ -323,8 +323,8 @@ impl std::fmt::Display for Board {
 
 fn main() {
     aoc::benchme(|bench: bool| {
-        let mut inp = std::fs::read(aoc::input_file()).expect("read error");
-        let board = Board::from_input(&mut inp);
+        let inp = std::fs::read(aoc::input_file()).expect("read error");
+        let board = Board::from_input(&inp);
         let (p1, p2) = board.parts();
         if !bench {
             println!("Part 1: {}", p1);
@@ -617,13 +617,10 @@ impl Queue {
         }
     }
     fn next(&mut self) -> Option<Board> {
-        match self.pq.pop() {
-            Some((b, _)) => Some(b),
-            None => None,
-        }
+        self.pq.pop().map(|(b, _)| b)
     }
     fn insert(&mut self, b: Board) {
-        self.pq.push(b.clone(), Reverse(b.clone()));
+        self.pq.push(b.clone(), Reverse(b));
     }
 }
 

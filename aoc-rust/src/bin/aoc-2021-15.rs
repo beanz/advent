@@ -82,7 +82,7 @@ impl Cave<'_> {
 impl fmt::Display for Cave<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for y in 0..self.h {
-            write!(f, "{}\n", str::from_utf8(self.m[y]).unwrap())?;
+            writeln!(f, "{}", str::from_utf8(self.m[y]).unwrap())?;
         }
         Ok(())
     }

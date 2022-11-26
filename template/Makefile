@@ -10,6 +10,7 @@ NIM=$(HOME)/Tmp/nim-1.6.6/bin/nim
 
 ifneq (,$(wildcard main.go))
 ALL += aoc-go
+CHECK += aoc-go
 CLEAN += aoc-go gocpu.out cover.out
 TEST += test-go
 HYPERFINE += aoc-go
@@ -21,6 +22,7 @@ TEST += test-pl
 endif
 ifneq (,$(wildcard aoc.zig))
 ALL += aoc-zig
+CHECK += aoc-zig-rel
 CLEAN += aoc-zig aoc-zig-rel aoc-lib.zig zig-cpu.svg
 CLEAN_DIR += zig-cache
 TEST += test-zig
@@ -28,26 +30,31 @@ HYPERFINE += aoc-zig-rel
 endif
 ifneq (,$(wildcard aoc.d))
 ALL += aoc-d
+CHECK += aoc-d
 CLEAN += aoc-d aoc-d.o aoc-d-rel aoc-d-rel.o
 HYPERFINE += aoc-d-rel
 endif
 ifneq (,$(wildcard aoc.cr))
 ALL += aoc-cr
+CHECK += aoc-cr-rel
 CLEAN += aoc-cr aoc-cr-rel cr-cpu.svg
 HYPERFINE += aoc-cr-rel
 endif
 ifneq (,$(wildcard aoc.nim))
 ALL += aoc-nim
+CHECK += aoc-nim-rel
 CLEAN += aoc-nim
 HYPERFINE += aoc-nim-rel
 endif
 ifneq (,$(wildcard cpp/aoc.cpp))
 ALL += aoc-cpp
+CHECK += aoc-cpp-rel
 CLEAN += aoc-cpp
 HYPERFINE += aoc-cpp-rel
 endif
 ifneq (,$(wildcard aoc.hs))
 ALL += aoc-hs
+CHECK += aoc-hs-rel
 CLEAN += aoc-hs aoc-hs-rel
 HYPERFINE += aoc-hs-rel
 endif
@@ -58,6 +65,7 @@ RS_BIN=$(subst src/bin,target/debug,${RS_SRC:.rs=})
 RS_REL=$(subst src/bin,target/release,${RS_SRC:.rs=})
 ifneq (,$(wildcard $(RS_SRC)))
 ALL += aoc-rs
+CHECK += aoc-rs-rel
 CLEAN += aoc-rs
 HYPERFINE += aoc-rs-rel
 TEST += test-rs
@@ -86,7 +94,7 @@ times: input.txt ${TIMES}
 	@echo
 
 hyperfine: ${HYPERFINE}
-	hyperfine --warmup 1 $(addprefix ./,${HYPERFINE})
+	hyperfine -N --warmup 1 $(addprefix ./,${HYPERFINE})
 
 input.txt:
 	aoc-dump
@@ -187,7 +195,7 @@ perl-prof:
 	perl -d:NYTProf aoc.pl input.txt
 	nytprofhtml --open
 
-check: ${ALL}
+check: ${CHECK}
 	@TT=$$(mktemp -d) ; \
 	GOLD=$$TT/gold.log ; \
 	./$< >$$GOLD ; \
@@ -220,7 +228,7 @@ prof-rs: $(RS_SRC)
 	  AoC_BENCH=1 cargo flamegraph --bin "$(basename $(notdir $<))" \
 		   -o ../$(YEAR)/$(DAY)/flamegraph.svg \
 		   -- ../$(YEAR)/$(DAY)/input.txt ; \
-		rm -f perf.data* )
+		echo )
 
 test-rs-cov: $(RS_SRC)
 	( cd ../../aoc-rust && \

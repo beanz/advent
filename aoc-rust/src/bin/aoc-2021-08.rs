@@ -66,11 +66,11 @@ impl Notes {
         let mut n: u8 = 0;
         let mut l: usize = 0;
 
-        for i in 0..inp.len() {
-            match inp[i] {
+        for ch in inp {
+            match ch {
                 b'a'..=b'g' => {
                     l += 1;
-                    n |= 1 << (inp[i] - b'a');
+                    n |= 1 << (ch - b'a');
                 }
                 b' ' => {
                     if l != 0 {

@@ -75,25 +75,25 @@ impl Image {
         if self.value(x - 1, y - 1, def) {
             i += 256;
         }
-        if self.value(x + 0, y - 1, def) {
+        if self.value(x, y - 1, def) {
             i += 128;
         }
         if self.value(x + 1, y - 1, def) {
             i += 64;
         }
-        if self.value(x - 1, y + 0, def) {
+        if self.value(x - 1, y, def) {
             i += 32;
         }
-        if self.value(x + 0, y + 0, def) {
+        if self.value(x, y, def) {
             i += 16;
         }
-        if self.value(x + 1, y + 0, def) {
+        if self.value(x + 1, y, def) {
             i += 8;
         }
         if self.value(x - 1, y + 1, def) {
             i += 4;
         }
-        if self.value(x + 0, y + 1, def) {
+        if self.value(x, y + 1, def) {
             i += 2;
         }
         if self.value(x + 1, y + 1, def) {
@@ -109,7 +109,7 @@ impl fmt::Display for Image {
             for c in r {
                 write!(f, "{}", if *c { '#' } else { '.' })?;
             }
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
         Ok(())
     }

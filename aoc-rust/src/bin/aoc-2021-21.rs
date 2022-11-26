@@ -248,7 +248,7 @@ fn part2lookup(pp1: u8, pp2: u8) -> usize {
 }
 
 fn parts(inp: &[u8]) -> (u32, usize) {
-    let nums = u8s(&inp);
+    let nums = u8s(inp);
     let p1 = part1(nums[1], nums[3]);
     let p2 = part2lookup(nums[1], nums[3]);
     (p1, p2)

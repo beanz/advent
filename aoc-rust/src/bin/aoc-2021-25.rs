@@ -84,7 +84,7 @@ impl fmt::Display for Trench<'_> {
             for x in 0..self.w {
                 write!(f, "{}", self.sc[self.sc_index(x, y)] as char)?;
             }
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
         Ok(())
     }
