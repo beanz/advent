@@ -22,6 +22,7 @@ rustc-hash = "1.1.0"
 arrayvec = "0.7.2"
 ahash = "0.8.2"
 nom = "7.1.1"
+nohash-hasher = "0.2.0"
 
 [profile.release]
 debug = true

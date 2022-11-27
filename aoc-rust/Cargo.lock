@@ -25,6 +25,7 @@ dependencies = [
  "json",
  "md5",
  "mod_exp",
+ "nohash-hasher",
  "nom",
  "num 0.4.0",
  "priority-queue",
@@ -130,6 +131,12 @@ checksum = "bb4a3fad6af79fcf8d1417b2f6359d814a173fb413a1bd48ba04208b42b0d8b0"
 dependencies = [
  "num 0.2.1",
 ]
+
+[[package]]
+name = "nohash-hasher"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2bf50223579dc7cdcfb3bfcacf7069ff68243f8c363f62ffa99cf000a6b9c451"
 
 [[package]]
 name = "nom"
