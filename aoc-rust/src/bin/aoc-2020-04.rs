@@ -24,6 +24,7 @@ fn validate_range(min: usize, max: usize, value: &[u8]) -> bool {
     }
     min <= n && n <= max
 }
+
 fn validate(state: &FSM, value: &[u8]) -> bool {
     match state {
         FSM::BirthYear => validate_range(1920, 2002, value),
@@ -38,24 +39,20 @@ fn validate(state: &FSM, value: &[u8]) -> bool {
             }
         }
         FSM::HairColor => {
-            if value.len() == 7 {
-                true // #[0-9a-f]{6} no test actually required
-            } else {
-                false
-            }
+            value.len() == 7 // #[0-9a-f]{6} no test actually required
         }
         FSM::EyeColor => {
             if value.len() == 3 {
-                match (value[0], value[1], value[2]) {
-                    (b'a', b'm', b'b') => true,
-                    (b'b', b'l', b'u') => true,
-                    (b'b', b'r', b'n') => true,
-                    (b'g', b'r', b'y') => true,
-                    (b'g', b'r', b'n') => true,
-                    (b'h', b'z', b'l') => true,
-                    (b'o', b't', b'h') => true,
-                    _ => false,
-                }
+                matches!(
+                    (value[0], value[1], value[2]),
+                    (b'a', b'm', b'b')
+                        | (b'b', b'l', b'u')
+                        | (b'b', b'r', b'n')
+                        | (b'g', b'r', b'y')
+                        | (b'g', b'r', b'n')
+                        | (b'h', b'z', b'l')
+                        | (b'o', b't', b'h')
+                )
             } else {
                 false
             }
