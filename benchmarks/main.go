@@ -26,83 +26,13 @@ func main() {
 
 func makeTable(benchmarks benchmarkData) string {
 	sb := strings.Builder{}
-
 	languages := []string{}
 	for lang := range benchmarks {
 		languages = append(languages, lang)
 	}
 	sort.Strings(languages)
-	for _, lang := range languages {
-		sb.WriteByte('\n')
-		sb.WriteString("## ")
-		sb.WriteString(lang)
-		sb.WriteByte('\n')
 
-		years := []string{}
-		for year := range benchmarks[lang] {
-			years = append(years, year)
-		}
-		sort.Strings(years)
-		sb.WriteString(" &nbsp; ")
-		yearRuntimes := make([]time.Duration, len(years))
-		for i, year := range years {
-			sb.WriteString(" | ")
-			sb.WriteString(year)
-			totalRuntime := time.Duration(0)
-			for _, runtime := range benchmarks[lang][year] {
-				totalRuntime += runtime
-			}
-			yearRuntimes[i] = totalRuntime
-		}
-		sb.WriteString("\n ---: ")
-		for range years {
-			sb.WriteString(" | ---: ")
-		}
-		sb.WriteByte('\n')
-		for _, day := range []string{
-			"01", "02", "03", "04", "05", "06",
-			"07", "08", "09", "10", "11", "12",
-			"13", "14", "15", "16", "17", "18",
-			"19", "20", "21", "22", "23", "24",
-			"25"} {
-			sb.WriteString("Day ")
-			sb.WriteString(day)
-			for i, year := range years {
-				sb.WriteString(" | ")
-				runtime, ok := benchmarks[lang][year][day]
-				propTotal := float64(runtime) / float64(yearRuntimes[i])
-				if ok {
-					strength := ""
-					prefix := ""
-					if propTotal > 0.2 {
-						strength = "**"
-						prefix = "🔴 "
-					}
-					sb.WriteString(strength)
-					sb.WriteString(prefix)
-					sb.WriteString(formatDuration(runtime))
-					sb.WriteString(strength)
-				} else {
-					sb.WriteByte('-')
-				}
-			}
-			sb.WriteByte('\n')
-		}
-		sb.WriteString("*Total*")
-		for _, year := range years {
-			totalRuntime := time.Duration(0)
-			for _, runtime := range benchmarks[lang][year] {
-				totalRuntime += runtime
-			}
-			sb.WriteString(" | *")
-			sb.WriteString(formatDuration(totalRuntime))
-			sb.WriteString("*")
-		}
-		sb.WriteByte('\n')
-		sb.WriteByte('\n')
-	}
-
-	for _, year := range []string{"2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022"} {
+	for _, year := range []string{"2022", "2021", "2020", "2019", "2018", "2017", "2016", "2015"} {
 		sb.WriteByte('\n')
 		sb.WriteString("## ")
 		sb.WriteString(year)
@@ -185,52 +115,120 @@ func makeTable(benchmarks benchmarkData) string {
 		sb.WriteByte('\n')
 		sb.WriteByte('\n')
 
-		if len(langs) == 1 && len(benchmarks[langs[0]][year]) == 1 {
-			continue
-		}
-
-		maxY = math.Min(maxY, 2000000000)
-		dayLabel := func(value float64) string {
-			return strconv.FormatFloat(value, 'f', 0, 64)
-		}
-
-		gmin, gmax, ginc, gfrac := looseLabel(minY, maxY, 8)
-		labelSeries := margaid.NewSeries(margaid.Titled("Labels"))
-		for tick := gmin; tick <= gmax; tick += ginc {
-			labelSeries.Add(margaid.MakeValue(float64(1.0), float64(tick)))
-		}
-		var labeler func(float64) string
-		if gfrac > 0 {
-			labeler = func(value float64) string {
-				return strconv.FormatFloat(value, 'f', gfrac, 64)
+		if len(langs) != 1 || len(benchmarks[langs[0]][year]) != 1 {
+			maxY = math.Min(maxY, 2000000000)
+			dayLabel := func(value float64) string {
+				return strconv.FormatFloat(value, 'f', 0, 64)
 			}
-		} else {
-			labeler = func(value float64) string {
-				return formatDuration(time.Duration(int64(value)))
-			}
-		}
 
-		diagram := margaid.New(800, 600,
-			margaid.WithRange(margaid.XAxis, 1.0, 25),
-			margaid.WithRange(margaid.YAxis, 0.0, maxY),
-			margaid.WithPadding(10),
-			margaid.WithInset(80),
-		)
-		diagram.Bar(series)
-		diagram.Legend(margaid.RightBottom)
-		diagram.Frame()
-		diagram.Axis(series[0], margaid.XAxis, diagram.LabeledTicker(dayLabel), false, "Day")
-		diagram.Axis(labelSeries, margaid.YAxis, diagram.LabeledTicker(labeler), false, "Runtime")
-		svg, err := os.Create("y" + year + ".svg")
-		if err != nil {
-			panic(err)
+			gmin, gmax, ginc, gfrac := looseLabel(minY, maxY, 8)
+			labelSeries := margaid.NewSeries(margaid.Titled("Labels"))
+			for tick := gmin; tick <= gmax; tick += ginc {
+				labelSeries.Add(margaid.MakeValue(float64(1.0), float64(tick)))
+			}
+			var labeler func(float64) string
+			if gfrac > 0 {
+				labeler = func(value float64) string {
+					return strconv.FormatFloat(value, 'f', gfrac, 64)
+				}
+			} else {
+				labeler = func(value float64) string {
+					return formatDuration(time.Duration(int64(value)))
+				}
+			}
+
+			diagram := margaid.New(800, 600,
+				margaid.WithRange(margaid.XAxis, 1.0, 25),
+				margaid.WithRange(margaid.YAxis, 0.0, maxY),
+				margaid.WithPadding(10),
+				margaid.WithInset(80),
+			)
+			diagram.Bar(series)
+			diagram.Legend(margaid.RightBottom)
+			diagram.Frame()
+			diagram.Axis(series[0], margaid.XAxis, diagram.LabeledTicker(dayLabel), false, "Day")
+			diagram.Axis(labelSeries, margaid.YAxis, diagram.LabeledTicker(labeler), false, "Runtime")
+			svg, err := os.Create("y" + year + ".svg")
+			if err != nil {
+				panic(err)
+			}
+			diagram.Render(svg)
+			sb.WriteString("![Graph for year ")
+			sb.WriteString(year)
+			sb.WriteString("](y")
+			sb.WriteString(year)
+			sb.WriteString(".svg)\n")
 		}
-		diagram.Render(svg)
-		sb.WriteString("![Graph for year ")
-		sb.WriteString(year)
-		sb.WriteString("](y")
-		sb.WriteString(year)
-		sb.WriteString(".svg)\n")
+	}
+
+	for _, lang := range languages {
+		sb.WriteByte('\n')
+		sb.WriteString("## ")
+		sb.WriteString(lang)
+		sb.WriteByte('\n')
+
+		years := []string{}
+		for year := range benchmarks[lang] {
+			years = append(years, year)
+		}
+		sort.Strings(years)
+		sb.WriteString(" &nbsp; ")
+		yearRuntimes := make([]time.Duration, len(years))
+		for i, year := range years {
+			sb.WriteString(" | ")
+			sb.WriteString(year)
+			totalRuntime := time.Duration(0)
+			for _, runtime := range benchmarks[lang][year] {
+				totalRuntime += runtime
+			}
+			yearRuntimes[i] = totalRuntime
+		}
+		sb.WriteString("\n ---: ")
+		for range years {
+			sb.WriteString(" | ---: ")
+		}
+		sb.WriteByte('\n')
+		for _, day := range []string{
+			"01", "02", "03", "04", "05", "06",
+			"07", "08", "09", "10", "11", "12",
+			"13", "14", "15", "16", "17", "18",
+			"19", "20", "21", "22", "23", "24",
+			"25"} {
+			sb.WriteString("Day ")
+			sb.WriteString(day)
+			for i, year := range years {
+				sb.WriteString(" | ")
+				runtime, ok := benchmarks[lang][year][day]
+				propTotal := float64(runtime) / float64(yearRuntimes[i])
+				if ok {
+					strength := ""
+					prefix := ""
+					if propTotal > 0.2 {
+						strength = "**"
+						prefix = "🔴 "
+					}
+					sb.WriteString(strength)
+					sb.WriteString(prefix)
+					sb.WriteString(formatDuration(runtime))
+					sb.WriteString(strength)
+				} else {
+					sb.WriteByte('-')
+				}
+			}
+			sb.WriteByte('\n')
+		}
+		sb.WriteString("*Total*")
+		for _, year := range years {
+			totalRuntime := time.Duration(0)
+			for _, runtime := range benchmarks[lang][year] {
+				totalRuntime += runtime
+			}
+			sb.WriteString(" | *")
+			sb.WriteString(formatDuration(totalRuntime))
+			sb.WriteString("*")
+		}
+		sb.WriteByte('\n')
+		sb.WriteByte('\n')
 	}
 
 	return sb.String()
