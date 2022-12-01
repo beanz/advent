@@ -263,6 +263,7 @@ build2018: go2018-build zig2018-build nim2018-build cr2018-build cpp2018-build p
 build2019: go2019-build zig2019-build nim2019-build cr2019-build cpp2019-build perl2019-build
 build2020: go2020-build zig2020-build nim2020-build cr2020-build cpp2020-build perl2020-build
 build2021: go2021-build zig2021-build nim2021-build cr2021-build cpp2021-build perl2021-build
+build2022: go2022-build zig2022-build nim2022-build cr2022-build cpp2022-build perl2022-build
 
 cpp2015-build: $(filter 2015/%,${CPP_BIN})
 cpp2015: $(filter 2015/%,${CPP_LOG})
@@ -278,6 +279,8 @@ cpp2020-build: $(filter 2020/%,${CPP_BIN})
 cpp2020: $(filter 2020/%,${CPP_LOG})
 cpp2021-build: $(filter 2021/%,${CPP_BIN})
 cpp2021: $(filter 2021/%,${CPP_LOG})
+cpp2022-build: $(filter 2022/%,${CPP_BIN})
+cpp2022: $(filter 2022/%,${CPP_LOG})
 
 cr2015-build: $(filter 2015/%,${CR_BIN})
 cr2015: $(filter 2015/%,${CR_LOG})
@@ -293,6 +296,8 @@ cr2020-build: $(filter 2020/%,${CR_BIN})
 cr2020: $(filter 2020/%,${CR_LOG})
 cr2021-build: $(filter 2021/%,${CR_BIN})
 cr2021: $(filter 2021/%,${CR_LOG})
+cr2022-build: $(filter 2022/%,${CR_BIN})
+cr2022: $(filter 2022/%,${CR_LOG})
 
 go2015-build: $(filter 2015/%,${GO_BIN})
 go2015: $(filter 2015/%,${GO_LOG})
@@ -322,6 +327,10 @@ go2021-build: $(filter 2021/%,${GO_BIN})
 go2021: $(filter 2021/%,${GO_LOG})
 go2021-bench: $(filter benchmarks/results/2021/%,${GO_BENCH})
 
+go2022-build: $(filter 2022/%,${GO_BIN})
+go2022: $(filter 2022/%,${GO_LOG})
+go2022-bench: $(filter benchmarks/results/2022/%,${GO_BENCH})
+
 nim2015-build: $(filter 2015/%,${NIM_BIN})
 nim2015: $(filter 2015/%,${NIM_LOG})
 nim2016-build: $(filter 2016/%,${NIM_BIN})
@@ -336,6 +345,8 @@ nim2020-build: $(filter 2020/%,${NIM_BIN})
 nim2020: $(filter 2020/%,${NIM_LOG})
 nim2021-build: $(filter 2021/%,${NIM_BIN})
 nim2021: $(filter 2021/%,${NIM_LOG})
+nim2022-build: $(filter 2022/%,${NIM_BIN})
+nim2022: $(filter 2022/%,${NIM_LOG})
 
 perl2015: $(filter 2015/%,${PERL_LOG})
 perl2016: $(filter 2016/%,${PERL_LOG})
@@ -344,6 +355,7 @@ perl2018: $(filter 2018/%,${PERL_LOG})
 perl2019: $(filter 2019/%,${PERL_LOG})
 perl2020: $(filter 2020/%,${PERL_LOG})
 perl2021: $(filter 2021/%,${PERL_LOG})
+perl2022: $(filter 2022/%,${PERL_LOG})
 perl2015-build: $(filter 2015/%,${PERL_CHK})
 perl2016-build: $(filter 2016/%,${PERL_CHK})
 perl2017-build: $(filter 2017/%,${PERL_CHK})
@@ -351,6 +363,7 @@ perl2018-build: $(filter 2018/%,${PERL_CHK})
 perl2019-build: $(filter 2019/%,${PERL_CHK})
 perl2020-build: $(filter 2020/%,${PERL_CHK})
 perl2021-build: $(filter 2021/%,${PERL_CHK})
+perl2022-build: $(filter 2022/%,${PERL_CHK})
 
 zig-test: zig2015-test zig2016-test zig2017-test zig2018-test zig2019-test zig2020-test zig2021-test
 zig2015-test: $(filter 2015/%,${ZIG_SRC})
@@ -388,6 +401,11 @@ zig2021-test: $(filter 2021/%,${ZIG_SRC})
 zig2021-build: $(filter 2021/%,${ZIG_BIN})
 zig2021: $(filter 2021/%,${ZIG_LOG})
 
+zig2022-test: $(filter 2022/%,${ZIG_SRC})
+	@for f in $^ ; do echo -n "$$f: "; zig test $$f ;done
+zig2022-build: $(filter 2022/%,${ZIG_BIN})
+zig2022: $(filter 2022/%,${ZIG_LOG})
+
 rs2015-build: $(filter aoc-rust/target/release/aoc-2015-%,${RS_BIN})
 rs2015: $(filter aoc-rust/target/release/aoc-2015-%,${RS_LOG})
 rs2016-build: $(filter aoc-rust/target/release/aoc-2016-%,${RS_BIN})
@@ -402,4 +420,6 @@ rs2020-build: $(filter aoc-rust/target/release/aoc-2020-%,${RS_BIN})
 rs2020: $(filter aoc-rust/target/release/aoc-2020-%,${RS_LOG})
 rs2021-build: $(filter aoc-rust/target/release/aoc-2021-%,${RS_BIN})
 rs2021: $(filter aoc-rust/target/release/aoc-2021-%,${RS_LOG})
+rs2022-build: $(filter aoc-rust/target/release/aoc-2022-%,${RS_BIN})
+rs2022: $(filter aoc-rust/target/release/aoc-2022-%,${RS_LOG})
 
