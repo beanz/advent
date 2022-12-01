@@ -23,7 +23,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             }
         }
     }
-    sums.sort_by_key(|e| std::cmp::Reverse(*e));
+    sums.select_nth_unstable_by(2, |a, b| b.cmp(a));
     (sums[0], sums[0] + sums[1] + sums[2])
 }
 
