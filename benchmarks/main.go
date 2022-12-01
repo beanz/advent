@@ -102,7 +102,7 @@ func makeTable(benchmarks benchmarkData) string {
 		sb.WriteByte('\n')
 	}
 
-	for _, year := range []string{"2015", "2016", "2017", "2018", "2019", "2020", "2021"} {
+	for _, year := range []string{"2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022"} {
 		sb.WriteByte('\n')
 		sb.WriteString("## ")
 		sb.WriteString(year)
@@ -184,6 +184,10 @@ func makeTable(benchmarks benchmarkData) string {
 		}
 		sb.WriteByte('\n')
 		sb.WriteByte('\n')
+
+		if len(langs) == 1 && len(benchmarks[langs[0]][year]) == 1 {
+			continue
+		}
 
 		maxY = math.Min(maxY, 2000000000)
 		dayLabel := func(value float64) string {
