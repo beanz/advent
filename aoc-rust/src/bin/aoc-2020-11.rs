@@ -21,8 +21,8 @@ impl Room {
         let mut h = 0;
         let mut j = 0;
         let mut k = 0;
-        for i in 0..inp.len() {
-            match inp[i] {
+        for ch in inp {
+            match ch {
                 b'L' => {
                     seats[j] = Seat::Empty;
                     j += 1;
@@ -83,7 +83,7 @@ impl Room {
                 nb_cache.push(self.neighbours(x as isize, y as isize, sight));
             }
         }
-        let mut cur = self.seats.clone();
+        let mut cur = self.seats;
         let mut new = [Seat::Floor; 10000];
         loop {
             let mut changed = false;
@@ -114,8 +114,8 @@ impl Room {
             (cur, new) = (new, cur);
         }
         let mut c = 0;
-        for i in 0..self.w * self.h {
-            if cur[i] == Seat::Occupied {
+        for seat in cur {
+            if seat == Seat::Occupied {
                 c += 1;
             }
         }

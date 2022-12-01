@@ -179,10 +179,6 @@ fn scan_works() {
     assert_eq!(scan.err, 71);
 }
 
-use ahash::RandomState;
-use std::collections::HashMap;
-use std::collections::HashSet;
-
 fn parts(inp: &[u8]) -> (usize, usize) {
     let (_, scan) = scan(inp).expect("invalid input");
     if scan.tickets.len() < scan.rules.len() {
@@ -222,10 +218,10 @@ fn parts(inp: &[u8]) -> (usize, usize) {
                     return (scan.err, p2);
                 }
             }
-            for j in 0..possible.len() {
-                for k in 0..possible[j].len() {
-                    if possible[j][k] == col {
-                        possible[j].swap_remove(k);
+            for poss in &mut possible {
+                for k in 0..poss.len() {
+                    if poss[k] == col {
+                        poss.swap_remove(k);
                         break;
                     }
                 }

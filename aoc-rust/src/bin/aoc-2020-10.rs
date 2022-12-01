@@ -43,7 +43,7 @@ impl Adapters {
         let mut cj = 0;
         let mut c: [usize; 4] = [0; 4];
         for j in 1..=self.max {
-            if self.set[j] == false {
+            if !self.set[j] {
                 continue;
             }
             let d = j - cj;
