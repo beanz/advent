@@ -27,6 +27,14 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     (sums[0], sums[0] + sums[1] + sums[2])
 }
 
+#[test]
+fn parts_works() {
+    let inp = std::fs::read("../2022/01/test1.txt").expect("read error");
+    assert_eq!(parts(&inp), (24000, 41000));
+    let inp = std::fs::read("../2022/01/input.txt").expect("read error");
+    assert_eq!(parts(&inp), (66487, 197301));
+}
+
 fn main() {
     let inp = std::fs::read(aoc::input_file()).expect("read error");
     aoc::benchme(|bench: bool| {
