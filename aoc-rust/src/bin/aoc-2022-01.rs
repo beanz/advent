@@ -1,6 +1,8 @@
-use arrayvec::ArrayVec;
 fn parts(inp: &[u8]) -> (usize, usize) {
-    let mut sums: ArrayVec<usize, 256> = ArrayVec::default();
+    let mut s0 = 0;
+    let mut s1 = 0;
+    let mut s2 = 0;
+    let mut max = 0;
     let mut s = 0;
     let mut n = 0;
     let mut eol = false;
@@ -8,7 +10,18 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         match ch {
             b'\n' => {
                 if eol {
-                    sums.push(s);
+                    if s > max {
+                        max = s;
+                    }
+                    if s > s0 {
+                        (s, s0) = (s0, s)
+                    }
+                    if s > s1 {
+                        (s, s1) = (s1, s)
+                    }
+                    if s > s2 {
+                        s2 = s
+                    }
                     s = 0;
                     eol = false;
                 } else {
@@ -23,8 +36,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             }
         }
     }
-    sums.select_nth_unstable_by(2, |a, b| b.cmp(a));
-    (sums[0], sums[0] + sums[1] + sums[2])
+    (max, s0 + s1 + s2)
 }
 
 #[test]

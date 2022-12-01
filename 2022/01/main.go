@@ -11,7 +11,9 @@ import (
 var input []byte
 
 func Parts(inp []byte) (int, int) {
-	sums := make([]int, 0, 3)
+	s0 := 0
+	s1 := 0
+	s2 := 0
 	var s int
 	var n int
 	eol := false
@@ -23,14 +25,14 @@ func Parts(inp []byte) (int, int) {
 				if s > max {
 					max = s
 				}
-				if len(sums) < 3 {
-					sums = append(sums, s)
-				} else {
-					for i := range sums {
-						if s > sums[i] {
-							sums[i], s = s, sums[i]
-						}
-					}
+				if s > s0 {
+					s, s0 = s0, s
+				}
+				if s > s1 {
+					s, s1 = s1, s
+				}
+				if s > s2 {
+					s2 = s
 				}
 				s = 0
 				eol = false
@@ -44,7 +46,7 @@ func Parts(inp []byte) (int, int) {
 			n = 10*n + int(ch-'0')
 		}
 	}
-	return max, sums[0] + sums[1] + sums[2]
+	return max, s0 + s1 + s2
 }
 
 func main() {
