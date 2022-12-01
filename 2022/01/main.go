@@ -3,7 +3,6 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	"sort"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -11,20 +10,28 @@ import (
 //go:embed input.txt
 var input []byte
 
-type Game struct {
-	p1, p2 int
-}
-
 func Parts(inp []byte) (int, int) {
-	sums := make([]int, 0, 256)
+	sums := make([]int, 0, 3)
 	var s int
 	var n int
 	eol := false
+	max := 0
 	for _, ch := range inp {
 		switch ch {
 		case '\n':
 			if eol {
-				sums = append(sums, s)
+				if s > max {
+					max = s
+				}
+				if len(sums) < 3 {
+					sums = append(sums, s)
+				} else {
+					for i := range sums {
+						if s > sums[i] {
+							sums[i], s = s, sums[i]
+						}
+					}
+				}
 				s = 0
 				eol = false
 			} else {
@@ -37,8 +44,7 @@ func Parts(inp []byte) (int, int) {
 			n = 10*n + int(ch-'0')
 		}
 	}
-	sort.Slice(sums, func(i, j int) bool { return sums[i] > sums[j] })
-	return sums[0], sums[0] + sums[1] + sums[2]
+	return max, sums[0] + sums[1] + sums[2]
 }
 
 func main() {
