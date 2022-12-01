@@ -10,24 +10,14 @@ use AoC::Helpers qw/:all/;
 $; = $" = ',';
 
 my $file = shift // "input.txt";
-my $reader = \&read_stuff;
+my $reader = \&read_guess;
 my $i = $reader->($file);
-my $i2 = $reader->($file);
-
-sub read_stuff {
-  my $file = shift;
-  my $in = read_chunks($file);
-  my @r;
-  for my $ch (@$in) {
-    push @r, sum split/\n/, $ch;
-  }
-  return \@r;
-}
 
 sub calc {
   my ($in) = @_;
   #dd([$in],[qw/in/]);
-  my @c = sort { $b <=> $a } @$in;
+  my @r = map { sum @$_ } @$in;
+  my @c = sort { $b <=> $a } @r;
   return [$c[0], $c[0]+$c[1]+$c[2]]
 }
 

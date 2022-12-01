@@ -77,6 +77,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
 
                                     rotate_lines
 
+                                    read_guess
                                     read_lines
                                     read_lists
                                     read_listy_records
@@ -411,6 +412,58 @@ sub rotate_lines {
     push @l, join '', map { substr $_, $i, 1 } reverse @$lines;
   }
   return \@l;
+}
+
+sub guess_input {
+  local $_ = $_[0];
+  if (/\n\n/) {
+    my @a = map guess_input($_), split/\n\n/;
+    if (any { ref $_ } @a) {
+      for (@a) {
+        $_ = [$_] if (!ref$_);
+      }
+    }
+    return \@a;
+  }
+  if (/\n/) {
+    my @a = map guess_input($_), split/\n/;
+    if (any { ref $_ } @a) {
+      for (@a) {
+        $_ = [$_] if (!ref$_);
+      }
+    }
+    return \@a;
+  }
+  for my $re (qr/\s*->\s*/, qr/,\s*/) {
+    if (/$re/) {
+      my @a = map guess_input($_), split$re;
+      if (any { ref $_ } @a) {
+        for (@a) {
+          $_ = [$_] if (!ref$_);
+        }
+      }
+      return \@a;
+    }
+  }
+  if (/ /) {
+    my @a = map guess_input($_), split;
+    if (any { ref $_ } @a) {
+      for (@a) {
+        $_ = [$_] if (!ref$_);
+      }
+    }
+    return \@a;
+  }
+  return $_;
+}
+
+sub read_guess {
+  my $file = shift;
+  open my $fh, '<', $file or die "Failed to open $file: $!\n";
+  local $/;
+  $_ = <$fh>;
+  close $fh;
+  return guess_input($_);
 }
 
 sub read_lines {

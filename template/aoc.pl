@@ -10,8 +10,8 @@ use AoC::Helpers qw/:all/;
 $; = $" = ',';
 
 my $file = shift // "input.txt";
-my $reader = \&read_stuff;
-#my $reader = \&read_lines;
+#my $reader = \&read_stuff;
+my $reader = \&read_guess;
 my $i = $reader->($file);
 my $i2 = $reader->($file);
 
