@@ -1,14 +1,15 @@
 fn parts(inp: &[u8]) -> (usize, usize) {
     let mut p1 = 0;
     let mut p2 = 0;
-    let s1 = [4, 8, 3, 0, 1, 5, 9, 0, 7, 2, 6];
-    let s2 = [3, 4, 8, 0, 1, 5, 9, 0, 2, 6, 7];
-    for i in (0..inp.len()).step_by(4) {
-        let j = (((inp[i] - b'A') as usize) << 2) + (inp[i + 2] - b'X') as usize;
-        p1 += s1[j];
-        p2 += s2[j];
+    let mut i = 0;
+    while i < inp.len() {
+        let a = (inp[i] - b'A') as isize;
+        let b = (inp[i + 2] - b'X') as isize;
+        p1 += b + 1 + 3 * ((4 + b - a) % 3);
+        p2 += 3 * b + 1 + (a + b + 2) % 3;
+        i += 4;
     }
-    (p1, p2)
+    (p1 as usize, p2 as usize)
 }
 
 #[test]
