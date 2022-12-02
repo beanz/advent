@@ -17,28 +17,6 @@ fn calc(inp: &str) -> (usize, usize) {
     (p1, p2)
 }
 
-#[test]
-fn part1_works() {
-    for tc in &[("1122", 3), ("1111", 4), ("1234", 0), ("91212129", 9)] {
-        let (p1, _) = calc(&tc.0);
-        assert_eq!(p1, tc.1, "{}", tc.0);
-    }
-}
-
-#[test]
-fn part2_works() {
-    for tc in &[
-        ("1212", 6),
-        ("1221", 0),
-        ("123425", 4),
-        ("123123", 12),
-        ("12131415", 4),
-    ] {
-        let (_, p2) = calc(&tc.0);
-        assert_eq!(p2, tc.1, "{}", tc.0);
-    }
-}
-
 fn main() {
     let nums = aoc::read_input_line();
     aoc::benchme(|bench: bool| {
@@ -48,4 +26,31 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn part1_works() {
+        for tc in &[("1122", 3), ("1111", 4), ("1234", 0), ("91212129", 9)] {
+            let (p1, _) = calc(&tc.0);
+            assert_eq!(p1, tc.1, "{}", tc.0);
+        }
+    }
+
+    #[test]
+    fn part2_works() {
+        for tc in &[
+            ("1212", 6),
+            ("1221", 0),
+            ("123425", 4),
+            ("123123", 12),
+            ("12131415", 4),
+        ] {
+            let (_, p2) = calc(&tc.0);
+            assert_eq!(p2, tc.1, "{}", tc.0);
+        }
+    }
 }

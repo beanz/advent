@@ -29,15 +29,20 @@ fn main() {
     });
 }
 
-#[test]
-#[cfg_attr(not(feature = "slow_tests"), ignore)]
-fn calc_works() {
-    for &(inp, exp) in [
-        ("abcdef", (609043, 6742839)),
-        ("pqrstuv", (1048970, 5714438)),
-    ]
-    .iter()
-    {
-        assert_eq!(calc(&inp.to_string()), exp, "{}", inp);
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[cfg_attr(not(feature = "slow_tests"), ignore)]
+    fn calc_works() {
+        for &(inp, exp) in [
+            ("abcdef", (609043, 6742839)),
+            ("pqrstuv", (1048970, 5714438)),
+        ]
+        .iter()
+        {
+            assert_eq!(calc(&inp.to_string()), exp, "{}", inp);
+        }
     }
 }

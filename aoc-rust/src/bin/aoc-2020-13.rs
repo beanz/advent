@@ -60,24 +60,6 @@ fn main() {
     });
 }
 
-#[test]
-fn parts_works() {
-    let inp = std::fs::read("../2020/13/test1.txt").expect("read error");
-    assert_eq!(parts(&inp), (295, 1068781));
-    let inp = std::fs::read("../2020/13/test2.txt").expect("read error");
-    assert_eq!(parts(&inp), (130, 3417));
-    let inp = std::fs::read("../2020/13/test3.txt").expect("read error");
-    assert_eq!(parts(&inp), (295, 754018));
-    let inp = std::fs::read("../2020/13/test4.txt").expect("read error");
-    assert_eq!(parts(&inp), (295, 779210));
-    let inp = std::fs::read("../2020/13/test5.txt").expect("read error");
-    assert_eq!(parts(&inp), (295, 1261476));
-    let inp = std::fs::read("../2020/13/test6.txt").expect("read error");
-    assert_eq!(parts(&inp), (47, 1202161486));
-    let inp = std::fs::read("../2020/13/input.txt").expect("read error");
-    assert_eq!(parts(&inp), (3035, 725169163285238));
-}
-
 fn egcd(a: isize, b: isize, x: &mut isize, y: &mut isize) -> isize {
     if a == 0 {
         (*x, *y) = (0, 1);
@@ -110,4 +92,27 @@ fn crt(la: &[isize], ln: &[isize]) -> isize {
         x %= p;
     }
     x
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        let inp = std::fs::read("../2020/13/test1.txt").expect("read error");
+        assert_eq!(parts(&inp), (295, 1068781));
+        let inp = std::fs::read("../2020/13/test2.txt").expect("read error");
+        assert_eq!(parts(&inp), (130, 3417));
+        let inp = std::fs::read("../2020/13/test3.txt").expect("read error");
+        assert_eq!(parts(&inp), (295, 754018));
+        let inp = std::fs::read("../2020/13/test4.txt").expect("read error");
+        assert_eq!(parts(&inp), (295, 779210));
+        let inp = std::fs::read("../2020/13/test5.txt").expect("read error");
+        assert_eq!(parts(&inp), (295, 1261476));
+        let inp = std::fs::read("../2020/13/test6.txt").expect("read error");
+        assert_eq!(parts(&inp), (47, 1202161486));
+        let inp = std::fs::read("../2020/13/input.txt").expect("read error");
+        assert_eq!(parts(&inp), (3035, 725169163285238));
+    }
 }

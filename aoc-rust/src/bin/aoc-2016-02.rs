@@ -18,14 +18,13 @@ impl Keypad {
     }
     fn part1() -> Keypad {
         Keypad::new(vec![
-            "11412", "22513", "33623", "41745", "52846", "63956", "74778",
-            "85879", "96989",
+            "11412", "22513", "33623", "41745", "52846", "63956", "74778", "85879", "96989",
         ])
     }
     fn part2() -> Keypad {
         Keypad::new(vec![
-            "11311", "22623", "31724", "44834", "55556", "62A57", "73B68",
-            "84C79", "99989", "A6AAB", "B7DAC", "C8CBC", "DBDDD",
+            "11311", "22623", "31724", "44834", "55556", "62A57", "73B68", "84C79", "99989",
+            "A6AAB", "B7DAC", "C8CBC", "DBDDD",
         ])
     }
     fn calc(&self, inp: &[String]) -> String {
@@ -54,24 +53,29 @@ fn main() {
     });
 }
 
-#[test]
-fn part1_works() {
-    let lines = vec![
-        "ULL".to_string(),
-        "RRDDD".to_string(),
-        "LURDL".to_string(),
-        "UUUUD".to_string(),
-    ];
-    assert_eq!(Keypad::part1().calc(&lines), "1985", "part 1 example");
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn part2_works() {
-    let lines = vec![
-        "ULL".to_string(),
-        "RRDDD".to_string(),
-        "LURDL".to_string(),
-        "UUUUD".to_string(),
-    ];
-    assert_eq!(Keypad::part2().calc(&lines), "5DB3", "part 2 example");
+    #[test]
+    fn part1_works() {
+        let lines = vec![
+            "ULL".to_string(),
+            "RRDDD".to_string(),
+            "LURDL".to_string(),
+            "UUUUD".to_string(),
+        ];
+        assert_eq!(Keypad::part1().calc(&lines), "1985", "part 1 example");
+    }
+
+    #[test]
+    fn part2_works() {
+        let lines = vec![
+            "ULL".to_string(),
+            "RRDDD".to_string(),
+            "LURDL".to_string(),
+            "UUUUD".to_string(),
+        ];
+        assert_eq!(Keypad::part2().calc(&lines), "5DB3", "part 2 example");
+    }
 }

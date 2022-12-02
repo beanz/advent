@@ -8,13 +8,6 @@ fn part1(l: &str) -> usize {
     }
 }
 
-#[test]
-fn part1_works() {
-    assert_eq!(part1(&"5 1 9 5".to_string()), 8);
-    assert_eq!(part1(&"7 5 3".to_string()), 4);
-    assert_eq!(part1(&"2 4 6 8".to_string()), 6);
-}
-
 fn part2(l: &str) -> usize {
     let uints: Vec<usize> = aoc::uints::<usize>(l).collect();
     for i in 0..uints.len() {
@@ -29,13 +22,6 @@ fn part2(l: &str) -> usize {
     0
 }
 
-#[test]
-fn part2_works() {
-    assert_eq!(part2(&"5 9 2 8".to_string()), 4);
-    assert_eq!(part2(&"9 4 7 3".to_string()), 3);
-    assert_eq!(part2(&"3 8 6 5".to_string()), 2);
-}
-
 fn main() {
     let inp = aoc::input_lines();
     aoc::benchme(|bench: bool| {
@@ -46,4 +32,22 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn part1_works() {
+        assert_eq!(part1(&"5 1 9 5".to_string()), 8);
+        assert_eq!(part1(&"7 5 3".to_string()), 4);
+        assert_eq!(part1(&"2 4 6 8".to_string()), 6);
+    }
+    #[test]
+    fn part2_works() {
+        assert_eq!(part2(&"5 9 2 8".to_string()), 4);
+        assert_eq!(part2(&"9 4 7 3".to_string()), 3);
+        assert_eq!(part2(&"3 8 6 5".to_string()), 2);
+    }
 }

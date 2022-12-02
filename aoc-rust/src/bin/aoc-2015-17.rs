@@ -47,12 +47,17 @@ fn main() {
     });
 }
 
-#[test]
-fn part1_works() {
-    assert_eq!(part1(&vec![20usize, 15, 10, 5, 5], 25), 4, "part 1 test");
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn part2_works() {
-    assert_eq!(part2(&vec![20usize, 15, 10, 5, 5], 25), 3, "part 2 test");
+    #[test]
+    fn part1_works() {
+        assert_eq!(part1(&vec![20usize, 15, 10, 5, 5], 25), 4, "part 1 test");
+    }
+
+    #[test]
+    fn part2_works() {
+        assert_eq!(part2(&vec![20usize, 15, 10, 5, 5], 25), 3, "part 2 test");
+    }
 }

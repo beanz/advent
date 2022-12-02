@@ -74,32 +74,37 @@ fn main() {
     });
 }
 
-#[test]
-fn factors_works() {
-    for tc in &[
-        (4, vec![1usize, 2, 4]),
-        (6, vec![1usize, 2, 3, 6]),
-        (12, vec![1usize, 2, 3, 4, 6, 12]),
-    ] {
-        let mut f = factors(tc.0);
-        f.sort();
-        assert_eq!(f, tc.1, "factors({})", tc.0);
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn factors_works() {
+        for tc in &[
+            (4, vec![1usize, 2, 4]),
+            (6, vec![1usize, 2, 3, 6]),
+            (12, vec![1usize, 2, 3, 4, 6, 12]),
+        ] {
+            let mut f = factors(tc.0);
+            f.sort();
+            assert_eq!(f, tc.1, "factors({})", tc.0);
+        }
     }
-}
 
-#[test]
-fn part1_works() {
-    assert_eq!(part1(70), 4, "part 1 example");
-}
+    #[test]
+    fn part1_works() {
+        assert_eq!(part1(70), 4, "part 1 example");
+    }
 
-#[test]
-#[cfg_attr(not(feature = "slow_tests"), ignore)]
-fn part1_works_slow() {
-    assert_eq!(part1(29000000), 665280, "part 1");
-}
+    #[test]
+    #[cfg_attr(not(feature = "slow_tests"), ignore)]
+    fn part1_works_slow() {
+        assert_eq!(part1(29000000), 665280, "part 1");
+    }
 
-#[test]
-#[cfg_attr(not(feature = "slow_tests"), ignore)]
-fn part2_works() {
-    assert_eq!(part2(29000000), 705600, "part 2");
+    #[test]
+    #[cfg_attr(not(feature = "slow_tests"), ignore)]
+    fn part2_works() {
+        assert_eq!(part2(29000000), 705600, "part 2");
+    }
 }

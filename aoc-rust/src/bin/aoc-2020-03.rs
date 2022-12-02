@@ -52,19 +52,24 @@ fn main() {
     })
 }
 
-#[test]
-fn is_tree_works() {
-    let inp = std::fs::read("../2020/03/test1.txt").expect("read error");
-    let f = Forest::new(&inp);
-    assert!(!f.is_tree(0, 0));
-    assert!(f.is_tree(0, 1));
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn parts_works() {
-    let inp = std::fs::read("../2020/03/test1.txt").expect("read error");
-    let f = Forest::new(&inp);
-    let (p1, p2) = f.parts();
-    assert_eq!(p1, 7, "part 1 test1");
-    assert_eq!(p2, 336, "part 2 test1");
+    #[test]
+    fn is_tree_works() {
+        let inp = std::fs::read("../2020/03/test1.txt").expect("read error");
+        let f = Forest::new(&inp);
+        assert!(!f.is_tree(0, 0));
+        assert!(f.is_tree(0, 1));
+    }
+
+    #[test]
+    fn parts_works() {
+        let inp = std::fs::read("../2020/03/test1.txt").expect("read error");
+        let f = Forest::new(&inp);
+        let (p1, p2) = f.parts();
+        assert_eq!(p1, 7, "part 1 test1");
+        assert_eq!(p2, 336, "part 2 test1");
+    }
 }

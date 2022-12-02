@@ -28,22 +28,26 @@ fn main() {
     });
 }
 
-#[test]
-fn parse_line_works() {
-    for &(inp, exp) in [("2x4x3", "[2, 3, 4]"), ("1x10x1", "[1, 1, 10]")].iter()
-    {
-        assert_eq!(
-            format!("{:?}", parse_line(&inp.to_string())),
-            exp,
-            "{}",
-            inp
-        );
-    }
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn calc_works() {
-    for &(inp, exp) in [("2x3x4", (58, 34)), ("1x1x10", (43, 14))].iter() {
-        assert_eq!(calc(parse_line(&inp.to_string())), exp, "{}", inp);
+    #[test]
+    fn parse_line_works() {
+        for &(inp, exp) in [("2x4x3", "[2, 3, 4]"), ("1x10x1", "[1, 1, 10]")].iter() {
+            assert_eq!(
+                format!("{:?}", parse_line(&inp.to_string())),
+                exp,
+                "{}",
+                inp
+            );
+        }
+    }
+
+    #[test]
+    fn calc_works() {
+        for &(inp, exp) in [("2x3x4", (58, 34)), ("1x1x10", (43, 14))].iter() {
+            assert_eq!(calc(parse_line(&inp.to_string())), exp, "{}", inp);
+        }
     }
 }

@@ -66,15 +66,20 @@ fn main() {
     });
 }
 
-#[test]
-fn routes_works() {
-    let mut routes = Routes::new();
-    routes.add("London to Dublin = 464");
-    routes.add("London to Belfast = 518");
-    routes.add("Dublin to Belfast = 141");
-    assert_eq!(routes.dist(0, 1), 464, "distance between first two");
-    assert_eq!(routes.dist(1, 0), 464, "distance back again is the same");
-    let (p1, p2) = routes.minmax();
-    assert_eq!(p1, 605, "shortest");
-    assert_eq!(p2, 982, "longest");
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn routes_works() {
+        let mut routes = Routes::new();
+        routes.add("London to Dublin = 464");
+        routes.add("London to Belfast = 518");
+        routes.add("Dublin to Belfast = 141");
+        assert_eq!(routes.dist(0, 1), 464, "distance between first two");
+        assert_eq!(routes.dist(1, 0), 464, "distance back again is the same");
+        let (p1, p2) = routes.minmax();
+        assert_eq!(p1, 605, "shortest");
+        assert_eq!(p2, 982, "longest");
+    }
 }

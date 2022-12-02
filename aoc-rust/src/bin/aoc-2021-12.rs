@@ -87,26 +87,6 @@ impl Caves {
     }
 }
 
-#[test]
-fn solve_works() {
-    let c1 =
-        Caves::new(&std::fs::read("../2021/12/test1.txt").expect("read error"));
-    assert_eq!(c1.solve(c1.start, 0, false, false), 10);
-    let c2 =
-        Caves::new(&std::fs::read("../2021/12/test2.txt").expect("read error"));
-    assert_eq!(c2.solve(c2.start, 0, false, false), 19);
-    let c3 =
-        Caves::new(&std::fs::read("../2021/12/test3.txt").expect("read error"));
-    assert_eq!(c3.solve(c3.start, 0, false, false), 226);
-    let ci =
-        Caves::new(&std::fs::read("../2021/12/input.txt").expect("read error"));
-    assert_eq!(ci.solve(ci.start, 0, false, false), 4691);
-    assert_eq!(c1.solve(c1.start, 0, true, false), 36);
-    assert_eq!(c2.solve(c2.start, 0, true, false), 103);
-    assert_eq!(c3.solve(c3.start, 0, true, false), 3509);
-    assert_eq!(ci.solve(ci.start, 0, true, false), 140718);
-}
-
 fn main() {
     aoc::benchme(|bench: bool| {
         let inp = std::fs::read(aoc::input_file()).expect("read error");
@@ -117,4 +97,25 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn solve_works() {
+        let c1 = Caves::new(&std::fs::read("../2021/12/test1.txt").expect("read error"));
+        assert_eq!(c1.solve(c1.start, 0, false, false), 10);
+        let c2 = Caves::new(&std::fs::read("../2021/12/test2.txt").expect("read error"));
+        assert_eq!(c2.solve(c2.start, 0, false, false), 19);
+        let c3 = Caves::new(&std::fs::read("../2021/12/test3.txt").expect("read error"));
+        assert_eq!(c3.solve(c3.start, 0, false, false), 226);
+        let ci = Caves::new(&std::fs::read("../2021/12/input.txt").expect("read error"));
+        assert_eq!(ci.solve(ci.start, 0, false, false), 4691);
+        assert_eq!(c1.solve(c1.start, 0, true, false), 36);
+        assert_eq!(c2.solve(c2.start, 0, true, false), 103);
+        assert_eq!(c3.solve(c3.start, 0, true, false), 3509);
+        assert_eq!(ci.solve(ci.start, 0, true, false), 140718);
+    }
 }

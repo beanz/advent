@@ -168,18 +168,6 @@ impl Reactor {
     }
 }
 
-#[test]
-fn parts_works() {
-    let r1 = Reactor::new(&std::fs::read("../2021/22/test1.txt").expect("read error"));
-    assert_eq!((39, 39), r1.parts());
-    let r2 = Reactor::new(&std::fs::read("../2021/22/test2.txt").expect("read error"));
-    assert_eq!((590784, 39769202357779), r2.parts());
-    let r3 = Reactor::new(&std::fs::read("../2021/22/test3.txt").expect("read error"));
-    assert_eq!((474140, 2758514936282235), r3.parts());
-    let r = Reactor::new(&std::fs::read("../2021/22/input.txt").expect("read error"));
-    assert_eq!((598616, 1193043154475246), r.parts());
-}
-
 fn main() {
     let inp = std::fs::read(aoc::input_file()).expect("read error");
     aoc::benchme(|bench: bool| {
@@ -190,4 +178,21 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        let r1 = Reactor::new(&std::fs::read("../2021/22/test1.txt").expect("read error"));
+        assert_eq!((39, 39), r1.parts());
+        let r2 = Reactor::new(&std::fs::read("../2021/22/test2.txt").expect("read error"));
+        assert_eq!((590784, 39769202357779), r2.parts());
+        let r3 = Reactor::new(&std::fs::read("../2021/22/test3.txt").expect("read error"));
+        assert_eq!((474140, 2758514936282235), r3.parts());
+        let r = Reactor::new(&std::fs::read("../2021/22/input.txt").expect("read error"));
+        assert_eq!((598616, 1193043154475246), r.parts());
+    }
 }

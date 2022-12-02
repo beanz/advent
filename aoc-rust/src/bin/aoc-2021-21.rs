@@ -265,8 +265,13 @@ fn main() {
     })
 }
 
-#[test]
-fn parts_works() {
-    let ex = std::fs::read("../2021/21/test1.txt").expect("read error");
-    assert_eq!(parts(&ex), (739785, 444356092776315), "parts test");
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        let ex = std::fs::read("../2021/21/test1.txt").expect("read error");
+        assert_eq!(parts(&ex), (739785, 444356092776315), "parts test");
+    }
 }

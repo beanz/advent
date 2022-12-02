@@ -28,16 +28,21 @@ fn main() {
     });
 }
 
-#[test]
-fn calc_works() {
-    for &(inp, exp) in [
-        (">", (2, 2)),
-        ("^v", (2, 3)),
-        ("^>v<", (4, 3)),
-        ("^v^v^v^v^v", (2, 11)),
-    ]
-    .iter()
-    {
-        assert_eq!(calc(&inp.to_string()), exp, "{}", inp);
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn calc_works() {
+        for &(inp, exp) in [
+            (">", (2, 2)),
+            ("^v", (2, 3)),
+            ("^>v<", (4, 3)),
+            ("^v^v^v^v^v", (2, 11)),
+        ]
+        .iter()
+        {
+            assert_eq!(calc(&inp.to_string()), exp, "{}", inp);
+        }
     }
 }

@@ -333,275 +333,6 @@ fn main() {
     })
 }
 
-#[test]
-fn pod_display_works() {
-    for (p, exp) in [
-        (Pod::Empty, "."),
-        (Pod::A, "A"),
-        (Pod::B, "B"),
-        (Pod::C, "C"),
-        (Pod::D, "D"),
-    ] {
-        assert_eq!(format!("{}", p), exp);
-    }
-}
-
-#[test]
-fn pod_cost_works() {
-    for (p, exp) in [
-        (Pod::Empty, 0),
-        (Pod::A, 1),
-        (Pod::B, 10),
-        (Pod::C, 100),
-        (Pod::D, 1000),
-    ] {
-        assert_eq!(p.cost(), exp);
-    }
-}
-
-#[test]
-fn pod_doorway_works() {
-    for (p, exp) in [(Pod::A, 2), (Pod::B, 4), (Pod::C, 6), (Pod::D, 8)] {
-        assert_eq!(p.doorway(), exp);
-    }
-}
-
-#[test]
-fn board_from_input_works() {
-    let b = Board::from_input(&std::fs::read("../2021/23/test0.txt").expect("read error"));
-    assert_eq!(b.state.len(), 19);
-    for i in 0..11 {
-        assert_eq!(b.state[i], Pod::Empty, "hallway empty");
-    }
-    assert_eq!(b.state[11], Pod::D);
-    assert_eq!(b.state[12], Pod::B);
-    assert_eq!(b.state[13], Pod::C);
-    assert_eq!(b.state[14], Pod::A);
-
-    assert_eq!(b.state[15], Pod::A);
-    assert_eq!(b.state[16], Pod::B);
-    assert_eq!(b.state[17], Pod::C);
-    assert_eq!(b.state[18], Pod::D);
-}
-
-#[test]
-fn board_expand_works() {
-    let b = Board::from_input(b"...........\nBCBD\nADCA").expand();
-    assert_eq!(
-        format!("{}", b),
-        r#"#############
-#...........#
-###B#C#B#D###
-  #D#C#B#A#
-  #D#B#A#C#
-  #A#D#C#A#
-  #########
-Cost: 0"#
-    );
-}
-
-#[test]
-fn board_is_win_works() {
-    let b = Board::from_input(&std::fs::read("../2021/23/test0.txt").expect("read error"));
-    assert_eq!(b.is_win(), false);
-    let mut w = Board {
-        state: b.state,
-        cost: 0,
-    };
-    w.state[11] = Pod::A;
-    w.state[14] = Pod::D;
-    assert_eq!(w.is_win(), true);
-}
-
-#[test]
-fn board_up_works() {
-    let b = Board::from_input(&std::fs::read("../2021/23/test0.txt").expect("read error"));
-    for (i, exp) in [
-        (1, None),
-        (11, Some(2)),
-        (12, Some(4)),
-        (13, Some(6)),
-        (14, Some(8)),
-        (15, Some(11)),
-    ] {
-        assert_eq!(b.up(i), exp, "{} up", i);
-    }
-}
-
-#[test]
-fn board_down_works() {
-    let b = Board::from_input(&std::fs::read("../2021/23/test0.txt").expect("read error"));
-    for (i, exp) in [
-        (1, None),
-        (2, Some(11)),
-        (4, Some(12)),
-        (6, Some(13)),
-        (8, Some(14)),
-        (11, Some(15)),
-        (19, None),
-    ] {
-        assert_eq!(b.down(i), exp, "{} down", i);
-    }
-}
-
-#[test]
-fn board_display_works() {
-    let mut b = Board {
-        state: vec![Pod::Empty; 19],
-        cost: 123,
-    };
-    assert_eq!(
-        format!("{}", b),
-        r#"#############
-#...........#
-###.#.#.#.###
-  #.#.#.#.#
-  #########
-Cost: 123"#
-    );
-    b.state[0] = Pod::A;
-    b.state[11] = Pod::B;
-    assert_eq!(
-        format!("{}", b),
-        r#"#############
-#A..........#
-###B#.#.#.###
-  #.#.#.#.#
-  #########
-Cost: 123"#
-    );
-}
-
-#[test]
-fn board_room_state_works() {
-    let b = Board::from_input(b"...........DBCDABCA");
-    assert_eq!(b.room_state(Pod::A.doorway()), RoomState::Invaded);
-    assert_eq!(b.room_state(Pod::B.doorway()), RoomState::Complete);
-    assert_eq!(b.room_state(Pod::C.doorway()), RoomState::Complete);
-    assert_eq!(b.room_state(Pod::D.doorway()), RoomState::Invaded);
-}
-
-#[test]
-fn board_moves_works() {
-    let empty_board = Board {
-        state: vec![Pod::Empty; 19],
-        cost: 123,
-    };
-    let mut m = vec![];
-    empty_board.moves(|nb| m.push(nb));
-    assert_eq!(m.len(), 0);
-}
-
-#[test]
-fn board_moves_from_works() {
-    let no_moves: Vec<&str> = vec![];
-    for (inp, pos, exp, name) in [
-        (
-            b"A..........\nB...\n....",
-            0,
-            no_moves,
-            "no moves from hallway if room is blocked",
-        ),
-        (
-            b"A..........\nB...\n....",
-            11,
-            vec![
-                r#"#############
-#AB.........#
-###.#.#.#.###
-  #.#.#.#.#
-  #########
-Cost: 20"#,
-                r#"#############
-#A..B.......#
-###.#.#.#.###
-  #.#.#.#.#
-  #########
-Cost: 20"#,
-                r#"#############
-#A....B.....#
-###.#.#.#.###
-  #.#.#.#.#
-  #########
-Cost: 40"#,
-                r#"#############
-#A......B...#
-###.#.#.#.###
-  #.#.#.#.#
-  #########
-Cost: 60"#,
-                r#"#############
-#A........B.#
-###.#.#.#.###
-  #.#.#.#.#
-  #########
-Cost: 80"#,
-                r#"#############
-#A.........B#
-###.#.#.#.###
-  #.#.#.#.#
-  #########
-Cost: 90"#,
-            ],
-            "can move out of room",
-        ),
-        (
-            b"A..B.......\n....\n....",
-            0,
-            vec![
-                r#"#############
-#...B.......#
-###.#.#.#.###
-  #A#.#.#.#
-  #########
-Cost: 4"#,
-            ],
-            "can move into room if empty",
-        ),
-        (
-            b"A..B.......\n....\nA...",
-            0,
-            vec![
-                r#"#############
-#...B.......#
-###A#.#.#.###
-  #A#.#.#.#
-  #########
-Cost: 3"#,
-            ],
-            "can move into room if free space",
-        ),
-        (
-            b"A..B.......\n....\nB...",
-            0,
-            vec![],
-            "no move into room with intruder",
-        ),
-        (
-            b"A..B.......\nA...\nB...",
-            11,
-            vec![
-                r#"#############
-#AA.B.......#
-###.#.#.#.###
-  #B#.#.#.#
-  #########
-Cost: 2"#,
-            ],
-            "will move to free intruder",
-        ),
-    ] {
-        let b = Board::from_input(inp);
-        eprintln!("{}\n{}", name, b);
-        let mut m = vec![];
-        b.moves_from(pos, |nb| m.push(nb));
-        assert_eq!(m.len(), exp.len(), "{}", name);
-        for (i, st) in exp.iter().enumerate() {
-            assert_eq!(format!("{}", m[i]), *st, "{}", name);
-        }
-    }
-}
-
 use priority_queue::PriorityQueue;
 use std::cmp::Reverse;
 
@@ -624,44 +355,317 @@ impl Queue {
     }
 }
 
-#[test]
-fn queue_works() {
-    let mut q = Queue::new();
-    assert!(q.next().is_none());
-    let b4 = Board {
-        state: vec![Pod::A],
-        cost: 4,
-    };
-    q.insert(b4.clone());
-    assert_eq!(q.next().expect("item").cost, 4);
-    q.insert(b4.clone());
-    q.insert(Board {
-        state: vec![Pod::B],
-        cost: 6,
-    });
-    assert_eq!(q.next().expect("item").cost, 4);
-    q.insert(b4.clone());
-    let altb4 = Board {
-        state: vec![Pod::C],
-        cost: 4,
-    };
-    q.insert(altb4);
-    assert_eq!(q.next().expect("item").cost, 4);
-    assert_eq!(q.next().expect("item").cost, 4);
-    assert_eq!(q.next().expect("item").cost, 6);
-    for i in [1, 2, 4, 8, 16, 17, 9, 5, 3] {
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn pod_display_works() {
+        for (p, exp) in [
+            (Pod::Empty, "."),
+            (Pod::A, "A"),
+            (Pod::B, "B"),
+            (Pod::C, "C"),
+            (Pod::D, "D"),
+        ] {
+            assert_eq!(format!("{}", p), exp);
+        }
+    }
+
+    #[test]
+    fn pod_cost_works() {
+        for (p, exp) in [
+            (Pod::Empty, 0),
+            (Pod::A, 1),
+            (Pod::B, 10),
+            (Pod::C, 100),
+            (Pod::D, 1000),
+        ] {
+            assert_eq!(p.cost(), exp);
+        }
+    }
+
+    #[test]
+    fn pod_doorway_works() {
+        for (p, exp) in [(Pod::A, 2), (Pod::B, 4), (Pod::C, 6), (Pod::D, 8)] {
+            assert_eq!(p.doorway(), exp);
+        }
+    }
+
+    #[test]
+    fn board_from_input_works() {
+        let b = Board::from_input(&std::fs::read("../2021/23/test0.txt").expect("read error"));
+        assert_eq!(b.state.len(), 19);
+        for i in 0..11 {
+            assert_eq!(b.state[i], Pod::Empty, "hallway empty");
+        }
+        assert_eq!(b.state[11], Pod::D);
+        assert_eq!(b.state[12], Pod::B);
+        assert_eq!(b.state[13], Pod::C);
+        assert_eq!(b.state[14], Pod::A);
+
+        assert_eq!(b.state[15], Pod::A);
+        assert_eq!(b.state[16], Pod::B);
+        assert_eq!(b.state[17], Pod::C);
+        assert_eq!(b.state[18], Pod::D);
+    }
+
+    #[test]
+    fn board_expand_works() {
+        let b = Board::from_input(b"...........\nBCBD\nADCA").expand();
+        assert_eq!(
+            format!("{}", b),
+            r#"#############
+#...........#
+###B#C#B#D###
+  #D#C#B#A#
+  #D#B#A#C#
+  #A#D#C#A#
+  #########
+Cost: 0"#
+        );
+    }
+
+    #[test]
+    fn board_is_win_works() {
+        let b = Board::from_input(&std::fs::read("../2021/23/test0.txt").expect("read error"));
+        assert_eq!(b.is_win(), false);
+        let mut w = Board {
+            state: b.state,
+            cost: 0,
+        };
+        w.state[11] = Pod::A;
+        w.state[14] = Pod::D;
+        assert_eq!(w.is_win(), true);
+    }
+
+    #[test]
+    fn board_up_works() {
+        let b = Board::from_input(&std::fs::read("../2021/23/test0.txt").expect("read error"));
+        for (i, exp) in [
+            (1, None),
+            (11, Some(2)),
+            (12, Some(4)),
+            (13, Some(6)),
+            (14, Some(8)),
+            (15, Some(11)),
+        ] {
+            assert_eq!(b.up(i), exp, "{} up", i);
+        }
+    }
+
+    #[test]
+    fn board_down_works() {
+        let b = Board::from_input(&std::fs::read("../2021/23/test0.txt").expect("read error"));
+        for (i, exp) in [
+            (1, None),
+            (2, Some(11)),
+            (4, Some(12)),
+            (6, Some(13)),
+            (8, Some(14)),
+            (11, Some(15)),
+            (19, None),
+        ] {
+            assert_eq!(b.down(i), exp, "{} down", i);
+        }
+    }
+
+    #[test]
+    fn board_display_works() {
         let mut b = Board {
             state: vec![Pod::Empty; 19],
-            cost: i,
+            cost: 123,
         };
-        b.state[i] = Pod::A;
-        q.insert(b);
+        assert_eq!(
+            format!("{}", b),
+            r#"#############
+#...........#
+###.#.#.#.###
+  #.#.#.#.#
+  #########
+Cost: 123"#
+        );
+        b.state[0] = Pod::A;
+        b.state[11] = Pod::B;
+        assert_eq!(
+            format!("{}", b),
+            r#"#############
+#A..........#
+###B#.#.#.###
+  #.#.#.#.#
+  #########
+Cost: 123"#
+        );
     }
-    q.insert(Board {
-        state: vec![],
-        cost: 2,
-    });
-    for j in [1, 2, 2, 3, 4, 5, 8, 9, 16, 17] {
-        assert_eq!(q.next().expect("item").cost, j);
+
+    #[test]
+    fn board_room_state_works() {
+        let b = Board::from_input(b"...........DBCDABCA");
+        assert_eq!(b.room_state(Pod::A.doorway()), RoomState::Invaded);
+        assert_eq!(b.room_state(Pod::B.doorway()), RoomState::Complete);
+        assert_eq!(b.room_state(Pod::C.doorway()), RoomState::Complete);
+        assert_eq!(b.room_state(Pod::D.doorway()), RoomState::Invaded);
+    }
+
+    #[test]
+    fn board_moves_works() {
+        let empty_board = Board {
+            state: vec![Pod::Empty; 19],
+            cost: 123,
+        };
+        let mut m = vec![];
+        empty_board.moves(|nb| m.push(nb));
+        assert_eq!(m.len(), 0);
+    }
+
+    #[test]
+    fn board_moves_from_works() {
+        let no_moves: Vec<&str> = vec![];
+        for (inp, pos, exp, name) in [
+            (
+                b"A..........\nB...\n....",
+                0,
+                no_moves,
+                "no moves from hallway if room is blocked",
+            ),
+            (
+                b"A..........\nB...\n....",
+                11,
+                vec![
+                    r#"#############
+#AB.........#
+###.#.#.#.###
+  #.#.#.#.#
+  #########
+Cost: 20"#,
+                    r#"#############
+#A..B.......#
+###.#.#.#.###
+  #.#.#.#.#
+  #########
+Cost: 20"#,
+                    r#"#############
+#A....B.....#
+###.#.#.#.###
+  #.#.#.#.#
+  #########
+Cost: 40"#,
+                    r#"#############
+#A......B...#
+###.#.#.#.###
+  #.#.#.#.#
+  #########
+Cost: 60"#,
+                    r#"#############
+#A........B.#
+###.#.#.#.###
+  #.#.#.#.#
+  #########
+Cost: 80"#,
+                    r#"#############
+#A.........B#
+###.#.#.#.###
+  #.#.#.#.#
+  #########
+Cost: 90"#,
+                ],
+                "can move out of room",
+            ),
+            (
+                b"A..B.......\n....\n....",
+                0,
+                vec![
+                    r#"#############
+#...B.......#
+###.#.#.#.###
+  #A#.#.#.#
+  #########
+Cost: 4"#,
+                ],
+                "can move into room if empty",
+            ),
+            (
+                b"A..B.......\n....\nA...",
+                0,
+                vec![
+                    r#"#############
+#...B.......#
+###A#.#.#.###
+  #A#.#.#.#
+  #########
+Cost: 3"#,
+                ],
+                "can move into room if free space",
+            ),
+            (
+                b"A..B.......\n....\nB...",
+                0,
+                vec![],
+                "no move into room with intruder",
+            ),
+            (
+                b"A..B.......\nA...\nB...",
+                11,
+                vec![
+                    r#"#############
+#AA.B.......#
+###.#.#.#.###
+  #B#.#.#.#
+  #########
+Cost: 2"#,
+                ],
+                "will move to free intruder",
+            ),
+        ] {
+            let b = Board::from_input(inp);
+            eprintln!("{}\n{}", name, b);
+            let mut m = vec![];
+            b.moves_from(pos, |nb| m.push(nb));
+            assert_eq!(m.len(), exp.len(), "{}", name);
+            for (i, st) in exp.iter().enumerate() {
+                assert_eq!(format!("{}", m[i]), *st, "{}", name);
+            }
+        }
+    }
+    #[test]
+    fn queue_works() {
+        let mut q = Queue::new();
+        assert!(q.next().is_none());
+        let b4 = Board {
+            state: vec![Pod::A],
+            cost: 4,
+        };
+        q.insert(b4.clone());
+        assert_eq!(q.next().expect("item").cost, 4);
+        q.insert(b4.clone());
+        q.insert(Board {
+            state: vec![Pod::B],
+            cost: 6,
+        });
+        assert_eq!(q.next().expect("item").cost, 4);
+        q.insert(b4.clone());
+        let altb4 = Board {
+            state: vec![Pod::C],
+            cost: 4,
+        };
+        q.insert(altb4);
+        assert_eq!(q.next().expect("item").cost, 4);
+        assert_eq!(q.next().expect("item").cost, 4);
+        assert_eq!(q.next().expect("item").cost, 6);
+        for i in [1, 2, 4, 8, 16, 17, 9, 5, 3] {
+            let mut b = Board {
+                state: vec![Pod::Empty; 19],
+                cost: i,
+            };
+            b.state[i] = Pod::A;
+            q.insert(b);
+        }
+        q.insert(Board {
+            state: vec![],
+            cost: 2,
+        });
+        for j in [1, 2, 2, 3, 4, 5, 8, 9, 16, 17] {
+            assert_eq!(q.next().expect("item").cost, j);
+        }
     }
 }

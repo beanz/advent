@@ -39,22 +39,27 @@ fn main() {
     });
 }
 
-#[test]
-fn part1_works() {
-    assert_eq!(part1("[1,2,3]"), 6);
-    assert_eq!(part1("{\"a\":2,\"b\":4}"), 6);
-    assert_eq!(part1("[[[3]]]"), 3);
-    assert_eq!(part1("{\"a\":{\"b\":4},\"c\":-1}"), 3);
-    assert_eq!(part1("{\"a\":[-1,1]}"), 0);
-    assert_eq!(part1("[-1,{\"a\":1}]"), 0);
-    assert_eq!(part1("[]"), 0);
-    assert_eq!(part1("{}"), 0);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn part2_works() {
-    assert_eq!(part2("[1,2,3]"), 6);
-    assert_eq!(part2("[1,{\"c\":\"red\",\"b\":2},3]"), 4);
-    assert_eq!(part2("{\"d\":\"red\",\"e\":[1,2,3,4],\"f\":5}"), 0);
-    assert_eq!(part2("[1,\"red\",5]"), 6);
+    #[test]
+    fn part1_works() {
+        assert_eq!(part1("[1,2,3]"), 6);
+        assert_eq!(part1("{\"a\":2,\"b\":4}"), 6);
+        assert_eq!(part1("[[[3]]]"), 3);
+        assert_eq!(part1("{\"a\":{\"b\":4},\"c\":-1}"), 3);
+        assert_eq!(part1("{\"a\":[-1,1]}"), 0);
+        assert_eq!(part1("[-1,{\"a\":1}]"), 0);
+        assert_eq!(part1("[]"), 0);
+        assert_eq!(part1("{}"), 0);
+    }
+
+    #[test]
+    fn part2_works() {
+        assert_eq!(part2("[1,2,3]"), 6);
+        assert_eq!(part2("[1,{\"c\":\"red\",\"b\":2},3]"), 4);
+        assert_eq!(part2("{\"d\":\"red\",\"e\":[1,2,3,4],\"f\":5}"), 0);
+        assert_eq!(part2("[1,\"red\",5]"), 6);
+    }
 }

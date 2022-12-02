@@ -27,22 +27,6 @@ fn odd_one(ws: &[usize]) -> Option<usize> {
     }
 }
 
-#[test]
-fn odd_one_works() {
-    assert_eq!(odd_one(&[]), None);
-    assert_eq!(odd_one(&[1]), None);
-    assert_eq!(odd_one(&[1, 1]), None);
-    assert_eq!(odd_one(&[1, 1, 1]), None);
-    assert_eq!(odd_one(&[1, 1, 0]), Some(2));
-    assert_eq!(odd_one(&[1, 1, 1, 1]), None);
-    assert_eq!(odd_one(&[0, 1, 1, 1]), Some(0));
-    assert_eq!(odd_one(&[1, 0, 1, 1]), Some(1));
-    assert_eq!(odd_one(&[1, 1, 0, 1]), Some(2));
-    assert_eq!(odd_one(&[1, 1, 1, 0]), Some(3));
-    assert_eq!(odd_one(&[1, 1, 1, 1, 1]), None);
-    assert_eq!(odd_one(&[1, 1, 1, 1, 0]), Some(4));
-}
-
 impl Tower {
     fn new(inp: &[String]) -> Tower {
         let mut parent: HashMap<String, String> = HashMap::new();
@@ -60,9 +44,7 @@ impl Tower {
                 let children_str = rhs.split(", ");
                 for child in children_str {
                     parent.insert(child.to_string(), tower.to_string());
-                    let c = children
-                        .entry(tower.to_string())
-                        .or_insert_with(Vec::new);
+                    let c = children.entry(tower.to_string()).or_insert_with(Vec::new);
                     c.push(child.to_string());
                 }
             }
@@ -101,11 +83,7 @@ impl Tower {
                     let not_odd = usize::from(odd == 0);
                     (
                         0,
-                        Some(
-                            *self.weights.get(&children[odd]).unwrap()
-                                + ws[not_odd]
-                                - ws[odd],
-                        ),
+                        Some(*self.weights.get(&children[odd]).unwrap() + ws[not_odd] - ws[odd]),
                     )
                 }
             }
@@ -150,12 +128,31 @@ const EX: [&str; 13] = [
     "cntj (57)",
 ];
 
-#[test]
-fn parts_work() {
-    let ex: Vec<String> =
-        EX.iter().map(|x| x.to_string()).collect::<Vec<String>>();
-    let tower = Tower::new(&ex);
-    let p1 = tower.part1();
-    assert_eq!(p1, "tknk", "part 1 example");
-    assert_eq!(tower.part2(p1), 60, "part 2 example");
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn odd_one_works() {
+        assert_eq!(odd_one(&[]), None);
+        assert_eq!(odd_one(&[1]), None);
+        assert_eq!(odd_one(&[1, 1]), None);
+        assert_eq!(odd_one(&[1, 1, 1]), None);
+        assert_eq!(odd_one(&[1, 1, 0]), Some(2));
+        assert_eq!(odd_one(&[1, 1, 1, 1]), None);
+        assert_eq!(odd_one(&[0, 1, 1, 1]), Some(0));
+        assert_eq!(odd_one(&[1, 0, 1, 1]), Some(1));
+        assert_eq!(odd_one(&[1, 1, 0, 1]), Some(2));
+        assert_eq!(odd_one(&[1, 1, 1, 0]), Some(3));
+        assert_eq!(odd_one(&[1, 1, 1, 1, 1]), None);
+        assert_eq!(odd_one(&[1, 1, 1, 1, 0]), Some(4));
+    }
+    #[test]
+    fn parts_work() {
+        let ex: Vec<String> = EX.iter().map(|x| x.to_string()).collect::<Vec<String>>();
+        let tower = Tower::new(&ex);
+        let p1 = tower.part1();
+        assert_eq!(p1, "tknk", "part 1 example");
+        assert_eq!(tower.part2(p1), 60, "part 2 example");
+    }
 }

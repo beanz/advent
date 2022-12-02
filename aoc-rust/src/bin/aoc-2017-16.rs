@@ -46,20 +46,6 @@ impl Programs {
     }
 }
 
-#[test]
-fn programs_works() {
-    let mut p = Programs::new('e');
-    p.spin(1);
-    assert_eq!(format!("{}", p), "eabcd");
-    p.swap(3, 4);
-    assert_eq!(format!("{}", p), "eabdc");
-    p.swap_ch('e', 'b');
-    assert_eq!(format!("{}", p), "baedc");
-    let mut p2 = Programs::new('e');
-    p2.dance(&["s1".to_string(), "x3/4".to_string(), "pe/b".to_string()]);
-    assert_eq!(format!("{}", p2), "baedc");
-}
-
 fn part2(ch: char, moves: &[String]) -> String {
     let mut p = Programs::new(ch);
     const END: usize = 10_000_000;
@@ -83,17 +69,6 @@ fn part2(ch: char, moves: &[String]) -> String {
     format!("{}", p)
 }
 
-#[test]
-fn part2_works() {
-    assert_eq!(
-        part2(
-            'e',
-            &["s1".to_string(), "x3/4".to_string(), "pe/b".to_string()]
-        ),
-        "abcde"
-    );
-}
-
 fn main() {
     let inp = aoc::read_input_line();
     aoc::benchme(|bench: bool| {
@@ -109,4 +84,33 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn programs_works() {
+        let mut p = Programs::new('e');
+        p.spin(1);
+        assert_eq!(format!("{}", p), "eabcd");
+        p.swap(3, 4);
+        assert_eq!(format!("{}", p), "eabdc");
+        p.swap_ch('e', 'b');
+        assert_eq!(format!("{}", p), "baedc");
+        let mut p2 = Programs::new('e');
+        p2.dance(&["s1".to_string(), "x3/4".to_string(), "pe/b".to_string()]);
+        assert_eq!(format!("{}", p2), "baedc");
+    }
+    #[test]
+    fn part2_works() {
+        assert_eq!(
+            part2(
+                'e',
+                &["s1".to_string(), "x3/4".to_string(), "pe/b".to_string()]
+            ),
+            "abcde"
+        );
+    }
 }

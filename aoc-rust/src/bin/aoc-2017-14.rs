@@ -59,13 +59,6 @@ fn part2(grid: &mut [bool]) -> usize {
     c
 }
 
-#[test]
-fn parts_work() {
-    let (p1, mut grid) = part1("flqrgnkx");
-    assert_eq!(p1, 8108, "part 1 example");
-    assert_eq!(part2(&mut grid), 1242, "part 2 example");
-}
-
 fn main() {
     let inp = aoc::read_input_line();
     aoc::benchme(|bench: bool| {
@@ -76,4 +69,16 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_work() {
+        let (p1, mut grid) = part1("flqrgnkx");
+        assert_eq!(p1, 8108, "part 1 example");
+        assert_eq!(part2(&mut grid), 1242, "part 2 example");
+    }
 }

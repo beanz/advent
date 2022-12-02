@@ -35,32 +35,6 @@ fn find_position(usq: usize) -> aoc::Point {
     }
 }
 
-#[test]
-fn find_position_works() {
-    assert_eq!(find_position(1), aoc::Point::new(0, 0), "part 1 example 1");
-    assert_eq!(
-        find_position(12),
-        aoc::Point::new(2, -1),
-        "part 1 example 2"
-    );
-    assert_eq!(find_position(23), aoc::Point::new(0, 2), "part 1 example 3");
-    assert_eq!(
-        find_position(1024),
-        aoc::Point::new(-15, -16),
-        "part 1 example 4"
-    );
-    assert_eq!(
-        find_position(16),
-        aoc::Point::new(-1, -2),
-        "part 1 top edge"
-    );
-    assert_eq!(
-        find_position(18),
-        aoc::Point::new(-2, -1),
-        "part 1 left edge"
-    );
-}
-
 fn part1(square: usize) -> usize {
     find_position(square).manhattan()
 }
@@ -96,20 +70,6 @@ fn part2(square: usize) -> usize {
     0
 }
 
-#[test]
-fn part2_works() {
-    assert_eq!(part2(2), 4, "part 2 - 2");
-    assert_eq!(part2(4), 5, "part 2 - 4");
-    assert_eq!(part2(5), 10, "part 2 - 5");
-    assert_eq!(part2(10), 11, "part 2 - 10");
-    assert_eq!(part2(11), 23, "part 2 - 11");
-    assert_eq!(part2(23), 25, "part 2 - 23");
-    assert_eq!(part2(26), 54, "part 2 - 26");
-    assert_eq!(part2(54), 57, "part 2 - 54");
-    assert_eq!(part2(747), 806, "part 2 - 747");
-    assert_eq!(part2(2380), 2391, "part 2 - 2380");
-}
-
 fn main() {
     let inp = aoc::read_input_line();
     aoc::benchme(|bench: bool| {
@@ -121,4 +81,48 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn find_position_works() {
+        assert_eq!(find_position(1), aoc::Point::new(0, 0), "part 1 example 1");
+        assert_eq!(
+            find_position(12),
+            aoc::Point::new(2, -1),
+            "part 1 example 2"
+        );
+        assert_eq!(find_position(23), aoc::Point::new(0, 2), "part 1 example 3");
+        assert_eq!(
+            find_position(1024),
+            aoc::Point::new(-15, -16),
+            "part 1 example 4"
+        );
+        assert_eq!(
+            find_position(16),
+            aoc::Point::new(-1, -2),
+            "part 1 top edge"
+        );
+        assert_eq!(
+            find_position(18),
+            aoc::Point::new(-2, -1),
+            "part 1 left edge"
+        );
+    }
+    #[test]
+    fn part2_works() {
+        assert_eq!(part2(2), 4, "part 2 - 2");
+        assert_eq!(part2(4), 5, "part 2 - 4");
+        assert_eq!(part2(5), 10, "part 2 - 5");
+        assert_eq!(part2(10), 11, "part 2 - 10");
+        assert_eq!(part2(11), 23, "part 2 - 11");
+        assert_eq!(part2(23), 25, "part 2 - 23");
+        assert_eq!(part2(26), 54, "part 2 - 26");
+        assert_eq!(part2(54), 57, "part 2 - 54");
+        assert_eq!(part2(747), 806, "part 2 - 747");
+        assert_eq!(part2(2380), 2391, "part 2 - 2380");
+    }
 }

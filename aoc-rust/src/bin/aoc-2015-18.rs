@@ -109,28 +109,33 @@ fn main() {
     });
 }
 
-#[test]
-fn part1_iter_works() {
-    let g = Grid::new(&vec![
-        ".#.#.#".to_string(),
-        "...##.".to_string(),
-        "#....#".to_string(),
-        "..#...".to_string(),
-        "#.#..#".to_string(),
-        "####..".to_string(),
-    ]);
-    assert_eq!(g.iter(4, false), 4, "part 1 of test input");
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn part2_iter_works() {
-    let g = Grid::new(&vec![
-        "##.#.#".to_string(),
-        "...##.".to_string(),
-        "#....#".to_string(),
-        "..#...".to_string(),
-        "#.#..#".to_string(),
-        "####.#".to_string(),
-    ]);
-    assert_eq!(g.iter(5, true), 17, "part 2 of test input");
+    #[test]
+    fn part1_iter_works() {
+        let g = Grid::new(&vec![
+            ".#.#.#".to_string(),
+            "...##.".to_string(),
+            "#....#".to_string(),
+            "..#...".to_string(),
+            "#.#..#".to_string(),
+            "####..".to_string(),
+        ]);
+        assert_eq!(g.iter(4, false), 4, "part 1 of test input");
+    }
+
+    #[test]
+    fn part2_iter_works() {
+        let g = Grid::new(&vec![
+            "##.#.#".to_string(),
+            "...##.".to_string(),
+            "#....#".to_string(),
+            "..#...".to_string(),
+            "#.#..#".to_string(),
+            "####.#".to_string(),
+        ]);
+        assert_eq!(g.iter(5, true), 17, "part 2 of test input");
+    }
 }

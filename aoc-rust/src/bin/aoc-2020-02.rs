@@ -73,12 +73,17 @@ fn main() {
     });
 }
 
-#[test]
-fn parts_works() {
-    let inp = std::fs::read("../2020/02/test1.txt").expect("read error");
-    let db = DB::new(&inp);
-    assert_eq!(db.parts(), (2, 1));
-    let inp = std::fs::read("../2020/02/input.txt").expect("read error");
-    let db = DB::new(&inp);
-    assert_eq!(db.parts(), (454, 649));
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        let inp = std::fs::read("../2020/02/test1.txt").expect("read error");
+        let db = DB::new(&inp);
+        assert_eq!(db.parts(), (2, 1));
+        let inp = std::fs::read("../2020/02/input.txt").expect("read error");
+        let db = DB::new(&inp);
+        assert_eq!(db.parts(), (454, 649));
+    }
 }

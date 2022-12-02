@@ -49,16 +49,6 @@ impl Crabs {
     }
 }
 
-#[test]
-fn parts_works() {
-    let c = Crabs {
-        nums: vec![16, 1, 2, 0, 4, 2, 7, 1, 2, 14],
-    };
-    let (p1, p2) = c.parts();
-    assert_eq!(p1, 37, "part 1 test1");
-    assert_eq!(p2, 168, "part 2 test1");
-}
-
 fn main() {
     let inp = std::fs::read(aoc::input_file()).expect("read error");
     aoc::benchme(|bench: bool| {
@@ -69,4 +59,19 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        let c = Crabs {
+            nums: vec![16, 1, 2, 0, 4, 2, 7, 1, 2, 14],
+        };
+        let (p1, p2) = c.parts();
+        assert_eq!(p1, 37, "part 1 test1");
+        assert_eq!(p2, 168, "part 2 test1");
+    }
 }

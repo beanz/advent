@@ -146,22 +146,27 @@ fn main() {
     })
 }
 
-#[test]
-fn parts_works() {
-    let inp = std::fs::read("../2020/04/test1.txt").expect("read error");
-    let (p1, p2) = parts(&inp);
-    assert_eq!(p1, 2, "part 1 test1");
-    assert_eq!(p2, 2, "part 2 test1");
-    let inp = std::fs::read("../2020/04/test2.txt").expect("read error");
-    let (p1, p2) = parts(&inp);
-    assert_eq!(p1, 4, "part 1 test2");
-    assert_eq!(p2, 0, "part 2 test2");
-    let inp = std::fs::read("../2020/04/test3.txt").expect("read error");
-    let (p1, p2) = parts(&inp);
-    assert_eq!(p1, 4, "part 1 test3");
-    assert_eq!(p2, 4, "part 2 test3");
-    let inp = std::fs::read("../2020/04/input.txt").expect("read error");
-    let (p1, p2) = parts(&inp);
-    assert_eq!(p1, 213, "part 1 input");
-    assert_eq!(p2, 147, "part 2 input");
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        let inp = std::fs::read("../2020/04/test1.txt").expect("read error");
+        let (p1, p2) = parts(&inp);
+        assert_eq!(p1, 2, "part 1 test1");
+        assert_eq!(p2, 2, "part 2 test1");
+        let inp = std::fs::read("../2020/04/test2.txt").expect("read error");
+        let (p1, p2) = parts(&inp);
+        assert_eq!(p1, 4, "part 1 test2");
+        assert_eq!(p2, 0, "part 2 test2");
+        let inp = std::fs::read("../2020/04/test3.txt").expect("read error");
+        let (p1, p2) = parts(&inp);
+        assert_eq!(p1, 4, "part 1 test3");
+        assert_eq!(p2, 4, "part 2 test3");
+        let inp = std::fs::read("../2020/04/input.txt").expect("read error");
+        let (p1, p2) = parts(&inp);
+        assert_eq!(p1, 213, "part 1 input");
+        assert_eq!(p2, 147, "part 2 input");
+    }
 }

@@ -36,14 +36,19 @@ fn main() {
     });
 }
 
-#[test]
-fn part1_works() {
-    let sizes: Vec<usize> = vec![1, 2, 3, 4, 5, 7, 8, 9, 10, 11];
-    assert_eq!(part1(&sizes), 99, "part 1 test");
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn part2_works() {
-    let sizes: Vec<usize> = vec![1, 2, 3, 4, 5, 7, 8, 9, 10, 11];
-    assert_eq!(part2(&sizes), 44, "part 2 test");
+    #[test]
+    fn part1_works() {
+        let sizes: Vec<usize> = vec![1, 2, 3, 4, 5, 7, 8, 9, 10, 11];
+        assert_eq!(part1(&sizes), 99, "part 1 test");
+    }
+
+    #[test]
+    fn part2_works() {
+        let sizes: Vec<usize> = vec![1, 2, 3, 4, 5, 7, 8, 9, 10, 11];
+        assert_eq!(part2(&sizes), 44, "part 2 test");
+    }
 }

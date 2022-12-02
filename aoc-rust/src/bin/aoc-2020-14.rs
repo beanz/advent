@@ -153,15 +153,20 @@ fn main() {
     });
 }
 
-#[test]
-fn parts_works() {
-    let inp = std::fs::read("../2020/14/test1.txt").expect("read error");
-    let prog = Prog::new(&inp);
-    assert_eq!(prog.parts(), (165, 0));
-    let inp = std::fs::read("../2020/14/test2.txt").expect("read error");
-    let prog = Prog::new(&inp);
-    assert_eq!(prog.parts(), (51, 208));
-    let inp = std::fs::read("../2020/14/input.txt").expect("read error");
-    let prog = Prog::new(&inp);
-    assert_eq!(prog.parts(), (4297467072083, 5030603328768));
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        let inp = std::fs::read("../2020/14/test1.txt").expect("read error");
+        let prog = Prog::new(&inp);
+        assert_eq!(prog.parts(), (165, 0));
+        let inp = std::fs::read("../2020/14/test2.txt").expect("read error");
+        let prog = Prog::new(&inp);
+        assert_eq!(prog.parts(), (51, 208));
+        let inp = std::fs::read("../2020/14/input.txt").expect("read error");
+        let prog = Prog::new(&inp);
+        assert_eq!(prog.parts(), (4297467072083, 5030603328768));
+    }
 }

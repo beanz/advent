@@ -88,22 +88,27 @@ fn main() {
     });
 }
 
-#[test]
-fn parts_work() {
-    let e: Vec<String> = [
-        "0 <-> 2",
-        "1 <-> 1",
-        "2 <-> 0, 3, 4",
-        "3 <-> 2, 4",
-        "4 <-> 2, 3, 6",
-        "5 <-> 6",
-        "6 <-> 4, 5",
-    ]
-    .iter()
-    .map(|x| x.to_string())
-    .collect::<Vec<String>>();
-    let mut p = Pipes::new();
-    p.add(&e);
-    assert_eq!(p.part1(), 6);
-    assert_eq!(p.part2(), 2);
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_work() {
+        let e: Vec<String> = [
+            "0 <-> 2",
+            "1 <-> 1",
+            "2 <-> 0, 3, 4",
+            "3 <-> 2, 4",
+            "4 <-> 2, 3, 6",
+            "5 <-> 6",
+            "6 <-> 4, 5",
+        ]
+        .iter()
+        .map(|x| x.to_string())
+        .collect::<Vec<String>>();
+        let mut p = Pipes::new();
+        p.add(&e);
+        assert_eq!(p.part1(), 6);
+        assert_eq!(p.part2(), 2);
+    }
 }

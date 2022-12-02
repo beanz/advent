@@ -116,52 +116,57 @@ fn main() {
     });
 }
 
-#[test]
-fn inst_new_works() {
-    {
-        let inst = Inst::new("hlf a");
-        assert_eq!((inst.op, inst.reg), (Op::Hlf, RA), "hlf a");
-    }
-    {
-        let inst = Inst::new("tpl B");
-        assert_eq!((inst.op, inst.reg), (Op::Tpl, RB), "tpl b");
-    }
-    {
-        let inst = Inst::new("inc a");
-        assert_eq!((inst.op, inst.reg), (Op::Inc, RA), "inc a");
-    }
-    {
-        let inst = Inst::new("jmp +2");
-        assert_eq!((inst.op, inst.off), (Op::Jmp, 2), "jmp +2");
-    }
-    {
-        let inst = Inst::new("jie a, -3");
-        assert_eq!(
-            (inst.op, inst.reg, inst.off),
-            (Op::Jie, RA, -3),
-            "jie a, -3"
-        );
-    }
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn part1_works() {
-    let comp = Comp::new(&vec![
-        "inc a".to_string(),
-        "jio a, +2".to_string(),
-        "tpl a".to_string(),
-        "inc a".to_string(),
-    ]);
-    assert_eq!(comp.run(0), (2, 0), "part 1 test input");
-}
+    #[test]
+    fn inst_new_works() {
+        {
+            let inst = Inst::new("hlf a");
+            assert_eq!((inst.op, inst.reg), (Op::Hlf, RA), "hlf a");
+        }
+        {
+            let inst = Inst::new("tpl B");
+            assert_eq!((inst.op, inst.reg), (Op::Tpl, RB), "tpl b");
+        }
+        {
+            let inst = Inst::new("inc a");
+            assert_eq!((inst.op, inst.reg), (Op::Inc, RA), "inc a");
+        }
+        {
+            let inst = Inst::new("jmp +2");
+            assert_eq!((inst.op, inst.off), (Op::Jmp, 2), "jmp +2");
+        }
+        {
+            let inst = Inst::new("jie a, -3");
+            assert_eq!(
+                (inst.op, inst.reg, inst.off),
+                (Op::Jie, RA, -3),
+                "jie a, -3"
+            );
+        }
+    }
 
-#[test]
-fn part2_works() {
-    let comp = Comp::new(&vec![
-        "inc a".to_string(),
-        "jio a, +2".to_string(),
-        "tpl a".to_string(),
-        "inc a".to_string(),
-    ]);
-    assert_eq!(comp.run(1), (7, 0), "part 1 test input");
+    #[test]
+    fn part1_works() {
+        let comp = Comp::new(&vec![
+            "inc a".to_string(),
+            "jio a, +2".to_string(),
+            "tpl a".to_string(),
+            "inc a".to_string(),
+        ]);
+        assert_eq!(comp.run(0), (2, 0), "part 1 test input");
+    }
+
+    #[test]
+    fn part2_works() {
+        let comp = Comp::new(&vec![
+            "inc a".to_string(),
+            "jio a, +2".to_string(),
+            "tpl a".to_string(),
+            "inc a".to_string(),
+        ]);
+        assert_eq!(comp.run(1), (7, 0), "part 1 test input");
+    }
 }

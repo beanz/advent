@@ -112,30 +112,6 @@ impl Maze {
     }
 }
 
-#[test]
-fn maze_gen_works() {
-    let mut ex1 = Maze::new(10);
-    let mut s = "".to_string();
-    for y in 0..4 {
-        for x in 0..10 {
-            s.push(if ex1.get(x, y) == Space::Wall {
-                '#'
-            } else {
-                '.'
-            });
-        }
-        s.push('\n');
-    }
-    assert_eq!(s, ".#.####.##\n..#..#...#\n#....##...\n###.#.###.\n");
-}
-
-#[test]
-fn solve_search_works() {
-    let mut ex1 = Maze::new(10);
-    assert_eq!(ex1.search(End::Pos(7, 4)), 11, "example part 1");
-    assert_eq!(ex1.search(End::Steps(50)), 151, "example part 2");
-}
-
 fn main() {
     let fav = aoc::read_input_line().parse::<u64>().unwrap();
     aoc::benchme(|bench: bool| {
@@ -147,4 +123,33 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn maze_gen_works() {
+        let mut ex1 = Maze::new(10);
+        let mut s = "".to_string();
+        for y in 0..4 {
+            for x in 0..10 {
+                s.push(if ex1.get(x, y) == Space::Wall {
+                    '#'
+                } else {
+                    '.'
+                });
+            }
+            s.push('\n');
+        }
+        assert_eq!(s, ".#.####.##\n..#..#...#\n#....##...\n###.#.###.\n");
+    }
+
+    #[test]
+    fn solve_search_works() {
+        let mut ex1 = Maze::new(10);
+        assert_eq!(ex1.search(End::Pos(7, 4)), 11, "example part 1");
+        assert_eq!(ex1.search(End::Steps(50)), 151, "example part 2");
+    }
 }

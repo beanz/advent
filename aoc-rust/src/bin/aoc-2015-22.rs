@@ -219,101 +219,106 @@ fn main() {
     });
 }
 
-#[test]
-fn example1_works() {
-    let mut s = State {
-        me: Me::new(10, 250),
-        boss: Boss::new(13, 8),
-        hard_mode: false,
-    };
-    s.turn(&POISON);
-    assert_eq!(s.boss.hp, 10, "T1&2 boss hp");
-    assert_eq!(s.me.hp, 2, "T1&2 player hp");
-    assert_eq!(s.me.armor, 0, "T1&2 player armor");
-    assert_eq!(s.me.mana, 77, "T1&2 player mana");
-    assert_eq!(s.me.mana_spent, 173, "T1&2 player mana spent");
-    s.turn(&MAGIC_MISSILE);
-    assert_eq!(s.boss.hp, 0, "T3&4 boss hp");
-    assert_eq!(s.me.hp, 2, "T3&4 player hp");
-    assert_eq!(s.me.armor, 0, "T3&4 player armor");
-    assert_eq!(s.me.mana, 24, "T3&4 player mana");
-    assert_eq!(s.me.mana_spent, 226, "T3&4 player mana spent");
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn example2_works() {
-    let mut s = State {
-        me: Me::new(10, 250),
-        boss: Boss::new(14, 8),
-        hard_mode: false,
-    };
-    s.turn(&RECHARGE);
-    assert_eq!(s.boss.hp, 14, "T1&2 boss hp");
-    assert_eq!(s.me.hp, 2, "T1&2 player hp");
-    assert_eq!(s.me.armor, 0, "T1&2 player armor");
-    assert_eq!(s.me.mana, 122, "T1&2 player mana");
-    assert_eq!(s.me.mana_spent, 229, "T1&2 player mana spent");
+    #[test]
+    fn example1_works() {
+        let mut s = State {
+            me: Me::new(10, 250),
+            boss: Boss::new(13, 8),
+            hard_mode: false,
+        };
+        s.turn(&POISON);
+        assert_eq!(s.boss.hp, 10, "T1&2 boss hp");
+        assert_eq!(s.me.hp, 2, "T1&2 player hp");
+        assert_eq!(s.me.armor, 0, "T1&2 player armor");
+        assert_eq!(s.me.mana, 77, "T1&2 player mana");
+        assert_eq!(s.me.mana_spent, 173, "T1&2 player mana spent");
+        s.turn(&MAGIC_MISSILE);
+        assert_eq!(s.boss.hp, 0, "T3&4 boss hp");
+        assert_eq!(s.me.hp, 2, "T3&4 player hp");
+        assert_eq!(s.me.armor, 0, "T3&4 player armor");
+        assert_eq!(s.me.mana, 24, "T3&4 player mana");
+        assert_eq!(s.me.mana_spent, 226, "T3&4 player mana spent");
+    }
 
-    s.turn(&SHIELD);
-    assert_eq!(s.boss.hp, 14, "T3&4 boss hp");
-    assert_eq!(s.me.hp, 1, "T3&4 player hp");
-    assert_eq!(s.me.armor, 7, "T3&4 player armor");
-    assert_eq!(s.me.mana, 211, "T3&4 player mana");
-    assert_eq!(s.me.mana_spent, 229 + 113, "T3&4 player mana spent");
+    #[test]
+    fn example2_works() {
+        let mut s = State {
+            me: Me::new(10, 250),
+            boss: Boss::new(14, 8),
+            hard_mode: false,
+        };
+        s.turn(&RECHARGE);
+        assert_eq!(s.boss.hp, 14, "T1&2 boss hp");
+        assert_eq!(s.me.hp, 2, "T1&2 player hp");
+        assert_eq!(s.me.armor, 0, "T1&2 player armor");
+        assert_eq!(s.me.mana, 122, "T1&2 player mana");
+        assert_eq!(s.me.mana_spent, 229, "T1&2 player mana spent");
 
-    s.turn(&DRAIN);
-    assert_eq!(s.boss.hp, 12, "T5&6 boss hp");
-    assert_eq!(s.me.hp, 2, "T5&6 player hp");
-    assert_eq!(s.me.armor, 7, "T5&6 player armor");
-    assert_eq!(s.me.mana, 340, "T5&6 player mana");
-    assert_eq!(s.me.mana_spent, 229 + 113 + 73, "T5&6 player mana spent");
+        s.turn(&SHIELD);
+        assert_eq!(s.boss.hp, 14, "T3&4 boss hp");
+        assert_eq!(s.me.hp, 1, "T3&4 player hp");
+        assert_eq!(s.me.armor, 7, "T3&4 player armor");
+        assert_eq!(s.me.mana, 211, "T3&4 player mana");
+        assert_eq!(s.me.mana_spent, 229 + 113, "T3&4 player mana spent");
 
-    s.turn(&POISON);
-    assert_eq!(s.boss.hp, 9, "T7&8 boss hp");
-    assert_eq!(s.me.hp, 1, "T7&8 player hp");
-    assert_eq!(s.me.armor, 7, "T7&8 player armor");
-    assert_eq!(s.me.mana, 167, "T7&8 player mana");
-    assert_eq!(
-        s.me.mana_spent,
-        229 + 113 + 73 + 173,
-        "T7&8 player mana spent"
-    );
+        s.turn(&DRAIN);
+        assert_eq!(s.boss.hp, 12, "T5&6 boss hp");
+        assert_eq!(s.me.hp, 2, "T5&6 player hp");
+        assert_eq!(s.me.armor, 7, "T5&6 player armor");
+        assert_eq!(s.me.mana, 340, "T5&6 player mana");
+        assert_eq!(s.me.mana_spent, 229 + 113 + 73, "T5&6 player mana spent");
 
-    s.turn(&MAGIC_MISSILE);
-    assert_eq!(s.boss.hp, -1, "T9&10 boss hp");
-    assert_eq!(s.me.hp, 1, "T9&10 player hp");
-    assert_eq!(s.me.armor, 0, "T9&10 player armor");
-    assert_eq!(s.me.mana, 114, "T9&10 player mana");
-    assert_eq!(
-        s.me.mana_spent,
-        229 + 113 + 73 + 173 + 53,
-        "T9&10 player mana spent"
-    );
-}
+        s.turn(&POISON);
+        assert_eq!(s.boss.hp, 9, "T7&8 boss hp");
+        assert_eq!(s.me.hp, 1, "T7&8 player hp");
+        assert_eq!(s.me.armor, 7, "T7&8 player armor");
+        assert_eq!(s.me.mana, 167, "T7&8 player mana");
+        assert_eq!(
+            s.me.mana_spent,
+            229 + 113 + 73 + 173,
+            "T7&8 player mana spent"
+        );
 
-#[test]
-fn part1_works() {
-    let mut s = State {
-        me: Me::new(50, 500),
-        boss: Boss::new(71, 10),
-        hard_mode: false,
-    };
-    for turn in &[
-        (POISON, 68, 40),
-        (RECHARGE, 62, 30),
-        (SHIELD, 56, 27),
-        (POISON, 50, 24),
-        (RECHARGE, 44, 21),
-        (SHIELD, 38, 18),
-        (POISON, 32, 15),
-        (RECHARGE, 26, 12),
-        (SHIELD, 20, 9),
-        (MAGIC_MISSILE, 13, 6),
-        (POISON, 10, 3),
-        (MAGIC_MISSILE, 0, 3),
-    ] {
-        s.turn(&turn.0);
-        assert_eq!(s.boss.hp, turn.1, "boss hp");
-        assert_eq!(s.me.hp, turn.2, "player hp");
+        s.turn(&MAGIC_MISSILE);
+        assert_eq!(s.boss.hp, -1, "T9&10 boss hp");
+        assert_eq!(s.me.hp, 1, "T9&10 player hp");
+        assert_eq!(s.me.armor, 0, "T9&10 player armor");
+        assert_eq!(s.me.mana, 114, "T9&10 player mana");
+        assert_eq!(
+            s.me.mana_spent,
+            229 + 113 + 73 + 173 + 53,
+            "T9&10 player mana spent"
+        );
+    }
+
+    #[test]
+    fn part1_works() {
+        let mut s = State {
+            me: Me::new(50, 500),
+            boss: Boss::new(71, 10),
+            hard_mode: false,
+        };
+        for turn in &[
+            (POISON, 68, 40),
+            (RECHARGE, 62, 30),
+            (SHIELD, 56, 27),
+            (POISON, 50, 24),
+            (RECHARGE, 44, 21),
+            (SHIELD, 38, 18),
+            (POISON, 32, 15),
+            (RECHARGE, 26, 12),
+            (SHIELD, 20, 9),
+            (MAGIC_MISSILE, 13, 6),
+            (POISON, 10, 3),
+            (MAGIC_MISSILE, 0, 3),
+        ] {
+            s.turn(&turn.0);
+            assert_eq!(s.boss.hp, turn.1, "boss hp");
+            assert_eq!(s.me.hp, turn.2, "player hp");
+        }
     }
 }

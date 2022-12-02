@@ -46,52 +46,11 @@ impl Dragon {
     }
 }
 
-#[test]
-fn dragon_works() {
-    for tc in &[
-        ("1", "100"),
-        ("0", "001"),
-        ("11111", "11111000000"),
-        ("111100001010", "1111000010100101011110000"),
-    ] {
-        let mut d = Dragon::new(&tc.0.to_string());
-        d.dragon();
-        assert_eq!(format!("{}", d), tc.1, "dragon of \"{}\"", tc.0);
-    }
-}
-
-#[test]
-fn extend_works() {
-    let mut d = Dragon::new(&"10000".to_string());
-    d.extend(20);
-    assert_eq!(
-        format!("{}", d),
-        "10000011110010000111",
-        "extend to length 20"
-    );
-}
-
-#[test]
-fn checksum_works() {
-    let mut d = Dragon::new(&"110010110100".to_string());
-    d.checksum();
-    assert_eq!(format!("{}", d), "100", "example checksum");
-}
-
 fn part1(init: &str, l: usize) -> Dragon {
     let mut d = Dragon::new(init);
     d.extend(l);
     d.checksum();
     d
-}
-
-#[test]
-fn part1_works() {
-    assert_eq!(
-        format!("{}", part1(&"10000".to_string(), 20)),
-        "01100",
-        "part 1 works"
-    );
 }
 
 fn main() {
@@ -104,4 +63,49 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn dragon_works() {
+        for tc in &[
+            ("1", "100"),
+            ("0", "001"),
+            ("11111", "11111000000"),
+            ("111100001010", "1111000010100101011110000"),
+        ] {
+            let mut d = Dragon::new(&tc.0.to_string());
+            d.dragon();
+            assert_eq!(format!("{}", d), tc.1, "dragon of \"{}\"", tc.0);
+        }
+    }
+
+    #[test]
+    fn extend_works() {
+        let mut d = Dragon::new(&"10000".to_string());
+        d.extend(20);
+        assert_eq!(
+            format!("{}", d),
+            "10000011110010000111",
+            "extend to length 20"
+        );
+    }
+
+    #[test]
+    fn checksum_works() {
+        let mut d = Dragon::new(&"110010110100".to_string());
+        d.checksum();
+        assert_eq!(format!("{}", d), "100", "example checksum");
+    }
+    #[test]
+    fn part1_works() {
+        assert_eq!(
+            format!("{}", part1(&"10000".to_string(), 20)),
+            "01100",
+            "part 1 works"
+        );
+    }
 }

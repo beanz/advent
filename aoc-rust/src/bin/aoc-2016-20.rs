@@ -33,17 +33,6 @@ fn calc(inp: &[String]) -> (usize, usize) {
     ((*new[0].end() + 1), p2)
 }
 
-#[test]
-fn calc_works() {
-    let (p1, p2) = calc(&vec![
-        "5-8".to_string(),
-        "0-2".to_string(),
-        "4-7".to_string(),
-    ]);
-    assert_eq!(p1, 3, "example part 1");
-    assert_eq!(p2, 4294967289, "example part 2");
-}
-
 fn main() {
     let lines = aoc::input_lines();
     aoc::benchme(|bench: bool| {
@@ -53,4 +42,20 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn calc_works() {
+        let (p1, p2) = calc(&vec![
+            "5-8".to_string(),
+            "0-2".to_string(),
+            "4-7".to_string(),
+        ]);
+        assert_eq!(p1, 3, "example part 1");
+        assert_eq!(p2, 4294967289, "example part 2");
+    }
 }

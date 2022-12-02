@@ -13,10 +13,7 @@ impl Gen {
             let cs = aoc::md5sum(self.ns.bytes());
             if cs[0] == 0 && cs[1] == 0 && (cs[2] & 0xf0 == 0) {
                 self.ns.inc();
-                return cs
-                    .iter()
-                    .map(|x| format!("{:02x}", x))
-                    .collect::<String>();
+                return cs.iter().map(|x| format!("{:02x}", x)).collect::<String>();
             }
             self.ns.inc();
         }
@@ -59,12 +56,17 @@ fn main() {
     });
 }
 
-#[test]
-fn gen_works() {
-    let mut gen = Gen::new(&"abc".to_string());
-    for _ in 1..3231920 {
-        // hack to make test faster
-        gen.ns.inc();
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn gen_works() {
+        let mut gen = Gen::new(&"abc".to_string());
+        for _ in 1..3231920 {
+            // hack to make test faster
+            gen.ns.inc();
+        }
+        assert_eq!(gen.next(), "00000155f8105dff7f56ee10fa9b9abd");
     }
-    assert_eq!(gen.next(), "00000155f8105dff7f56ee10fa9b9abd");
 }

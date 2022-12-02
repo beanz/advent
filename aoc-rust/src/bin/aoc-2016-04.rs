@@ -10,15 +10,6 @@ fn room_record(room: &str) -> (&str, usize, &str) {
     (name, sector_id, check)
 }
 
-#[test]
-fn room_record_works() {
-    let room = "rsvxltspi-sfnigx-wxsveki-984[sixve]".to_string();
-    let (name, sector_id, check) = room_record(&room);
-    assert_eq!(name, "rsvxltspi-sfnigx-wxsveki", "room record name");
-    assert_eq!(sector_id, 984, "room record sector id");
-    assert_eq!(check, "sixve", "room record checksum");
-}
-
 fn valid(room: &str) -> usize {
     let (name, sector_id, check) = room_record(room);
     let mut occurs: Vec<(usize, char)> = name
@@ -39,14 +30,6 @@ fn valid(room: &str) -> usize {
         return 0;
     }
     sector_id
-}
-
-#[test]
-fn valid_works() {
-    let valid_room = "rsvxltspi-sfnigx-wxsveki-984[sixve]";
-    assert_eq!(valid(&valid_room), 984, "valid room");
-    let invalid_room = "totally-real-room-200[decoy]";
-    assert_eq!(valid(&invalid_room), 0, "invalid room");
 }
 
 fn part1(inp: &[String]) -> usize {
@@ -125,4 +108,25 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn room_record_works() {
+        let room = "rsvxltspi-sfnigx-wxsveki-984[sixve]".to_string();
+        let (name, sector_id, check) = room_record(&room);
+        assert_eq!(name, "rsvxltspi-sfnigx-wxsveki", "room record name");
+        assert_eq!(sector_id, 984, "room record sector id");
+        assert_eq!(check, "sixve", "room record checksum");
+    }
+    #[test]
+    fn valid_works() {
+        let valid_room = "rsvxltspi-sfnigx-wxsveki-984[sixve]";
+        assert_eq!(valid(&valid_room), 984, "valid room");
+        let invalid_room = "totally-real-room-200[decoy]";
+        assert_eq!(valid(&invalid_room), 0, "invalid room");
+    }
 }

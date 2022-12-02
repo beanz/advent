@@ -12,14 +12,6 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     (p1 as usize, p2 as usize)
 }
 
-#[test]
-fn parts_works() {
-    let inp = std::fs::read("../2022/02/test1.txt").expect("read error");
-    assert_eq!(parts(&inp), (15, 12));
-    let inp = std::fs::read("../2022/02/input.txt").expect("read error");
-    assert_eq!(parts(&inp), (9651, 10560));
-}
-
 fn main() {
     let inp = std::fs::read(aoc::input_file()).expect("read error");
     aoc::benchme(|bench: bool| {
@@ -29,4 +21,17 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        let inp = std::fs::read("../2022/02/test1.txt").expect("read error");
+        assert_eq!(parts(&inp), (15, 12));
+        let inp = std::fs::read("../2022/02/input.txt").expect("read error");
+        assert_eq!(parts(&inp), (9651, 10560));
+    }
 }

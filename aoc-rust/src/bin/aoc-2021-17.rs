@@ -76,13 +76,6 @@ fn signed_ints(inp: &[u8], res: &mut [i32]) {
     }
 }
 
-#[test]
-fn parts_works() {
-    let (tp1, tp2) = parts(b"target area: x=20..30, y=-10..-5\n");
-    assert_eq!(tp1, 45);
-    assert_eq!(tp2, 112);
-}
-
 fn main() {
     let inp = std::fs::read(aoc::input_file()).expect("read error");
     aoc::benchme(|bench: bool| {
@@ -92,4 +85,16 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        let (tp1, tp2) = parts(b"target area: x=20..30, y=-10..-5\n");
+        assert_eq!(tp1, 45);
+        assert_eq!(tp2, 112);
+    }
 }

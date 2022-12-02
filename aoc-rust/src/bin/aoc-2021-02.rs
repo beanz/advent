@@ -43,10 +43,15 @@ fn main() {
     })
 }
 
-#[test]
-fn parts_works() {
-    let ex = std::fs::read("../2021/02/test1.txt").expect("read");
-    let (p1, p2) = parts(&ex);
-    assert_eq!(p1, 150, "part 1 test");
-    assert_eq!(p2, 900, "part 2 test");
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        let ex = std::fs::read("../2021/02/test1.txt").expect("read");
+        let (p1, p2) = parts(&ex);
+        assert_eq!(p1, 150, "part 1 test");
+        assert_eq!(p2, 900, "part 2 test");
+    }
 }

@@ -37,28 +37,33 @@ fn main() {
     });
 }
 
-#[test]
-fn p1works() {
-    for &(inp, exp) in [
-        ("(())", 0),
-        ("()()", 0),
-        ("(((", 3),
-        ("(()(()(", 3),
-        ("))(((((", 3),
-        ("())", -1),
-        ("))(", -1),
-        (")))", -3),
-        (")())())", -3),
-    ]
-    .iter()
-    {
-        assert_eq!(p1(&inp.to_string()), exp, "{}", inp);
-    }
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn p2works() {
-    for &(inp, exp) in [(")", 1), ("()())", 5)].iter() {
-        assert_eq!(p2(&inp.to_string()), exp, "{}", inp);
+    #[test]
+    fn p1works() {
+        for &(inp, exp) in [
+            ("(())", 0),
+            ("()()", 0),
+            ("(((", 3),
+            ("(()(()(", 3),
+            ("))(((((", 3),
+            ("())", -1),
+            ("))(", -1),
+            (")))", -3),
+            (")())())", -3),
+        ]
+        .iter()
+        {
+            assert_eq!(p1(&inp.to_string()), exp, "{}", inp);
+        }
+    }
+
+    #[test]
+    fn p2works() {
+        for &(inp, exp) in [(")", 1), ("()())", 5)].iter() {
+            assert_eq!(p2(&inp.to_string()), exp, "{}", inp);
+        }
     }
 }

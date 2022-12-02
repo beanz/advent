@@ -41,17 +41,22 @@ fn main() {
     })
 }
 
-#[test]
-fn calc_works() {
-    for &(inp, exp) in [
-        ("\"\"", (2 - 0, 6 - 2)),
-        ("\"abc\"", (5 - 3, 9 - 5)),
-        ("\"aaa\\\"aaa\"", (10 - 7, 16 - 10)),
-        ("\"\\x27\"", (6 - 1, 11 - 6)),
-        ("\"h\\\\\"", (5 - 2, 11 - 5)),
-    ]
-    .iter()
-    {
-        assert_eq!(calc(&inp.to_string()), exp, "{}", inp);
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn calc_works() {
+        for &(inp, exp) in [
+            ("\"\"", (2 - 0, 6 - 2)),
+            ("\"abc\"", (5 - 3, 9 - 5)),
+            ("\"aaa\\\"aaa\"", (10 - 7, 16 - 10)),
+            ("\"\\x27\"", (6 - 1, 11 - 6)),
+            ("\"h\\\\\"", (5 - 2, 11 - 5)),
+        ]
+        .iter()
+        {
+            assert_eq!(calc(&inp.to_string()), exp, "{}", inp);
+        }
     }
 }

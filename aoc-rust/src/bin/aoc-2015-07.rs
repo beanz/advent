@@ -1,10 +1,6 @@
 use std::collections::HashMap;
 
-pub fn calc(
-    m: &HashMap<String, String>,
-    cache: &mut HashMap<String, u16>,
-    s: &str,
-) -> u16 {
+pub fn calc(m: &HashMap<String, String>, cache: &mut HashMap<String, u16>, s: &str) -> u16 {
     if cache.contains_key(&s.to_string()) {
         return *cache.get(&s.to_string()).unwrap();
     }
@@ -74,30 +70,35 @@ fn main() {
     });
 }
 
-#[test]
-fn calc_works() {
-    let mut cache = HashMap::new();
-    let mut m: HashMap<String, String> = HashMap::new();
-    m.insert("x".to_string(), "123".to_string());
-    m.insert("y".to_string(), "456".to_string());
-    m.insert("d".to_string(), "x AND y".to_string());
-    m.insert("e".to_string(), "x OR y".to_string());
-    m.insert("f".to_string(), "x LSHIFT 2".to_string());
-    m.insert("g".to_string(), "y RSHIFT 2".to_string());
-    m.insert("h".to_string(), "NOT x".to_string());
-    m.insert("i".to_string(), "NOT y".to_string());
-    for &(inp, exp) in [
-        ("d", 72),
-        ("e", 507),
-        ("f", 492),
-        ("g", 114),
-        ("h", 65412),
-        ("i", 65079),
-        ("x", 123),
-        ("y", 456),
-    ]
-    .iter()
-    {
-        assert_eq!(calc(&m, &mut cache, inp), exp, "{}", inp);
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn calc_works() {
+        let mut cache = HashMap::new();
+        let mut m: HashMap<String, String> = HashMap::new();
+        m.insert("x".to_string(), "123".to_string());
+        m.insert("y".to_string(), "456".to_string());
+        m.insert("d".to_string(), "x AND y".to_string());
+        m.insert("e".to_string(), "x OR y".to_string());
+        m.insert("f".to_string(), "x LSHIFT 2".to_string());
+        m.insert("g".to_string(), "y RSHIFT 2".to_string());
+        m.insert("h".to_string(), "NOT x".to_string());
+        m.insert("i".to_string(), "NOT y".to_string());
+        for &(inp, exp) in [
+            ("d", 72),
+            ("e", 507),
+            ("f", 492),
+            ("g", 114),
+            ("h", 65412),
+            ("i", 65079),
+            ("x", 123),
+            ("y", 456),
+        ]
+        .iter()
+        {
+            assert_eq!(calc(&m, &mut cache, inp), exp, "{}", inp);
+        }
     }
 }

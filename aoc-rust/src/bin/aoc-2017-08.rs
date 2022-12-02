@@ -55,11 +55,15 @@ const EX: [&str; 4] = [
     "c inc -20 if c == 10",
 ];
 
-#[test]
-fn run_works() {
-    let ex: Vec<String> =
-        EX.iter().map(|x| x.to_string()).collect::<Vec<String>>();
-    let (p1, p2) = run(&ex);
-    assert_eq!(p1, 1, "part 1 example");
-    assert_eq!(p2, 10, "part 2 example");
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn run_works() {
+        let ex: Vec<String> = EX.iter().map(|x| x.to_string()).collect::<Vec<String>>();
+        let (p1, p2) = run(&ex);
+        assert_eq!(p1, 1, "part 1 example");
+        assert_eq!(p2, 10, "part 2 example");
+    }
 }

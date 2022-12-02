@@ -32,11 +32,7 @@ impl Octo<'_> {
             (1, 1),
         ] {
             let (nx, ny) = (x + ox, y + oy);
-            if nx < 0
-                || nx >= (self.w - 1) as isize
-                || ny < 0
-                || ny >= self.h as isize
-            {
+            if nx < 0 || nx >= (self.w - 1) as isize || ny < 0 || ny >= self.h as isize {
                 continue;
             }
             let ni = (ny as usize) * self.w + (nx as usize);
@@ -96,29 +92,6 @@ impl fmt::Display for Octo<'_> {
     }
 }
 
-#[test]
-fn step_works() {
-    // let mut inp: Vec<u8> = vec![];
-    // for ch in b"11111\n19991\n19191\n19991\n11111\n" {
-    //     inp.push(*ch);
-    // }
-    // let mut n = Octo::new(&mut inp);
-    // assert_eq!(n.step(), 9, "first example");
-    // assert_eq!(format!("{}", n), "34543\n40004\n50005\n40004\n34543\n");
-    let mut inp2: Vec<u8> = vec![];
-    for ch in b"5483143223\n2745854711\n5264556173\n6141336146\n6357385478\n4167524645\n2176841721\n6882881134\n4846848554\n5283751526\n" {
-        inp2.push(*ch);
-    }
-    let mut n2 = Octo::new(&mut inp2);
-    assert_eq!(n2.step(), 0, "second example: step 1");
-    assert_eq!(format!("{}", n2), "6594254334\n3856965822\n6375667284\n7252447257\n7468496589\n5278635756\n3287952832\n7993992245\n5957959665\n6394862637\n");
-    assert_eq!(n2.step(), 35, "second example: step 2");
-    assert_eq!(format!("{}", n2), "8807476555\n5089087054\n8597889608\n8485769600\n8700908800\n6600088989\n6800005943\n0000007456\n9000000876\n8700006848\n");
-}
-
-#[test]
-fn parts_works() {}
-
 fn main() {
     aoc::benchme(|bench: bool| {
         let mut inp = std::fs::read(aoc::input_file()).expect("read error");
@@ -129,4 +102,29 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn step_works() {
+        // let mut inp: Vec<u8> = vec![];
+        // for ch in b"11111\n19991\n19191\n19991\n11111\n" {
+        //     inp.push(*ch);
+        // }
+        // let mut n = Octo::new(&mut inp);
+        // assert_eq!(n.step(), 9, "first example");
+        // assert_eq!(format!("{}", n), "34543\n40004\n50005\n40004\n34543\n");
+        let mut inp2: Vec<u8> = vec![];
+        for ch in b"5483143223\n2745854711\n5264556173\n6141336146\n6357385478\n4167524645\n2176841721\n6882881134\n4846848554\n5283751526\n" {
+        inp2.push(*ch);
+    }
+        let mut n2 = Octo::new(&mut inp2);
+        assert_eq!(n2.step(), 0, "second example: step 1");
+        assert_eq!(format!("{}", n2), "6594254334\n3856965822\n6375667284\n7252447257\n7468496589\n5278635756\n3287952832\n7993992245\n5957959665\n6394862637\n");
+        assert_eq!(n2.step(), 35, "second example: step 2");
+        assert_eq!(format!("{}", n2), "8807476555\n5089087054\n8597889608\n8485769600\n8700908800\n6600088989\n6800005943\n0000007456\n9000000876\n8700006848\n");
+    }
 }

@@ -6,12 +6,7 @@ pub fn nice(s: &str) -> (bool, bool) {
     let mut sep_repeat = false;
     let b: &[u8] = s.as_bytes();
     for i in 0..s.len() {
-        if b[i] == b'a'
-            || b[i] == b'e'
-            || b[i] == b'i'
-            || b[i] == b'o'
-            || b[i] == b'u'
-        {
+        if b[i] == b'a' || b[i] == b'e' || b[i] == b'i' || b[i] == b'o' || b[i] == b'u' {
             vowel_count += 1;
         }
         if i == s.len() - 1 {
@@ -72,21 +67,26 @@ fn main() {
     });
 }
 
-#[test]
-fn nice_works() {
-    for &(inp, exp) in [
-        ("ugknbfddgicrmopn", (true, false)),
-        ("aaa", (true, false)),
-        ("jchzalrnumimnmhp", (false, false)),
-        ("haegwjzuvuyypxyu", (false, false)),
-        ("dvszwmarrgswjxmb", (false, false)),
-        ("qjhvhtzxzqqjkmpb", (false, true)),
-        ("xxyxx", (false, true)),
-        ("uurcxstgmygtbstg", (false, false)),
-        ("ieodomkazucvgmuy", (false, false)),
-    ]
-    .iter()
-    {
-        assert_eq!(nice(inp), exp, "{}", inp);
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn nice_works() {
+        for &(inp, exp) in [
+            ("ugknbfddgicrmopn", (true, false)),
+            ("aaa", (true, false)),
+            ("jchzalrnumimnmhp", (false, false)),
+            ("haegwjzuvuyypxyu", (false, false)),
+            ("dvszwmarrgswjxmb", (false, false)),
+            ("qjhvhtzxzqqjkmpb", (false, true)),
+            ("xxyxx", (false, true)),
+            ("uurcxstgmygtbstg", (false, false)),
+            ("ieodomkazucvgmuy", (false, false)),
+        ]
+        .iter()
+        {
+            assert_eq!(nice(inp), exp, "{}", inp);
+        }
     }
 }

@@ -11,10 +11,7 @@ impl Sue {
         props.insert("num".to_string(), nums.next().unwrap());
         let sp = s.split(' ');
         for name in sp.step_by(2).skip(1) {
-            props.insert(
-                name.trim_matches(':').to_string(),
-                nums.next().unwrap(),
-            );
+            props.insert(name.trim_matches(':').to_string(), nums.next().unwrap());
         }
         Sue { props }
     }
@@ -86,31 +83,36 @@ fn main() {
     });
 }
 
-#[test]
-fn find_sue1_works() {
-    let sue1 = Sue::new("Sue 1: cats: 5, children: 1, cars: 2");
-    assert_eq!(*sue1.prop("num").unwrap(), 1usize, "sue 1: num");
-    assert_eq!(*sue1.prop("cats").unwrap(), 5usize, "sue 1: cats");
-    assert_eq!(*sue1.prop("children").unwrap(), 1usize, "sue 1: children");
-    assert_eq!(*sue1.prop("cars").unwrap(), 2usize, "sue 1: cars");
-    let sue10 = Sue::new("Sue 10: cats: 4, cars: 3");
-    assert_eq!(*sue10.prop("num").unwrap(), 10usize, "sue 10: num");
-    assert_eq!(*sue10.prop("cats").unwrap(), 4usize, "sue 10: cats");
-    assert_eq!(*sue10.prop("cars").unwrap(), 3usize, "sue 10: cars");
-    assert_eq!(
-        find_sue1(&[sue1, sue10], &[("cats", 4usize), ("goldfish", 5)]),
-        10,
-        "find sue part 1"
-    );
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn find_sue2_works() {
-    let sue1 = Sue::new("Sue 1: cats: 5, children: 1, cars: 2");
-    let sue10 = Sue::new("Sue 10: cats: 4, cars: 3");
-    assert_eq!(
-        find_sue2(&[sue1, sue10], &[("cats", 4usize), ("goldfish", 5)]),
-        1,
-        "find sue part 2"
-    );
+    #[test]
+    fn find_sue1_works() {
+        let sue1 = Sue::new("Sue 1: cats: 5, children: 1, cars: 2");
+        assert_eq!(*sue1.prop("num").unwrap(), 1usize, "sue 1: num");
+        assert_eq!(*sue1.prop("cats").unwrap(), 5usize, "sue 1: cats");
+        assert_eq!(*sue1.prop("children").unwrap(), 1usize, "sue 1: children");
+        assert_eq!(*sue1.prop("cars").unwrap(), 2usize, "sue 1: cars");
+        let sue10 = Sue::new("Sue 10: cats: 4, cars: 3");
+        assert_eq!(*sue10.prop("num").unwrap(), 10usize, "sue 10: num");
+        assert_eq!(*sue10.prop("cats").unwrap(), 4usize, "sue 10: cats");
+        assert_eq!(*sue10.prop("cars").unwrap(), 3usize, "sue 10: cars");
+        assert_eq!(
+            find_sue1(&[sue1, sue10], &[("cats", 4usize), ("goldfish", 5)]),
+            10,
+            "find sue part 1"
+        );
+    }
+
+    #[test]
+    fn find_sue2_works() {
+        let sue1 = Sue::new("Sue 1: cats: 5, children: 1, cars: 2");
+        let sue10 = Sue::new("Sue 10: cats: 4, cars: 3");
+        assert_eq!(
+            find_sue2(&[sue1, sue10], &[("cats", 4usize), ("goldfish", 5)]),
+            1,
+            "find sue part 2"
+        );
+    }
 }

@@ -32,8 +32,7 @@ impl Mach {
         for r in &self.rules {
             let s = &self.init;
             for (i, _) in s.match_indices(&r.0) {
-                let n =
-                    format!("{}{}{}", &s[0..i], &r.1[..], &s[i + r.0.len()..],);
+                let n = format!("{}{}{}", &s[0..i], &r.1[..], &s[i + r.0.len()..],);
                 res.insert(n);
             }
         }
@@ -78,47 +77,52 @@ fn main() {
     });
 }
 
-#[test]
-fn part1_works() {
-    let m1 = Mach::new(&vec![
-        "H => HO".to_string(),
-        "H => OH".to_string(),
-        "O => HH".to_string(),
-        "".to_string(),
-        "HOH".to_string(),
-    ]);
-    assert_eq!(m1.part1(), 4, "part 1 of first test input");
-    let m2 = Mach::new(&vec![
-        "H => HO".to_string(),
-        "H => OH".to_string(),
-        "O => HH".to_string(),
-        "".to_string(),
-        "HOHOHO".to_string(),
-    ]);
-    assert_eq!(m2.part1(), 7, "part 1 of second test input");
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn part2_works() {
-    let lines = vec![
-        "e => H".to_string(),
-        "e => O".to_string(),
-        "H => HO".to_string(),
-        "H => OH".to_string(),
-        "O => HH".to_string(),
-        "".to_string(),
-        "HOH".to_string(),
-    ];
-    let mut m1 = Mach::new(&lines);
-    assert_eq!(m1.part2(), 3, "part 2 of first test input");
-    let mut m2 = Mach::new(&vec![
-        "e => H".to_string(),
-        "e => O".to_string(),
-        "H => HO".to_string(),
-        "H => OH".to_string(),
-        "O => HH".to_string(),
-        "".to_string(),
-        "HOHOHO".to_string(),
-    ]);
-    assert_eq!(m2.part2(), 6, "part 2 of second test input");
+    #[test]
+    fn part1_works() {
+        let m1 = Mach::new(&vec![
+            "H => HO".to_string(),
+            "H => OH".to_string(),
+            "O => HH".to_string(),
+            "".to_string(),
+            "HOH".to_string(),
+        ]);
+        assert_eq!(m1.part1(), 4, "part 1 of first test input");
+        let m2 = Mach::new(&vec![
+            "H => HO".to_string(),
+            "H => OH".to_string(),
+            "O => HH".to_string(),
+            "".to_string(),
+            "HOHOHO".to_string(),
+        ]);
+        assert_eq!(m2.part1(), 7, "part 1 of second test input");
+    }
+
+    #[test]
+    fn part2_works() {
+        let lines = vec![
+            "e => H".to_string(),
+            "e => O".to_string(),
+            "H => HO".to_string(),
+            "H => OH".to_string(),
+            "O => HH".to_string(),
+            "".to_string(),
+            "HOH".to_string(),
+        ];
+        let mut m1 = Mach::new(&lines);
+        assert_eq!(m1.part2(), 3, "part 2 of first test input");
+        let mut m2 = Mach::new(&vec![
+            "e => H".to_string(),
+            "e => O".to_string(),
+            "H => HO".to_string(),
+            "H => OH".to_string(),
+            "O => HH".to_string(),
+            "".to_string(),
+            "HOHOHO".to_string(),
+        ]);
+        assert_eq!(m2.part2(), 6, "part 2 of second test input");
+    }
 }

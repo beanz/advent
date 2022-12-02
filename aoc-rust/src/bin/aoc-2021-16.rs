@@ -127,20 +127,25 @@ fn main() {
     })
 }
 
-#[test]
-fn num_works() {
-    let test1a = "D2FE28".to_string().into_bytes();
-    let mut p = Packet::new(&test1a);
-    println!("{}", p);
-    assert_eq!(p.num(3), 6, "num(3) == 6");
-    assert_eq!(p.num(3), 4, "num(3) == 4");
-    assert_eq!(p.num(5), 23, "num(5) == 23");
-    assert_eq!(p.num(5), 30, "num(5) == 30");
-    assert_eq!(p.num(5), 5, "num(5) == 5");
-    let test1b = "38006F45291200".to_string().into_bytes();
-    p = Packet::new(&test1b);
-    assert_eq!(p.num(3), 1, "num(3) == 1");
-    assert_eq!(p.num(3), 6, "num(3) == 6");
-    assert_eq!(p.num(1), 0, "num(0) == 0");
-    assert_eq!(p.num(15), 27, "num(15) == 27");
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn num_works() {
+        let test1a = "D2FE28".to_string().into_bytes();
+        let mut p = Packet::new(&test1a);
+        println!("{}", p);
+        assert_eq!(p.num(3), 6, "num(3) == 6");
+        assert_eq!(p.num(3), 4, "num(3) == 4");
+        assert_eq!(p.num(5), 23, "num(5) == 23");
+        assert_eq!(p.num(5), 30, "num(5) == 30");
+        assert_eq!(p.num(5), 5, "num(5) == 5");
+        let test1b = "38006F45291200".to_string().into_bytes();
+        p = Packet::new(&test1b);
+        assert_eq!(p.num(3), 1, "num(3) == 1");
+        assert_eq!(p.num(3), 6, "num(3) == 6");
+        assert_eq!(p.num(1), 0, "num(0) == 0");
+        assert_eq!(p.num(15), 27, "num(15) == 27");
+    }
 }

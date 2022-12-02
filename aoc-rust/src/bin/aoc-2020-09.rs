@@ -86,12 +86,17 @@ fn main() {
     });
 }
 
-#[test]
-fn parts_works() {
-    let inp = std::fs::read("../2020/09/test1.txt").expect("read error");
-    let xmas = Xmas::new(&inp);
-    assert_eq!(xmas.parts(), (127, 62));
-    let inp = std::fs::read("../2020/09/input.txt").expect("read error");
-    let xmas = Xmas::new(&inp);
-    assert_eq!(xmas.parts(), (31161678, 5453868));
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        let inp = std::fs::read("../2020/09/test1.txt").expect("read error");
+        let xmas = Xmas::new(&inp);
+        assert_eq!(xmas.parts(), (127, 62));
+        let inp = std::fs::read("../2020/09/input.txt").expect("read error");
+        let xmas = Xmas::new(&inp);
+        assert_eq!(xmas.parts(), (31161678, 5453868));
+    }
 }

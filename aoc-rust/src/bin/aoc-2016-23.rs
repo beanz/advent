@@ -15,13 +15,6 @@ fn part2(comp: &mut elfcomp2016::ElfComp2016) -> isize {
     comp.get_reg(b'a')
 }
 
-#[test]
-fn part1_works() {
-    let e: Vec<String> = EX1.iter().map(|x| x.to_string()).collect::<Vec<String>>();
-    let mut comp = elfcomp2016::ElfComp2016::new(&e);
-    assert_eq!(part1(&mut comp), 3, "part 1 example");
-}
-
 fn main() {
     let lines = aoc::input_lines();
     let lines2 = aoc::input_lines();
@@ -35,4 +28,16 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn part1_works() {
+        let e: Vec<String> = EX1.iter().map(|x| x.to_string()).collect::<Vec<String>>();
+        let mut comp = elfcomp2016::ElfComp2016::new(&e);
+        assert_eq!(part1(&mut comp), 3, "part 1 example");
+    }
 }

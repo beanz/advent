@@ -44,10 +44,15 @@ fn main() {
     })
 }
 
-#[test]
-fn parts_works() {
-    let inp = std::fs::read("../2020/05/input.txt").expect("read error");
-    let (p1, p2) = parts(&inp);
-    assert_eq!(p1, 947, "part 1");
-    assert_eq!(p2, 636, "part 2");
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        let inp = std::fs::read("../2020/05/input.txt").expect("read error");
+        let (p1, p2) = parts(&inp);
+        assert_eq!(p1, 947, "part 1");
+        assert_eq!(p2, 636, "part 2");
+    }
 }

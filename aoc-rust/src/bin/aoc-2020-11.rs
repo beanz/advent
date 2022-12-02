@@ -1,5 +1,3 @@
-use arrayvec::ArrayVec;
-
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 enum Seat {
     Floor,
@@ -44,10 +42,10 @@ impl Room {
         Room { seats, w, h }
     }
 
-    fn neighbours(&self, x: isize, y: isize, sight: bool) -> ArrayVec<usize, 8> {
+    fn neighbours(&self, x: isize, y: isize, sight: bool) -> Vec<usize> {
         let w = self.w as isize;
         let h = self.h as isize;
-        let mut nb: ArrayVec<usize, 8> = ArrayVec::default();
+        let mut nb: Vec<usize> = Vec::default();
         for (ox, oy) in &[
             (-1, -1),
             (0, -1),
@@ -77,13 +75,13 @@ impl Room {
     }
     fn solve(&self, sight: bool) -> usize {
         let group = if sight { 5 } else { 4 };
-        let mut nb_cache: ArrayVec<ArrayVec<usize, 8>, 10000> = ArrayVec::default();
+        let mut nb_cache: Vec<Vec<usize>> = Vec::default();
         for y in 0..self.h {
             for x in 0..self.w {
                 nb_cache.push(self.neighbours(x as isize, y as isize, sight));
             }
         }
-        let mut cur = self.seats;
+        let mut cur = self.seats.clone();
         let mut new = [Seat::Floor; 10000];
         loop {
             let mut changed = false;
@@ -139,15 +137,20 @@ fn main() {
     });
 }
 
-#[test]
-fn parts_works() {
-    let inp = std::fs::read("../2020/11/test1.txt").expect("read error");
-    let room = Room::new(&inp);
-    assert_eq!(room.parts(), (37, 26));
-    let inp = std::fs::read("../2020/11/test2.txt").expect("read error");
-    let room = Room::new(&inp);
-    assert_eq!(room.parts(), (14, 13));
-    let inp = std::fs::read("../2020/11/input.txt").expect("read error");
-    let room = Room::new(&inp);
-    assert_eq!(room.parts(), (2481, 2227));
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        let inp = std::fs::read("../2020/11/test1.txt").expect("read error");
+        let room = Room::new(&inp);
+        assert_eq!(room.parts(), (37, 26));
+        let inp = std::fs::read("../2020/11/test2.txt").expect("read error");
+        let room = Room::new(&inp);
+        assert_eq!(room.parts(), (14, 13));
+        let inp = std::fs::read("../2020/11/input.txt").expect("read error");
+        let room = Room::new(&inp);
+        assert_eq!(room.parts(), (2481, 2227));
+    }
 }

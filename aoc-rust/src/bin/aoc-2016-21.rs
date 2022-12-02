@@ -4,13 +4,6 @@ fn swap_by_index(s: &mut [char], i: usize, j: usize) {
     s.swap(i, j);
 }
 
-#[test]
-fn swap_by_index_works() {
-    let mut s = vec!['a', 'b', 'c', 'd', 'e'];
-    swap_by_index(&mut s, 4, 0);
-    assert_eq!(s, vec!['e', 'b', 'c', 'd', 'a'], "swap by index example");
-}
-
 fn swap_by_letter(s: &mut [char], c1: char, c2: char) {
     for el in s.iter_mut() {
         if *el == c1 {
@@ -21,22 +14,8 @@ fn swap_by_letter(s: &mut [char], c1: char, c2: char) {
     }
 }
 
-#[test]
-fn swap_by_letter_works() {
-    let mut s = vec!['e', 'b', 'c', 'd', 'a'];
-    swap_by_letter(&mut s, 'b', 'd');
-    assert_eq!(s, vec!['e', 'd', 'c', 'b', 'a'], "swap by letter example");
-}
-
 fn reverse_slice(s: &mut [char], i: usize, j: usize) {
     s[i..=j].reverse();
-}
-
-#[test]
-fn reverse_slice_works() {
-    let mut s = vec!['e', 'd', 'c', 'b', 'a'];
-    reverse_slice(&mut s, 0, 4);
-    assert_eq!(s, vec!['a', 'b', 'c', 'd', 'e'], "reverse example");
 }
 
 fn rotate(s: &mut [char], n: isize) {
@@ -47,27 +26,9 @@ fn rotate(s: &mut [char], n: isize) {
     }
 }
 
-#[test]
-fn rotate_works() {
-    let mut s = vec!['a', 'b', 'c', 'd', 'e'];
-    rotate(&mut s, 1);
-    assert_eq!(s, vec!['b', 'c', 'd', 'e', 'a'], "rotate left example");
-    rotate(&mut s, -1);
-    assert_eq!(s, vec!['a', 'b', 'c', 'd', 'e'], "rotate right");
-}
-
 fn move_ch(s: &mut Vec<char>, i: usize, j: usize) {
     let t = s.remove(i);
     s.insert(j, t);
-}
-
-#[test]
-fn move_works() {
-    let mut s = vec!['b', 'c', 'd', 'e', 'a'];
-    move_ch(&mut s, 1, 4);
-    assert_eq!(s, vec!['b', 'd', 'e', 'a', 'c'], "move example 1");
-    move_ch(&mut s, 3, 0);
-    assert_eq!(s, vec!['a', 'b', 'd', 'e', 'c'], "move example 2");
 }
 
 fn rotate_by_ch(s: &mut [char], c1: char) {
@@ -81,23 +42,6 @@ fn rotate_by_ch(s: &mut [char], c1: char) {
     i += 1;
     i %= s.len();
     rotate(s, -(i as isize));
-}
-
-#[test]
-fn rotate_by_ch_works() {
-    let mut s = vec!['a', 'b', 'd', 'e', 'c'];
-    rotate_by_ch(&mut s, 'b');
-    assert_eq!(
-        s,
-        vec!['e', 'c', 'a', 'b', 'd'],
-        "rotate by letter example 1"
-    );
-    rotate_by_ch(&mut s, 'd');
-    assert_eq!(
-        s,
-        vec!['d', 'e', 'c', 'a', 'b'],
-        "rotate by letter example 2"
-    );
 }
 
 enum Op {
@@ -125,9 +69,7 @@ impl Op {
             "rotate" => match words.next().unwrap() {
                 "left" => Op::Rotate(uints[0] as isize),
                 "right" => Op::Rotate(-(uints[0] as isize)),
-                "based" => {
-                    Op::RotateC(words.nth(4).unwrap().chars().next().unwrap())
-                }
+                "based" => Op::RotateC(words.nth(4).unwrap().chars().next().unwrap()),
                 _ => panic!("invalid rotate op: {}", s),
             },
             "reverse" => Op::Reverse(uints[0], uints[1]),
@@ -167,12 +109,6 @@ const EX: [&str; 8] = [
     "rotate based on position of letter d",
 ];
 
-#[test]
-fn part1_works() {
-    let ops = EX.iter().map(|l| Op::new(l)).collect::<Vec<Op>>();
-    assert_eq!(part1(&ops, "abcde"), "decab", "part 1 complete example");
-}
-
 fn part2(ops: &[Op], st: &str) -> String {
     let alpha = vec!['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
     for p in alpha.iter().permutations(8) {
@@ -196,4 +132,65 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn swap_by_index_works() {
+        let mut s = vec!['a', 'b', 'c', 'd', 'e'];
+        swap_by_index(&mut s, 4, 0);
+        assert_eq!(s, vec!['e', 'b', 'c', 'd', 'a'], "swap by index example");
+    }
+    #[test]
+    fn swap_by_letter_works() {
+        let mut s = vec!['e', 'b', 'c', 'd', 'a'];
+        swap_by_letter(&mut s, 'b', 'd');
+        assert_eq!(s, vec!['e', 'd', 'c', 'b', 'a'], "swap by letter example");
+    }
+    #[test]
+    fn reverse_slice_works() {
+        let mut s = vec!['e', 'd', 'c', 'b', 'a'];
+        reverse_slice(&mut s, 0, 4);
+        assert_eq!(s, vec!['a', 'b', 'c', 'd', 'e'], "reverse example");
+    }
+    #[test]
+    fn rotate_works() {
+        let mut s = vec!['a', 'b', 'c', 'd', 'e'];
+        rotate(&mut s, 1);
+        assert_eq!(s, vec!['b', 'c', 'd', 'e', 'a'], "rotate left example");
+        rotate(&mut s, -1);
+        assert_eq!(s, vec!['a', 'b', 'c', 'd', 'e'], "rotate right");
+    }
+    #[test]
+    fn move_works() {
+        let mut s = vec!['b', 'c', 'd', 'e', 'a'];
+        move_ch(&mut s, 1, 4);
+        assert_eq!(s, vec!['b', 'd', 'e', 'a', 'c'], "move example 1");
+        move_ch(&mut s, 3, 0);
+        assert_eq!(s, vec!['a', 'b', 'd', 'e', 'c'], "move example 2");
+    }
+    #[test]
+    fn rotate_by_ch_works() {
+        let mut s = vec!['a', 'b', 'd', 'e', 'c'];
+        rotate_by_ch(&mut s, 'b');
+        assert_eq!(
+            s,
+            vec!['e', 'c', 'a', 'b', 'd'],
+            "rotate by letter example 1"
+        );
+        rotate_by_ch(&mut s, 'd');
+        assert_eq!(
+            s,
+            vec!['d', 'e', 'c', 'a', 'b'],
+            "rotate by letter example 2"
+        );
+    }
+    #[test]
+    fn part1_works() {
+        let ops = EX.iter().map(|l| Op::new(l)).collect::<Vec<Op>>();
+        assert_eq!(part1(&ops, "abcde"), "decab", "part 1 complete example");
+    }
 }

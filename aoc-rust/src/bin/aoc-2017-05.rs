@@ -12,12 +12,6 @@ fn calc(jumps: &mut [isize], part2: bool) -> usize {
     c
 }
 
-#[test]
-fn calc_works() {
-    assert_eq!(calc(&mut [0, 3, 0, 1, -3], false), 5, "part 1 example");
-    assert_eq!(calc(&mut [0, 3, 0, 1, -3], true), 10, "part 2 example");
-}
-
 fn main() {
     let inp = aoc::slurp_input_file();
     aoc::benchme(|bench: bool| {
@@ -29,4 +23,15 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn calc_works() {
+        assert_eq!(calc(&mut [0, 3, 0, 1, -3], false), 5, "part 1 example");
+        assert_eq!(calc(&mut [0, 3, 0, 1, -3], true), 10, "part 2 example");
+    }
 }

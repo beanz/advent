@@ -88,12 +88,6 @@ impl fmt::Display for Cave<'_> {
     }
 }
 
-#[test]
-fn step_works() {}
-
-#[test]
-fn parts_works() {}
-
 fn main() {
     aoc::benchme(|bench: bool| {
         let mut inp = std::fs::read(aoc::input_file()).expect("read error");

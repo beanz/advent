@@ -98,8 +98,7 @@ impl Game {
         let dist = self.distances();
         let mut p1min = std::usize::MAX;
         let mut p2min = std::usize::MAX;
-        for perm in (1..self.numbers.len()).permutations(self.numbers.len() - 1)
-        {
+        for perm in (1..self.numbers.len()).permutations(self.numbers.len() - 1) {
             let mut d = *dist.get(&(0, perm[0])).unwrap();
             for i in 0..perm.len() - 1 {
                 d += *dist.get(&(perm[i], perm[i + 1])).unwrap();
@@ -128,21 +127,26 @@ fn main() {
     });
 }
 
-#[test]
-fn calc_works() {
-    let g = Game::new(
-        &[
-            "###########",
-            "#0.1.....2#",
-            "#.#######.#",
-            "#4.......3#",
-            "###########",
-        ]
-        .iter()
-        .map(|x| x.to_string())
-        .collect::<Vec<String>>(),
-    );
-    let (p1, p2) = g.calc();
-    assert_eq!(p1, 14, "part 1 example");
-    assert_eq!(p2, 20, "part 2 example");
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn calc_works() {
+        let g = Game::new(
+            &[
+                "###########",
+                "#0.1.....2#",
+                "#.#######.#",
+                "#4.......3#",
+                "###########",
+            ]
+            .iter()
+            .map(|x| x.to_string())
+            .collect::<Vec<String>>(),
+        );
+        let (p1, p2) = g.calc();
+        assert_eq!(p1, 14, "part 1 example");
+        assert_eq!(p2, 20, "part 2 example");
+    }
 }

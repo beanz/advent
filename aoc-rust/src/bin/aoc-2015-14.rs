@@ -61,13 +61,18 @@ fn main() {
     });
 }
 
-#[test]
-fn works() {
-    let comet =
-        Deer::new("Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.");
-    let dancer =
-        Deer::new("Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.");
-    let deers: Vec<Deer> = vec![comet, dancer];
-    assert_eq!(max_dist(&deers, 1000), 1120, "part 1 test");
-    assert_eq!(max_score(&deers, 1000), 689, "part 2 test");
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn works() {
+        let comet =
+            Deer::new("Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.");
+        let dancer =
+            Deer::new("Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.");
+        let deers: Vec<Deer> = vec![comet, dancer];
+        assert_eq!(max_dist(&deers, 1000), 1120, "part 1 test");
+        assert_eq!(max_score(&deers, 1000), 689, "part 2 test");
+    }
 }

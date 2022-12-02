@@ -38,10 +38,7 @@ impl Seats {
             .permutations(self.people.len())
             .map(|x| {
                 x.windows(2)
-                    .map(|pair| {
-                        self.happiness(pair[0], pair[1])
-                            + self.happiness(pair[1], pair[0])
-                    })
+                    .map(|pair| self.happiness(pair[0], pair[1]) + self.happiness(pair[1], pair[0]))
                     .sum::<i32>()
                     + self.happiness(x[0], x[x.len() - 1])
                     + self.happiness(x[x.len() - 1], x[0])
@@ -79,32 +76,37 @@ fn main() {
     });
 }
 
-#[test]
-fn part1_works() {
-    let mut seats = Seats::new();
-    seats.add("Alice would gain 54 happiness units by sitting next to Bob.");
-    seats.add("Alice would lose 79 happiness units by sitting next to Carol.");
-    seats.add("Alice would lose 2 happiness units by sitting next to David.");
-    seats.add("Bob would gain 83 happiness units by sitting next to Alice.");
-    seats.add("Bob would lose 7 happiness units by sitting next to Carol.");
-    seats.add("Bob would lose 63 happiness units by sitting next to David.");
-    seats.add("Carol would lose 62 happiness units by sitting next to Alice.");
-    seats.add("Carol would gain 60 happiness units by sitting next to Bob.");
-    seats.add("Carol would gain 55 happiness units by sitting next to David.");
-    seats.add("David would gain 46 happiness units by sitting next to Alice.");
-    seats.add("David would lose 7 happiness units by sitting next to Bob.");
-    seats.add("David would gain 41 happiness units by sitting next to Carol.");
-    assert_eq!(seats.person_id("Alice"), 0);
-    assert_eq!(seats.person_id("Bob"), 1);
-    assert_eq!(seats.person_id("Carol"), 2);
-    assert_eq!(seats.person_id("David"), 3);
-    assert_eq!(seats.happiness(0, 1), 54);
-    assert_eq!(seats.happiness(1, 0), 83);
-    assert_eq!(seats.happiness(1, 2), -7);
-    assert_eq!(seats.happiness(2, 1), 60);
-    assert_eq!(seats.happiness(2, 3), 55);
-    assert_eq!(seats.happiness(3, 2), 41);
-    assert_eq!(seats.happiness(3, 0), 46);
-    assert_eq!(seats.happiness(0, 3), -2);
-    assert_eq!(seats.part1(), 330);
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn part1_works() {
+        let mut seats = Seats::new();
+        seats.add("Alice would gain 54 happiness units by sitting next to Bob.");
+        seats.add("Alice would lose 79 happiness units by sitting next to Carol.");
+        seats.add("Alice would lose 2 happiness units by sitting next to David.");
+        seats.add("Bob would gain 83 happiness units by sitting next to Alice.");
+        seats.add("Bob would lose 7 happiness units by sitting next to Carol.");
+        seats.add("Bob would lose 63 happiness units by sitting next to David.");
+        seats.add("Carol would lose 62 happiness units by sitting next to Alice.");
+        seats.add("Carol would gain 60 happiness units by sitting next to Bob.");
+        seats.add("Carol would gain 55 happiness units by sitting next to David.");
+        seats.add("David would gain 46 happiness units by sitting next to Alice.");
+        seats.add("David would lose 7 happiness units by sitting next to Bob.");
+        seats.add("David would gain 41 happiness units by sitting next to Carol.");
+        assert_eq!(seats.person_id("Alice"), 0);
+        assert_eq!(seats.person_id("Bob"), 1);
+        assert_eq!(seats.person_id("Carol"), 2);
+        assert_eq!(seats.person_id("David"), 3);
+        assert_eq!(seats.happiness(0, 1), 54);
+        assert_eq!(seats.happiness(1, 0), 83);
+        assert_eq!(seats.happiness(1, 2), -7);
+        assert_eq!(seats.happiness(2, 1), 60);
+        assert_eq!(seats.happiness(2, 3), 55);
+        assert_eq!(seats.happiness(3, 2), 41);
+        assert_eq!(seats.happiness(3, 0), 46);
+        assert_eq!(seats.happiness(0, 3), -2);
+        assert_eq!(seats.part1(), 330);
+    }
 }

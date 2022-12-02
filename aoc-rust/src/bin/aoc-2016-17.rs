@@ -10,19 +10,6 @@ fn open(p: &str) -> Box<[bool; 4]> {
     ])
 }
 
-#[test]
-fn open_works() {
-    for tc in &[
-        ("hijkl", [true, true, true, false]),
-        ("hijklD", [true, false, true, true]),
-        ("hijklDR", [false; 4]),
-        ("hijklDU", [false, false, false, true]),
-        ("hijklDUR", [false; 4]),
-    ] {
-        assert_eq!(open(&tc.0.to_string()), Box::new(tc.1), "open {}", tc.0)
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 struct SearchState {
     pos: (usize, usize),
@@ -102,23 +89,6 @@ fn search(inp: &str) -> (String, usize) {
     (p1.unwrap(), p2)
 }
 
-#[test]
-fn search_works() {
-    for tc in &[
-        ("ihgpwlah", ("DDRRRD", 370usize)),
-        ("kglvqrro", ("DDUDRLRRUDRD", 492)),
-        ("ulqzkmiv", ("DRURDRUDDLLDLUURRDULRLDUUDDDRR", 830)),
-        ("mmsxrhfx", ("RLDUDRDDRR", 590)),
-    ] {
-        assert_eq!(
-            search(&tc.0.to_string()),
-            (tc.1 .0.to_string(), tc.1 .1),
-            "search {}",
-            tc.0
-        );
-    }
-}
-
 fn main() {
     let inp = aoc::read_input_line();
     aoc::benchme(|bench: bool| {
@@ -128,4 +98,38 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn open_works() {
+        for tc in &[
+            ("hijkl", [true, true, true, false]),
+            ("hijklD", [true, false, true, true]),
+            ("hijklDR", [false; 4]),
+            ("hijklDU", [false, false, false, true]),
+            ("hijklDUR", [false; 4]),
+        ] {
+            assert_eq!(open(&tc.0.to_string()), Box::new(tc.1), "open {}", tc.0)
+        }
+    }
+    #[test]
+    fn search_works() {
+        for tc in &[
+            ("ihgpwlah", ("DDRRRD", 370usize)),
+            ("kglvqrro", ("DDUDRLRRUDRD", 492)),
+            ("ulqzkmiv", ("DRURDRUDDLLDLUURRDULRLDUUDDDRR", 830)),
+            ("mmsxrhfx", ("RLDUDRDDRR", 590)),
+        ] {
+            assert_eq!(
+                search(&tc.0.to_string()),
+                (tc.1 .0.to_string(), tc.1 .1),
+                "search {}",
+                tc.0
+            );
+        }
+    }
 }

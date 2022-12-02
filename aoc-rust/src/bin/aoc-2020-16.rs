@@ -48,33 +48,8 @@ fn rule_line(input: &[u8]) -> IResult<&[u8], Rule> {
     ))
 }
 
-#[test]
-fn rule_works() {
-    let input = b"class: 1-3 or 5-7\n";
-    let (rest, r) = rule_line(input).unwrap();
-    assert_eq!(r.name, b"class");
-    assert_eq!(r.r1, (1, 3));
-    assert_eq!(r.r2, (5, 7));
-    assert_eq!(rest, b"");
-}
-
 fn rule_list(input: &[u8]) -> IResult<&[u8], Vec<Rule>> {
     terminated(many1(rule_line), tag("\n"))(input)
-}
-
-#[test]
-fn rule_list_works() {
-    let input = b"class: 1-3 or 5-7\nrow: 6-11 or 33-44\nseat: 13-40 or 45-50\n\n";
-    let (input, r) = rule_list(input).unwrap();
-    assert_eq!(r[0].name, b"class");
-    assert_eq!(r[0].r1, (1, 3));
-    assert_eq!(r[0].r2, (5, 7));
-    assert_eq!(r[1].name, b"row");
-    assert_eq!(r[1].r1, (6, 11));
-    assert_eq!(r[1].r2, (33, 44));
-    assert_eq!(r[2].name, b"seat");
-    assert_eq!(r[2].r1, (13, 40));
-    assert_eq!(r[2].r2, (45, 50));
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -94,15 +69,6 @@ fn ticket(input: &[u8]) -> IResult<&[u8], Ticket> {
         })
         .collect();
     Ok((input, Ticket { n }))
-}
-
-#[test]
-fn ticket_works() {
-    let input = b"7,1,14\n";
-    let (input, tkt) = ticket(input).unwrap();
-    assert_eq!(input, b"");
-    let exp: Vec<u16> = vec![7, 1, 14];
-    assert_eq!(tkt.n, exp);
 }
 
 struct Scan<'a> {
@@ -147,36 +113,6 @@ fn scan(input: &[u8]) -> IResult<&[u8], Scan> {
             err,
         },
     ))
-}
-
-#[test]
-fn scan_works() {
-    let inp = std::fs::read("../2020/16/test1.txt").expect("read error");
-    let (input, scan) = scan(&inp).unwrap();
-    assert_eq!(input, b"");
-    assert_eq!(
-        scan.rules,
-        vec![
-            Rule {
-                name: b"class",
-                r1: (1, 3),
-                r2: (5, 7)
-            },
-            Rule {
-                name: b"row",
-                r1: (6, 11),
-                r2: (33, 44),
-            },
-            Rule {
-                name: b"seat",
-                r1: (13, 40),
-                r2: (45, 50),
-            }
-        ]
-    );
-    assert_eq!(scan.ticket.n, vec![7, 1, 14]);
-    assert_eq!(scan.tickets, vec![Ticket { n: vec![7, 3, 47] },]);
-    assert_eq!(scan.err, 71);
 }
 
 fn parts(inp: &[u8]) -> (usize, usize) {
@@ -241,12 +177,82 @@ fn main() {
     });
 }
 
-#[test]
-fn parts_works() {
-    let inp = std::fs::read("../2020/16/test1.txt").expect("read error");
-    assert_eq!(parts(&inp), (71, 0));
-    let inp = std::fs::read("../2020/16/test2.txt").expect("read error");
-    assert_eq!(parts(&inp), (0, 1716));
-    let inp = std::fs::read("../2020/16/input.txt").expect("read error");
-    assert_eq!(parts(&inp), (21980, 1439429522627));
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn rule_works() {
+        let input = b"class: 1-3 or 5-7\n";
+        let (rest, r) = rule_line(input).unwrap();
+        assert_eq!(r.name, b"class");
+        assert_eq!(r.r1, (1, 3));
+        assert_eq!(r.r2, (5, 7));
+        assert_eq!(rest, b"");
+    }
+
+    #[test]
+    fn rule_list_works() {
+        let input = b"class: 1-3 or 5-7\nrow: 6-11 or 33-44\nseat: 13-40 or 45-50\n\n";
+        let (input, r) = rule_list(input).unwrap();
+        assert_eq!(input, b"");
+        assert_eq!(r[0].name, b"class");
+        assert_eq!(r[0].r1, (1, 3));
+        assert_eq!(r[0].r2, (5, 7));
+        assert_eq!(r[1].name, b"row");
+        assert_eq!(r[1].r1, (6, 11));
+        assert_eq!(r[1].r2, (33, 44));
+        assert_eq!(r[2].name, b"seat");
+        assert_eq!(r[2].r1, (13, 40));
+        assert_eq!(r[2].r2, (45, 50));
+    }
+
+    #[test]
+    fn ticket_works() {
+        let input = b"7,1,14\n";
+        let (input, tkt) = ticket(input).unwrap();
+        assert_eq!(input, b"");
+        let exp: Vec<u16> = vec![7, 1, 14];
+        assert_eq!(tkt.n, exp);
+    }
+
+    #[test]
+    fn scan_works() {
+        let inp = std::fs::read("../2020/16/test1.txt").expect("read error");
+        let (input, scan) = scan(&inp).unwrap();
+        assert_eq!(input, b"");
+        assert_eq!(
+            scan.rules,
+            vec![
+                Rule {
+                    name: b"class",
+                    r1: (1, 3),
+                    r2: (5, 7)
+                },
+                Rule {
+                    name: b"row",
+                    r1: (6, 11),
+                    r2: (33, 44),
+                },
+                Rule {
+                    name: b"seat",
+                    r1: (13, 40),
+                    r2: (45, 50),
+                }
+            ]
+        );
+        assert_eq!(scan.ticket.n, vec![7, 1, 14]);
+        assert_eq!(scan.tickets, vec![Ticket { n: vec![7, 3, 47] },]);
+        assert_eq!(scan.err, 71);
+    }
+
+    #[test]
+    fn parts_works() {
+        let inp = std::fs::read("../2020/16/test1.txt").expect("read error");
+        assert_eq!(parts(&inp), (71, 0));
+        let inp = std::fs::read("../2020/16/test2.txt").expect("read error");
+        assert_eq!(parts(&inp), (0, 1716));
+        let inp = std::fs::read("../2020/16/input.txt").expect("read error");
+        assert_eq!(parts(&inp), (21980, 1439429522627));
+    }
 }

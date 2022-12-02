@@ -71,16 +71,6 @@ impl Polymer {
     }
 }
 
-#[test]
-fn parts() {
-    let t1 = Polymer::new(
-        &std::fs::read("../2021/14/test1.txt").expect("read error"),
-    );
-    let (tp1, tp2) = t1.parts();
-    assert_eq!(tp1, 1588);
-    assert_eq!(tp2, 2188189693529);
-}
-
 fn main() {
     aoc::benchme(|bench: bool| {
         let inp = std::fs::read(aoc::input_file()).expect("read error");
@@ -91,4 +81,17 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts() {
+        let t1 = Polymer::new(&std::fs::read("../2021/14/test1.txt").expect("read error"));
+        let (tp1, tp2) = t1.parts();
+        assert_eq!(tp1, 1588);
+        assert_eq!(tp2, 2188189693529);
+    }
 }

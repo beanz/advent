@@ -136,10 +136,7 @@ impl Factory {
         let o0 = self.outputs.get(&0).unwrap();
         let o1 = self.outputs.get(&1).unwrap();
         let o2 = self.outputs.get(&2).unwrap();
-        if !o0.values.is_empty()
-            && !o1.values.is_empty()
-            && !o2.values.is_empty()
-        {
+        if !o0.values.is_empty() && !o1.values.is_empty() && !o2.values.is_empty() {
             Some(o0.values[0] * o1.values[0] * o2.values[0])
         } else {
             None
@@ -169,26 +166,6 @@ impl Factory {
     }
 }
 
-#[allow(dead_code)]
-const EX1: [&str; 6] = [
-    "value 5 goes to bot 2",
-    "bot 2 gives low to bot 1 and high to bot 0",
-    "value 3 goes to bot 1",
-    "bot 1 gives low to output 1 and high to bot 0",
-    "bot 0 gives low to output 2 and high to output 0",
-    "value 2 goes to bot 2",
-];
-
-#[test]
-fn factory_works() {
-    let e: Vec<String> =
-        EX1.iter().map(|x| x.to_string()).collect::<Vec<String>>();
-    let mut f = Factory::new(&e, (2, 5));
-    let (p1, p2) = f.calc();
-    assert_eq!(p1, 2);
-    assert_eq!(p2, 30);
-}
-
 fn main() {
     let inp = aoc::input_lines();
     aoc::benchme(|bench: bool| {
@@ -199,4 +176,28 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[allow(dead_code)]
+    const EX1: [&str; 6] = [
+        "value 5 goes to bot 2",
+        "bot 2 gives low to bot 1 and high to bot 0",
+        "value 3 goes to bot 1",
+        "bot 1 gives low to output 1 and high to bot 0",
+        "bot 0 gives low to output 2 and high to output 0",
+        "value 2 goes to bot 2",
+    ];
+
+    #[test]
+    fn factory_works() {
+        let e: Vec<String> = EX1.iter().map(|x| x.to_string()).collect::<Vec<String>>();
+        let mut f = Factory::new(&e, (2, 5));
+        let (p1, p2) = f.calc();
+        assert_eq!(p1, 2);
+        assert_eq!(p2, 30);
+    }
 }

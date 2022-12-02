@@ -74,18 +74,23 @@ fn main() {
     });
 }
 
-#[test]
-fn parts_works() {
-    let inp = std::fs::read("../2020/10/test0.txt").expect("read error");
-    let adapters = Adapters::new(&inp);
-    assert_eq!(adapters.parts(), (8, 4));
-    let inp = std::fs::read("../2020/10/test1.txt").expect("read error");
-    let adapters = Adapters::new(&inp);
-    assert_eq!(adapters.parts(), (35, 8));
-    let inp = std::fs::read("../2020/10/test2.txt").expect("read error");
-    let adapters = Adapters::new(&inp);
-    assert_eq!(adapters.parts(), (220, 19208));
-    let inp = std::fs::read("../2020/10/input.txt").expect("read error");
-    let adapters = Adapters::new(&inp);
-    assert_eq!(adapters.parts(), (1920, 1511207993344));
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        let inp = std::fs::read("../2020/10/test0.txt").expect("read error");
+        let adapters = Adapters::new(&inp);
+        assert_eq!(adapters.parts(), (8, 4));
+        let inp = std::fs::read("../2020/10/test1.txt").expect("read error");
+        let adapters = Adapters::new(&inp);
+        assert_eq!(adapters.parts(), (35, 8));
+        let inp = std::fs::read("../2020/10/test2.txt").expect("read error");
+        let adapters = Adapters::new(&inp);
+        assert_eq!(adapters.parts(), (220, 19208));
+        let inp = std::fs::read("../2020/10/input.txt").expect("read error");
+        let adapters = Adapters::new(&inp);
+        assert_eq!(adapters.parts(), (1920, 1511207993344));
+    }
 }

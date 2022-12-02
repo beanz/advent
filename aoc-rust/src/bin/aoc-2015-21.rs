@@ -26,44 +26,6 @@ impl Fighter {
     }
 }
 
-#[test]
-fn fighter_attack_works() {
-    for tc in &[(5, 2, 3), (5, 10, 1), (7, 5, 2)] {
-        let me = Fighter::new(0, tc.0, 0);
-        let boss = Fighter::new(0, 0, tc.1);
-        assert_eq!(
-            me.attack(&boss),
-            tc.2,
-            "attack {} damage against {} armor",
-            tc.0,
-            tc.1
-        );
-    }
-}
-
-#[test]
-fn fighter_time_until_death_works() {
-    for tc in &[(12, 2, 5, 4), (8, 5, 7, 4)] {
-        let me = Fighter::new(tc.0, 0, tc.1);
-        let boss = Fighter::new(0, tc.2, 0);
-        assert_eq!(
-            me.time_until_death(&boss),
-            tc.3 as usize,
-            "time until death {}hp {}armor against {} damage",
-            tc.0,
-            tc.1,
-            tc.2
-        );
-    }
-}
-
-#[test]
-fn fighter_battle_works() {
-    let me = Fighter::new(8, 5, 5);
-    let boss = Fighter::new(12, 7, 2);
-    assert_eq!(me.beats(&boss), true, "boss is beaten");
-}
-
 #[derive(Debug, Clone, Copy)]
 struct Equipment {
     cost: usize,
@@ -250,10 +212,52 @@ fn main() {
     });
 }
 
-#[test]
-fn sim_works() {
-    let battle = Battle::new();
-    let (p1, p2) = battle.sim();
-    assert_eq!(p1, 121, "part 1");
-    assert_eq!(p2, 201, "part 2");
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn fighter_attack_works() {
+        for tc in &[(5, 2, 3), (5, 10, 1), (7, 5, 2)] {
+            let me = Fighter::new(0, tc.0, 0);
+            let boss = Fighter::new(0, 0, tc.1);
+            assert_eq!(
+                me.attack(&boss),
+                tc.2,
+                "attack {} damage against {} armor",
+                tc.0,
+                tc.1
+            );
+        }
+    }
+
+    #[test]
+    fn fighter_time_until_death_works() {
+        for tc in &[(12, 2, 5, 4), (8, 5, 7, 4)] {
+            let me = Fighter::new(tc.0, 0, tc.1);
+            let boss = Fighter::new(0, tc.2, 0);
+            assert_eq!(
+                me.time_until_death(&boss),
+                tc.3 as usize,
+                "time until death {}hp {}armor against {} damage",
+                tc.0,
+                tc.1,
+                tc.2
+            );
+        }
+    }
+
+    #[test]
+    fn fighter_battle_works() {
+        let me = Fighter::new(8, 5, 5);
+        let boss = Fighter::new(12, 7, 2);
+        assert_eq!(me.beats(&boss), true, "boss is beaten");
+    }
+    #[test]
+    fn sim_works() {
+        let battle = Battle::new();
+        let (p1, p2) = battle.sim();
+        assert_eq!(p1, 121, "part 1");
+        assert_eq!(p2, 201, "part 2");
+    }
 }

@@ -5,17 +5,9 @@ fn has_abba(s: &str) -> bool {
         .any(|c| c[0] != c[1] && c[0] == c[3] && c[1] == c[2])
 }
 
-#[test]
-fn has_abba_works() {
-    assert_eq!(has_abba("ioxxoj"), true, "has abba");
-    assert_eq!(has_abba("abcd"), false, "no abba 1");
-    assert_eq!(has_abba("gggg"), false, "no abba 2");
-}
-
 fn supports_tls(ip: &&String) -> bool {
     let segments = ip.split(|c| c == '[' || c == ']');
-    segments.clone().step_by(2).any(has_abba)
-        && !segments.skip(1).step_by(2).any(has_abba)
+    segments.clone().step_by(2).any(has_abba) && !segments.skip(1).step_by(2).any(has_abba)
 }
 
 fn supports_ssl(ip: &&String) -> bool {
@@ -60,28 +52,36 @@ fn main() {
     });
 }
 
-#[allow(dead_code)]
-const EX1: [&str; 4] = [
-    "abba[mnop]qrst",
-    "abcd[bddb]xyyx",
-    "aaaa[qwer]tyui",
-    "ioxxoj[asdfgh]zxcvbn",
-];
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[allow(dead_code)]
-const EX2: [&str; 4] =
-    ["aba[bab]xyz", "xyx[xyx]xyx", "aaa[kek]eke", "zazbz[bzb]cdb"];
+    #[allow(dead_code)]
+    const EX1: [&str; 4] = [
+        "abba[mnop]qrst",
+        "abcd[bddb]xyyx",
+        "aaaa[qwer]tyui",
+        "ioxxoj[asdfgh]zxcvbn",
+    ];
 
-#[test]
-fn part1_works() {
-    let e: Vec<String> =
-        EX1.iter().map(|x| x.to_string()).collect::<Vec<String>>();
-    assert_eq!(part1(&e), 2, "part 1 example");
-}
+    #[allow(dead_code)]
+    const EX2: [&str; 4] = ["aba[bab]xyz", "xyx[xyx]xyx", "aaa[kek]eke", "zazbz[bzb]cdb"];
 
-#[test]
-fn part2_works() {
-    let e: Vec<String> =
-        EX2.iter().map(|x| x.to_string()).collect::<Vec<String>>();
-    assert_eq!(part2(&e), 3, "part 2 example");
+    #[test]
+    fn has_abba_works() {
+        assert_eq!(has_abba("ioxxoj"), true, "has abba");
+        assert_eq!(has_abba("abcd"), false, "no abba 1");
+        assert_eq!(has_abba("gggg"), false, "no abba 2");
+    }
+    #[test]
+    fn part1_works() {
+        let e: Vec<String> = EX1.iter().map(|x| x.to_string()).collect::<Vec<String>>();
+        assert_eq!(part1(&e), 2, "part 1 example");
+    }
+
+    #[test]
+    fn part2_works() {
+        let e: Vec<String> = EX2.iter().map(|x| x.to_string()).collect::<Vec<String>>();
+        assert_eq!(part2(&e), 3, "part 2 example");
+    }
 }

@@ -16,14 +16,6 @@ fn digit(n: Segments) -> u8 {
     }
 }
 
-#[test]
-fn parts_segments() {
-    let s = 4 | 32;
-    assert_eq!(digit(s), 1, "segments digit");
-    let s = 1 | 2 | 8 | 32 | 64;
-    assert_eq!(digit(s), 5, "segments digit");
-}
-
 struct Entry {
     output: [Segments; 4],
     pattern_of_len: [u8; 8],
@@ -156,15 +148,6 @@ impl Notes {
     }
 }
 
-#[test]
-fn parts_works() {
-    let n = Notes::new(
-        b"be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe\n",
-    );
-    assert_eq!(n.part1(), 2, "part 1 test0");
-    assert_eq!(n.part2(), 8394, "part 2 test0");
-}
-
 fn main() {
     let inp = std::fs::read(aoc::input_file()).expect("read error");
     aoc::benchme(|bench: bool| {
@@ -176,4 +159,26 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_segments() {
+        let s = 4 | 32;
+        assert_eq!(digit(s), 1, "segments digit");
+        let s = 1 | 2 | 8 | 32 | 64;
+        assert_eq!(digit(s), 5, "segments digit");
+    }
+
+    #[test]
+    fn parts_works() {
+        let n = Notes::new(
+        b"be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe\n",
+    );
+        assert_eq!(n.part1(), 2, "part 1 test0");
+        assert_eq!(n.part2(), 8394, "part 2 test0");
+    }
 }

@@ -74,22 +74,27 @@ fn main() {
     });
 }
 
-#[test]
-fn parts_works() {
-    let inp = std::fs::read("../2020/15/test1.txt").expect("read error");
-    assert_eq!(parts(&inp), (436, 175594));
-    let inp = std::fs::read("../2020/15/test2.txt").expect("read error");
-    assert_eq!(parts(&inp), (1, 2578));
-    let inp = std::fs::read("../2020/15/test3.txt").expect("read error");
-    assert_eq!(parts(&inp), (10, 3544142));
-    let inp = std::fs::read("../2020/15/test4.txt").expect("read error");
-    assert_eq!(parts(&inp), (27, 261214));
-    let inp = std::fs::read("../2020/15/test5.txt").expect("read error");
-    assert_eq!(parts(&inp), (78, 6895259));
-    let inp = std::fs::read("../2020/15/test6.txt").expect("read error");
-    assert_eq!(parts(&inp), (438, 18));
-    let inp = std::fs::read("../2020/15/test7.txt").expect("read error");
-    assert_eq!(parts(&inp), (1836, 362));
-    let inp = std::fs::read("../2020/15/input.txt").expect("read error");
-    assert_eq!(parts(&inp), (260, 950));
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        let inp = std::fs::read("../2020/15/test1.txt").expect("read error");
+        assert_eq!(parts(&inp), (436, 175594));
+        let inp = std::fs::read("../2020/15/test2.txt").expect("read error");
+        assert_eq!(parts(&inp), (1, 2578));
+        let inp = std::fs::read("../2020/15/test3.txt").expect("read error");
+        assert_eq!(parts(&inp), (10, 3544142));
+        let inp = std::fs::read("../2020/15/test4.txt").expect("read error");
+        assert_eq!(parts(&inp), (27, 261214));
+        let inp = std::fs::read("../2020/15/test5.txt").expect("read error");
+        assert_eq!(parts(&inp), (78, 6895259));
+        let inp = std::fs::read("../2020/15/test6.txt").expect("read error");
+        assert_eq!(parts(&inp), (438, 18));
+        let inp = std::fs::read("../2020/15/test7.txt").expect("read error");
+        assert_eq!(parts(&inp), (1836, 362));
+        let inp = std::fs::read("../2020/15/input.txt").expect("read error");
+        assert_eq!(parts(&inp), (260, 950));
+    }
 }

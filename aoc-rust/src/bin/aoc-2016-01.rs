@@ -37,16 +37,21 @@ fn main() {
     });
 }
 
-#[test]
-fn calc_works() {
-    for &(inp, exp) in [
-        ("R2, L3", (5, None)),
-        ("R2, R2, R2", (2, None)),
-        ("R5, L5, R5, R3", (12, None)),
-        ("R8, R4, R4, R8", (8, Some(4))),
-    ]
-    .iter()
-    {
-        assert_eq!(calc(&inp.to_string()), exp, "calc: {}", inp);
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn calc_works() {
+        for &(inp, exp) in [
+            ("R2, L3", (5, None)),
+            ("R2, R2, R2", (2, None)),
+            ("R5, L5, R5, R3", (12, None)),
+            ("R8, R4, R4, R8", (8, Some(4))),
+        ]
+        .iter()
+        {
+            assert_eq!(calc(&inp.to_string()), exp, "calc: {}", inp);
+        }
     }
 }

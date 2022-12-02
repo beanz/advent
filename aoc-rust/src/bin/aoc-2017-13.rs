@@ -59,13 +59,18 @@ fn main() {
     });
 }
 
-#[test]
-fn parts_work() {
-    let ex: Vec<String> = ["0: 3", "1: 2", "4: 4", "6: 4"]
-        .iter()
-        .map(|x| x.to_string())
-        .collect::<Vec<String>>();
-    let fw = Firewall::new(&ex);
-    assert_eq!(fw.part1(), 24);
-    assert_eq!(fw.part2(), 10);
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_work() {
+        let ex: Vec<String> = ["0: 3", "1: 2", "4: 4", "6: 4"]
+            .iter()
+            .map(|x| x.to_string())
+            .collect::<Vec<String>>();
+        let fw = Firewall::new(&ex);
+        assert_eq!(fw.part1(), 24);
+        assert_eq!(fw.part2(), 10);
+    }
 }

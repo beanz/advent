@@ -68,37 +68,6 @@ impl fmt::Display for Rect {
     }
 }
 
-#[test]
-fn rect_works() {
-    let mut r = Rect::new(7, 3);
-    r.rect(3, 2);
-    assert_eq!(format!("{}", r), "###....\n###....\n.......", "rect 3x2");
-}
-
-#[test]
-fn rotate_column_works() {
-    let mut r = Rect::new(7, 3);
-    r.rect(3, 2);
-    r.rotate_column(1, 2);
-    assert_eq!(
-        format!("{}", r),
-        "###....\n#.#....\n.#.....",
-        "rotate column 1 by 2"
-    );
-}
-
-#[test]
-fn rotate_row_works() {
-    let mut r = Rect::new(7, 3);
-    r.rect(3, 2);
-    r.rotate_row(0, 5);
-    assert_eq!(
-        format!("{}", r),
-        "#....##\n###....\n.......",
-        "rotate row 0 by 5"
-    );
-}
-
 fn main() {
     let inp = aoc::input_lines();
     aoc::benchme(|bench: bool| {
@@ -113,4 +82,40 @@ fn main() {
             println!("Part 2:\n{}", r);
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn rect_works() {
+        let mut r = Rect::new(7, 3);
+        r.rect(3, 2);
+        assert_eq!(format!("{}", r), "###....\n###....\n.......", "rect 3x2");
+    }
+
+    #[test]
+    fn rotate_column_works() {
+        let mut r = Rect::new(7, 3);
+        r.rect(3, 2);
+        r.rotate_column(1, 2);
+        assert_eq!(
+            format!("{}", r),
+            "###....\n#.#....\n.#.....",
+            "rotate column 1 by 2"
+        );
+    }
+
+    #[test]
+    fn rotate_row_works() {
+        let mut r = Rect::new(7, 3);
+        r.rect(3, 2);
+        r.rotate_row(0, 5);
+        assert_eq!(
+            format!("{}", r),
+            "#....##\n###....\n.......",
+            "rotate row 0 by 5"
+        );
+    }
 }

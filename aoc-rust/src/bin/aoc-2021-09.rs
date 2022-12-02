@@ -61,18 +61,6 @@ impl Lava<'_> {
     }
 }
 
-#[test]
-fn parts_works() {
-    let mut inp: Vec<u8> = vec![];
-    for ch in b"2199943210\n3987894921\n9856789892\n8767896789\n9899965678\n" {
-        inp.push(*ch);
-    }
-    let mut n = Lava::new(&mut inp);
-    let (p1, p2) = n.parts();
-    assert_eq!(p1, 15, "part 1 test1");
-    assert_eq!(p2, 1134, "part 2 test1");
-}
-
 fn main() {
     aoc::benchme(|bench: bool| {
         let mut inp = std::fs::read(aoc::input_file()).expect("read error");
@@ -83,4 +71,21 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        let mut inp: Vec<u8> = vec![];
+        for ch in b"2199943210\n3987894921\n9856789892\n8767896789\n9899965678\n" {
+            inp.push(*ch);
+        }
+        let mut n = Lava::new(&mut inp);
+        let (p1, p2) = n.parts();
+        assert_eq!(p1, 15, "part 1 test1");
+        assert_eq!(p2, 1134, "part 2 test1");
+    }
 }

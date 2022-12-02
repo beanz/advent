@@ -39,12 +39,17 @@ fn main() {
     });
 }
 
-#[test]
-fn calc_works() {
-    let results: Vec<&str> = vec!["11", "21", "1211", "111221", "312211"];
-    let mut c = "1";
-    for exp in results.iter() {
-        assert_eq!(&calc(c, 1), exp, "{}", exp);
-        c = exp;
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn calc_works() {
+        let results: Vec<&str> = vec!["11", "21", "1211", "111221", "312211"];
+        let mut c = "1";
+        for exp in results.iter() {
+            assert_eq!(&calc(c, 1), exp, "{}", exp);
+            c = exp;
+        }
     }
 }

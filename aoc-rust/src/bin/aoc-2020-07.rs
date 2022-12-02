@@ -47,18 +47,6 @@ fn bag_name(input: &[u8]) -> IResult<&[u8], &[u8]> {
     )(input)
 }
 
-#[test]
-fn bag_name_works() {
-    let input = b"bright white bag";
-    let (rest, name) = bag_name(input).unwrap();
-    assert_eq!(name, b"bright white");
-    assert_eq!(rest, b"");
-    let input = b"light red bags";
-    let (rest, name) = bag_name(input).unwrap();
-    assert_eq!(name, b"light red");
-    assert_eq!(rest, b"");
-}
-
 fn bag_quantity(input: &[u8]) -> IResult<&[u8], BagQuantity> {
     let (input, q) = terminated(digit1, tag(" "))(input)?;
     let num = std::str::from_utf8(q)
@@ -67,20 +55,6 @@ fn bag_quantity(input: &[u8]) -> IResult<&[u8], BagQuantity> {
         .expect("number");
     let (input, name) = bag_name(input)?;
     Ok((input, BagQuantity { num, name }))
-}
-
-#[test]
-fn bag_quantity_works() {
-    let input = b"1 bright white bag";
-    let (rest, bq) = bag_quantity(input).unwrap();
-    assert_eq!(rest, b"");
-    assert_eq!(
-        bq,
-        BagQuantity {
-            name: b"bright white",
-            num: 1
-        }
-    );
 }
 
 fn bag_list(input: &[u8]) -> IResult<&[u8], Vec<BagQuantity>> {
@@ -157,12 +131,41 @@ fn main() {
     });
 }
 
-#[test]
-fn parts_works() {
-    let inp = std::fs::read("../2020/07/test1.txt").expect("read error");
-    assert_eq!(parts(&inp), (4, 32));
-    let inp = std::fs::read("../2020/07/test2.txt").expect("read error");
-    assert_eq!(parts(&inp), (0, 126));
-    let inp = std::fs::read("../2020/07/input.txt").expect("read error");
-    assert_eq!(parts(&inp), (112, 6260));
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn bag_name_works() {
+        let input = b"bright white bag";
+        let (rest, name) = bag_name(input).unwrap();
+        assert_eq!(name, b"bright white");
+        assert_eq!(rest, b"");
+        let input = b"light red bags";
+        let (rest, name) = bag_name(input).unwrap();
+        assert_eq!(name, b"light red");
+        assert_eq!(rest, b"");
+    }
+    #[test]
+    fn bag_quantity_works() {
+        let input = b"1 bright white bag";
+        let (rest, bq) = bag_quantity(input).unwrap();
+        assert_eq!(rest, b"");
+        assert_eq!(
+            bq,
+            BagQuantity {
+                name: b"bright white",
+                num: 1
+            }
+        );
+    }
+    #[test]
+    fn parts_works() {
+        let inp = std::fs::read("../2020/07/test1.txt").expect("read error");
+        assert_eq!(parts(&inp), (4, 32));
+        let inp = std::fs::read("../2020/07/test2.txt").expect("read error");
+        assert_eq!(parts(&inp), (0, 126));
+        let inp = std::fs::read("../2020/07/input.txt").expect("read error");
+        assert_eq!(parts(&inp), (112, 6260));
+    }
 }

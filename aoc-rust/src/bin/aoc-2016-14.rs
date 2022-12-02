@@ -38,15 +38,6 @@ impl Iterator for Md5er {
     }
 }
 
-#[test]
-fn md5er_works() {
-    let mut md5er = Md5er::new(&"abc".to_string());
-    assert_eq!(
-        md5er.next().unwrap().string(),
-        "577571be4de9dcce85a041ba0410f29f"
-    );
-}
-
 struct StretchedMd5er {
     ns: aoc::NumStr,
 }
@@ -77,15 +68,6 @@ impl Iterator for StretchedMd5er {
     }
 }
 
-#[test]
-fn stretched_md5er_works() {
-    let mut md5er = StretchedMd5er::new(&"abc".to_string());
-    assert_eq!(
-        md5er.next().unwrap().string(),
-        "a107ff634856bb300138cac6568c0f24"
-    );
-}
-
 fn find_key<I>(md5er: I) -> usize
 where
     I: Iterator<Item = Md5erResult>,
@@ -104,16 +86,12 @@ where
         it.reset_peek();
         for _n in 1..1000 {
             let (_, nmd5) = it.peek().unwrap();
-            let has_5 =
-                nmd5.string().bytes().collect::<Vec<u8>>().windows(5).any(
-                    |c| {
-                        c[0] == ch
-                            && c[1] == ch
-                            && c[2] == ch
-                            && c[3] == ch
-                            && c[4] == ch
-                    },
-                );
+            let has_5 = nmd5
+                .string()
+                .bytes()
+                .collect::<Vec<u8>>()
+                .windows(5)
+                .any(|c| c[0] == ch && c[1] == ch && c[2] == ch && c[3] == ch && c[4] == ch);
             if has_5 {
                 //println!("!! {} {}: {}", i, ch as char, nmd5.string());
                 c += 1;
@@ -146,4 +124,26 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn md5er_works() {
+        let mut md5er = Md5er::new(&"abc".to_string());
+        assert_eq!(
+            md5er.next().unwrap().string(),
+            "577571be4de9dcce85a041ba0410f29f"
+        );
+    }
+    #[test]
+    fn stretched_md5er_works() {
+        let mut md5er = StretchedMd5er::new(&"abc".to_string());
+        assert_eq!(
+            md5er.next().unwrap().string(),
+            "a107ff634856bb300138cac6568c0f24"
+        );
+    }
 }

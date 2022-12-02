@@ -4,30 +4,11 @@ fn possible(sides: &[usize]) -> bool {
         && sides[1] + sides[2] > sides[0]
 }
 
-#[test]
-fn possible_works() {
-    assert_eq!(possible(&[39, 703, 839]), false, "possible 39, 703, 839");
-    assert_eq!(possible(&[237, 956, 841]), true, "possible 237, 956, 841");
-}
-
 fn part1(lines: &[String]) -> usize {
     lines
         .iter()
         .filter(|l| possible(&aoc::ints::<usize>(l).collect::<Vec<usize>>()))
         .count()
-}
-
-#[test]
-fn part1_works() {
-    assert_eq!(
-        part1(&[
-            "   39  703  839".to_string(),
-            "  229  871    3".to_string(),
-            "  237  956  841".to_string(),
-        ]),
-        1,
-        "part 1 sample"
-    );
 }
 
 fn part2(lines: &[String]) -> usize {
@@ -48,19 +29,6 @@ fn part2(lines: &[String]) -> usize {
         .sum()
 }
 
-#[test]
-fn part2_works() {
-    assert_eq!(
-        part2(&vec![
-            "   39  703  839".to_string(),
-            "  229  871    3".to_string(),
-            "  237  956  841".to_string(),
-        ]),
-        3,
-        "part 2 sample"
-    );
-}
-
 fn main() {
     let lines = aoc::input_lines();
     aoc::benchme(|bench: bool| {
@@ -71,4 +39,39 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn possible_works() {
+        assert_eq!(possible(&[39, 703, 839]), false, "possible 39, 703, 839");
+        assert_eq!(possible(&[237, 956, 841]), true, "possible 237, 956, 841");
+    }
+    #[test]
+    fn part1_works() {
+        assert_eq!(
+            part1(&[
+                "   39  703  839".to_string(),
+                "  229  871    3".to_string(),
+                "  237  956  841".to_string(),
+            ]),
+            1,
+            "part 1 sample"
+        );
+    }
+    #[test]
+    fn part2_works() {
+        assert_eq!(
+            part2(&vec![
+                "   39  703  839".to_string(),
+                "  229  871    3".to_string(),
+                "  237  956  841".to_string(),
+            ]),
+            3,
+            "part 2 sample"
+        );
+    }
 }

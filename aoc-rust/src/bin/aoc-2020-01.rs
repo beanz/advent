@@ -53,12 +53,17 @@ fn main() {
     });
 }
 
-#[test]
-fn parts_works() {
-    let report: Vec<Int> = vec![1721, 979, 366, 299, 675, 1456];
-    assert_eq!(
-        Report::new(&report).parts(),
-        (514579, 241861950),
-        "parts test"
-    );
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        let report: Vec<Int> = vec![1721, 979, 366, 299, 675, 1456];
+        assert_eq!(
+            Report::new(&report).parts(),
+            (514579, 241861950),
+            "parts test"
+        );
+    }
 }

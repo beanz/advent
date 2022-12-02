@@ -28,14 +28,19 @@ fn main() {
     });
 }
 
-#[test]
-fn part1_works() {
-    let depths: Vec<Int> = vec![199, 200, 208, 210, 200, 207, 240, 269, 260, 263];
-    assert_eq!(part1(&depths), 7, "part 1 test");
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn part2_works() {
-    let depths: Vec<Int> = vec![199, 200, 208, 210, 200, 207, 240, 269, 260, 263];
-    assert_eq!(part2(&depths), 5, "part 2 test");
+    #[test]
+    fn part1_works() {
+        let depths: Vec<Int> = vec![199, 200, 208, 210, 200, 207, 240, 269, 260, 263];
+        assert_eq!(part1(&depths), 7, "part 1 test");
+    }
+
+    #[test]
+    fn part2_works() {
+        let depths: Vec<Int> = vec![199, 200, 208, 210, 200, 207, 240, 269, 260, 263];
+        assert_eq!(part2(&depths), 5, "part 2 test");
+    }
 }
