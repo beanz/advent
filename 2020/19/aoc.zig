@@ -1,6 +1,5 @@
 const std = @import("std");
 const aoc = @import("aoc-lib.zig");
-const seglist = @import("segmented_list.zig");
 
 const Matcher = struct {
     const Rule = union(enum) {
@@ -72,7 +71,7 @@ const Matcher = struct {
         self.alloc.destroy(self);
     }
 
-    pub fn MatchAux(m: *Matcher, v: []const u8, i: usize, todo: *seglist.SegmentedList(usize, 32)) bool {
+    pub fn MatchAux(m: *Matcher, v: []const u8, i: usize, todo: *std.SegmentedList(usize, 32)) bool {
         const rem_len = v.len - i;
         if (todo.count() > rem_len) {
             //std.debug.print("more todo but nothing left to match", .{});
@@ -101,18 +100,18 @@ const Matcher = struct {
             },
             .opt => |*opt| {
                 for (opt.*) |rs| {
-                    var todo_n = &seglist.SegmentedList(usize, 32).init(&m.alloc);
-                    defer todo_n.deinit();
+                    var todo_n = std.SegmentedList(usize, 32){};
+                    defer todo_n.deinit(m.alloc);
                     var k: usize = 0;
                     while (k < todo.count()) : (k += 1) {
-                        todo_n.push(todo.at(k).*) catch unreachable;
+                        todo_n.append(m.alloc, todo.at(k).*) catch unreachable;
                     }
 
                     k = rs.len;
                     while (k > 0) : (k -= 1) {
-                        todo_n.push(rs[k - 1]) catch unreachable;
+                        todo_n.append(m.alloc, rs[k - 1]) catch unreachable;
                     }
-                    if (m.MatchAux(v, i, todo_n)) {
+                    if (m.MatchAux(v, i, &todo_n)) {
                         return true;
                     }
                 }
@@ -122,9 +121,10 @@ const Matcher = struct {
     }
 
     pub fn Match(m: *Matcher, v: []const u8) bool {
-        var todo = &seglist.SegmentedList(usize, 32).init(&m.alloc);
-        todo.push(0) catch unreachable;
-        const res = m.MatchAux(v, 0, todo);
+        var todo = std.SegmentedList(usize, 32){};
+        defer todo.deinit(m.alloc);
+        todo.append(m.alloc, 0) catch unreachable;
+        const res = m.MatchAux(v, 0, &todo);
         return res;
     }
 
