@@ -1,124 +1,101 @@
-use itertools::Itertools;
-
-struct Md5erResult {
-    cs: Box<[u8; 16]>,
-}
-
-impl Md5erResult {
-    fn new(cs: Box<[u8; 16]>) -> Md5erResult {
-        Md5erResult { cs }
-    }
-    fn string(&self) -> String {
-        self.cs
-            .iter()
-            .map(|x| format!("{:02x}", x))
-            .collect::<String>()
-    }
-}
-
-struct Md5er {
-    ns: aoc::NumStr,
-}
-
-impl Md5er {
-    fn new(s: &str) -> Md5er {
-        Md5er {
-            ns: aoc::NumStr::new(s.to_string()),
+fn triple_digit(sum: &[u8]) -> Option<u8> {
+    for i in 0..sum.len() - 1 {
+        if (sum[i] >> 4) == (sum[i] & 0xf) && (sum[i] >> 4) == (sum[i + 1] >> 4) {
+            return Some(sum[i] >> 4);
+        }
+        if (sum[i] & 0xf) == (sum[i + 1] >> 4) && (sum[i] & 0xf) == (sum[i + 1] & 0xf) {
+            return Some(sum[i] & 0xf);
         }
     }
+    None
 }
 
-impl Iterator for Md5er {
-    type Item = Md5erResult;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        let cs = aoc::md5sum(self.ns.bytes());
-        self.ns.inc();
-        Some(Md5erResult::new(cs))
-    }
-}
-
-struct StretchedMd5er {
-    ns: aoc::NumStr,
-}
-
-impl StretchedMd5er {
-    fn new(s: &str) -> StretchedMd5er {
-        StretchedMd5er {
-            ns: aoc::NumStr::new(s.to_string()),
-        }
-    }
-}
-
-impl Iterator for StretchedMd5er {
-    type Item = Md5erResult;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        let mut cs = aoc::md5sum(self.ns.bytes());
-        for _n in 1..2017 {
-            cs = aoc::md5sum(
-                cs.iter()
-                    .map(|x| format!("{:02x}", x))
-                    .collect::<String>()
-                    .as_bytes(),
-            )
-        }
-        self.ns.inc();
-        Some(Md5erResult::new(cs))
-    }
-}
-
-fn find_key<I>(md5er: I) -> usize
-where
-    I: Iterator<Item = Md5erResult>,
-{
-    let mut c = 0;
-    let mut it = md5er.enumerate().multipeek();
-    loop {
-        let (i, md5) = it.next().unwrap();
-        let s = md5.string().bytes().collect::<Vec<u8>>();
-        let triple = s.windows(3).find(|c| c[0] == c[1] && c[1] == c[2]);
-        if triple.is_none() {
+fn has_five(sum: &[u8], d: u8) -> bool {
+    let d0 = d << 4;
+    let dd = d | d0;
+    for i in 0..sum.len() - 2 {
+        if sum[i + 1] != dd {
             continue;
         }
-        let ch = triple.unwrap()[0];
-        //println!("{}: {} {}", i, ch as char, md5.string());
-        it.reset_peek();
-        for _n in 1..1000 {
-            let (_, nmd5) = it.peek().unwrap();
-            let has_5 = nmd5
-                .string()
-                .bytes()
-                .collect::<Vec<u8>>()
-                .windows(5)
-                .any(|c| c[0] == ch && c[1] == ch && c[2] == ch && c[3] == ch && c[4] == ch);
-            if has_5 {
-                //println!("!! {} {}: {}", i, ch as char, nmd5.string());
-                c += 1;
-                if c == 64 {
-                    return i;
+        if sum[i] == dd && sum[i + 2] & 0xf0 == d0 {
+            return true;
+        }
+        if sum[i] & 0xf == d && sum[i + 2] == dd {
+            return true;
+        }
+    }
+    false
+}
+
+struct OTP<'a> {
+    salt: &'a [u8],
+}
+impl<'a> OTP<'a> {
+    fn new(inp: &[u8]) -> OTP {
+        OTP {
+            salt: &inp[0..inp.len() - 1],
+        }
+    }
+    fn find_key(&self, num: usize, stretched: bool) -> usize {
+        let mut ring: [[u8; 16]; 1001] = [[0; 16]; 1001];
+        let salt = std::str::from_utf8(self.salt).expect("ascii").into();
+        let mut num_str = aoc::NumStr::new(salt);
+        let next_md5 = if !stretched {
+            |ns: &mut aoc::NumStr| {
+                let b = ns.bytes();
+                let r = *aoc::md5sum(b);
+                ns.inc();
+                r
+            }
+        } else {
+            |ns: &mut aoc::NumStr| {
+                const DIGITS: &[u8; 16] = b"0123456789abcdef";
+                let b = ns.bytes();
+                let mut r = *aoc::md5sum(b);
+                let mut n: [u8; 32] = [0; 32];
+                for _ in 0..2016 {
+                    for j in 0..16 {
+                        n[j * 2] = DIGITS[(r[j] >> 4) as usize];
+                        n[1 + j * 2] = DIGITS[(r[j] & 0xf) as usize];
+                    }
+                    r = *aoc::md5sum(&n);
                 }
-                break;
+                ns.inc();
+                r
+            }
+        };
+        for i in 0..1001 {
+            ring[i] = next_md5(&mut num_str);
+        }
+        let mut ring_i = 0;
+        let mut n = 1;
+        loop {
+            let ti = ring_i;
+            let sum = ring[ti % 1001];
+            ring[ti % 1001] = next_md5(&mut num_str);
+            ring_i += 1;
+            if let Some(ch) = triple_digit(&sum) {
+                for i in 1..1001 {
+                    if has_five(&ring[(ti + i) % 1001], ch) {
+                        if n == num {
+                            return ti;
+                        }
+                        n += 1;
+                    }
+                }
             }
         }
     }
-}
-
-fn part1(salt: &str) -> usize {
-    let md5er = Md5er::new(salt);
-    find_key(md5er)
-}
-
-fn part2(salt: &str) -> usize {
-    let md5er = StretchedMd5er::new(salt);
-    find_key(md5er)
+    fn parts(&self) -> (usize, usize) {
+        (self.find_key(64, false), self.find_key(64, true))
+    }
 }
 
 fn main() {
-    let salt = aoc::read_input_line();
+    let inp = std::fs::read(aoc::input_file()).expect("read error");
     aoc::benchme(|bench: bool| {
-        let p1 = part1(&salt);
-        let p2 = part2(&salt);
+        let otp = OTP::new(&inp);
+        let (p1, p2) = otp.parts();
         if !bench {
             println!("Part 1: {}", p1);
             println!("Part 2: {}", p2);
@@ -130,20 +107,36 @@ fn main() {
 mod tests {
     use super::*;
 
-    #[test]
-    fn md5er_works() {
-        let mut md5er = Md5er::new(&"abc".to_string());
-        assert_eq!(
-            md5er.next().unwrap().string(),
-            "577571be4de9dcce85a041ba0410f29f"
-        );
+    pub fn decode_hex(s: &str) -> Vec<u8> {
+        (0..s.len())
+            .step_by(2)
+            .map(|i| u8::from_str_radix(&s[i..i + 2], 16).expect("hex"))
+            .collect()
     }
     #[test]
-    fn stretched_md5er_works() {
-        let mut md5er = StretchedMd5er::new(&"abc".to_string());
-        assert_eq!(
-            md5er.next().unwrap().string(),
-            "a107ff634856bb300138cac6568c0f24"
-        );
+    fn triple_digit_works() {
+        let t = decode_hex("01234567890123456789012345678901");
+        assert_eq!(triple_digit(&t), None);
+        let t = decode_hex("0034e0923cc38887a57bd7b1d4f953df");
+        assert_eq!(triple_digit(&t), Some(0x8));
+        let t = decode_hex("347dac6ee8eeea4652c7476d0f97bee5");
+        assert_eq!(triple_digit(&t), Some(0xe));
+        let t = decode_hex("01234567890123456789012345678999");
+        assert_eq!(triple_digit(&t), Some(0x9));
+        let t = decode_hex("01234567890123456789012345678881");
+        assert_eq!(triple_digit(&t), Some(0x8));
+        let t = decode_hex("00034567890123456789012345678901");
+        assert_eq!(triple_digit(&t), Some(0x0));
+        let t = decode_hex("01114567890123456789012345678901");
+        assert_eq!(triple_digit(&t), Some(0x1));
+    }
+    #[test]
+    fn has_five_works() {
+        let t = decode_hex("aaaa4567890123456789012345678901");
+        assert!(!has_five(&t, 0xa));
+        let t = decode_hex("aaaaa567890123456789012345678901");
+        assert!(has_five(&t, 0xa));
+        let t = decode_hex("c3d313e7a72ea2111114dd4963979596");
+        assert!(has_five(&t, 0x1));
     }
 }
