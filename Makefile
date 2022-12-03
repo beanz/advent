@@ -218,7 +218,7 @@ aoc-rust/target/release/%.ns: aoc-rust/target/release/%
 	( cd $* && AoC_BENCH=1 ./$(notdir $<) | tee /dev/stderr ) >$@
 
 %/aoc-go.ns: %/aoc-go
-	(cd $* && go test -run=XXX -benchtime=5s -bench=BenchmarkMain . ) | \
+	(cd $* && go test -run=XXX -benchmem -benchtime=5s -bench=BenchmarkMain . ) | \
 	  tee /dev/stderr | grep "BenchmarkMain-" > $@
 
 %/aoc.pl.log: %/aoc.pl

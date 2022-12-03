@@ -21,7 +21,7 @@ func main() {
 		panic(err)
 	}
 	table := makeTable(benchmarks)
-	ioutil.WriteFile("benchmarks.md", []byte(table), 0644)
+	_ = ioutil.WriteFile("benchmarks.md", []byte(table), 0644)
 }
 
 func makeTable(benchmarks benchmarkData) string {
@@ -49,15 +49,23 @@ func makeTable(benchmarks benchmarkData) string {
 		series := make([]*margaid.Series, len(langs))
 
 		sb.WriteString(" &nbsp; ")
-		langRuntimes := make([]time.Duration, len(langs))
+		langRes := make([]benchResult, len(langs))
 		for i, lang := range langs {
 			sb.WriteString(" | ")
 			sb.WriteString(lang)
 			totalRuntime := time.Duration(0)
-			for _, runtime := range benchmarks[lang][year] {
-				totalRuntime += runtime
+			var totalMem *float64
+			for _, res := range benchmarks[lang][year] {
+				totalRuntime += res.t
+				if res.mem != nil {
+					if totalMem == nil {
+						z := float64(0)
+						totalMem = &z
+					}
+					*totalMem += *res.mem
+				}
 			}
-			langRuntimes[i] = totalRuntime
+			langRes[i] = benchResult{t: totalRuntime, mem: totalMem}
 			series[i] = margaid.NewSeries(margaid.Titled(lang))
 		}
 		sb.WriteString("\n ---: ")
@@ -75,10 +83,14 @@ func makeTable(benchmarks benchmarkData) string {
 			sb.WriteString(day)
 			for i, lang := range langs {
 				sb.WriteString(" | ")
-				runtime, ok := benchmarks[lang][year][day]
-				series[i].Add(margaid.MakeValue(float64(di+1), float64(runtime)))
-				propTotal := float64(runtime) / float64(langRuntimes[i])
+				res, ok := benchmarks[lang][year][day]
 				if ok {
+					series[i].Add(margaid.MakeValue(float64(di+1), float64(res.t)))
+					propTotal := float64(res.t) / float64(langRes[i].t)
+					var propMem = 0.0
+					if res.mem != nil {
+						propMem = *res.mem / *langRes[i].mem
+					}
 					strength := ""
 					prefix := ""
 					if propTotal > 0.2 {
@@ -87,8 +99,21 @@ func makeTable(benchmarks benchmarkData) string {
 					}
 					sb.WriteString(strength)
 					sb.WriteString(prefix)
-					sb.WriteString(formatDuration(runtime))
+					sb.WriteString(formatDuration(res.t))
 					sb.WriteString(strength)
+					if res.mem != nil {
+						strength := ""
+						prefix := ""
+						if propMem > 0.2 {
+							strength = "**"
+							prefix = "🔴 "
+						}
+						sb.WriteString(" / ")
+						sb.WriteString(strength)
+						sb.WriteString(prefix)
+						sb.WriteString(formatMemory(*res.mem))
+						sb.WriteString(strength)
+					}
 				} else {
 					sb.WriteByte('-')
 				}
@@ -99,17 +124,29 @@ func makeTable(benchmarks benchmarkData) string {
 		sb.WriteString("*Total*")
 		for _, lang := range langs {
 			totalRuntime := time.Duration(0)
-			for _, runtime := range benchmarks[lang][year] {
-				totalRuntime += runtime
-				if float64(runtime) > maxY {
-					maxY = float64(runtime)
+			var totalMem *float64
+			for _, res := range benchmarks[lang][year] {
+				totalRuntime += res.t
+				if float64(res.t) > maxY {
+					maxY = float64(res.t)
 				}
-				if float64(runtime) < minY {
-					minY = float64(runtime)
+				if float64(res.t) < minY {
+					minY = float64(res.t)
+				}
+				if res.mem != nil {
+					if totalMem == nil {
+						z := float64(0)
+						totalMem = &z
+					}
+					*totalMem += *res.mem
 				}
 			}
 			sb.WriteString(" | *")
 			sb.WriteString(formatDuration(totalRuntime))
+			if totalMem != nil {
+				sb.WriteString(" / ")
+				sb.WriteString(formatMemory(*totalMem))
+			}
 			sb.WriteString("*")
 		}
 		sb.WriteByte('\n')
@@ -152,7 +189,7 @@ func makeTable(benchmarks benchmarkData) string {
 			if err != nil {
 				panic(err)
 			}
-			diagram.Render(svg)
+			_ = diagram.Render(svg)
 			sb.WriteString("![Graph for year ")
 			sb.WriteString(year)
 			sb.WriteString("](y")
@@ -173,15 +210,23 @@ func makeTable(benchmarks benchmarkData) string {
 		}
 		sort.Strings(years)
 		sb.WriteString(" &nbsp; ")
-		yearRuntimes := make([]time.Duration, len(years))
+		yearRes := make([]benchResult, len(years))
 		for i, year := range years {
 			sb.WriteString(" | ")
 			sb.WriteString(year)
 			totalRuntime := time.Duration(0)
-			for _, runtime := range benchmarks[lang][year] {
-				totalRuntime += runtime
+			var totalMem *float64
+			for _, res := range benchmarks[lang][year] {
+				totalRuntime += res.t
+				if res.mem != nil {
+					if totalMem == nil {
+						z := float64(0)
+						totalMem = &z
+					}
+					*totalMem += *res.mem
+				}
 			}
-			yearRuntimes[i] = totalRuntime
+			yearRes[i] = benchResult{t: totalRuntime, mem: totalMem}
 		}
 		sb.WriteString("\n ---: ")
 		for range years {
@@ -198,9 +243,13 @@ func makeTable(benchmarks benchmarkData) string {
 			sb.WriteString(day)
 			for i, year := range years {
 				sb.WriteString(" | ")
-				runtime, ok := benchmarks[lang][year][day]
-				propTotal := float64(runtime) / float64(yearRuntimes[i])
+				res, ok := benchmarks[lang][year][day]
 				if ok {
+					propTotal := float64(res.t) / float64(yearRes[i].t)
+					var propMem = 0.0
+					if res.mem != nil {
+						propMem = *res.mem / *yearRes[i].mem
+					}
 					strength := ""
 					prefix := ""
 					if propTotal > 0.2 {
@@ -209,8 +258,21 @@ func makeTable(benchmarks benchmarkData) string {
 					}
 					sb.WriteString(strength)
 					sb.WriteString(prefix)
-					sb.WriteString(formatDuration(runtime))
+					sb.WriteString(formatDuration(res.t))
 					sb.WriteString(strength)
+					if res.mem != nil {
+						strength := ""
+						prefix := ""
+						if propMem > 0.2 {
+							strength = "**"
+							prefix = "🔴 "
+						}
+						sb.WriteString(" / ")
+						sb.WriteString(strength)
+						sb.WriteString(prefix)
+						sb.WriteString(formatMemory(*res.mem))
+						sb.WriteString(strength)
+					}
 				} else {
 					sb.WriteByte('-')
 				}
@@ -220,11 +282,23 @@ func makeTable(benchmarks benchmarkData) string {
 		sb.WriteString("*Total*")
 		for _, year := range years {
 			totalRuntime := time.Duration(0)
-			for _, runtime := range benchmarks[lang][year] {
-				totalRuntime += runtime
+			var totalMem *float64
+			for _, res := range benchmarks[lang][year] {
+				totalRuntime += res.t
+				if res.mem != nil {
+					if totalMem == nil {
+						z := float64(0)
+						totalMem = &z
+					}
+					*totalMem += *res.mem
+				}
 			}
 			sb.WriteString(" | *")
 			sb.WriteString(formatDuration(totalRuntime))
+			if totalMem != nil {
+				sb.WriteString(" / ")
+				sb.WriteString(formatMemory(*totalMem))
+			}
 			sb.WriteString("*")
 		}
 		sb.WriteByte('\n')
@@ -284,16 +358,17 @@ func loadBenchmarks(dir string) (benchmarkData, error) {
 
 func (bm benchmarkData) readResult(file string, lang, year, day string) error {
 	if _, ok := bm[lang]; !ok {
-		bm[lang] = map[string]map[string]time.Duration{}
+		bm[lang] = map[string]map[string]benchResult{}
 	}
 	if _, ok := bm[lang][year]; !ok {
-		bm[lang][year] = map[string]time.Duration{}
+		bm[lang][year] = map[string]benchResult{}
 	}
 	data, err := os.ReadFile(file)
 	if err != nil {
 		return err
 	}
 	result := strings.TrimSpace(string(data))
+	var mem *float64
 	multiplier := float64(1)
 	switch {
 	case len(result) > 3 && result[len(result)-2:] == "ns":
@@ -312,7 +387,18 @@ func (bm benchmarkData) readResult(file string, lang, year, day string) error {
 		multiplier = 1000000
 	case len(result) > 14 && result[:13] == "BenchmarkMain":
 		// go result
-		result = strings.Split(result[:len(result)-6], "\t")[2]
+		s := strings.Split(result, "\t")
+		t := s[2]
+		result = t[:len(t)-6]
+		if len(s) > 3 {
+			s := s[3]
+			m, err := strconv.ParseFloat(strings.TrimSpace(s[:len(s)-4]), 64)
+			if err != nil {
+				fmt.Printf("unable to parse memory: %v\n", s)
+			} else {
+				mem = &m
+			}
+		}
 	default:
 		return fmt.Errorf("unknown results format: %s", result)
 	}
@@ -320,7 +406,7 @@ func (bm benchmarkData) readResult(file string, lang, year, day string) error {
 	if err != nil {
 		return err
 	}
-	bm[lang][year][day] = time.Duration(int64(math.Round(benchmark * multiplier)))
+	bm[lang][year][day] = benchResult{t: time.Duration(int64(math.Round(benchmark * multiplier))), mem: mem}
 	return nil
 }
 
@@ -331,6 +417,27 @@ func formatDuration(dur time.Duration) string {
 		}
 	}
 	return dur.String()
+}
+
+func formatMemory(mem float64) string {
+	if mem == 0 {
+		return "None"
+	}
+	units := []string{"B", "KB", "MB", "GB"}
+	for _, unit := range units {
+		if mem < 100 {
+			return fmt.Sprintf("%.1f %s", math.Round(mem*10)/10, unit)
+		}
+		if mem < 1000 {
+			return fmt.Sprintf("%.0f %s", math.Round(mem), unit)
+		}
+		mem /= 1000
+	}
+	unit := units[len(units)-1]
+	if mem < 100 {
+		return fmt.Sprintf("%f %s", math.Round(mem*10)/10, unit)
+	}
+	return fmt.Sprintf("%f %s", math.Round(mem), unit)
 }
 
 func looseLabel(min, max float64, ticks int) (float64, float64, float64, int) {
@@ -370,4 +477,8 @@ func niceNum(x float64, round int) float64 {
 	return nf * math.Pow(10.0, expv)
 }
 
-type benchmarkData map[string]map[string]map[string]time.Duration
+type benchResult struct {
+	mem *float64
+	t   time.Duration
+}
+type benchmarkData map[string]map[string]map[string]benchResult
