@@ -1,0 +1,1 @@
+perl -lne '$s=join"",a..z,A..Z;$A.=$_.$/;$n=y///c/2;s/^.{$n}\K/ /;s/^.*(.).*? .*\1.*$/$a+=1+index$s,$1/e;END{$A=~s/^.*(.).*?\n.*\1.*\n.*\1.*$/$b+=1+index$s,$1/meg;print"Part 1: $a\nPart 2: $b"}' ${1:-input.txt}
