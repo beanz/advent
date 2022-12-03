@@ -312,6 +312,12 @@ pub fn md5sum(b: &[u8]) -> Box<[u8; 16]> {
     Box::new(digest.into())
 }
 
+pub fn md5sum2(b: &[u8]) -> [u8; 16] {
+    let digest = md5::compute(b);
+    let r: [u8; 16] = digest.into();
+    r.to_owned()
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default)]
 pub struct HexFlatTop {
     q: isize,

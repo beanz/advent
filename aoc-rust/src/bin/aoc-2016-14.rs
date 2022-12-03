@@ -43,7 +43,7 @@ impl<'a> OTP<'a> {
         let next_md5 = if !stretched {
             |ns: &mut aoc::NumStr| {
                 let b = ns.bytes();
-                let r = *aoc::md5sum(b);
+                let r = aoc::md5sum2(b);
                 ns.inc();
                 r
             }
@@ -51,14 +51,14 @@ impl<'a> OTP<'a> {
             |ns: &mut aoc::NumStr| {
                 const DIGITS: &[u8; 16] = b"0123456789abcdef";
                 let b = ns.bytes();
-                let mut r = *aoc::md5sum(b);
+                let mut r = aoc::md5sum2(b);
                 let mut n: [u8; 32] = [0; 32];
                 for _ in 0..2016 {
                     for j in 0..16 {
                         n[j * 2] = DIGITS[(r[j] >> 4) as usize];
                         n[1 + j * 2] = DIGITS[(r[j] & 0xf) as usize];
                     }
-                    r = *aoc::md5sum(&n);
+                    r = aoc::md5sum2(&n);
                 }
                 ns.inc();
                 r
