@@ -63,9 +63,17 @@ pub fn black_box<T>(dummy: T) -> T {
     }
 }
 
+extern crate stats_alloc;
+use stats_alloc::{Region, StatsAlloc, INSTRUMENTED_SYSTEM};
+use std::alloc::System;
+
+#[global_allocator]
+static GLOBAL: &StatsAlloc<System> = &INSTRUMENTED_SYSTEM;
+
 pub fn benchme(mut fun: impl FnMut(bool)) {
     let bench = is_benchmark();
     let start = Instant::now();
+    let reg = Region::new(&GLOBAL);
     let mut iterations = 0;
     loop {
         fun(bench);
@@ -76,10 +84,12 @@ pub fn benchme(mut fun: impl FnMut(bool)) {
     }
     if bench {
         let elapsed = start.elapsed().as_micros();
+        let stats = reg.change();
         println!(
-            "bench {} iterations in {}µs: {}ns",
+            "bench {} iterations in {}µs: {}b {}ns",
             iterations,
             elapsed,
+            stats.bytes_allocated as f64 / (iterations as f64),
             (1000 * elapsed) as f64 / (iterations as f64)
         );
     }

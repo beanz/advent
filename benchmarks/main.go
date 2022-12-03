@@ -377,6 +377,16 @@ func (bm benchmarkData) readResult(file string, lang, year, day string) error {
 		i := 0
 		if len(s) > 1 {
 			i = 1
+			first, second, ok := strings.Cut(s[1], "b ")
+			if ok {
+				s[1] = second
+				m, err := strconv.ParseFloat(first, 64)
+				if err != nil {
+					fmt.Printf("unable to parse memory: %v\n", s)
+				} else {
+					mem = &m
+				}
+			}
 		}
 		result = s[i][:len(s[i])-2]
 	case len(result) > 4 && result[len(result)-3:] == "μs":
