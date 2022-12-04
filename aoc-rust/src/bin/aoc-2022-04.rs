@@ -1,22 +1,12 @@
-fn next_uint(inp: &[u8], i: usize) -> (usize, usize) {
-    let mut n = 0;
-    let mut i = i;
-    while b'0' <= inp[i] && inp[i] <= b'9' {
-        n = 10 * n + (inp[i] - b'0') as usize;
-        i += 1;
-    }
-    (i, n)
-}
-
 fn parts(inp: &[u8]) -> (usize, usize) {
     let mut c1 = 0;
     let mut c2 = 0;
     let mut i = 0;
     while i < inp.len() {
-        let (j, l0) = next_uint(inp, i);
-        let (j, h0) = next_uint(inp, j + 1);
-        let (j, l1) = next_uint(inp, j + 1);
-        let (j, h1) = next_uint(inp, j + 1);
+        let (j, l0) = aoc::read::uint::<usize>(inp, i);
+        let (j, h0) = aoc::read::uint::<usize>(inp, j + 1);
+        let (j, l1) = aoc::read::uint::<usize>(inp, j + 1);
+        let (j, h1) = aoc::read::uint::<usize>(inp, j + 1);
         c1 += usize::from((l0 >= l1 && h0 <= h1) || (l1 >= l0 && h1 <= h0));
         c2 += usize::from(!(l0 > h1 || l1 > h0));
         i = j + 1

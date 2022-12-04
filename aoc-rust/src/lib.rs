@@ -1,4 +1,5 @@
 pub mod elfcomp2016;
+pub mod read;
 
 use std::env;
 use std::fmt;
@@ -470,16 +471,21 @@ impl Rope {
     }
 }
 
-#[test]
-fn twist_works() {
-    let mut r = Rope::new(5);
-    assert_eq!(format!("{}", r), "[0] 1 2 3 4", "twist example 0");
-    r.twist(3);
-    assert_eq!(format!("{}", r), "2 1 0 [3] 4", "twist example 1");
-    r.twist(4);
-    assert_eq!(format!("{}", r), "4 3 0 [1] 2", "twist example 2");
-    r.twist(1);
-    assert_eq!(format!("{}", r), "4 [3] 0 1 2", "twist example 3");
-    r.twist(5);
-    assert_eq!(format!("{}", r), "3 4 2 1 [0]", "twist example 4");
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn twist_works() {
+        let mut r = Rope::new(5);
+        assert_eq!(format!("{}", r), "[0] 1 2 3 4", "twist example 0");
+        r.twist(3);
+        assert_eq!(format!("{}", r), "2 1 0 [3] 4", "twist example 1");
+        r.twist(4);
+        assert_eq!(format!("{}", r), "4 3 0 [1] 2", "twist example 2");
+        r.twist(1);
+        assert_eq!(format!("{}", r), "4 [3] 0 1 2", "twist example 3");
+        r.twist(5);
+        assert_eq!(format!("{}", r), "3 4 2 1 [0]", "twist example 4");
+    }
 }
