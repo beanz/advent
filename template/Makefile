@@ -255,11 +255,11 @@ clippy: $(RS_SRC)
 
 expect-pl: aoc.pl
 	@if [ -z "$$AoC_E" ]; then echo 2>&1 "AoC_E must be set"; exit 1; fi
-	@while true; do perl aoc.pl $${TEST:-test1.txt} | tee /dev/stderr |grep -Fq $$AoC_E && break; sleep 1; done; perl aoc.pl
+	@while true; do perl aoc.pl $${TEST:-test1.txt} | tee /dev/stderr |grep -Fq "$$AoC_E" && break; sleep 1; done; perl aoc.pl
 
 expect-go: aoc-go
 	@if [ -z "$$AoC_E" ]; then echo 2>&1 "AoC_E must be set"; exit 1; fi
-	@while true; do go build -o aoc-go && ./aoc-go $${TEST:-test1.txt} |tee /dev/stderr |grep -Fq $$AoC_E && break; sleep 1; done; ./aoc-go
+	@while true; do go build -o aoc-go && ./aoc-go $${TEST:-test1.txt} |tee /dev/stderr |grep -Fq "$$AoC_E" && break; sleep 1; done; ./aoc-go
 
 template:
 	@if [ ! -e Makefile ]; then ln -s ../../template/Makefile . ; fi ; \
