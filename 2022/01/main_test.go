@@ -27,7 +27,7 @@ func TestParts(t *testing.T) {
 		p1   int
 		p2   int
 	}{
-		{"test1.txt", test1, 24000, 41000},
+		{"test1.txt", test1, 24000, 45000},
 		{"input.txt", input, 66487, 197301},
 	}
 	for _, tc := range tests {

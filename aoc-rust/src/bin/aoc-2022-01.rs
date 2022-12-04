@@ -6,22 +6,26 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let mut s = 0;
     let mut n = 0;
     let mut eol = false;
+    let mut add = |s| {
+        let mut s = s;
+        if s > max {
+            max = s;
+        }
+        if s > s0 {
+            (s, s0) = (s0, s)
+        }
+        if s > s1 {
+            (s, s1) = (s1, s)
+        }
+        if s > s2 {
+            s2 = s
+        }
+    };
     for ch in inp {
         match ch {
             b'\n' => {
                 if eol {
-                    if s > max {
-                        max = s;
-                    }
-                    if s > s0 {
-                        (s, s0) = (s0, s)
-                    }
-                    if s > s1 {
-                        (s, s1) = (s1, s)
-                    }
-                    if s > s2 {
-                        s2 = s
-                    }
+                    add(s);
                     s = 0;
                     eol = false;
                 } else {
@@ -35,6 +39,9 @@ fn parts(inp: &[u8]) -> (usize, usize) {
                 n = 10 * n + (ch - b'0') as usize;
             }
         }
+    }
+    if eol {
+        add(s);
     }
     (max, s0 + s1 + s2)
 }
@@ -57,7 +64,7 @@ mod tests {
     #[test]
     fn parts_works() {
         let inp = std::fs::read("../2022/01/test1.txt").expect("read error");
-        assert_eq!(parts(&inp), (24000, 41000));
+        assert_eq!(parts(&inp), (24000, 45000));
         let inp = std::fs::read("../2022/01/input.txt").expect("read error");
         assert_eq!(parts(&inp), (66487, 197301));
     }

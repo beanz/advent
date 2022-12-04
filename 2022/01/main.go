@@ -18,22 +18,25 @@ func Parts(inp []byte) (int, int) {
 	var n int
 	eol := false
 	max := 0
+	add := func(s int) {
+		if s > max {
+			max = s
+		}
+		if s > s0 {
+			s, s0 = s0, s
+		}
+		if s > s1 {
+			s, s1 = s1, s
+		}
+		if s > s2 {
+			s2 = s
+		}
+	}
 	for _, ch := range inp {
 		switch ch {
 		case '\n':
 			if eol {
-				if s > max {
-					max = s
-				}
-				if s > s0 {
-					s, s0 = s0, s
-				}
-				if s > s1 {
-					s, s1 = s1, s
-				}
-				if s > s2 {
-					s2 = s
-				}
+				add(s)
 				s = 0
 				eol = false
 			} else {
@@ -45,6 +48,9 @@ func Parts(inp []byte) (int, int) {
 			eol = false
 			n = 10*n + int(ch-'0')
 		}
+	}
+	if eol {
+		add(s)
 	}
 	return max, s0 + s1 + s2
 }
