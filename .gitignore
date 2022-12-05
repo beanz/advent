@@ -35,3 +35,5 @@ cover.out
 snippet[0-9]*.txt
 /benchmarks/benchmarks.md
 /lib-zig/zig-cache
+perf.data
+perf.data.old
