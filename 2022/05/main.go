@@ -59,11 +59,9 @@ func (d *Dock) Move(f, t, n int) {
 func (d *Dock) Move2(f, t, n int) {
 	fr := (MAX_STACKS + f) * MAX_CRATES
 	to := (MAX_STACKS + t) * MAX_CRATES
-	fe := int(d[fr]) + fr
+	fe := int(d[fr]) + 1 + fr
 	te := int(d[to]) + 1 + to
-	for i := 0; i < n; i++ {
-		d[te+i] = d[fe+i-n+1]
-	}
+	copy(d[te:te+n], d[fe-n:fe+1])
 	d[fr] -= byte(n)
 	d[to] += byte(n)
 }
