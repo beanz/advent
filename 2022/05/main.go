@@ -11,46 +11,61 @@ import (
 //go:embed input.txt
 var input []byte
 
-type Stack []byte
+const MAX_STACKS = 9
+const MAX_CRATES = 60
 
-func (s *Stack) Pick() byte {
-	cr := (*s)[len(*s)-1]
-	*s = (*s)[:len(*s)-1]
-	return cr
-}
+type Dock [MAX_STACKS * MAX_CRATES * 2]byte
 
-func (s *Stack) Place(cr byte) {
-	*s = append(*s, cr)
-}
-
-type Move struct {
-	n, from, to int
-}
-type Game struct {
-	st []Stack
-	mv []Move
-}
-
-func (g *Game) String() string {
+func (d *Dock) String() string {
 	var sb strings.Builder
-	for _, s := range g.st {
-		fmt.Fprintf(&sb, "C: %s\n", string(s))
-	}
-	//for _, m := range g.mv {
-	//  fmt.Fprintf(&sb, "M: %d %d -> %d\n", m.n, m.from, m.to)
-	//}
-	return sb.String()
-}
-
-func (g *Game) Top() string {
-	var sb strings.Builder
-	for _, s := range g.st {
-		if len(s) == 0 {
+	for i := 0; i < MAX_STACKS*2; i++ {
+		o := i * MAX_CRATES
+		if d[o] == 0 {
 			continue
 		}
-		fmt.Fprintf(&sb, "%s", string(s[len(s)-1]))
+		fmt.Fprintf(&sb, "%dx%d: %s\n", i, d[o], string(d[o+1:1+o+int(d[o])]))
 	}
 	return sb.String()
+}
+
+func (d *Dock) Add(i int, v byte) {
+	o := i * MAX_CRATES
+	e := int(d[o]) + 1 + o
+	copy(d[o+2:e+1], d[o+1:e])
+	d[o+1] = v
+	d[o]++
+}
+
+func (d *Dock) Top(i int) byte {
+	o := i * MAX_CRATES
+	if d[o] == 0 {
+		return ' '
+	}
+	return d[int(d[o])+o]
+}
+
+func (d *Dock) Move(f, t, n int) {
+	fr := f * MAX_CRATES
+	to := t * MAX_CRATES
+	fe := int(d[fr]) + fr
+	te := int(d[to]) + 1 + to
+	for i := 0; i < n; i++ {
+		d[te+i] = d[fe-i]
+	}
+	d[fr] -= byte(n)
+	d[to] += byte(n)
+}
+
+func (d *Dock) Move2(f, t, n int) {
+	fr := (MAX_STACKS + f) * MAX_CRATES
+	to := (MAX_STACKS + t) * MAX_CRATES
+	fe := int(d[fr]) + fr
+	te := int(d[to]) + 1 + to
+	for i := 0; i < n; i++ {
+		d[te+i] = d[fe+i-n+1]
+	}
+	d[fr] -= byte(n)
+	d[to] += byte(n)
 }
 
 func NextUInt(in []byte, i int) (j int, n int) {
@@ -61,12 +76,10 @@ func NextUInt(in []byte, i int) (j int, n int) {
 	return
 }
 
-func NewGame(in []byte) *Game {
-	stacks := make([]Stack, 9)
-	g := &Game{stacks, make([]Move, 0, 512)}
+func Parts(in []byte) ([MAX_STACKS]byte, [MAX_STACKS]byte) {
+	dock := Dock{}
 	i := 0
 	j := 0
-	st := make([][]byte, 9)
 	for ; i < len(in); i++ {
 		if in[i] == '\n' {
 			if j == 0 {
@@ -79,54 +92,29 @@ func NewGame(in []byte) *Game {
 		if in[i] < 'A' || in[i] > 'Z' {
 			continue
 		}
-		st[(j-1)/4] = append(st[(j-1)/4], in[i])
+		dock.Add((j-1)/4, in[i])
+		dock.Add(MAX_STACKS+(j-1)/4, in[i])
 	}
 	i++
 	for ; i < len(in); i++ {
 		j, n := NextUInt(in, i+5)
-		from, to := int(in[j+6]-'0'), int(in[j+11]-'0')
-		from--
-		to--
-		g.mv = append(g.mv, Move{n, from, to})
+		fr, to := int(in[j+6]-'1'), int(in[j+11]-'1')
+		dock.Move(fr, to, n)
+		dock.Move2(fr, to, n)
 		i = j + 12
 	}
-
-	for i, s := range st {
-		for j := len(s) - 1; j >= 0; j-- {
-			stacks[i] = append(stacks[i], s[j])
-		}
+	p1 := [MAX_STACKS]byte{}
+	p2 := [MAX_STACKS]byte{}
+	for i := 0; i < MAX_STACKS; i++ {
+		p1[i] = dock.Top(i)
+		p2[i] = dock.Top(MAX_STACKS + i)
 	}
-	return g
-}
-
-func (g *Game) Part1() string {
-	for _, mv := range g.mv {
-		for i := 0; i < mv.n; i++ {
-			cr := g.st[mv.from].Pick()
-			g.st[mv.to].Place(cr)
-		}
-	}
-	return g.Top()
-}
-
-func (g *Game) Part2() string {
-	cr := make([]byte, 0, 100)
-	for _, mv := range g.mv {
-		for i := 0; i < mv.n; i++ {
-			cr = append(cr, g.st[mv.from].Pick())
-		}
-		for j := len(cr) - 1; j >= 0; j-- {
-			g.st[mv.to].Place(cr[j])
-		}
-		cr = cr[:0]
-	}
-	return g.Top()
+	return p1, p2
 }
 
 func main() {
 	in := InputBytes(input)
-	p1 := NewGame(in).Part1()
-	p2 := NewGame(in).Part2()
+	p1, p2 := Parts(in)
 	if !benchmark {
 		fmt.Printf("Part 1: %s\n", p1)
 		fmt.Printf("Part 2: %s\n", p2)

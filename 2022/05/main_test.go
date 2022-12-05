@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "embed"
+	"fmt"
 	"testing"
 
 	assert "github.com/stretchr/testify/require"
@@ -20,31 +21,19 @@ func ExampleMain() {
 	// Part 2: WZMFVGGZP
 }
 
-func TestPart1(t *testing.T) {
+func TestParts(t *testing.T) {
 	tests := []struct {
-		file string
-		data []byte
-		ans  string
+		file   string
+		data   []byte
+		p1, p2 string
 	}{
-		{"test1.txt", test1, "CMZ"},
-		{"input.txt", input, "PTWLTDSJV"},
+		{"test1.txt", test1, "CMZ      ", "MCD      "},
+		{"input.txt", input, "PTWLTDSJV", "WZMFVGGZP"},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.ans, NewGame(tc.data).Part1(), tc.file)
-	}
-}
-
-func TestPart2(t *testing.T) {
-	tests := []struct {
-		file string
-		data []byte
-		ans  string
-	}{
-		{"test1.txt", test1, "MCD"},
-		{"input.txt", input, "WZMFVGGZP"},
-	}
-	for _, tc := range tests {
-		assert.Equal(t, tc.ans, NewGame(tc.data).Part2(), tc.file)
+		p1, p2 := Parts(tc.data)
+		assert.Equal(t, tc.p1, fmt.Sprintf("%s", p1), tc.file)
+		assert.Equal(t, tc.p2, fmt.Sprintf("%s", p2), tc.file)
 	}
 }
 
