@@ -1,56 +1,79 @@
-type Stack = [u8; 80];
+const MAX_CRATES: usize = 60;
+const MAX_STACKS: usize = 9;
+type Dock = [u8; MAX_STACKS * MAX_CRATES * 2];
 
 #[allow(dead_code)]
-fn len(s: &Stack) -> u8 {
-    s[0]
+fn len(d: &Dock, i: usize) -> u8 {
+    d[i * MAX_CRATES]
 }
-fn unshift(s: &mut Stack, v: u8) {
-    let mut i = s[0] as usize;
-    while i != 0 {
-        s[i + 1] = s[i];
-        i -= 1;
-    }
-    s[1] = v;
-    s[0] += 1;
+fn unshift(d: &mut Dock, i: usize, v: u8) {
+    let o = i * MAX_CRATES;
+    let l = d[o] as usize + 1 + o;
+    d.copy_within(o + 1..l, o + 2);
+    d[o + 1] = v;
+    d[o] += 1;
 }
-fn top(s: &Stack) -> u8 {
-    if s[0] == 0 {
+fn top(d: &Dock, i: usize) -> u8 {
+    let o = i * MAX_CRATES;
+    if d[o] == 0 {
         32
     } else {
-        s[s[0] as usize]
+        d[o + d[o] as usize]
     }
 }
 #[allow(dead_code)]
-fn pop(s: &mut Stack) -> u8 {
-    s[0] -= 1;
-    s[(1 + s[0]) as usize]
+fn pop(d: &mut Dock, i: usize) -> u8 {
+    let o = i * MAX_CRATES;
+    d[o] -= 1;
+    d[(1 + d[o]) as usize]
 }
 #[allow(dead_code)]
-fn push(s: &mut Stack, v: u8) {
-    s[0] += 1;
-    s[s[0] as usize] = v;
+fn push(d: &mut Dock, i: usize, v: u8) {
+    let o = i * MAX_CRATES;
+    d[o] += 1;
+    d[o + d[o] as usize] = v;
 }
-fn mov(s: &mut Stack, d: &mut Stack, n: usize) {
-    assert!(s[0] as usize >= n);
+fn mov(d: &mut Dock, f: usize, t: usize, n: usize) {
+    let fr = f * MAX_CRATES;
+    assert!(d[fr] as usize >= n);
+    let to = t * MAX_CRATES;
+    let fe = d[fr] as usize + fr;
+    let te = d[to] as usize + 1 + to;
     for i in 0..n {
-        let so = s[0] as usize;
-        let d_o = d[0] as usize + 1;
-        d[d_o + i] = s[so - i];
+        d[te + i] = d[fe - i];
     }
-    s[0] -= n as u8;
-    d[0] += n as u8;
+    d[fr] -= n as u8;
+    d[to] += n as u8;
 }
 
-fn mov2(s: &mut Stack, d: &mut Stack, n: usize) {
-    assert!(s[0] as usize >= n);
-    let o = d[0] as usize + 1;
-    d[o..o + n].copy_from_slice(&s[(s[0] + 1) as usize - n..(s[0] + 1) as usize]);
-    s[0] -= n as u8;
-    d[0] += n as u8;
+fn mov2(d: &mut Dock, f: usize, t: usize, n: usize) {
+    let fr = f * MAX_CRATES;
+    assert!(d[fr] as usize >= n);
+    let to = t * MAX_CRATES;
+    let fe = fr + 1 + (d[fr] as usize);
+    let te = to + 1 + (d[to] as usize);
+    d.copy_within(fe - n..fe, te);
+    d[fr] -= n as u8;
+    d[to] += n as u8;
+}
+#[allow(dead_code)]
+fn debug(d: &Dock) {
+    for i in 0..MAX_STACKS * 2 {
+        let o = i * MAX_CRATES;
+        if d[o] == 0 {
+            continue;
+        }
+        eprintln!(
+            "{}: {} {}",
+            i,
+            d[o],
+            std::str::from_utf8(&d[o + 1..o + (d[o] as usize + 1)]).expect("ascii")
+        );
+    }
 }
 
 fn parts(inp: &[u8]) -> ([u8; 9], [u8; 9]) {
-    let mut stacks = [[0; 80]; 18];
+    let mut dock = [0; MAX_STACKS * MAX_CRATES * 2];
     let mut i = 0;
     let mut j = 0;
     while i < inp.len() {
@@ -68,8 +91,8 @@ fn parts(inp: &[u8]) -> ([u8; 9], [u8; 9]) {
             continue;
         }
         let si = (j - 1) / 4;
-        unshift(&mut stacks[si], inp[i]);
-        unshift(&mut stacks[si + 9], inp[i]);
+        unshift(&mut dock, si, inp[i]);
+        unshift(&mut dock, si + 9, inp[i]);
         i += 1;
     }
     i += 1;
@@ -77,33 +100,15 @@ fn parts(inp: &[u8]) -> ([u8; 9], [u8; 9]) {
         let (j, n) = aoc::read::uint::<usize>(inp, i + 5);
         let f = (inp[j + 6] - b'1') as usize;
         let t = (inp[j + 11] - b'1') as usize;
-        {
-            let (s, d) = if f < t {
-                let (l, r) = stacks.split_at_mut(t);
-                (&mut l[f], &mut r[0])
-            } else {
-                let (l, r) = stacks.split_at_mut(f);
-                (&mut r[0], &mut l[t])
-            };
-            mov(s, d, n);
-        }
-        {
-            let (s, d) = if f < t {
-                let (l, r) = stacks.split_at_mut(9 + t);
-                (&mut l[9 + f], &mut r[0])
-            } else {
-                let (l, r) = stacks.split_at_mut(9 + f);
-                (&mut r[0], &mut l[9 + t])
-            };
-            mov2(s, d, n);
-        }
+        mov(&mut dock, f, t, n);
+        mov2(&mut dock, 9 + f, 9 + t, n);
         i = j + 13;
     }
     let mut p1 = [32; 9];
     let mut p2 = [32; 9];
     for i in 0..9 {
-        p1[i] = top(&stacks[i]);
-        p2[i] = top(&stacks[9 + i]);
+        p1[i] = top(&dock, i);
+        p2[i] = top(&dock, 9 + i);
     }
     (p1, p2)
 }
@@ -125,29 +130,37 @@ mod tests {
 
     #[test]
     fn stack_works() {
-        let mut s = [0; 80];
-        assert_eq!(len(&s), 0);
-        unshift(&mut s, b'A');
-        assert_eq!(len(&s), 1);
-        assert_eq!(top(&s), b'A');
-        unshift(&mut s, b'B');
-        assert_eq!(len(&s), 2);
-        assert_eq!(top(&s), b'A');
-        push(&mut s, b'C');
-        assert_eq!(len(&s), 3);
-        assert_eq!(top(&s), b'C');
-        assert_eq!(pop(&mut s), b'C');
-        assert_eq!(len(&s), 2);
-        assert_eq!(top(&s), b'A');
-        let mut d = [0; 80];
-        mov(&mut s, &mut d, 2);
-        assert_eq!(len(&s), 0);
-        assert_eq!(len(&d), 2);
-        assert_eq!(top(&d), b'B');
-        mov2(&mut d, &mut s, 2);
-        assert_eq!(len(&d), 0);
-        assert_eq!(len(&s), 2);
-        assert_eq!(top(&s), b'B');
+        let mut d = [0; MAX_STACKS * MAX_CRATES * 2];
+        assert_eq!(len(&d, 0), 0);
+        unshift(&mut d, 0, b'A');
+        assert_eq!(len(&d, 0), 1);
+        assert_eq!(top(&d, 0), b'A');
+        unshift(&mut d, 0, b'B');
+        assert_eq!(len(&d, 0), 2);
+        assert_eq!(top(&d, 0), b'A');
+        push(&mut d, 0, b'C');
+        assert_eq!(len(&d, 0), 3);
+        assert_eq!(top(&d, 0), b'C');
+        assert_eq!(pop(&mut d, 0), b'C');
+        assert_eq!(len(&d, 0), 2);
+        assert_eq!(top(&d, 0), b'A');
+        mov(&mut d, 0, 1, 2);
+        assert_eq!(len(&d, 0), 0);
+        assert_eq!(len(&d, 1), 2);
+        assert_eq!(top(&d, 1), b'B');
+        mov2(&mut d, 1, 0, 2);
+        assert_eq!(len(&d, 1), 0);
+        assert_eq!(len(&d, 0), 2);
+        assert_eq!(top(&d, 0), b'B');
+        unshift(&mut d, 9, b'D');
+        assert_eq!(len(&d, 9), 1);
+        assert_eq!(top(&d, 9), b'D');
+        unshift(&mut d, 9, b'C');
+        assert_eq!(len(&d, 9), 2);
+        assert_eq!(top(&d, 9), b'D');
+        unshift(&mut d, 9, b'M');
+        assert_eq!(len(&d, 9), 3);
+        assert_eq!(top(&d, 9), b'D');
     }
     #[test]
     fn parts_works() {
