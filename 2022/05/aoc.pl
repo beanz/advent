@@ -13,15 +13,15 @@ my $file = shift // "input.txt";
 my $reader = \&read_stuff;
 #my $reader = \&read_guess;
 my $i = $reader->($file);
-my $i2 = $reader->($file);
 
 sub read_stuff {
   my $file = shift;
-  my $in = read_lines($file);
+  my $in = read_guess($file);
   my @c = ();
-  my %m = ( m => $in, cr => \@c );
+  my @c2 = ();
+  my %m = ( m => $in->[1], cr => \@c, cr2 => \@c2 );
   CRANE:
-  while (my $l = shift @$in) {
+  while (my $l = shift @{$in->[0]}) {
     last if ($l eq "");
     for my $c (0..9) {
       my $cr = substr $l.(" " x 80), 1+($c*4), 1;
@@ -32,17 +32,16 @@ sub read_stuff {
         next;
       }
       push @{$c[$c]}, $cr;
+      push @{$c2[$c]}, $cr;
     }
   }
-  shift @$in;
   return \%m;
 }
 
 sub calc {
   my ($in) = @_;
-  my $c = 0;
   for my $l (@{$in->{m}}) {
-    my ($n, $c0, $c1) = ($l =~ m!move (\d+) from (\d+) to (\d+)!);
+    my (undef, $n, undef, $c0, undef, $c1) = @$l;
     $c0--;
     $c1--;
     for (0..$n-1) {
@@ -59,16 +58,15 @@ sub calc {
 
 sub calc2 {
   my ($in) = @_;
-  my $c = 0;
   for my $l (@{$in->{m}}) {
-    my ($n, $c0, $c1) = ($l =~ m!move (\d+) from (\d+) to (\d+)!);
+    my (undef, $n, undef, $c0, undef, $c1) = @$l;
     $c0--;
     $c1--;
-    my @cr = splice @{$in->{cr}->[$c0]}, 0, $n, ();
-    unshift @{$in->{cr}->[$c1]}, @cr;
+    my @cr = splice @{$in->{cr2}->[$c0]}, 0, $n, ();
+    unshift @{$in->{cr2}->[$c1]}, @cr;
   }
   my $s;
-  for my $cr (@{$in->{cr}}) {
+  for my $cr (@{$in->{cr2}}) {
     $s .= $cr->[0];
   }
   return $s;
@@ -80,7 +78,7 @@ print "Part 1: ", calc($i), "\n";
 
 testPart2() if (TEST);
 
-print "Part 2: ", calc2($i2), "\n";
+print "Part 2: ", calc2($i), "\n";
 
 sub testPart1 {
   my @test_cases =
