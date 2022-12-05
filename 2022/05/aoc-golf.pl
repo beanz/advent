@@ -1,0 +1,3 @@
+A=${A:-0}; export A
+perl -0nE 'sub p{return unless $ENV{A};print"\033[H\033[2J";say for@a;select$u,$u,$u,0.1}s/ 1 [^\n]*\n\n(.*)$//ms;$m=$1;s/(.*)\n/$a[$_].=substr$1,1+$_*4,1for(0..8)/meg;for(@a){s/ +//;$_=reverse};$_=$m;s/.{5}(\d+).{6}(\d)....(\d)\n/$t=$3;$a[$2-1]=~s!(.{$1})$!$a[$t-1].=reverse$1;""!e;p;""/mge;s/.*(.)$/$1/ for@a;say"Part 1: ",@a;' ${1:-input.txt}
+perl -0nE 'sub p{return unless $ENV{A};print"\033[H\033[2J";say for@a;select$u,$u,$u,0.1}s/ 1 [^\n]*\n\n(.*)$//ms;$m=$1;s/(.*)\n/$a[$_].=substr$1,1+$_*4,1for(0..8)/meg;for(@a){s/ +//;$_=reverse};$_=$m;s/.{5}(\d+).{6}(\d)....(\d)\n/$t=$3;$a[$2-1]=~s!(.{$1})$!$a[$t-1].=$1;""!e;p;""/mge;s/.*(.)$/$1/ for@a;say"Part 2: ",@a;' ${1:-input.txt}
