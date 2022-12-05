@@ -489,3 +489,19 @@ mod tests {
         assert_eq!(format!("{}", r), "3 4 2 1 [0]", "twist example 4");
     }
 }
+
+pub fn inp_debug(inp: &[u8], i: usize) {
+    let n = if i + 10 < inp.len() {
+        i + 10
+    } else {
+        inp.len()
+    };
+    for ch in &inp[i..n] {
+        if *ch == b'\n' {
+            eprint!("\\n");
+        } else {
+            eprint!("{}", *ch as char);
+        }
+    }
+    eprintln!();
+}
