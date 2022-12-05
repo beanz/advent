@@ -426,7 +426,11 @@ sub guess_input {
     return \@a;
   }
   if (/\n/) {
-    my @a = map guess_input($_), split/\n/;
+    my @a = split/\n/;
+    if (any { /^\s/ } @a) {
+    } else {
+      @a = map guess_input($_), @a;
+    }
     if (any { ref $_ } @a) {
       for (@a) {
         $_ = [$_] if (!ref$_);
