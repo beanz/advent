@@ -5,80 +5,43 @@ use v5.10;
 use lib "../../lib-perl";
 no warnings 'portable';
 use AoC::Helpers qw/:all/;
+use List::MoreUtils qw/slideatatime distinct/;
 #use Carp::Always qw/carp verbose/;
 #use Algorithm::Combinatorics qw/permutations combinations/;
 $; = $" = ',';
 
 my $file = shift // "input.txt";
-#my $reader = \&read_stuff;
 my $reader = \&read_guess;
 my $i = $reader->($file);
-my $i2 = $reader->($file);
-
-sub read_stuff {
-  my $file = shift;
-  my $in = read_lines($file);
-  my %m = ( lines => $in );
-  for my $i (0..(@$in-1)) {
-    my $l = $in->[$i];
-    print "$i: $l\n";
-  }
-  return \%m;
-}
 
 sub calc {
-  my ($in) = @_;
-  dd([$in],[qw/in/]);
-  my $l = 4;
-  for (0..length($in)-$l+1) {
-    my $ch = join "", sort, split//, substr $in, $_, $l;
-    print "$ch\n";
-    if ($ch !~ m!(.).*\1!) {
-      return $_+$l;
-    }
+  my ($in, $l) = @_;
+  $l //= 4;
+  my $i = 0;
+  my $line = ref $in ? $in->[0] : $in;
+  my $it = slideatatime 1, $l, split//, $line;
+  while (my @a = $it->()) {
+    return $i+$l if ((distinct @a) == @a);
+    $i++;
   }
   die "not found";
 }
 
-sub calc2 {
-  my ($in) = @_;
-  my $c = 0;
-  for my $l (@$in) {
-
-  }
-  return $c;
-}
-
-testPart1() if (TEST);
+testParts() if (TEST);
 
 print "Part 1: ", calc($i), "\n";
+print "Part 2: ", calc($i, 14), "\n";
 
-testPart2() if (TEST);
-
-print "Part 2: ", calc2($i2), "\n";
-
-sub testPart1 {
+sub testParts {
   my @test_cases =
     (
-     [ "test1.txt", 10 ],
-     [ "input.txt", 307 ],
+     [ "test1.txt", 4, 7 ],
+     [ "test1.txt", 14, 19 ],
+     [ "input.txt", 4, 1282 ],
+     [ "input.txt", 14, 3513 ],
     );
   for my $tc (@test_cases) {
-    my $res = calc($reader->($tc->[0]));
-    assertEq("Test 1 [$tc->[0]]", $res, $tc->[1]);
-  }
-}
-
-sub testPart2 {
-  my @test_cases =
-    (
-     [ "test1.txt", 1, 15 ],
-     [ "test1.txt", 2, 12 ],
-     [ "test1.txt", 10, 37 ],
-     [ "test1.txt", 100, 2208 ],
-    );
-  for my $tc (@test_cases) {
-    my $res = calc2($reader->($tc->[0]), $tc->[1]);
-    assertEq("Test 2 [$tc->[0] x $tc->[1]]", $res, $tc->[2]);
+    my $res = calc($reader->($tc->[0]), $tc->[1]);
+    assertEq("Test 1 [$tc->[0] $tc->[1]]", $res, $tc->[2]);
   }
 }

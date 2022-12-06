@@ -3,36 +3,40 @@ package main
 import (
 	_ "embed"
 	"fmt"
+
 	. "github.com/beanz/advent/lib-go"
 )
 
 //go:embed input.txt
 var input []byte
 
-type Game struct {
-	i int
+func Parts(in []byte) (int, int) {
+	return Part(in, 4), Part(in, 14)
 }
 
-func NewGame(in []byte) *Game {
-	return &Game{1}
-}
-
-func (g *Game) Part1() int {
-	return g.i
-}
-
-func (g *Game) Part2() int {
-	return g.i
+func Part(in []byte, l int) int {
+	for i := 0; i < len(in)-l; i++ {
+		ok := true
+		for j := i; j < i+l; j++ {
+			for k := j + 1; k < i+l; k++ {
+				if in[j] == in[k] {
+					ok = false
+					break
+				}
+			}
+		}
+		if ok {
+			return i + l
+		}
+	}
+	return -1
 }
 
 func main() {
-	g := NewGame(InputBytes(input))
-	p1 := g.Part1()
+	in := InputBytes(input)
+	p1, p2 := Parts(in)
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
-	}
-	p2 := g.Part2()
-	if !benchmark {
 		fmt.Printf("Part 2: %d\n", p2)
 	}
 }
