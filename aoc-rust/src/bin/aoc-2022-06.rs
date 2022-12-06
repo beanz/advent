@@ -1,8 +1,9 @@
 fn parts(inp: &[u8]) -> (usize, usize) {
-    (part(inp, 4), part(inp, 14))
+    let p1 = part(inp, 4, 0);
+    (p1, part(inp, 14, p1 - 4))
 }
-fn part(inp: &[u8], l: usize) -> usize {
-    let mut i = 0;
+fn part(inp: &[u8], l: usize, o: usize) -> usize {
+    let mut i = o;
     while i < inp.len() - l {
         let mut set = 0;
         for j in i..i + l {

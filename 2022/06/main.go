@@ -11,11 +11,12 @@ import (
 var input []byte
 
 func Parts(in []byte) (int, int) {
-	return Part(in, 4), Part(in, 14)
+	p1 := Part(in, 4, 0)
+	return p1, Part(in, 14, p1-4)
 }
 
-func Part(in []byte, l int) int {
-	for i := 0; i < len(in)-l; i++ {
+func Part(in []byte, l int, offset int) int {
+	for i := offset; i < len(in)-l; i++ {
 		ok := true
 	LOOP:
 		for j := i; j < i+l; j++ {
