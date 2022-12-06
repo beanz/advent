@@ -6,6 +6,7 @@ type Dock = [u8; MAX_STACKS * MAX_CRATES * 2];
 fn len(d: &Dock, i: usize) -> u8 {
     d[i * MAX_CRATES]
 }
+#[allow(dead_code)]
 fn unshift(d: &mut Dock, i: usize, v: u8) {
     let o = i * MAX_CRATES;
     let l = d[o] as usize + 1 + o;
@@ -81,28 +82,28 @@ fn debug(d: &Dock) {
 fn parts(inp: &[u8]) -> ([u8; 9], [u8; 9]) {
     let mut dock = [0; MAX_STACKS * MAX_CRATES * 2];
     let mut i = 0;
-    let mut j = 0;
+    let mut l = 0;
     while i < inp.len() {
         if inp[i] == b'\n' {
-            if j == 0 {
+            l += 1;
+            if inp[i + 1] == b'\n' {
                 break;
             }
-            j = 0;
-            i += 1;
-            continue;
         }
-        j += 1;
-        if inp[i] < b'A' || inp[i] > b'Z' {
-            i += 1;
-            continue;
-        }
-        let si = (j - 1) / 4;
-        push(&mut dock, si, inp[i]);
-        push(&mut dock, si + 9, inp[i]);
         i += 1;
     }
-    for j in 0..MAX_STACKS * 2 {
-        reverse(&mut dock, j);
+    i += 1;
+    let ll = i / l;
+    let mut j = i - ll;
+    while j > 0 {
+        j -= ll;
+        for k in 0..ll / 4 {
+            let ch = inp[j + 1 + k * 4];
+            if b'A' <= ch && ch <= b'Z' {
+                push(&mut dock, k, ch);
+                push(&mut dock, k + 9, ch);
+            }
+        }
     }
     i += 1;
     while i < inp.len() {
