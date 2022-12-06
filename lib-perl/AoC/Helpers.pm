@@ -651,7 +651,7 @@ sub read_chunky_records {
     my $xy = $self->xy($p);
     my @n;
     if ($xy->[X] > 0) {
-      push @n, $p;
+      push @n, $p-1;
     }
     if ($xy->[X] < $self->[WIDTH]-1) {
       push @n, $p+1;
