@@ -2,12 +2,14 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     (part(inp, 4), part(inp, 14))
 }
 fn part(inp: &[u8], l: usize) -> usize {
-    for i in 0..inp.len() - l {
+    let mut i = 0;
+    while i < inp.len() - l {
         let mut ok = true;
         'Loop: for j in i..i + l {
             for k in j + 1..i + l {
                 if inp[j] == inp[k] {
                     ok = false;
+                    i = j;
                     break 'Loop;
                 }
             }
@@ -15,6 +17,7 @@ fn part(inp: &[u8], l: usize) -> usize {
         if ok {
             return i + l;
         }
+        i += 1;
     }
     1
 }

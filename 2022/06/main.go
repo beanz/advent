@@ -22,6 +22,7 @@ func Part(in []byte, l int) int {
 			for k := j + 1; k < i+l; k++ {
 				if in[j] == in[k] {
 					ok = false
+					i = j
 					break LOOP
 				}
 			}
