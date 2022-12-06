@@ -1,15 +1,29 @@
+macro_rules! read_uint {
+    ($in:expr, $i:expr, $t:ty) => {{
+        let mut n: $t = 0;
+        while b'0' <= $in[$i] && $in[$i] <= b'9' {
+            n = 10 * n + ($in[$i] - b'0') as $t;
+            $i += 1;
+        }
+        n
+    }};
+}
+
 fn parts(inp: &[u8]) -> (usize, usize) {
     let mut c1 = 0;
     let mut c2 = 0;
     let mut i = 0;
     while i < inp.len() {
-        let (j, l0) = aoc::read::uint::<usize>(inp, i);
-        let (j, h0) = aoc::read::uint::<usize>(inp, j + 1);
-        let (j, l1) = aoc::read::uint::<usize>(inp, j + 1);
-        let (j, h1) = aoc::read::uint::<usize>(inp, j + 1);
+        let l0 = read_uint!(inp, i, usize);
+        i += 1;
+        let h0 = read_uint!(inp, i, usize);
+        i += 1;
+        let l1 = read_uint!(inp, i, usize);
+        i += 1;
+        let h1 = read_uint!(inp, i, usize);
+        i += 1;
         c1 += usize::from((l0 >= l1 && h0 <= h1) || (l1 >= l0 && h1 <= h0));
         c2 += usize::from(!(l0 > h1 || l1 > h0));
-        i = j + 1
     }
     (c1, c2)
 }
