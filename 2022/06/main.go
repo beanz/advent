@@ -17,11 +17,12 @@ func Parts(in []byte) (int, int) {
 func Part(in []byte, l int) int {
 	for i := 0; i < len(in)-l; i++ {
 		ok := true
+	LOOP:
 		for j := i; j < i+l; j++ {
 			for k := j + 1; k < i+l; k++ {
 				if in[j] == in[k] {
 					ok = false
-					break
+					break LOOP
 				}
 			}
 		}
