@@ -22,6 +22,12 @@ fn top(d: &Dock, i: usize) -> u8 {
     }
 }
 #[allow(dead_code)]
+fn reverse(d: &mut Dock, i: usize) {
+    let o = i * MAX_CRATES;
+    let l = d[o] as usize;
+    d[(o + 1)..(l + o + 1)].reverse();
+}
+#[allow(dead_code)]
 fn pop(d: &mut Dock, i: usize) -> u8 {
     let o = i * MAX_CRATES;
     d[o] -= 1;
@@ -91,9 +97,12 @@ fn parts(inp: &[u8]) -> ([u8; 9], [u8; 9]) {
             continue;
         }
         let si = (j - 1) / 4;
-        unshift(&mut dock, si, inp[i]);
-        unshift(&mut dock, si + 9, inp[i]);
+        push(&mut dock, si, inp[i]);
+        push(&mut dock, si + 9, inp[i]);
         i += 1;
+    }
+    for j in 0..MAX_STACKS * 2 {
+        reverse(&mut dock, j);
     }
     i += 1;
     while i < inp.len() {
@@ -161,6 +170,9 @@ mod tests {
         unshift(&mut d, 9, b'M');
         assert_eq!(len(&d, 9), 3);
         assert_eq!(top(&d, 9), b'D');
+        reverse(&mut d, 9);
+        assert_eq!(len(&d, 9), 3);
+        assert_eq!(top(&d, 9), b'M');
     }
     #[test]
     fn parts_works() {
