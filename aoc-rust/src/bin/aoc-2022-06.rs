@@ -4,17 +4,17 @@ fn parts(inp: &[u8]) -> (usize, usize) {
 fn part(inp: &[u8], l: usize) -> usize {
     let mut i = 0;
     while i < inp.len() - l {
-        let mut ok = true;
-        'Loop: for j in i..i + l {
-            for k in j + 1..i + l {
-                if inp[j] == inp[k] {
-                    ok = false;
-                    i = j;
-                    break 'Loop;
-                }
+        let mut set = 0;
+        for j in i..i + l {
+            let bit = 1 << (inp[j] - b'a') as usize;
+            if set & bit != 0 {
+                //i = j;
+                set = 0;
+                break;
             }
+            set |= bit;
         }
-        if ok {
+        if set != 0 {
             return i + l;
         }
         i += 1;
