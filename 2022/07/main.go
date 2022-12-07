@@ -3,57 +3,12 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
 
 //go:embed input.txt
 var input []byte
-
-func parent(d string) string {
-	l := strings.LastIndex(d, "/")
-	if l == 0 {
-		return "/"
-	}
-	return d[:l]
-}
-
-func cd(c, n string) string {
-	if n == "/" {
-		return n
-	}
-	if n == ".." {
-		return parent(c)
-	}
-	if c == "/" {
-		return "/" + n
-	}
-	return c + "/" + n
-}
-
-func bparent(d []byte) []byte {
-	for j := len(d) - 1; j > 0; j-- {
-		if d[j] == '/' {
-			return d[:j]
-		}
-	}
-	return d[:1]
-}
-
-func bcd(c, n []byte) []byte {
-	if len(n) == 1 && n[0] == '/' {
-		return n
-	}
-	if len(n) == 2 && n[0] == '.' && n[1] == '.' {
-		return bparent(c)
-	}
-	if len(c) == 1 && c[0] == '/' {
-		return append(c, n...)
-	}
-	c = append(c, '/')
-	return append(c, n...)
-}
 
 func NextUInt(in []byte, i int) (j int, n int) {
 	j = i
@@ -63,66 +18,62 @@ func NextUInt(in []byte, i int) (j int, n int) {
 	return
 }
 
-func key(d []byte) int {
-	k := len(d)
-	for i, ch := range d {
-		k ^= int(ch) * (19 + i*7)
+func NextLine(in []byte, i int) int {
+	for in[i] != '\n' {
+		i++
 	}
-	return k
+	i++
+	return i
 }
 
 func Parts(in []byte) (int, int) {
-	w := []byte{'/'}
-	s := make(map[int]int, 200)
-	for i := 0; i < len(in); i++ {
-		if in[i] == '$' {
-			if in[i+2] == 'l' {
-				continue
+	t := 0
+	n := 0
+	for _, ch := range in {
+		if '0' <= ch && ch <= '9' {
+			n = 10*n + int(ch-'0')
+		} else {
+			if n > 0 {
+				t += n
+				n = 0
 			}
-			j := i + 5
-			for in[j] != '\n' {
-				j++
-			}
-			n := in[i+5 : j]
-			w = bcd(w, n)
-			i = j
-			continue
 		}
-		if '0' <= in[i] && in[i] <= '9' {
-			j, b := NextUInt(in, i)
-			d := w
-			for {
-				s[key(d)] += b
-				u := bparent(d)
-				if len(u) == len(d) {
-					break
-				}
-				d = u
-			}
-			for in[j] != '\n' {
-				j++
-			}
-			i = j
-			continue
-		}
-		j := i
-		for in[j] != '\n' {
-			j++
-		}
-		i = j
 	}
-	m := 70000000
-	n := 30000000 - (m - s[key([]byte{'/'})])
+	p1 := 0
+	min := 70000000
+	need := 30000000 - (min - t)
+	i := 0
+	i = NextLine(in, i)
+	Size(in, i, need, &min, &p1)
+	return p1, min
+}
+
+func Size(in []byte, i int, need int, min *int, p1 *int) (int, int) {
 	c := 0
-	for _, v := range s {
-		if v <= 100000 {
-			c += v
+	for i < len(in) {
+		if '0' <= in[i] && in[i] <= '9' {
+			j, n := NextUInt(in, i)
+			i = j
+			c += n
+		} else if in[i+5] == '.' {
+			i = NextLine(in, i)
+			return i, c
+		} else if in[i] == '$' && in[i+2] == 'c' {
+			i = NextLine(in, i)
+			j, s := Size(in, i, need, min, p1)
+			if s < 100000 {
+				*p1 += s
+			}
+			if s < *min && s > need {
+				*min = s
+			}
+			c += s
+			i = j
+			continue
 		}
-		if v >= n && v < m {
-			m = v
-		}
+		i = NextLine(in, i)
 	}
-	return c, m
+	return i, c
 }
 
 func main() {

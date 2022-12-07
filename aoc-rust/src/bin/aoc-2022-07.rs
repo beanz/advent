@@ -1,35 +1,3 @@
-fn parts(inp: &[u8]) -> (usize, usize) {
-    let mut t = 0;
-    let mut n = 0;
-    let mut num = false;
-    for ch in inp {
-        match ch {
-            b'0'..=b'9' => {
-                n = 10 * n + (ch - b'0') as usize;
-                num = true;
-            }
-            _ => {
-                if num {
-                    t += n
-                } else {
-                    num = false;
-                }
-                n = 0;
-            }
-        }
-    }
-    let mut p1 = 0;
-    let mut min = 70000000;
-    let need = 30000000 - (min - t);
-    let mut i = 0;
-    while inp[i] != b'\n' {
-        i += 1;
-    }
-    i += 1;
-    let _ = size(inp, i, need, &mut min, &mut p1);
-    (p1, min)
-}
-
 macro_rules! next_line {
     ($in:expr, $i:expr) => {{
         while $in[$i] != b'\n' {
@@ -38,6 +6,32 @@ macro_rules! next_line {
         $i += 1;
     }};
 }
+
+fn parts(inp: &[u8]) -> (usize, usize) {
+    let mut t = 0;
+    let mut n = 0;
+    for ch in inp {
+        match ch {
+            b'0'..=b'9' => {
+                n = 10 * n + (ch - b'0') as usize;
+            }
+            _ => {
+                if n > 0 {
+                    t += n;
+                    n = 0;
+                }
+            }
+        }
+    }
+    let mut p1 = 0;
+    let mut min = 70000000;
+    let need = 30000000 - (min - t);
+    let mut i = 0;
+    next_line!(inp, i);
+    let _ = size(inp, i, need, &mut min, &mut p1);
+    (p1, min)
+}
+
 fn size(inp: &[u8], i: usize, n: usize, m: &mut usize, p1: &mut usize) -> (usize, usize) {
     let mut c = 0;
     let mut i = i;

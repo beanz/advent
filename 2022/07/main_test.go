@@ -36,30 +36,6 @@ func TestParts(t *testing.T) {
 	}
 }
 
-func Test_bparent(t *testing.T) {
-	assert.Equal(t, []byte{'/'}, bparent([]byte("/a")))
-	assert.Equal(t, []byte("/a"), bparent([]byte("/a/b")))
-	assert.Equal(t, []byte{'/'}, bparent([]byte("/")))
-}
-
-func Test_bcd(t *testing.T) {
-	assert.Equal(t, []byte{'/'}, bcd([]byte("/a/b"), []byte{'/'}))
-	assert.Equal(t, []byte("/a"), bcd([]byte("/a/b"), []byte("..")))
-	assert.Equal(t, []byte("/a/b"), bcd([]byte("/a"), []byte("b")))
-}
-
-func Test_parent(t *testing.T) {
-	assert.Equal(t, "/", parent("/a"))
-	assert.Equal(t, "/a", parent("/a/b"))
-	assert.Equal(t, "/", parent("/"))
-}
-
-func Test_cd(t *testing.T) {
-	assert.Equal(t, "/", cd("/a/b", "/"))
-	assert.Equal(t, "/a", cd("/a/b", ".."))
-	assert.Equal(t, "/a/b", cd("/a", "b"))
-}
-
 func BenchmarkMain(b *testing.B) {
 	benchmark = true
 	for i := 0; i < b.N; i++ {
