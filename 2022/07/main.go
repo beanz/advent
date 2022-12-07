@@ -27,9 +27,32 @@ func cd(c, n string) string {
 		return parent(c)
 	}
 	if c == "/" {
-		return c + n
+		return "/" + n
 	}
 	return c + "/" + n
+}
+
+func bparent(d []byte) []byte {
+	for j := len(d) - 1; j > 0; j-- {
+		if d[j] == '/' {
+			return d[:j]
+		}
+	}
+	return d[:1]
+}
+
+func bcd(c, n []byte) []byte {
+	if len(n) == 1 && n[0] == '/' {
+		return n
+	}
+	if len(n) == 2 && n[0] == '.' && n[1] == '.' {
+		return bparent(c)
+	}
+	if len(c) == 1 && c[0] == '/' {
+		return append(c, n...)
+	}
+	c = append(c, '/')
+	return append(c, n...)
 }
 
 func NextUInt(in []byte, i int) (j int, n int) {
@@ -40,9 +63,17 @@ func NextUInt(in []byte, i int) (j int, n int) {
 	return
 }
 
+func key(d []byte) int {
+	k := len(d)
+	for i, ch := range d {
+		k ^= int(ch) * (19 + i*7)
+	}
+	return k
+}
+
 func Parts(in []byte) (int, int) {
-	w := "/"
-	s := make(map[string]int, 200)
+	w := []byte{'/'}
+	s := make(map[int]int, 200)
 	for i := 0; i < len(in); i++ {
 		if in[i] == '$' {
 			if in[i+2] == 'l' {
@@ -52,8 +83,8 @@ func Parts(in []byte) (int, int) {
 			for in[j] != '\n' {
 				j++
 			}
-			n := string(in[i+5 : j])
-			w = cd(w, n)
+			n := in[i+5 : j]
+			w = bcd(w, n)
 			i = j
 			continue
 		}
@@ -61,9 +92,9 @@ func Parts(in []byte) (int, int) {
 			j, b := NextUInt(in, i)
 			d := w
 			for {
-				s[d] += b
-				u := parent(d)
-				if u == d {
+				s[key(d)] += b
+				u := bparent(d)
+				if len(u) == len(d) {
 					break
 				}
 				d = u
@@ -81,7 +112,7 @@ func Parts(in []byte) (int, int) {
 		i = j
 	}
 	m := 70000000
-	n := 30000000 - (m - s["/"])
+	n := 30000000 - (m - s[key([]byte{'/'})])
 	c := 0
 	for _, v := range s {
 		if v <= 100000 {
