@@ -16,10 +16,8 @@ fn parts(inp: &[u8]) -> (usize, usize) {
                 n = 10 * n + (ch - b'0') as usize;
             }
             _ => {
-                if n > 0 {
-                    t += n;
-                    n = 0;
-                }
+                t += n;
+                n = 0;
             }
         }
     }
@@ -38,18 +36,19 @@ fn size(inp: &[u8], i: usize, n: usize, m: &mut usize, p1: &mut usize) -> (usize
     while i < inp.len() {
         if b'0' <= inp[i] && inp[i] <= b'9' {
             let (j, n) = aoc::read::uint::<usize>(inp, i);
-            i = j;
+            i = j + 1;
             c += n;
         } else if inp[i + 5] == b'.' {
-            next_line!(inp, i);
+            i += 8;
             return (i, c);
-        } else if inp[i + 0] == b'$' && inp[i + 2] == b'c' {
+        } else if inp[i + 2] == b'c' {
+            // no single digit sizes so we don't need to check '$'
+            i += 6;
             next_line!(inp, i);
             let (j, s) = size(inp, i, n, m, p1);
             if s < 100000 {
                 *p1 += s;
-            }
-            if s < *m && s > n {
+            } else if s < *m && s > n {
                 *m = s;
             }
             c += s;

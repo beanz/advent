@@ -33,10 +33,8 @@ func Parts(in []byte) (int, int) {
 		if '0' <= ch && ch <= '9' {
 			n = 10*n + int(ch-'0')
 		} else {
-			if n > 0 {
-				t += n
-				n = 0
-			}
+			t += n
+			n = 0
 		}
 	}
 	p1 := 0
@@ -53,18 +51,18 @@ func Size(in []byte, i int, need int, min *int, p1 *int) (int, int) {
 	for i < len(in) {
 		if '0' <= in[i] && in[i] <= '9' {
 			j, n := NextUInt(in, i)
-			i = j
+			i = j + 1
 			c += n
 		} else if in[i+5] == '.' {
-			i = NextLine(in, i)
+			i += 8
 			return i, c
-		} else if in[i] == '$' && in[i+2] == 'c' {
+		} else if in[i+2] == 'c' {
+			i += 6
 			i = NextLine(in, i)
 			j, s := Size(in, i, need, min, p1)
 			if s < 100000 {
 				*p1 += s
-			}
-			if s < *min && s > need {
+			} else if s < *min && s > need {
 				*min = s
 			}
 			c += s

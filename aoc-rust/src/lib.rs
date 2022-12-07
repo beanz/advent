@@ -79,7 +79,7 @@ pub fn benchme(mut fun: impl FnMut(bool)) {
     loop {
         fun(bench);
         iterations += 1;
-        if !bench || start.elapsed().as_micros() > 500000 {
+        if !bench || start.elapsed().as_micros() > 5000000 {
             break;
         }
     }
