@@ -10,7 +10,7 @@ where
     let mut i = i;
     assert!(i < inp.len() && b'0' <= inp[i] && inp[i] <= b'9');
     while i < inp.len() && b'0' <= inp[i] && inp[i] <= b'9' {
-        n = n * 10.into() + (inp[i] - b'0').into();
+        n = n * 10.into() + (inp[i] & 0xf).into();
         i += 1;
     }
     (i, n)

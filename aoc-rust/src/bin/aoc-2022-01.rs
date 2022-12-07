@@ -36,7 +36,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             }
             _ => {
                 eol = false;
-                n = 10 * n + (ch - b'0') as usize;
+                n = 10 * n + (ch&0xf) as usize;
             }
         }
     }

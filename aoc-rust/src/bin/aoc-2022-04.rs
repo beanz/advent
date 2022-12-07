@@ -2,7 +2,7 @@ macro_rules! read_uint {
     ($in:expr, $i:expr, $t:ty) => {{
         let mut n: $t = 0;
         while b'0' <= $in[$i] && $in[$i] <= b'9' {
-            n = 10 * n + ($in[$i] - b'0') as $t;
+            n = 10 * n + ($in[$i] & 0xf) as $t;
             $i += 1;
         }
         n

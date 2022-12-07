@@ -45,7 +45,7 @@ func FastInts(l []byte, expected int) []int {
 	for _, ch := range l {
 		if ch >= '0' && ch <= '9' {
 			num = true
-			n = n*10 + int(ch-'0')
+			n = n*10 + int(ch&0xf)
 		} else if num {
 			res = append(res, n)
 			n = 0
@@ -68,7 +68,7 @@ func FastSignedInts(l []byte, expected int) []int {
 			m = -1
 		} else if ch >= '0' && ch <= '9' {
 			num = true
-			n = n*10 + int(ch-'0')
+			n = n*10 + int(ch&0xf)
 		} else if num {
 			res = append(res, n*m)
 			n = 0
@@ -89,7 +89,7 @@ func FastBytes(l []byte) []byte {
 	for _, ch := range l {
 		if ch >= '0' && ch <= '9' {
 			num = true
-			n = n*10 + ch - '0'
+			n = n*10 + (ch & 0xf)
 		} else if num {
 			res = append(res, n)
 			n = 0
@@ -112,7 +112,7 @@ func FastInt64s(l []byte, expected int) []int64 {
 			m = -1
 		} else if ch >= '0' && ch <= '9' {
 			num = true
-			n = n*10 + int64(ch-'0')
+			n = n*10 + int64(ch&0xf)
 		} else if num {
 			res = append(res, n*m)
 			n = 0
@@ -131,7 +131,7 @@ func ScanUint(in []byte, i int) (int, int) {
 	j := i
 	for ; j < len(in); j++ {
 		if in[j] >= '0' && in[j] <= '9' {
-			n = n*10 + int(in[j]-'0')
+			n = n*10 + int(in[j]&0xf)
 		} else {
 			break
 		}
@@ -149,7 +149,7 @@ func ScanInt(in []byte, i int) (int, int) {
 	}
 	for ; j < len(in); j++ {
 		if in[j] >= '0' && in[j] <= '9' {
-			n = n*10 + int(in[j]-'0')
+			n = n*10 + int(in[j]&0xf)
 		} else {
 			break
 		}

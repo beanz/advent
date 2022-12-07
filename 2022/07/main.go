@@ -31,7 +31,7 @@ func Parts(in []byte) (int, int) {
 	n := 0
 	for _, ch := range in {
 		if '0' <= ch && ch <= '9' {
-			n = 10*n + int(ch-'0')
+			n = 10*n + int(ch&0xf)
 		} else {
 			t += n
 			n = 0

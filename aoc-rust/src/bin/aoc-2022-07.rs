@@ -13,7 +13,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     for ch in inp {
         match ch {
             b'0'..=b'9' => {
-                n = 10 * n + (ch - b'0') as usize;
+                n = 10 * n + (ch & 0xf) as usize;
             }
             _ => {
                 t += n;

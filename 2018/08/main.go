@@ -52,8 +52,8 @@ func (p *parseState) Part2Parse() int {
 	s := 0
 	c := p.next()
 	m := p.next()
-	cc := []int{}
 	if c > 0 {
+		cc := make([]int, 0, c)
 		for j := 0; j < c; j++ {
 			cc = append(cc, p.Part2Parse())
 		}
