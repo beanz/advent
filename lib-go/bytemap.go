@@ -141,3 +141,25 @@ func (m *ByteMap) Visit(fn func(i int, v byte) (byte, bool)) {
 		}
 	}
 }
+
+func (m *ByteMap) VisitXY(fn func(x, y int, v byte) (byte, bool)) {
+	for y := 0; y < m.h; y++ {
+		for x := 0; x < m.w-1; x++ { // -1 due to newlines
+			i := x + y*m.w
+			if v, update := fn(x, y, m.d[i]); update {
+				m.d[i] = v
+			}
+		}
+	}
+}
+
+func (m *ByteMap) VisitXYI(fn func(x, y, i int, v byte) (byte, bool)) {
+	for y := 0; y < m.h; y++ {
+		for x := 0; x < m.w-1; x++ { // -1 due to newlines
+			i := x + y*m.w
+			if v, update := fn(x, y, i, m.d[i]); update {
+				m.d[i] = v
+			}
+		}
+	}
+}

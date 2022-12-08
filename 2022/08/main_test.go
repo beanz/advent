@@ -20,31 +20,19 @@ func ExampleMain() {
 	// Part 2: 201684
 }
 
-func TestPart1(t *testing.T) {
+func TestParts(t *testing.T) {
 	tests := []struct {
-		file string
-		data []byte
-		ans  int
+		file   string
+		data   []byte
+		p1, p2 int
 	}{
-		{"test1.txt", test1, 21},
-		{"input.txt", input, 1681},
+		{"test1.txt", test1, 21, 8},
+		{"input.txt", input, 1681, 201684},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.ans, NewGame(tc.data).Part1(), tc.file)
-	}
-}
-
-func TestPart2(t *testing.T) {
-	tests := []struct {
-		file string
-		data []byte
-		ans  int
-	}{
-		{"test1.txt", test1, 8},
-		{"input.txt", input, 201684},
-	}
-	for _, tc := range tests {
-		assert.Equal(t, tc.ans, NewGame(tc.data).Part2(), tc.file)
+		p1, p2 := Parts(tc.data)
+		assert.Equal(t, tc.p1, p1, tc.file)
+		assert.Equal(t, tc.p2, p2, tc.file)
 	}
 }
 
