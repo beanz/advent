@@ -1,3 +1,5 @@
+type Int = i32;
+
 fn parts(inp: &[u8]) -> (usize, usize) {
     let mut p1 = 0;
     let mut p2 = 0;
@@ -7,7 +9,9 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     }
     let w1 = w + 1;
     let h = inp.len() / w1;
-    let inc: [usize; 4] = [w1 - 1, w1 + 1, 0, 2 * w1]; // -1,1,-w1,w1
+    let w1i = (w + 1) as Int;
+    let w1xh = w1i * h as Int;
+    let inc: [Int; 4] = [-1, 1, -(w1 as Int), w1 as Int];
     for i in 0..inp.len() {
         let t = inp[i];
         if t == b'\n' {
@@ -16,17 +20,17 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         let mut p1_done = false;
         let mut score = 1;
         for di in inc {
-            let mut ni = i;
-            (ni, _) = (ni + di).overflowing_sub(w1);
+            let mut ni = i as Int;
+            ni += di;
             let mut view = 0;
             let mut visible = true;
-            while ni % w1 != w && ni < w1 * h {
+            while ni >= 0 && ni < w1xh && ni % w1i != w as Int {
                 view += 1;
-                if inp[ni] >= t {
+                if inp[ni as usize] >= t {
                     visible = false;
                     break;
                 }
-                (ni, _) = (ni + di).overflowing_sub(w1);
+                ni += di;
             }
             score *= view;
             if visible && !p1_done {
