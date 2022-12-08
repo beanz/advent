@@ -1,0 +1,1 @@
+perl -lE '@O=(-1,0,1,0,-1);@w=map{chomp;[split//]}<>;$H=@w;$W=@{$w[0]};for$y(0..$H-1){for$x(0..$W-1){$d=1;$s=1;for(0..3){$v=1;$dx=$O[$_];$dy=$O[$_+1];$c=0;$X=$x+$dx;$Y=$y+$dy;while(0<=$X&&$X<$W&&0<=$Y&&$Y<$H){$c++;if($w[$Y][$X]>=$w[$y][$x]){$v=0;last}$X=$X+$dx;$Y=$Y+$dy}$s*=$c;if($v*$d){$p++;$d=0}}$P=$s if($s>$P)}}say"Part 1: $p\nPart 2: $P"' ${1:-input.txt}
