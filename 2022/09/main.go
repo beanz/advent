@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"math/bits"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -10,36 +11,38 @@ import (
 //go:embed input.txt
 var input []byte
 
-type Int int32
+type Int int
+
+var isDigit = [256]bool{48: true, 49: true, 50: true, 51: true, 52: true, 53: true, 54: true, 55: true, 56: true, 57: true}
 
 func NextUInt(in []byte, i int) (j int, n int) {
 	j = i
-	for ; '0' <= in[j] && in[j] <= '9'; j++ {
-		n = 10*n + int(in[j]-'0')
+	for ; isDigit[in[j]]; j++ {
+		n = 10*n + int(in[j]&0xf)
 	}
 	return
 }
 
-func Move(h, t Pos) Pos {
+func Move(h, t Pos) (Pos, bool) {
 	dx, dy := h.x-t.x, h.y-t.y
 	if dx <= 1 && dx >= -1 && dy <= 1 && dy >= -1 {
-		return t
+		return t, false
 	}
-	if dx > 1 {
-		t.x = h.x - 1
-	} else if dx < -1 {
-		t.x = h.x + 1
+	if dx > 0 {
+		t.x++
+	} else if dx < 0 {
+		t.x--
 	} else {
 		t.x = h.x
 	}
-	if dy > 1 {
-		t.y = h.y - 1
-	} else if dy < -1 {
-		t.y = h.y + 1
+	if dy > 0 {
+		t.y++
+	} else if dy < 0 {
+		t.y--
 	} else {
 		t.y = h.y
 	}
-	return t
+	return t, true
 }
 
 type Pos struct {
@@ -49,25 +52,27 @@ type Pos struct {
 var Inc = [86]Pos{'R': {1, 0}, 'L': {-1, 0}, 'D': {0, 1}, 'U': {0, -1}}
 
 func Parts(in []byte) (int, int) {
-	v1, v2 := make(map[Pos]struct{}, 6000), make(map[Pos]struct{}, 3000)
-	h := Pos{0, 0}
-	t := []Pos{{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}}
+	v1, v2 := VisitMap{}, VisitMap{}
+	t := [10]Pos{}
 	for i := 0; i < len(in); i++ {
 		ch := in[i]
 		j, n := NextUInt(in, i+2)
 		i = j
 		inc := Inc[ch]
+		var dragged bool
 		for j := 0; j < int(n); j++ {
-			h.x, h.y = h.x+inc.x, h.y+inc.y
-			t[0] = Move(h, t[0])
-			for k := 1; k <= 8; k++ {
-				t[k] = Move(t[k-1], t[k])
+			t[0].x, t[0].y = t[0].x+inc.x, t[0].y+inc.y
+			for k := 1; k <= 9; k++ {
+				t[k], dragged = Move(t[k-1], t[k])
+				if !dragged {
+					break
+				}
 			}
-			v1[t[0]] = struct{}{}
-			v2[t[8]] = struct{}{}
+			v1.Visit(t[1])
+			v2.Visit(t[9])
 		}
 	}
-	return len(v1), len(v2)
+	return v1.Len(), v2.Len()
 }
 
 func main() {
@@ -77,6 +82,27 @@ func main() {
 		fmt.Printf("Part 1: %d\n", p1)
 		fmt.Printf("Part 2: %d\n", p2)
 	}
+}
+
+const mapRange = 512
+const mapRange2 = mapRange * 2
+const mapSize = mapRange2 * mapRange2 / 64
+
+type VisitMap [mapSize]uint64
+
+func (v *VisitMap) Visit(p Pos) {
+	i := (p.x + mapRange) + (p.y+mapRange)*mapRange2
+	b := i >> 6
+	var bit uint64 = 1 << (i & 0x3f)
+	v[b] |= bit
+}
+
+func (v *VisitMap) Len() int {
+	c := 0
+	for _, b := range v {
+		c += bits.OnesCount64(b)
+	}
+	return c
 }
 
 var benchmark = false
