@@ -6,8 +6,8 @@ fn part(inp: &[u8], l: usize, o: usize) -> usize {
     let mut i = o;
     while i < inp.len() - l {
         let mut set = 0;
-        for j in i..i + l {
-            let bit = 1 << (inp[j] - b'a') as usize;
+        for ch in inp.iter().skip(i).take(l) {
+            let bit = 1 << (ch - b'a') as usize;
             if set & bit != 0 {
                 //i = j;
                 set = 0;

@@ -6,6 +6,7 @@ type Dock = [u8; MAX_STACKS * MAX_CRATES * 2];
 fn len(d: &Dock, i: usize) -> u8 {
     d[i * MAX_CRATES]
 }
+#[allow(dead_code)]
 fn unshift(d: &mut Dock, i: usize, v: u8) {
     let o = i * MAX_CRATES;
     let l = d[o] as usize + 1 + o;

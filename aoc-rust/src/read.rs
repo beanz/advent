@@ -8,7 +8,7 @@ where
 {
     let mut n: T = 0.into();
     let mut i = i;
-    assert!(i < inp.len() && b'0' <= inp[i] && inp[i] <= b'9');
+    debug_assert!(i < inp.len() && b'0' <= inp[i] && inp[i] <= b'9');
     while i < inp.len() && b'0' <= inp[i] && inp[i] <= b'9' {
         n = n * 10.into() + (inp[i] & 0xf).into();
         i += 1;
@@ -32,7 +32,7 @@ where
         m = -m;
         i += 1;
     }
-    assert!(
+    debug_assert!(
         i < inp.len() && b'0' <= inp[i] && inp[i] <= b'9',
         "{} < {}",
         i,
