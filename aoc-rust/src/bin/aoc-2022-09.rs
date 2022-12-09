@@ -50,15 +50,11 @@ impl Point {
             self.x += 1
         } else if dx < 0 {
             self.x -= 1
-        } else {
-            self.x = hx
         }
         if dy > 0 {
             self.y += 1
         } else if dy < 0 {
             self.y -= 1
-        } else {
-            self.y = hy
         }
         true
     }
@@ -83,21 +79,25 @@ fn main() {
 
 struct Visit<const N: usize> {
     set: [u64; N],
+    len: usize,
 }
 
 impl<const N: usize> Visit<{ N }> {
     fn new() -> Visit<{ N }> {
-        Visit { set: [0; N] }
+        Visit {
+            set: [0; N],
+            len: 0,
+        }
     }
     fn visit(&mut self, i: usize, bit: u64) {
-        self.set[i] |= bit
+        if self.set[i] & bit != 0 {
+            return;
+        }
+        self.set[i] |= bit;
+        self.len += 1;
     }
     fn len(&self) -> usize {
-        let mut c = 0;
-        for n in self.set {
-            c += n.count_ones() as usize;
-        }
-        c
+        self.len
     }
 }
 

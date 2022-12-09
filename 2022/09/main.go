@@ -32,15 +32,11 @@ func Move(h, t Pos) (Pos, bool) {
 		t.x++
 	} else if dx < 0 {
 		t.x--
-	} else {
-		t.x = h.x
 	}
 	if dy > 0 {
 		t.y++
 	} else if dy < 0 {
 		t.y--
-	} else {
-		t.y = h.y
 	}
 	return t, true
 }
