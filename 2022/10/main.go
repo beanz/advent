@@ -15,7 +15,6 @@ func Parts(in []byte) (int, [246]byte) {
 	i := 0
 	j := 0
 	for i < len(in) {
-		inc[j] = 0
 		j++
 		if in[i] == 'a' {
 			var k int
@@ -32,27 +31,33 @@ func Parts(in []byte) (int, [246]byte) {
 		}
 	}
 	num := j
-	sig := [240]int{}
 	x := 1
-	for i = 0; i < 240; i++ {
-		sig[i] = x
-		x += inc[i%num]
-	}
-	p1 := 20*sig[20-1] + 60*sig[60-1] + 100*sig[100-1] + 140*sig[140-1] + 180*sig[180-1] + 220*sig[220-1]
+	// i is sig index
+	j = 0   // j = i%40
+	k := 0  // k = inc index
+	bi := 0 // p2 buffer index
+	p1 := 0
 	p2 := [246]byte{}
-	j = 0
-	for k := 0; k < 240; k++ {
-		v := sig[k]
-		c := k % 40
-		if v >= c-1 && v <= c+1 {
-			p2[j] = '#'
+	for i = 0; i < 240; i++ {
+		if x >= j-1 && x <= j+1 {
+			p2[bi] = '#'
 		} else {
-			p2[j] = '.'
+			p2[bi] = '.'
 		}
+		bi++
 		j++
-		if c == 39 {
-			p2[j] = '\n'
-			j++
+		if j == 20 {
+			p1 += (i + 1) * x
+		}
+		if j == 40 {
+			p2[bi] = '\n'
+			j = 0
+			bi++
+		}
+		x += inc[k]
+		k++
+		if k == num {
+			k = 0
 		}
 	}
 	return p1, p2
