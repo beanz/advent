@@ -10,7 +10,7 @@ import (
 //go:embed input.txt
 var input []byte
 
-func Parts(in []byte) (int, []byte) {
+func Parts(in []byte) (int, [246]byte) {
 	inc := [512]int{}
 	i := 0
 	j := 0
@@ -55,14 +55,14 @@ func Parts(in []byte) (int, []byte) {
 			j++
 		}
 	}
-	return p1, p2[:]
+	return p1, p2
 }
 
 func main() {
 	in := InputBytes(input)
 	p1, p2 := Parts(in)
 	if !benchmark {
-		fmt.Printf("Part 1: %d\nPart 2:\n%s", p1, string(p2))
+		fmt.Printf("Part 1: %d\nPart 2:\n%s", p1, string(p2[:]))
 	}
 }
 
