@@ -97,7 +97,13 @@ fn solve(mk: &mut [Monkey; 8], len: usize, rounds: usize, reduce: usize) -> usiz
                     Op::Mul(n) => w * n,
                     Op::Sq => w * w,
                 };
-                w = if reduce == 0 { w / 3 } else { w % reduce };
+                w = if reduce == 0 {
+                    w / 3
+                } else if w >= reduce {
+                    w % reduce
+                } else {
+                    w
+                };
                 let to = if w % mk[i].div == 0 {
                     mk[i].to_true
                 } else {
