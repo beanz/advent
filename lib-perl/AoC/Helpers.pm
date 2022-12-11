@@ -93,6 +93,7 @@ our $VERSION = '0.01';
 use FindBin;
 sub input_path {
   my ($file) = @_;
+  $file //= "input.txt";
   my ($y, $d) = ($FindBin::RealBin =~ m!/(\d+)/(\d\d)!);
   if (-e $file) {
     return $file;
