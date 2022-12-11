@@ -96,8 +96,8 @@ times: input.txt ${TIMES}
 hyperfine: ${HYPERFINE}
 	hyperfine -N --warmup 1 $(addprefix ./,${HYPERFINE})
 
-input.txt:
-	aoc-dump
+%.txt: ../../input/$(YEAR)/$(DAY)/%.txt
+	cp $< $@
 
 aoc-cpp: cpp/aoc.cpp ../../lib-cpp/*.hpp cpp/input.h
 	$(CC) -I../../lib-cpp -o $@ $<
@@ -141,8 +141,8 @@ aoc-d: aoc.d
 aoc-d-rel: aoc.d
 	dmd -release -boundscheck=off -O -J. -of=$@ $<
 
-aoc-go: main.go
-	go build -o $@ $<
+aoc-go: main.go input.txt
+	go build -o $@
 
 aoc-gccgo: main.go
 	 go build -a -compiler gccgo -gccgoflags=all='-flto -Os -fdata-sections -ffunction-sections -Wl,--gc-sections,-s' $<

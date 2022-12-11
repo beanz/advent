@@ -77,6 +77,8 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
 
                                     rotate_lines
 
+                                    input_file
+                                    input_path
                                     read_guess
                                     read_lines
                                     read_lists
@@ -87,6 +89,21 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
 ) ] );
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our $VERSION = '0.01';
+
+use FindBin;
+sub input_path {
+  my ($file) = @_;
+  my ($y, $d) = ($FindBin::RealBin =~ m!/(\d+)/(\d\d)!);
+  if (-e $file) {
+    return $file;
+  } else {
+    return "$FindBin::RealBin/../../input/$y/$d/$file";
+  }
+}
+
+sub input_file {
+  return input_path(@ARGV ? $ARGV[0] : "input.txt");
+}
 
 sub hk {
   join '!', @_;
@@ -463,6 +480,7 @@ sub guess_input {
 
 sub read_guess {
   my $file = shift;
+  $file = input_path($file);
   open my $fh, '<', $file or die "Failed to open $file: $!\n";
   local $/;
   $_ = <$fh>;
@@ -472,6 +490,7 @@ sub read_guess {
 
 sub read_lines {
   my $file = shift;
+  $file = input_path($file);
   open my $fh, '<', $file or die "Failed to open $file: $!\n";
   my @c = <$fh>;
   chomp @c;
@@ -480,6 +499,7 @@ sub read_lines {
 
 sub read_lists {
   my ($file, $rs, $fs) = @_;
+  $file = input_path($file);
   $rs //= "\n";
   $fs //= qr/\s+/;
   open my $fh, '<', $file or die "Failed to open $file: $!\n";
@@ -491,6 +511,7 @@ sub read_lists {
 
 sub read_listy_records {
   my ($file, $rs, $fs, $fn) = @_;
+  $file = input_path($file);
   $rs //= "\n";
   $fs //= qr/\s+/;
   my $c = read_lists($file, $rs, $fs);
@@ -499,6 +520,7 @@ sub read_listy_records {
 
 sub read_chunks {
   my ($file, $rs) = @_;
+  $file = input_path($file);
   $rs //= "\n\n";
   open my $fh, '<', $file or die "Failed to open $file: $!\n";
   local $/ = $rs;
@@ -509,6 +531,7 @@ sub read_chunks {
 
 sub read_chunky_records {
   my ($file, $rs, $fs, $kvs) = @_;
+  $file = input_path($file);
   $rs //= "\n\n";
   $fs //= qr/\s+/;
   $kvs //= qr/:/;
@@ -553,6 +576,7 @@ sub read_chunky_records {
 
   sub from_file {
     my ($pkg, $file, $readfn, $strfn) = @_;
+    $file = input_path($file);
     $readfn //= sub { $_[0] };
     $strfn //= sub { $_[0] };
     my $l = AoC::Helpers::read_lines($file);
