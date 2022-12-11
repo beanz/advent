@@ -11,28 +11,31 @@ import (
 var input []byte
 
 type Monkey struct {
-	num    int
-	items  []int
 	c      int
-	items2 []int
+	l      int
+	items  [32]int
+	l2     int
+	items2 [32]int
 	div    int
 	op     func(old int) int
-	throw  func(w int) int
+	toT    int
+	toF    int
 }
 
 func NextMonkey(in []byte, i int) (int, Monkey) {
 	if in[i] != 'M' {
 		panic("monkey missing")
 	}
-	n := int(in[i+7] - '0')
 	j := i + len("Monkey X:\n  Starting Items: ")
-	items := []int{}
-	items2 := []int{}
+	items := [32]int{}
+	items2 := [32]int{}
+	l := 0
 	for {
 		k, n := NextUInt(in, j)
 		j = k
-		items = append(items, n)
-		items2 = append(items2, n)
+		items[l] = n
+		items2[l] = n
+		l++
 		if in[k] == '\n' {
 			break
 		}
@@ -68,32 +71,32 @@ func NextMonkey(in []byte, i int) (int, Monkey) {
 	j = k + 1 + len("    If false: throw to monkey ")
 	k, fm := NextUInt(in, j)
 	j = k + 1
-	throw := func(w int) int {
-		if w%div == 0 {
-			return tm
-		} else {
-			return fm
-		}
-	}
-	return j, Monkey{n, items, 0, items2, div, op, throw}
+	return j, Monkey{0, l, items, l, items2, div, op, tm, fm}
 }
 
 type Business struct {
-	mk     []Monkey
+	mk     [8]Monkey
+	l      int
 	reduce func(w int) int
 	lcm    int
 }
 
 func (mb *Business) MonkeyDo(i int) {
-	for len(mb.mk[i].items) != 0 {
+	for j := 0; j < mb.mk[i].l; j++ {
 		mb.mk[i].c++
-		w := mb.mk[i].items[0]
-		mb.mk[i].items = mb.mk[i].items[1:]
+		w := mb.mk[i].items[j]
 		w = mb.mk[i].op(w)
 		w = mb.reduce(w)
-		to := mb.mk[i].throw(w)
-		mb.mk[to].items = append(mb.mk[to].items, w)
+		var to int
+		if w%mb.mk[i].div == 0 {
+			to = mb.mk[i].toT
+		} else {
+			to = mb.mk[i].toF
+		}
+		mb.mk[to].items[mb.mk[to].l] = w
+		mb.mk[to].l++
 	}
+	mb.mk[i].l = 0
 }
 
 func (mb *Business) Solve(rounds int) int {
@@ -117,16 +120,18 @@ func (mb *Business) Solve(rounds int) int {
 
 func Parts(in []byte) (int, int) {
 	reduce := func(x int) int { return x / 3 }
-	mb := Business{[]Monkey{}, reduce, 1}
+	mb := Business{[8]Monkey{}, 0, reduce, 1}
 	for i := 0; i < len(in); i++ {
 		j, m := NextMonkey(in, i)
-		mb.mk = append(mb.mk, m)
+		mb.mk[mb.l] = m
+		mb.l++
 		mb.lcm *= m.div
 		i = j
 	}
 	p1 := mb.Solve(20)
 	for i := range mb.mk {
 		mb.mk[i].items = mb.mk[i].items2
+		mb.mk[i].l = mb.mk[i].l2
 		mb.mk[i].c = 0
 	}
 	mb.reduce = func(w int) int {
