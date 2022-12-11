@@ -1,5 +1,8 @@
 DIRS=$(sort $(wildcard ????/??/))
 
+PRIVATE_INPUTS=$(sort $(wildcard input/????/??/*.txt))
+INPUTS=$(subst input/,,${PRIVATE_INPUTS})
+
 PERL_SRC=$(sort $(wildcard ????/??/aoc.pl))
 PERL_CHK=$(subst /aoc.pl,/aoc.pl.chk,${PERL_SRC})
 PERL_LOG=$(subst /aoc.pl,/aoc.pl.log,${PERL_SRC})
@@ -63,7 +66,7 @@ TIME=../../bin/time
 
 .DELETE_ON_ERROR: /bin/true
 
-all: ${GO_BIN} ${CPP_BIN} ${NIM_BIN} ${ZIG_BIN} ${CR_BIN} ${PERL_CHK} ${RS_BIN}
+all: ${INPUTS} ${GO_BIN} ${CPP_BIN} ${NIM_BIN} ${ZIG_BIN} ${CR_BIN} ${PERL_CHK} ${RS_BIN}
 run: ${GO_LOG} ${CPP_LOG} ${NIM_LOG} ${ZIG_LOG} ${CR_LOG} ${PERL_LOG} ${RS_LOG}
 
 todo:
@@ -101,7 +104,6 @@ benchmarks/README.md: benchmarks/README.template.md benchmarks/benchmarks.md
 benchmarks/benchmarks.md: $(GO_BENCH) $(RS_BENCH) $(CPP_BENCH) $(ZIG_BENCH) $(CR_BENCH) $(HS_BENCH) benchmarks/main.go
 	cd benchmarks && go run . ..
 
-
 nim-build: ${NIM_BIN}
 nim: ${NIM_LOG} ${NIM_BIN}
 
@@ -121,7 +123,7 @@ aoc-rust/target/release/aoc-%: aoc-rust/src/bin/aoc-%.rs
 %/aoc.pl.chk: %/aoc.pl
 	(cd $(dir $@) && perl -c aoc.pl && touch $(notdir $@)) || exit 1
 
-%/aoc-go: %/main.go
+%/aoc-go: %/main.go %/input.txt
 	cd $(dir $@) && go build -o aoc-go main.go
 
 %/aoc-cpp: %/cpp/aoc.cpp %/cpp/input.h
@@ -131,39 +133,42 @@ aoc-rust/target/release/aoc-%: aoc-rust/src/bin/aoc-%.rs
 	$(CC) -I$(dir $@)../../lib-cpp -O3 -o $@ $<
 
 %/cpp/input.h: %/input.txt
-	xxd -i $< $@
+	cd $(dir $<) && xxd -i $(notdir $<) cpp/$(notdir $@)
 
-%/aoc-nim: %/aoc.nim
+%/aoc-nim: %/aoc.nim %/input.txt
 	$(NIM) c --opt:speed -d:release -p:$(dir $@)../../lib-nim $<
 	mv $(dir $@)/aoc $@
 
-%/aoc-nim-rel: %/aoc.nim
+%/aoc-nim-rel: %/aoc.nim %/input.txt
 	$(NIM) c --checks:off --assertions:off --opt:speed -d:release \
 	  -p:$(dir $@)../../lib-nim $<
 	mv $(dir $@)/aoc $@
 
-%/aoc-cr: %/aoc.cr
+%/aoc-cr: %/aoc.cr %/input.txt
 	cd $(dir $@) && \
 	  CRYSTAL_PATH=$(CR_LIB) $(CR) build --debug \
 	  -o $(notdir $@) $(notdir $<)
 
-%/aoc-cr-rel: %/aoc.cr
+%/aoc-cr-rel: %/aoc.cr %/input.txt
 	cd $(dir $@) && \
 	  CRYSTAL_PATH=$(CR_LIB) $(CR) build --release \
 	  -o $(notdir $@) $(notdir $<)
 
-%/aoc-hs: %/aoc.hs
+%/aoc-hs: %/aoc.hs %/input.txt
 	cd $(dir $@) && \
 	  ghc -i ../../lib-hs/Utils.hs -o $(notdir $@) $(notdir $<)
 
-%/aoc-hs-rel: %/aoc.hs
+%/aoc-hs-rel: %/aoc.hs %/input.txt
 	cd $(dir $@) && \
 	  ghc -i ../../lib-hs/Utils.hs -O3 -o $(notdir $@) $(notdir $<)
 
-%/aoc-zig: %/aoc.zig
+%/aoc-zig: %/aoc.zig %/input.txt %/aoc-lib.zig
 	cd $(dir $@) && zig build-exe --name $(notdir $@) $(notdir $<)
 
-%/aoc-zig-rel: %/aoc.zig
+%/aoc-lib.zig: lib-zig/aoc-lib.zig
+	ln -s ../../lib-zig/aoc-lib.zig $@
+
+%/aoc-zig-rel: %/aoc.zig %/input.txt
 	cd $(dir $@) && zig build-exe -O ReleaseFast \
 		--name $(notdir $@) $(notdir $<)
 
@@ -423,3 +428,82 @@ rs2021: $(filter aoc-rust/target/release/aoc-2021-%,${RS_LOG})
 rs2022-build: $(filter aoc-rust/target/release/aoc-2022-%,${RS_BIN})
 rs2022: $(filter aoc-rust/target/release/aoc-2022-%,${RS_LOG})
 
+# Private input targets
+%/input.txt: input/%/input.txt
+	cp $< $@
+%/input2.txt: input/%/input2.txt
+	cp $< $@
+%/input3.txt: input/%/input3.txt
+	cp $< $@
+%/maze.txt: input/%/maze.txt
+	cp $< $@
+%/monster.txt: input/%/monster.txt
+	cp $< $@
+%/p2answer.txt: input/%/p2answer.txt
+	cp $< $@
+%/shop.txt: input/%/shop.txt
+	cp $< $@
+%/tape.txt: input/%/tape.txt
+	cp $< $@
+%/test.txt: input/%/test.txt
+	cp $< $@
+%/test0.txt: input/%/test0.txt
+	cp $< $@
+%/test0a.txt: input/%/test0a.txt
+	cp $< $@
+%/test0b.txt: input/%/test0b.txt
+	cp $< $@
+%/test1.txt: input/%/test1.txt
+	cp $< $@
+%/test1a.txt: input/%/test1a.txt
+	cp $< $@
+%/test1b.txt: input/%/test1b.txt
+	cp $< $@
+%/test1c.txt: input/%/test1c.txt
+	cp $< $@
+%/test1d.txt: input/%/test1d.txt
+	cp $< $@
+%/test1e.txt: input/%/test1e.txt
+	cp $< $@
+%/test1f.txt: input/%/test1f.txt
+	cp $< $@
+%/test1g.txt: input/%/test1g.txt
+	cp $< $@
+%/test1h.txt: input/%/test1h.txt
+	cp $< $@
+%/test2.txt: input/%/test2.txt
+	cp $< $@
+%/test2a.txt: input/%/test2a.txt
+	cp $< $@
+%/test2b.txt: input/%/test2b.txt
+	cp $< $@
+%/test2c.txt: input/%/test2c.txt
+	cp $< $@
+%/test2d.txt: input/%/test2d.txt
+	cp $< $@
+%/test2e.txt: input/%/test2e.txt
+	cp $< $@
+%/test2f.txt: input/%/test2f.txt
+	cp $< $@
+%/test2g.txt: input/%/test2g.txt
+	cp $< $@
+%/test2h.txt: input/%/test2h.txt
+	cp $< $@
+%/test3a.txt: input/%/test3a.txt
+	cp $< $@
+%/test3b.txt: input/%/test3b.txt
+	cp $< $@
+%/test3.txt: input/%/test3.txt
+	cp $< $@
+%/test4.txt: input/%/test4.txt
+	cp $< $@
+%/test5.txt: input/%/test5.txt
+	cp $< $@
+%/test6.txt: input/%/test6.txt
+	cp $< $@
+%/test7.txt: input/%/test7.txt
+	cp $< $@
+%/test8.txt: input/%/test8.txt
+	cp $< $@
+%/test9.txt: input/%/test9.txt
+	cp $< $@

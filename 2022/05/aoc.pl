@@ -83,8 +83,8 @@ print "Part 2: ", calc2($i), "\n";
 sub testPart1 {
   my @test_cases =
     (
-     [ "test1.txt", 10 ],
-     [ "input.txt", 307 ],
+     [ "test1.txt", "CMZ" ],
+     [ "input.txt", "PTWLTDSJV" ],
     );
   for my $tc (@test_cases) {
     my $res = calc($reader->($tc->[0]));
@@ -95,13 +95,11 @@ sub testPart1 {
 sub testPart2 {
   my @test_cases =
     (
-     [ "test1.txt", 1, 15 ],
-     [ "test1.txt", 2, 12 ],
-     [ "test1.txt", 10, 37 ],
-     [ "test1.txt", 100, 2208 ],
+     [ "test1.txt", "MCD" ],
+     [ "input.txt", "WZMFVGGZP" ],
     );
   for my $tc (@test_cases) {
-    my $res = calc2($reader->($tc->[0]), $tc->[1]);
-    assertEq("Test 2 [$tc->[0] x $tc->[1]]", $res, $tc->[2]);
+    my $res = calc2($reader->($tc->[0]));
+    assertEq("Test 2 [$tc->[0]]", $res, $tc->[1]);
   }
 }

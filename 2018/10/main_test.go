@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -38,7 +39,7 @@ func TestSolve(t *testing.T) {
 `, s)
 	assert.Equal(t, 10007, time)
 
-	g = NewGame(ReadLines("input-ap.txt"))
+	g = NewGame(ReadLines("input2.txt"))
 	s, time = g.Solve()
 	assert.Equal(t,
 		`.####....####...#.......######..#.......#....#...####...######

@@ -577,7 +577,6 @@ sub read_chunky_records {
 
   sub from_file {
     my ($pkg, $file, $readfn, $strfn) = @_;
-    $file = input_path($file);
     $readfn //= sub { $_[0] };
     $strfn //= sub { $_[0] };
     my $l = AoC::Helpers::read_lines($file);

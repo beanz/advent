@@ -2,8 +2,9 @@ package main
 
 import (
 	_ "embed"
-	assert "github.com/stretchr/testify/require"
 	"testing"
+
+	assert "github.com/stretchr/testify/require"
 )
 
 //go:embed test1.txt
@@ -24,7 +25,7 @@ var p2OfInput string
 
 func TestParts(t *testing.T) {
 	tests := []TestCase{
-		{"test1.txt", test1, 17, "#####\n#   #\n#   #\n#   #\n#####\n"},
+		{"test1.txt", test1, 17, "#####\n#   #\n#   #\n#   #\n#####\n     \n     \n"},
 		{"input.txt", input, 747, p2OfInput},
 	}
 	for _, tc := range tests {
