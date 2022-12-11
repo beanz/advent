@@ -98,6 +98,8 @@ go-test: ${GO_SRC}
 go-test-fast: ${GO_SRC}
 	for f in ${GO_SRC} ; do ( cd $${f%/*} && make test-go-fast ); done
 
+bench: ${INPUTS} benchmarks/README.md
+
 benchmarks/README.md: benchmarks/README.template.md benchmarks/benchmarks.md
 	cat $^ > $@
 

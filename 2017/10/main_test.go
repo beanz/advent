@@ -2,9 +2,10 @@ package main
 
 import (
 	_ "embed"
+	"testing"
+
 	. "github.com/beanz/advent/lib-go"
 	assert "github.com/stretchr/testify/require"
-	"testing"
 )
 
 //go:embed test.txt
@@ -26,16 +27,16 @@ func TestPart1(t *testing.T) {
 	assert.Equal(t, 23715, NewRope(InputLines(input)[0], 256).Part1())
 }
 
-//go:embed test-2a.txt
+//go:embed test2a.txt
 var test2a []byte
 
-//go:embed test-2b.txt
+//go:embed test2b.txt
 var test2b []byte
 
-//go:embed test-2c.txt
+//go:embed test2c.txt
 var test2c []byte
 
-//go:embed test-2d.txt
+//go:embed test2d.txt
 var test2d []byte
 
 func TestPart2(t *testing.T) {

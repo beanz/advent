@@ -101,7 +101,7 @@ func (mb *Business) MonkeyDo(i int) {
 
 func (mb *Business) Solve(rounds int) int {
 	for r := 1; r <= rounds; r++ {
-		for i := 0; i < len(mb.mk); i++ {
+		for i := 0; i < mb.l; i++ {
 			mb.MonkeyDo(i)
 		}
 	}
