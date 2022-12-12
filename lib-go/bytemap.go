@@ -79,39 +79,35 @@ func (m *ByteMap) Add(i int, v byte) {
 	m.d[i] += v
 }
 
-func (m *ByteMap) Neighbours(i int) []int {
+func (m *ByteMap) VisitNeighbours(i int, fn func(int, byte)) {
 	x, y := m.IndexToXY(i)
-	res := make([]int, 0, 4)
 	if x > 0 {
-		res = append(res, i-1)
+		fn(i-1, m.d[i-1])
 	}
 	if x < m.w-2 { // because we've still got newlines!
-		res = append(res, i+1)
+		fn(i+1, m.d[i+1])
 	}
 	if y > 0 {
-		res = append(res, i-m.w)
+		fn(i-m.w, m.d[i-m.w])
 	}
 	if y < m.h-1 {
-		res = append(res, i+m.w)
+		fn(i+m.w, m.d[i+m.w])
 	}
+}
+
+func (m *ByteMap) Neighbours(i int) []int {
+	res := make([]int, 0, 4)
+	m.VisitNeighbours(i, func(ni int, nch byte) {
+		res = append(res, ni)
+	})
 	return res
 }
 
 func (m *ByteMap) NeighbourValues(i int) []byte {
-	x, y := m.IndexToXY(i)
 	res := make([]byte, 0, 4)
-	if x > 0 {
-		res = append(res, m.d[i-1])
-	}
-	if x < m.w-2 { // because we've still got newlines!
-		res = append(res, m.d[i+1])
-	}
-	if y > 0 {
-		res = append(res, m.d[i-m.w])
-	}
-	if y < m.h-1 {
-		res = append(res, m.d[i+m.w])
-	}
+	m.VisitNeighbours(i, func(ni int, nch byte) {
+		res = append(res, nch)
+	})
 	return res
 }
 

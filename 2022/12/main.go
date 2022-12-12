@@ -20,26 +20,27 @@ func Parts(in []byte) (int, int) {
 	m := NewByteMap(in)
 	p1, p2 := -1, -1
 	var e int
-	todo := []Search{}
-	todo2 := []Search{}
+	todoArray := [100]Search{}
+	todo := NewDeque(todoArray[0:])
+	todo2Array := [3000]Search{}
+	todo2 := NewDeque(todo2Array[0:])
 	m.Visit(func(i int, v byte) (byte, bool) {
 		if v == 'S' {
 			v = 'a'
-			todo = append(todo, Search{i, 'a', 0})
-			todo2 = append(todo2, Search{i, 'a', 0})
+			todo.Push(Search{i, 'a', 0})
+			todo2.Push(Search{i, 'a', 0})
 		} else if v == 'E' {
 			e = i
 			v = 'z'
 		} else if v == 'a' {
-			todo2 = append(todo2, Search{i, 'a', 0})
+			todo2.Push(Search{i, 'a', 0})
 			return v, false
 		}
 		return v, true
 	})
-	v := make([]bool, 10240)
-	for len(todo) > 0 {
-		cur := todo[0]
-		todo = todo[1:]
+	v := [10240]bool{}
+	for todo.Len() > 0 {
+		cur := todo.Pop()
 		if ok := v[cur.pos]; ok {
 			continue
 		}
@@ -48,18 +49,16 @@ func Parts(in []byte) (int, int) {
 			p1 = cur.steps
 			break
 		}
-		for _, nb := range m.Neighbours(cur.pos) {
-			nch := m.Get(nb)
-			if nch > cur.ch+1 {
-				continue
+		m.VisitNeighbours(cur.pos, func(nb int, nch byte) {
+			if nch > cur.ch+1 || v[nb] {
+				return
 			}
-			todo = append(todo, Search{nb, nch, cur.steps + 1})
-		}
+			todo.Push(Search{nb, nch, cur.steps + 1})
+		})
 	}
-	v2 := make([]bool, 10240)
-	for len(todo2) > 0 {
-		cur := todo2[0]
-		todo2 = todo2[1:]
+	v2 := [10240]bool{}
+	for todo2.Len() > 0 {
+		cur := todo2.Pop()
 		if ok := v2[cur.pos]; ok {
 			continue
 		}
@@ -68,13 +67,12 @@ func Parts(in []byte) (int, int) {
 			p2 = cur.steps
 			break
 		}
-		for _, nb := range m.Neighbours(cur.pos) {
-			nch := m.Get(nb)
-			if !(nch <= cur.ch+1) {
-				continue
+		m.VisitNeighbours(cur.pos, func(nb int, nch byte) {
+			if nch > cur.ch+1 || v2[nb] {
+				return
 			}
-			todo2 = append(todo2, Search{nb, nch, cur.steps + 1})
-		}
+			todo2.Push(Search{nb, nch, cur.steps + 1})
+		})
 	}
 	return p1, p2
 }
