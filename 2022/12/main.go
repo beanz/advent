@@ -11,70 +11,55 @@ import (
 var input []byte
 
 type Search struct {
-	pos   int
+	x, y  int
 	ch    byte
 	steps int
 }
 
 func Parts(in []byte) (int, int) {
 	m := NewByteMap(in)
-	p1, p2 := -1, -1
-	var e int
+	var ex, ey int
 	todoArray := [100]Search{}
 	todo := NewDeque(todoArray[0:])
 	todo2Array := [3000]Search{}
 	todo2 := NewDeque(todo2Array[0:])
-	m.Visit(func(i int, v byte) (byte, bool) {
+	m.VisitXY(func(x, y int, v byte) (byte, bool) {
 		if v == 'S' {
 			v = 'a'
-			todo.Push(Search{i, 'a', 0})
-			todo2.Push(Search{i, 'a', 0})
+			todo.Push(Search{x, y, 'a', 0})
+			todo2.Push(Search{x, y, 'a', 0})
 		} else if v == 'E' {
-			e = i
+			ex, ey = x, y
 			v = 'z'
 		} else if v == 'a' {
-			todo2.Push(Search{i, 'a', 0})
+			todo2.Push(Search{x, y, 'a', 0})
 			return v, false
 		}
 		return v, true
 	})
+	return Solve(m, todo, ex, ey), Solve(m, todo2, ex, ey)
+}
+
+func Solve(m *ByteMap, todo *Deque[Search], ex, ey int) int {
+	w := m.Width()
 	v := [10240]bool{}
 	for todo.Len() > 0 {
 		cur := todo.Pop()
-		if ok := v[cur.pos]; ok {
+		if ok := v[cur.x+cur.y*w]; ok {
 			continue
 		}
-		v[cur.pos] = true
-		if cur.pos == e {
-			p1 = cur.steps
-			break
+		v[cur.x+cur.y*w] = true
+		if cur.x == ex && cur.y == ey {
+			return cur.steps
 		}
-		m.VisitNeighbours(cur.pos, func(nb int, nch byte) {
-			if nch > cur.ch+1 || v[nb] {
+		m.VisitNeighboursXY(cur.x, cur.y, func(nx, ny int, nch byte) {
+			if nch > cur.ch+1 || v[nx+ny*w] {
 				return
 			}
-			todo.Push(Search{nb, nch, cur.steps + 1})
+			todo.Push(Search{nx, ny, nch, cur.steps + 1})
 		})
 	}
-	v2 := [10240]bool{}
-	for todo2.Len() > 0 {
-		cur := todo2.Pop()
-		if ok := v2[cur.pos]; ok {
-			continue
-		}
-		v2[cur.pos] = true
-		if cur.pos == e {
-			p2 = cur.steps
-			break
-		}
-		m.VisitNeighbours(cur.pos, func(nb int, nch byte) {
-			if nch > cur.ch+1 || v2[nb] {
-				return
-			}
-			todo2.Push(Search{nb, nch, cur.steps + 1})
-		})
-	}
-	return p1, p2
+	return -1
 }
 
 func main() {

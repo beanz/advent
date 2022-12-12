@@ -79,18 +79,35 @@ func (m *ByteMap) Add(i int, v byte) {
 	m.d[i] += v
 }
 
+func (m *ByteMap) VisitNeighboursXY(x, y int, fn func(int, int, byte)) {
+	i := x + y*m.w
+	if x > 0 {
+		fn(x-1, y, m.d[i-1])
+	}
+	if x < m.w-2 {
+		fn(x+1, y, m.d[i+1])
+	}
+	if y > 0 {
+		fn(x, y-1, m.d[i-m.w])
+	}
+	if y < m.h-1 {
+		fn(x, y+1, m.d[i+m.w])
+	}
+}
+
 func (m *ByteMap) VisitNeighbours(i int, fn func(int, byte)) {
-	x, y := m.IndexToXY(i)
+	x := i % m.w
+	l := len(m.d)
 	if x > 0 {
 		fn(i-1, m.d[i-1])
 	}
-	if x < m.w-2 { // because we've still got newlines!
+	if x < m.w-2 {
 		fn(i+1, m.d[i+1])
 	}
-	if y > 0 {
+	if i >= m.w {
 		fn(i-m.w, m.d[i-m.w])
 	}
-	if y < m.h-1 {
+	if i < l-m.w {
 		fn(i+m.w, m.d[i+m.w])
 	}
 }
