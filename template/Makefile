@@ -265,4 +265,9 @@ template:
 	@if [ ! -e Makefile ]; then ln -s ../../template/Makefile . ; fi ; \
 	for f in aoc.pl main.go main_test.go ; do \
 	  if [ ! -e $$f ]; then cp -p ../../template/$$f . ; fi \
-	done
+	done \
+	frs="../../aoc-rust/src/bin/aoc-$(YEAR)-$(DAY).rs" ; \
+	if [ ! -e $$frs ]; then \
+		sed -e's/YYYY/'"$(YEAR)"'/g;s/DD/'"$(DAY)"'/g' \
+		  <../../template/aoc-yyyy-dd.rs >$$frs; \
+	fi
