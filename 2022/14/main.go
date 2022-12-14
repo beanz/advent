@@ -12,18 +12,21 @@ import (
 var input []byte
 
 type Int = int32
-type Occupied [147456]bool
+type Occupied [76800]bool
+
+func OccupiedIndex(x, y Int) Int {
+	return (x-300)*192 + y
+}
 
 func (o *Occupied) Add(x, y Int) {
-	o[x*192+y] = true
+	o[OccupiedIndex(x, y)] = true
 }
 
 func (o *Occupied) Empty(x, y Int) bool {
-	return !o[x*192+y]
+	return !o[OccupiedIndex(x, y)]
 }
 
-func Debug(m *Occupied, bb *FBoundingBox) {
-	minx, maxx, _, maxy := bb.Limits()
+func Debug(m *Occupied, minx, maxx, maxy Int) {
 	for y := Int(0); y <= maxy; y++ {
 		for x := minx; x <= maxx; x++ {
 			if !m.Empty(x, y) {
@@ -88,7 +91,7 @@ func Parts(in []byte) (int, int) {
 			}
 		}
 	}
-	//Debug(&m, bb)
+	//Debug(&m, minx, maxx, maxy)
 	p1 := 0
 	c := 0
 	var sx int32 = 500
