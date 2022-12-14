@@ -58,16 +58,16 @@ sub pp {
 }
 
 sub calc {
-  my ($in, $p2) = @_;
+  my ($in) = @_;
   my $m = $in->{m};
   my @bb2 = @{$in->{bb}};
-  my $c = 0;
+  my ($c, $p1, $p2) = (0, 0, 0);
   my ($x, $y) = (500, 0);
   while (1) {
 
     #print "S: $x,$y\n";
-    if (!$p2 && ($x > $in->{bb}->[MAXX] || $x < $in->{bb}->[MINX])) {
-      last;
+    if (!$p1 && ($x > $in->{bb}->[MAXX] || $x < $in->{bb}->[MINX])) {
+      $p1 = $c;
     }
     if ($y < $in->{bb}->[MAXY] + 1) {
       if (!exists $m->{$x, $y + 1}) {
@@ -86,7 +86,7 @@ sub calc {
       }
     }
     if ($x == 500 && $y == 0) {
-      $c++;
+      $p2 = $c + 1;
       last;
     }
     minmax_xy(\@bb2, $x, $y);
@@ -102,32 +102,20 @@ sub calc {
     print scalar keys %$m, "\n";
     dd([\@bb2], [qw/bb2/]);
   }
-  return $c;
+  return [$p1, $p2];
 }
 
-testPart1() if (TEST);
+testParts() if (TEST);
 
-print "Part 1: ", calc($i), "\n";
+my $res = calc($i);
+print "Part 1: ", $res->[0], "\n";
+print "Part 2: ", $res->[1], "\n";
 
-testPart2() if (TEST);
-
-print "Part 2: ", calc($i2, 1), "\n";
-
-sub testPart1 {
-  my @test_cases = (["test1.txt", 24], ["input.txt", 1513],);
+sub testParts {
+  my @test_cases = (["test1.txt", 24, 93], ["input.txt", 1513, 22646],);
   for my $tc (@test_cases) {
     my $res = calc($reader->($tc->[0]));
-    assertEq("Test 1 [$tc->[0]]", $res, $tc->[1]);
-  }
-}
-
-sub testPart2 {
-  my @test_cases = (
-    ["test1.txt", 93],
-    ["input.txt", 22646],
-  );
-  for my $tc (@test_cases) {
-    my $res = calc($reader->($tc->[0]), 1);
-    assertEq("Test 2 [$tc->[0]]", $res, $tc->[1]);
+    assertEq("Test 1 [$tc->[0]]", $res->[0], $tc->[1]);
+    assertEq("Test 2 [$tc->[0]]", $res->[1], $tc->[2]);
   }
 }
