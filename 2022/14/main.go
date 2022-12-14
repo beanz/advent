@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"math"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -36,36 +37,60 @@ func Debug(m *Occupied, bb *FBoundingBox) {
 }
 
 func Parts(in []byte) (int, int) {
-	bb := NewFBoundingBox()
+	minx, maxx, maxy := int32(math.MaxInt32), int32(math.MinInt32), int32(math.MinInt32)
 	m := Occupied{}
 	for i := 0; i < len(in); i++ {
 		j, x := NextUInt(in, i)
 		i = j + 1
 		j, y := NextUInt(in, i)
 		i = j
-		p := NewFP2(x, y)
 		m.Add(x, y)
-		bb.Add(p)
+		if minx > x {
+			minx = x
+		}
+		if maxx < x {
+			maxx = x
+		}
+		if maxy < y {
+			maxy = y
+		}
 		for i < len(in) && in[i] != '\n' {
 			i += 4
 			j, nx := NextUInt(in, i)
 			i = j + 1
 			j, ny := NextUInt(in, i)
 			i = j
-			p2 := NewFP2(nx, ny)
-			n2 := p.Norm(p2)
-			for p != p2 {
-				p = p.Add(n2)
-				bb.Add(p)
-				px, py := p.XY()
-				m.Add(px, py)
+			var ix Int
+			if nx > x {
+				ix = 1
+			} else if nx < x {
+				ix = -1
+			}
+			var iy Int
+			if ny > y {
+				iy = 1
+			} else if ny < y {
+				iy = -1
+			}
+			for x != nx || y != ny {
+				x += ix
+				y += iy
+				if minx > x {
+					minx = x
+				}
+				if maxx < x {
+					maxx = x
+				}
+				if maxy < y {
+					maxy = y
+				}
+				m.Add(x, y)
 			}
 		}
 	}
 	//Debug(&m, bb)
 	p1 := 0
 	c := 0
-	minx, maxx, _, maxy := bb.Limits()
 	var sx int32 = 500
 	var sy int32
 	for {
