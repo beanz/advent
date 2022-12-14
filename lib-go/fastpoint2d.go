@@ -67,21 +67,28 @@ func (p FP2) Sub(o FP2) FP2 {
 	return NewFP2(x-ox, y-oy)
 }
 
-func (p FP2) Norm(o FP2) FP2 {
+func (p FP2) NormXY(o FP2) (int32, int32) {
 	y := int32(p & 0xffffffff)
 	x := int32((p >> 32) & 0xffffffff)
+	dy := int32(o&0xffffffff) - y
+	dx := int32((o>>32)&0xffffffff) - x
 	var nx int32
 	var ny int32
-	if x > 0 {
+	if dx > 0 {
 		nx = 1
-	} else if x < 0 {
+	} else if dx < 0 {
 		nx = -1
 	}
-	if y > 0 {
+	if dy > 0 {
 		ny = 1
-	} else if y < 0 {
+	} else if dy < 0 {
 		ny = -1
 	}
+	return nx, ny
+}
+
+func (p FP2) Norm(o FP2) FP2 {
+	nx, ny := p.NormXY(o)
 	return NewFP2(nx, ny)
 }
 

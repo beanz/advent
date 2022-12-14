@@ -10,8 +10,8 @@ type FBoundingBox struct {
 }
 
 func NewFBoundingBox() *FBoundingBox {
-	return &FBoundingBox{math.MinInt32, math.MaxInt32,
-		math.MinInt32, math.MaxInt32}
+	return &FBoundingBox{math.MaxInt32, math.MinInt32,
+		math.MaxInt32, math.MinInt32}
 }
 
 func (bb *FBoundingBox) String() string {
