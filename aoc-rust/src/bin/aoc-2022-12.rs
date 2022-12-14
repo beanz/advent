@@ -7,24 +7,14 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     }
     let w1 = w + 1;
     let mut todo1 = Deque::<Search, 100>::default();
-    let mut todo2 = Deque::<Search, 3200>::default();
+    let mut todo2 = Deque::<Search, 100>::default();
     let mut e = 0;
+    let mut s = 0;
     for i in 0..inp.len() {
         match inp[i] {
             b'S' => {
+                s = i;
                 todo1.push(Search {
-                    pos: i,
-                    ch: b'a',
-                    steps: 0,
-                });
-                todo2.push(Search {
-                    pos: i,
-                    ch: b'a',
-                    steps: 0,
-                });
-            }
-            b'a' => {
-                todo2.push(Search {
                     pos: i,
                     ch: b'a',
                     steps: 0,
@@ -32,6 +22,11 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             }
             b'E' => {
                 e = i;
+                todo2.push(Search {
+                    pos: i,
+                    ch: b'z',
+                    steps: 0,
+                });
             }
             _ => {}
         }
@@ -82,36 +77,36 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             continue;
         }
         v[cur.pos] = true;
-        if cur.pos == e {
+        if cur.pos == s || cur.ch == b'a' {
             p2 = cur.steps;
             break;
         }
         let steps = cur.steps + 1;
         if cur.pos > 0 && (cur.pos - 1) % w1 != w {
             let pos = cur.pos - 1;
-            let ch = if inp[pos] == b'E' { b'z' } else { inp[pos] };
-            if ch <= cur.ch + 1 && !v[pos] {
+            let ch = inp[pos];
+            if ch + 1 >= cur.ch && !v[pos] {
                 todo2.push(Search { pos, steps, ch })
             }
         }
         if cur.pos < inp.len() - 1 && (cur.pos + 1) % w1 != w {
             let pos = cur.pos + 1;
-            let ch = if inp[pos] == b'E' { b'z' } else { inp[pos] };
-            if ch <= cur.ch + 1 && !v[pos] {
+            let ch = inp[pos];
+            if ch + 1 >= cur.ch && !v[pos] {
                 todo2.push(Search { pos, steps, ch })
             }
         }
         if cur.pos >= w1 {
             let pos = cur.pos - w1;
-            let ch = if inp[pos] == b'E' { b'z' } else { inp[pos] };
-            if ch <= cur.ch + 1 && !v[pos] {
+            let ch = inp[pos];
+            if ch + 1 >= cur.ch && !v[pos] {
                 todo2.push(Search { pos, steps, ch })
             }
         }
         if cur.pos < inp.len() - w1 {
             let pos = cur.pos + w1;
-            let ch = if inp[pos] == b'E' { b'z' } else { inp[pos] };
-            if ch <= cur.ch + 1 && !v[pos] {
+            let ch = inp[pos];
+            if ch + 1 >= cur.ch && !v[pos] {
                 todo2.push(Search { pos, steps, ch })
             }
         }
