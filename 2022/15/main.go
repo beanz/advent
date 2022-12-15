@@ -83,13 +83,20 @@ func Parts(in []byte) (int, int) {
 		p1 += span.e - span.s
 	}
 	p2 := -1
-	for y := 0; y < maxY; y++ {
+	mid := maxY / 2
+	for iy := 0; iy < mid; iy++ {
+		y := mid - iy - 1
 		sp := SpansForRow(sensors, y)
-		if len(sp) != 2 {
-			continue
+		if len(sp) == 2 {
+			p2 = 4000000*sp[0].e + y
+			break
 		}
-		p2 = 4000000*sp[0].e + y
-		break
+		y = mid + iy
+		sp = SpansForRow(sensors, y)
+		if len(sp) == 2 {
+			p2 = 4000000*sp[0].e + y
+			break
+		}
 	}
 	return p1, p2
 }
