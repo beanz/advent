@@ -29,72 +29,76 @@ func (bs ByStart) Less(i, j int) bool { return bs[i].s < bs[j].s }
 
 func (bs ByStart) Swap(i, j int) { bs[i], bs[j] = bs[j], bs[i] }
 
-func SpansForRow(s []Sensor, y int) []Span {
-	res := make(ByStart, 0, 30)
+func SpansForRow(s []Sensor, y int, spans []Span) int {
+	k := 0
 	for _, sensor := range s {
 		d := sensor.md - Abs(sensor.y-y)
 		if d < 0 {
 			continue
 		}
-		res = append(res, Span{sensor.x - d, sensor.x + d + 1})
+		spans[k] = Span{sensor.x - d, sensor.x + d + 1}
+		k++
 	}
-	sort.Sort(res)
+	sort.Sort(ByStart(spans[:k]))
 	j := 0
-	for i := 1; i < len(res); i++ {
-		if res[i].s <= res[j].e {
-			if res[i].e > res[j].e {
-				res[j].e = res[i].e
+	for i := 1; i < k; i++ {
+		if spans[i].s <= spans[j].e {
+			if spans[i].e > spans[j].e {
+				spans[j].e = spans[i].e
 			}
 			continue
 		}
 		j++
-		res[j] = res[i]
+		spans[j] = spans[i]
 	}
-	return res[:j+1]
+	return j + 1
 }
 
 func Parts(in []byte) (int, int) {
-	sensors := make([]Sensor, 0, 30)
+	sensors := [30]Sensor{}
+	k := 0
 	for i := 0; i < len(in); {
 		j, x := NextInt(in, i+12)
 		j, y := NextInt(in, j+4)
 		j, bx := NextInt(in, j+25)
 		j, by := NextInt(in, j+4)
 		d := Abs(x-bx) + Abs(y-by)
-		sensors = append(sensors, Sensor{x, y, bx, by, d})
+		sensors[k] = Sensor{x, y, bx, by, d}
+		k++
 		i = j + 1
 	}
 	y := 2000000
 	maxY := 4000000
-	if len(sensors) < 15 {
+	if k < 15 {
 		y = 10 // example
 		maxY = 20
 	}
-	done := map[int]struct{}{}
-	for _, s := range sensors {
+	done := make(map[int]struct{}, 30)
+	for _, s := range sensors[:k] {
 		if s.by == y {
 			done[s.bx] = struct{}{}
 		}
 	}
 	beaconCount := len(done)
-	sp := SpansForRow(sensors, y)
+	spans := [30]Span{}
+	spanLen := SpansForRow(sensors[:k], y, spans[:30])
 	p1 := -beaconCount
-	for _, span := range sp {
+	for _, span := range spans[:spanLen] {
 		p1 += span.e - span.s
 	}
 	p2 := -1
 	mid := maxY / 2
 	for iy := 0; iy < mid; iy++ {
 		y := mid - iy - 1
-		sp := SpansForRow(sensors, y)
-		if len(sp) == 2 {
-			p2 = 4000000*sp[0].e + y
+		spanLen := SpansForRow(sensors[:k], y, spans[:30])
+		if spanLen == 2 {
+			p2 = 4000000*spans[0].e + y
 			break
 		}
 		y = mid + iy
-		sp = SpansForRow(sensors, y)
-		if len(sp) == 2 {
-			p2 = 4000000*sp[0].e + y
+		spanLen = SpansForRow(sensors[:k], y, spans[:30])
+		if spanLen == 2 {
+			p2 = 4000000*spans[0].e + y
 			break
 		}
 	}
