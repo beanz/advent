@@ -7,6 +7,10 @@ struct Sensor {
     bx: isize,
     by: isize,
     md: isize,
+    r1x: isize,
+    r1y: isize,
+    r2x: isize,
+    r2y: isize,
 }
 
 #[derive(Debug, PartialEq, Clone, Eq, Ord)]
@@ -51,6 +55,15 @@ fn spans_of_row(sensors: &[Sensor], y: isize) -> Vec<Span> {
     }
     res[0..j + 1].to_vec()
 }
+
+fn rot_ccw(x: isize, y: isize) -> (isize, isize) {
+    (x + y, y - x)
+}
+
+fn rot_cc(x: isize, y: isize) -> (isize, isize) {
+    ((x - y) >> 1, (y + x) >> 1)
+}
+
 fn parts(inp: &[u8]) -> (usize, usize) {
     let mut sensors: [Sensor; 30] = [Sensor::default(); 30];
     let mut k = 0;
@@ -61,7 +74,19 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         let (j, bx) = aoc::read::int::<isize>(inp, j + 25);
         let (j, by) = aoc::read::int::<isize>(inp, j + 4);
         let md = (x - bx).abs() + (y - by).abs();
-        sensors[k] = Sensor { x, y, bx, by, md };
+        let (r1x, r1y) = rot_ccw(x - md - 1, y);
+        let (r2x, r2y) = rot_ccw(x + md + 1, y);
+        sensors[k] = Sensor {
+            x,
+            y,
+            bx,
+            by,
+            md,
+            r1x,
+            r1y,
+            r2x,
+            r2y,
+        };
         k += 1;
         i = j + 1;
     }
@@ -79,23 +104,58 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         p1 += (span.e - span.s) as usize;
     }
     p1 -= beacon_count;
-    let mut p2 = 0;
-    let mid = max_y / 2;
-    for iy in 0..mid {
-        let y = mid - iy - 1;
-        let spans = spans_of_row(&sensors, y);
-        if spans.len() == 2 {
-            p2 = 4000000 * spans[0].e + y;
-            break;
-        }
-        let y = mid + iy;
-        let spans = spans_of_row(&sensors, y);
-        if spans.len() == 2 {
-            p2 = 4000000 * spans[0].e + y;
-            break;
+    (p1, part2(&sensors[0..k], max_y))
+}
+
+fn part2(sensors: &[Sensor], max: isize) -> usize {
+    let mut nx = vec![];
+    let mut ny = vec![];
+    for i in 0..sensors.len() {
+        for j in i..sensors.len() {
+            if sensors[i].r1x == sensors[j].r2x {
+                nx.push(sensors[i].r1x);
+            }
+            if sensors[i].r2x == sensors[j].r1x {
+                nx.push(sensors[i].r2x);
+            }
+            if sensors[i].r1y == sensors[j].r2y {
+                ny.push(sensors[i].r1y);
+            }
+            if sensors[i].r2y == sensors[j].r1y {
+                ny.push(sensors[i].r2y);
+            }
         }
     }
-    (p1, p2 as usize)
+    nx.sort();
+    nx.dedup();
+    ny.sort();
+    ny.dedup();
+    let mut poss: Vec<(isize, isize)> = vec![];
+    for rx in &nx {
+        for ry in &ny {
+            let (x, y) = rot_cc(*rx, *ry);
+            if 0 <= x && x <= max && 0 <= y && y <= max {
+                poss.push((x, y));
+            }
+        }
+    }
+    if poss.len() == 1 {
+        return (4000000 * poss[0].0 + poss[0].1) as usize;
+    }
+    for p in poss {
+        let mut near = false;
+        for s in sensors {
+            let md = (s.x - p.0).abs() + (s.y - p.1).abs();
+            if md <= s.md {
+                near = true;
+                break;
+            }
+        }
+        if !near {
+            return (4000000 * p.0 + p.1) as usize;
+        }
+    }
+    0
 }
 
 fn main() {
