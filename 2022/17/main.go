@@ -16,15 +16,22 @@ type Pos struct {
 }
 
 type Rock struct {
-	points [5]Pos
-	w, h   int
+	rows []byte
+	w    int
+}
+
+var ROCKS = [...]Rock{
+	{[]byte{0b1111000}, 4},
+	{[]byte{0b0100000, 0b1110000, 0b0100000}, 3},
+	{[]byte{0b1110000, 0b0010000, 0b0010000}, 3},
+	{[]byte{0b1000000, 0b1000000, 0b1000000, 0b1000000}, 1},
+	{[]byte{0b1100000, 0b1100000}, 2},
 }
 
 type Chamber struct {
-	m             map[Pos]struct{}
+	m             []byte
 	top           int
 	jets          []byte
-	rocks         [5]Rock
 	jet_i, rock_i int
 }
 
@@ -37,18 +44,19 @@ func (ch *Chamber) Jet() byte {
 	return j
 }
 
-func (ch *Chamber) Rock() *Rock {
-	r := ch.rocks[ch.rock_i]
+func (ch *Chamber) Rock() int {
+	r := ch.rock_i
 	ch.rock_i++
-	if ch.rock_i == len(ch.rocks) {
+	if ch.rock_i == len(ROCKS) {
 		ch.rock_i = 0
 	}
-	return &r
+	return r
 }
 
-func (ch Chamber) Hit(r *Rock, x, y int) bool {
-	for _, p := range r.points {
-		if _, ok := ch.m[Pos{x + p.x, y + p.y}]; ok {
+func (ch Chamber) Hit(rn int, x, y int) bool {
+	rows := ROCKS[rn].rows
+	for i := 0; i < len(rows); i++ {
+		if ch.m[y+i]&(rows[i]>>x) != 0 {
 			return true
 		}
 	}
@@ -56,29 +64,30 @@ func (ch Chamber) Hit(r *Rock, x, y int) bool {
 }
 
 func (ch *Chamber) Fall() {
-	r := ch.Rock()
+	rn := ch.Rock()
 	p := Pos{2, ch.top + 3}
 	for {
 		if ch.Jet() == '<' {
-			if p.x > 0 && !ch.Hit(r, p.x-1, p.y) {
+			if p.x > 0 && !ch.Hit(rn, p.x-1, p.y) {
 				p.x--
 			}
 		} else {
-			if p.x < 7-r.w && !ch.Hit(r, p.x+1, p.y) {
+			if p.x < 7-ROCKS[rn].w && !ch.Hit(rn, p.x+1, p.y) {
 				p.x++
 			}
 		}
-		if !ch.Hit(r, p.x, p.y-1) {
+		if !ch.Hit(rn, p.x, p.y-1) {
 			p.y--
 		} else {
 			break
 		}
 	}
-	for _, rp := range r.points {
-		ch.m[Pos{p.x + rp.x, p.y + rp.y}] = struct{}{}
+	rows := ROCKS[rn].rows
+	for i := 0; i < len(rows); i++ {
+		ch.m[p.y+i] |= rows[i] >> p.x
 	}
-	if ch.top < p.y+r.h {
-		ch.top = p.y + r.h
+	if ch.top < p.y+len(rows) {
+		ch.top = p.y + len(rows)
 	}
 }
 
@@ -89,12 +98,14 @@ func (ch Chamber) String() string {
 	}
 	var sb strings.Builder
 	for y := ch.top; y >= bottom; y-- {
-		for x := 0; x < 7; x++ {
-			if _, ok := ch.m[Pos{x, y}]; ok {
+		var bit byte = 0b1000000
+		for bit > 0 {
+			if ch.m[y]&bit != 0 {
 				fmt.Fprintf(&sb, "%c", '#')
 			} else {
 				fmt.Fprintf(&sb, "%c", '.')
 			}
+			bit >>= 1
 		}
 		fmt.Fprintln(&sb)
 	}
@@ -103,14 +114,13 @@ func (ch Chamber) String() string {
 
 func (ch Chamber) Key() uint64 {
 	var k uint64
-	bit := uint64(1)
-	for y := ch.top; y > ch.top-5; y-- {
-		for x := 0; x < 7; x++ {
-			if _, ok := ch.m[Pos{x, y}]; ok {
-				k |= bit
-			}
-			bit <<= 1
-		}
+	bottom := 0
+	if ch.top > 5 {
+		bottom = ch.top - 5
+	}
+	for y := ch.top; y > bottom; y-- {
+		k <<= 7
+		k |= uint64(ch.m[y])
 	}
 	k <<= 14
 	k |= uint64(ch.jet_i)
@@ -125,25 +135,16 @@ type CycleState struct {
 }
 
 func Parts(in []byte) (int, uint64) {
-	m := map[Pos]struct{}{}
-	for i := 0; i < 7; i++ { // create a floor
-		m[Pos{i, 0}] = struct{}{}
-	}
+	m := [6400]byte{}
+	m[0] = 0b1111111
 	ch := Chamber{
-		m:    m,
+		m:    m[0:],
 		top:  1,
 		jets: in[:len(in)-1],
-		rocks: [5]Rock{
-			Rock{[5]Pos{{0, 0}, {1, 0}, {2, 0}, {3, 0}, {0, 0}}, 4, 1},
-			Rock{[5]Pos{{1, 2}, {0, 1}, {1, 1}, {2, 1}, {1, 0}}, 3, 3},
-			Rock{[5]Pos{{2, 2}, {2, 1}, {0, 0}, {1, 0}, {2, 0}}, 3, 3},
-			Rock{[5]Pos{{0, 3}, {0, 2}, {0, 1}, {0, 0}, {0, 0}}, 1, 4},
-			Rock{[5]Pos{{0, 1}, {1, 1}, {0, 0}, {1, 0}, {0, 0}}, 2, 2},
-		},
 	}
 	round := uint64(1)
 	last := uint64(1000000000000)
-	seen := map[uint64]CycleState{}
+	seen := make(map[uint64]CycleState, 4096)
 	var cycleTop uint64
 	p1 := 0
 	for round <= last {
@@ -152,14 +153,16 @@ func Parts(in []byte) (int, uint64) {
 			p1 = ch.top - 1
 		}
 		k := ch.Key()
-		if old, ok := seen[k]; ok && round >= 2022 && cycleTop == 0 {
-			// fmt.Printf("found cycle: %d && %d / %d && %d\n",
-			//   round, old.round, ch.top, old.top)
-			diffTop := ch.top - old.top
-			diffRound := round - old.round
-			n := (last - round) / diffRound
-			round += n * diffRound
-			cycleTop = n * uint64(diffTop)
+		if round >= 2022 && cycleTop == 0 {
+			if old, ok := seen[k]; ok {
+				// fmt.Printf("found cycle: %d && %d / %d && %d\n",
+				//   round, old.round, ch.top, old.top)
+				diffTop := ch.top - old.top
+				diffRound := round - old.round
+				n := (last - round) / diffRound
+				round += n * diffRound
+				cycleTop = n * uint64(diffTop)
+			}
 		}
 		seen[k] = CycleState{round, ch.top}
 		if round == 2022 {

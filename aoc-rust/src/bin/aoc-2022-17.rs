@@ -1,3 +1,4 @@
+use ahash::RandomState;
 use std::collections::HashMap;
 use std::fmt;
 
@@ -25,9 +26,9 @@ const ROCKS: &[Rock] = &[
     },
     Rock {
         rows: &[
-            0b0010000,
-            0b0010000,
             0b1110000,
+            0b0010000,
+            0b0010000,
         ],
         w: 3,
     },
@@ -78,7 +79,7 @@ impl<'a> Chamber<'a> {
     }
     fn hit(&self, rows: &[u8], x: usize, y: usize) -> bool {
         for i in 0..rows.len() {
-            if self.m[y + i] & (rows[rows.len() - 1 - i] >> x) != 0 {
+            if self.m[y + i] & (rows[i] >> x) != 0 {
                 return true;
             }
         }
@@ -106,7 +107,7 @@ impl<'a> Chamber<'a> {
             }
         }
         for i in 0..r.rows.len() {
-            self.m[y + i] |= r.rows[r.rows.len() - 1 - i] >> x
+            self.m[y + i] |= r.rows[i] >> x
         }
         if self.top < y + r.rows.len() {
             self.top = y + r.rows.len();
@@ -172,7 +173,8 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let last = 1000000000000usize;
     let mut cycle_top = 0;
     let mut p1 = 0;
-    let mut seen: HashMap<usize, (usize, usize)> = HashMap::default();
+    let mut seen: HashMap<usize, (usize, usize), RandomState> =
+        HashMap::with_capacity_and_hasher(4096, RandomState::new());
     while round <= last {
         ch.fall();
         if round == 2022 {
