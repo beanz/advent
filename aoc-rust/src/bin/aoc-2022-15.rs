@@ -29,7 +29,7 @@ fn rot_ccw(x: isize, y: isize) -> (isize, isize) {
     (x + y, y - x)
 }
 
-fn rot_cc(x: isize, y: isize) -> (isize, isize) {
+fn rot_cw(x: isize, y: isize) -> (isize, isize) {
     ((x - y) >> 1, (y + x) >> 1)
 }
 
@@ -134,7 +134,7 @@ fn part2(sensors: &[Sensor], max: isize) -> usize {
     let mut poss = SmallVec::<[(isize, isize); 30]>::new();
     for rx in &nx {
         for ry in &ny {
-            let (x, y) = rot_cc(*rx, *ry);
+            let (x, y) = rot_cw(*rx, *ry);
             if 0 <= x && x <= max && 0 <= y && y <= max {
                 poss.push((x, y));
             }
