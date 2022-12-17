@@ -114,21 +114,18 @@ impl<'a> Chamber<'a> {
         }
     }
     fn key(&self) -> usize {
-        let mut k = 0;
-        let mut y = self.top;
-        let bottom = if self.top > 5 { self.top - 5 } else { 0 };
-        while y > bottom {
-            k <<= 7;
-            k |= self.m[y] as usize;
-            if y == 0 {
-                break;
-            }
-            y -= 1;
-        }
+        let y = self.top;
+        let mut k = self.m[y - 4] as usize;
+        k <<= 7;
+        k += self.m[y - 3] as usize;
+        k <<= 7;
+        k += self.m[y - 2] as usize;
+        k <<= 7;
+        k += self.m[y - 1] as usize;
+        k <<= 7;
+        k += self.m[y - 0] as usize;
         k <<= 14;
-        k |= self.jet_i;
-        k <<= 3;
-        k |= self.rock_i;
+        k += self.jet_i * 8 + self.rock_i;
         k
     }
 }
@@ -175,22 +172,28 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let mut p1 = 0;
     let mut seen: HashMap<usize, (usize, usize), RandomState> =
         HashMap::with_capacity_and_hasher(4096, RandomState::new());
+    while round <= 5 {
+        ch.fall();
+        round += 1;
+    }
     while round <= last {
         ch.fall();
         if round == 2022 {
             p1 = ch.top - 1;
         }
-        let k = ch.key();
-        if round >= 2022 && cycle_top == 0 {
-            if let Some((old_round, old_top)) = seen.get(&k) {
-                let diff_top = ch.top - old_top;
-                let diff_round = round - old_round;
-                let n = (last - round) / diff_round;
-                round += n * diff_round;
-                cycle_top = n * diff_top;
+        if cycle_top == 0 {
+            let k = ch.key();
+            if round >= 2022 {
+                if let Some((old_round, old_top)) = seen.get(&k) {
+                    let diff_top = ch.top - old_top;
+                    let diff_round = round - old_round;
+                    let n = (last - round) / diff_round;
+                    round += n * diff_round;
+                    cycle_top = n * diff_top;
+                }
             }
+            seen.insert(k, (round, ch.top));
         }
-        seen.insert(k, (round, ch.top));
         round += 1;
     }
     (p1, cycle_top + ch.top - 1)

@@ -114,18 +114,18 @@ func (ch Chamber) String() string {
 
 func (ch Chamber) Key() uint64 {
 	var k uint64
-	bottom := 0
-	if ch.top > 5 {
-		bottom = ch.top - 5
-	}
-	for y := ch.top; y > bottom; y-- {
-		k <<= 7
-		k |= uint64(ch.m[y])
-	}
-	k <<= 14
-	k |= uint64(ch.jet_i)
-	k <<= 3
-	k |= uint64(ch.rock_i)
+	y := ch.top
+	k = uint64(ch.m[y])
+	k <<= 8
+	k += uint64(ch.m[y-1])
+	k <<= 8
+	k += uint64(ch.m[y-2])
+	k <<= 8
+	k += uint64(ch.m[y-3])
+	k <<= 8
+	k += uint64(ch.m[y-4])
+	k <<= 16
+	k += uint64(ch.jet_i*8 + ch.rock_i)
 	return k
 }
 
@@ -147,24 +147,30 @@ func Parts(in []byte) (int, uint64) {
 	seen := make(map[uint64]CycleState, 4096)
 	var cycleTop uint64
 	p1 := 0
+	for round <= 5 {
+		ch.Fall()
+		round++
+	}
 	for round <= last {
 		ch.Fall()
 		if round == 2022 {
 			p1 = ch.top - 1
 		}
-		k := ch.Key()
-		if round >= 2022 && cycleTop == 0 {
-			if old, ok := seen[k]; ok {
-				// fmt.Printf("found cycle: %d && %d / %d && %d\n",
-				//   round, old.round, ch.top, old.top)
-				diffTop := ch.top - old.top
-				diffRound := round - old.round
-				n := (last - round) / diffRound
-				round += n * diffRound
-				cycleTop = n * uint64(diffTop)
+		if cycleTop == 0 {
+			k := ch.Key()
+			if round >= 2022 {
+				if old, ok := seen[k]; ok {
+					// fmt.Printf("found cycle: %d && %d / %d && %d\n",
+					//   round, old.round, ch.top, old.top)
+					diffTop := ch.top - old.top
+					diffRound := round - old.round
+					n := (last - round) / diffRound
+					round += n * diffRound
+					cycleTop = n * uint64(diffTop)
+				}
 			}
+			seen[k] = CycleState{round, ch.top}
 		}
-		seen[k] = CycleState{round, ch.top}
 		if round == 2022 {
 			p1 = ch.top - 1
 		}
