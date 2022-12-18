@@ -10,123 +10,112 @@ import (
 //go:embed input.txt
 var input []byte
 
-type Pos struct {
-	x, y, z int
-}
+type Pos int32
 
-func (p Pos) Key() int {
-	return p.x<<10 + p.y<<5 + p.z
+func NewPos(x, y, z int) Pos {
+	return Pos((x << 10) + (y << 5) + z)
+}
+func (p Pos) xyz() (int, int, int) {
+	return int(p >> 10), int((p >> 5) & 0x1f), int(p & 0x1f)
 }
 
 func Parts(in []byte) (int, int) {
-	pos := make([]Pos, 0, 7680)
-	min := Pos{10000, 10000, 10000}
-	max := Pos{0, 0, 0}
+	pos := [2560]Pos{}
+	j := 0
+	mx := 0
+	my := 0
+	mz := 0
 	for i := 0; i < len(in); {
-		j, p := NextPos(in, i)
-		pos = append(pos, p)
-		if min.x > p.x {
-			min.x = p.x
+		var x, y, z int
+		i, x = NextUInt(in, i)
+		x += 2
+		i++
+		i, y = NextUInt(in, i)
+		y += 2
+		i++
+		i, z = NextUInt(in, i)
+		z += 2
+		i++
+		pos[j] = NewPos(x, y, z)
+		j++
+		if mx < x {
+			mx = x
 		}
-		if max.x < p.x {
-			max.x = p.x
+		if my < y {
+			my = y
 		}
-		if min.y > p.y {
-			min.y = p.y
+		if mz < z {
+			mz = z
 		}
-		if max.y < p.y {
-			max.y = p.y
-		}
-		if min.z > p.z {
-			min.z = p.z
-		}
-		if max.z < p.z {
-			max.z = p.z
-		}
-		i = j
 	}
-	p1 := 6 * len(pos)
+	p1 := 6 * j
 	thing := [32768]bool{}
-	for i := 0; i < len(pos); i++ {
-		thing[pos[i].Key()] = true
-		for j := i + 1; j < len(pos); j++ {
-			eqx, eqy, eqz := pos[i].x == pos[j].x, pos[i].y == pos[j].y, pos[i].z == pos[j].z
-			if eqx {
-				if eqy && (pos[i].z == pos[j].z-1 || pos[i].z == pos[j].z+1) {
-					p1 -= 2
-				}
-				if eqz && (pos[i].y == pos[j].y-1 || pos[i].y == pos[j].y+1) {
-					p1 -= 2
-				}
-			} else {
-				if eqy && eqz && (pos[i].x == pos[j].x-1 || pos[i].x == pos[j].x+1) {
-					p1 -= 2
-				}
-			}
+	for i := 0; i < j; i++ {
+		thing[pos[i]] = true
+		if thing[pos[i]-1024] {
+			p1 -= 2
+		}
+		if thing[pos[i]+1024] {
+			p1 -= 2
+		}
+		if thing[pos[i]-32] {
+			p1 -= 2
+		}
+		if thing[pos[i]+32] {
+			p1 -= 2
+		}
+		if thing[pos[i]-1] {
+			p1 -= 2
+		}
+		if thing[pos[i]+1] {
+			p1 -= 2
 		}
 	}
-	min.x--
-	min.y--
-	min.z--
-	max.x++
-	max.y++
-	max.z++
-	todo := make([]Pos, 0, 768)
-	todo = append(todo, Pos{max.x, max.y, max.z})
+	mx++
+	my++
+	mz++
+	todo := NewQueue(pos[0:])
+	todo.Push(NewPos(mx, my, mz))
 	visit := [32768]bool{}
 	p2 := 0
-	for len(todo) != 0 {
-		cur := todo[0]
-		todo = todo[1:]
-		key := cur.Key()
-		if thing[key] {
+	c := 0
+	for !todo.Empty() {
+		c++
+		cur := todo.Pop()
+		if visit[cur] {
 			continue
 		}
-		if visit[key] {
-			continue
-		}
-		visit[key] = true
-		n := Pos{cur.x + 1, cur.y, cur.z}
-		nk := n.Key()
-		if thing[nk] {
+		visit[cur] = true
+		x, y, z := cur.xyz()
+		if thing[cur+1024] {
 			p2++
-		} else if !visit[nk] && cur.x < max.x {
-			todo = append(todo, n)
+		} else if !visit[cur+1024] && x < mx {
+			todo.Push(cur + 1024)
 		}
-		n = Pos{cur.x - 1, cur.y, cur.z}
-		nk = n.Key()
-		if thing[nk] {
+		if thing[cur-1024] {
 			p2++
-		} else if !visit[nk] && cur.x > min.x {
-			todo = append(todo, n)
+		} else if !visit[cur-1024] && x > 1 {
+			todo.Push(cur - 1024)
 		}
-		n = Pos{cur.x, cur.y + 1, cur.z}
-		nk = n.Key()
-		if thing[nk] {
+		if thing[cur+32] {
 			p2++
-		} else if !visit[nk] && cur.y < max.y {
-			todo = append(todo, n)
+		} else if !visit[cur+32] && y < my {
+			todo.Push(cur + 32)
 		}
-		n = Pos{cur.x, cur.y - 1, cur.z}
-		nk = n.Key()
-		if thing[nk] {
+		if thing[cur-32] {
 			p2++
-		} else if !visit[nk] && cur.y > min.y {
-			todo = append(todo, n)
+		} else if !visit[cur-32] && y > 1 {
+			todo.Push(cur - 32)
 		}
-		n = Pos{cur.x, cur.y, cur.z + 1}
-		nk = n.Key()
-		if thing[nk] {
+		if thing[cur+1] {
 			p2++
-		} else if !visit[nk] && cur.z < max.z {
-			todo = append(todo, n)
+		} else if !visit[cur+1] && z < mz {
+			todo.Push(cur + 1)
 		}
-		n = Pos{cur.x, cur.y, cur.z - 1}
-		nk = n.Key()
-		if thing[nk] {
+		if thing[cur-1] {
 			p2++
-		} else if !visit[nk] && cur.z > min.z {
-			todo = append(todo, n)
+		} else if !visit[cur-1] && z > 1 {
+			todo.Push(cur - 1)
 		}
 	}
 	return p1, p2
@@ -138,15 +127,6 @@ func main() {
 		fmt.Printf("Part 1: %d\n", p1)
 		fmt.Printf("Part 2: %d\n", p2)
 	}
-}
-
-func NextPos(in []byte, i int) (int, Pos) {
-	j, x := NextUInt(in, i)
-	j++
-	j, y := NextUInt(in, j)
-	j++
-	j, z := NextUInt(in, j)
-	return j + 1, Pos{x + 2, y + 2, z + 2}
 }
 
 func NextUInt(in []byte, i int) (j int, n int) {
