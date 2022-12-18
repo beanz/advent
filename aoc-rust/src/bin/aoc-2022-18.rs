@@ -16,7 +16,7 @@ macro_rules! read_uint {
 type Pos = usize;
 
 fn pos(x: u8, y: u8, z: u8) -> Pos {
-    ((x as usize) << 10) + ((y as usize) << 5) + (z as usize)
+    ((x as Pos) << 10) + ((y as Pos) << 5) + (z as Pos)
 }
 
 fn xyz(p: Pos) -> (u8, u8, u8) {
@@ -45,11 +45,23 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let mut thing = [false; 32768];
     for i in 0..cubes.len() {
         thing[cubes[i]] = true;
-        for j in i + 1..cubes.len() {
-            p1 -= match (cubes[i] as isize) - (cubes[j] as isize) {
-                -1 | 1 | -32 | 32 | -1024 | 1024 => 2,
-                _ => 0,
-            };
+        if thing[cubes[i] - 1024] {
+            p1 -= 2
+        }
+        if thing[cubes[i] + 1024] {
+            p1 -= 2
+        }
+        if thing[cubes[i] - 32] {
+            p1 -= 2
+        }
+        if thing[cubes[i] + 32] {
+            p1 -= 2
+        }
+        if thing[cubes[i] - 1] {
+            p1 -= 2
+        }
+        if thing[cubes[i] + 1] {
+            p1 -= 2
         }
     }
     let mut todo = Deque::<Pos, 768>::default();
