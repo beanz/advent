@@ -11,28 +11,37 @@ import (
 //go:embed input.txt
 var input []byte
 
-type Sensor struct {
-	x, y     int
-	bx, by   int
-	md       int
-	r1x, r1y int
-	r2x, r2y int
+type Int int32
+
+func AbsI(x Int) Int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }
 
-func rotCCW(x, y int) (int, int) {
+type Sensor struct {
+	x, y     Int
+	bx, by   Int
+	md       Int
+	r1x, r1y Int
+	r2x, r2y Int
+}
+
+func rotCCW(x, y Int) (Int, Int) {
 	return x + y, y - x
 }
 
-func rotCW(x, y int) (int, int) {
+func rotCW(x, y Int) (Int, Int) {
 	return (x - y) >> 1, (y + x) >> 1
 }
 
 type Pos struct {
-	x, y int
+	x, y Int
 }
 
 type Span struct {
-	s, e int
+	s, e Int
 }
 
 type ByStart []Span
@@ -43,11 +52,11 @@ func (bs ByStart) Less(i, j int) bool { return bs[i].s < bs[j].s }
 
 func (bs ByStart) Swap(i, j int) { bs[i], bs[j] = bs[j], bs[i] }
 
-func SpansForRow(s []Sensor, y int) []Span {
+func SpansForRow(s []Sensor, y Int) []Span {
 	spans := [30]Span{}
 	k := 0
 	for _, sensor := range s {
-		d := sensor.md - Abs(sensor.y-y)
+		d := sensor.md - AbsI(sensor.y-y)
 		if d < 0 {
 			continue
 		}
@@ -69,7 +78,7 @@ func SpansForRow(s []Sensor, y int) []Span {
 	return spans[:j+1]
 }
 
-func Parts(in []byte) (int, int) {
+func Parts(in []byte) (Int, int) {
 	sensors := [30]Sensor{}
 	k := 0
 	for i := 0; i < len(in); {
@@ -77,15 +86,15 @@ func Parts(in []byte) (int, int) {
 		j, y := NextInt(in, j+4)
 		j, bx := NextInt(in, j+25)
 		j, by := NextInt(in, j+4)
-		d := Abs(x-bx) + Abs(y-by)
+		d := AbsI(x-bx) + AbsI(y-by)
 		r1x, r1y := rotCCW(x-d-1, y)
 		r2x, r2y := rotCCW(x+d+1, y)
 		sensors[k] = Sensor{x, y, bx, by, d, r1x, r1y, r2x, r2y}
 		k++
 		i = j + 1
 	}
-	y := 2000000
-	max := 4000000
+	var y Int = 2000000
+	var max Int = 4000000
 	if k < 15 {
 		y = 10 // example
 		max = 20
@@ -93,8 +102,8 @@ func Parts(in []byte) (int, int) {
 	return Part1(sensors[:k], y), Part2(sensors[:k], max)
 }
 
-func Part1(sensors []Sensor, y int) int {
-	done := make(map[int]struct{}, 30)
+func Part1(sensors []Sensor, y Int) Int {
+	done := make(map[Int]struct{}, 30)
 	for _, s := range sensors {
 		if s.by == y {
 			done[s.bx] = struct{}{}
@@ -102,16 +111,16 @@ func Part1(sensors []Sensor, y int) int {
 	}
 	beaconCount := len(done)
 	spans := SpansForRow(sensors, y)
-	p1 := -beaconCount
+	p1 := Int(-beaconCount)
 	for _, span := range spans {
 		p1 += span.e - span.s
 	}
 	return p1
 }
 
-func Part2(sensors []Sensor, max int) int {
-	nx := make([]int, 0, 30)
-	ny := make([]int, 0, 30)
+func Part2(sensors []Sensor, max Int) int {
+	nx := make([]Int, 0, 30)
+	ny := make([]Int, 0, 30)
 	for i := 0; i < len(sensors); i++ {
 		for j := i; j < len(sensors); j++ {
 			if sensors[i].r1x == sensors[j].r2x {
@@ -128,7 +137,7 @@ func Part2(sensors []Sensor, max int) int {
 			}
 		}
 	}
-	sort.Ints(nx)
+	sort.Slice(nx, func(i, j int) bool { return nx[i] < nx[j] })
 	l := 1
 	for i := 1; i < len(nx); i++ {
 		if nx[i-1] != nx[i] {
@@ -137,7 +146,7 @@ func Part2(sensors []Sensor, max int) int {
 		}
 	}
 	nx = nx[:l]
-	sort.Ints(ny)
+	sort.Slice(ny, func(i, j int) bool { return ny[i] < ny[j] })
 	l = 1
 	for i := 1; i < len(ny); i++ {
 		if ny[i-1] != ny[i] {
@@ -156,19 +165,19 @@ func Part2(sensors []Sensor, max int) int {
 		}
 	}
 	if len(poss) == 1 {
-		return 4000000*poss[0].x + poss[0].y
+		return 4000000*int(poss[0].x) + int(poss[0].y)
 	}
 	for _, p := range poss {
 		near := false
 		for _, sensor := range sensors {
-			md := Abs(sensor.x-p.x) + Abs(sensor.y-p.y)
+			md := AbsI(sensor.x-p.x) + AbsI(sensor.y-p.y)
 			if md <= sensor.md {
 				near = true
 				break
 			}
 		}
 		if !near {
-			return 4000000*p.x + p.y
+			return 4000000*int(p.x) + int(p.y)
 		}
 	}
 	return 0
@@ -182,15 +191,15 @@ func main() {
 	}
 }
 
-func NextInt(in []byte, i int) (j int, n int) {
+func NextInt(in []byte, i int) (j int, n Int) {
 	j = i
-	m := 1
+	var m Int = 1
 	if in[j] == '-' {
 		m = -1
 		j++
 	}
 	for ; '0' <= in[j] && in[j] <= '9'; j++ {
-		n = 10*n + int(in[j]-'0')
+		n = 10*n + Int(in[j]-'0')
 	}
 	n *= m
 	return
