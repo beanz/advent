@@ -1,3 +1,4 @@
+pub mod deque;
 pub mod elfcomp2016;
 pub mod read;
 

@@ -15,7 +15,7 @@ type Pos struct {
 }
 
 func (p Pos) Key() int {
-	return (p.x+2)<<10 + (p.y+2)<<5 + (p.z + 2)
+	return p.x<<10 + p.y<<5 + p.z
 }
 
 func Parts(in []byte) (int, int) {
@@ -146,7 +146,7 @@ func NextPos(in []byte, i int) (int, Pos) {
 	j, y := NextUInt(in, j)
 	j++
 	j, z := NextUInt(in, j)
-	return j + 1, Pos{x, y, z}
+	return j + 1, Pos{x + 2, y + 2, z + 2}
 }
 
 func NextUInt(in []byte, i int) (j int, n int) {
