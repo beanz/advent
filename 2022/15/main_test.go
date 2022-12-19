@@ -22,9 +22,10 @@ func ExampleMain() {
 
 func TestParts(t *testing.T) {
 	tests := []struct {
-		file   string
-		data   []byte
-		p1, p2 int
+		file string
+		data []byte
+		p1   Int
+		p2   int
 	}{
 		{"test1.txt", test1, 26, 56000011},
 		{"input.txt", input, 4985193, 11583882601918},

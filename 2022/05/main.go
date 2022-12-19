@@ -66,14 +66,6 @@ func (d *Dock) Move2(f, t, n int) {
 	d[to] += byte(n)
 }
 
-func NextUInt(in []byte, i int) (j int, n int) {
-	j = i
-	for ; '0' <= in[j] && in[j] <= '9'; j++ {
-		n = 10*n + int(in[j]-'0')
-	}
-	return
-}
-
 func Parts(in []byte) ([MAX_STACKS]byte, [MAX_STACKS]byte) {
 	dock := Dock{}
 	i := 0
@@ -95,7 +87,7 @@ func Parts(in []byte) ([MAX_STACKS]byte, [MAX_STACKS]byte) {
 	}
 	i++
 	for ; i < len(in); i++ {
-		j, n := NextUInt(in, i+5)
+		j, n := ChompUInt[int](in, i+5)
 		fr, to := int(in[j+6]-'1'), int(in[j+11]-'1')
 		dock.Move(fr, to, n)
 		dock.Move2(fr, to, n)

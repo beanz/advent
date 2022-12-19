@@ -10,22 +10,6 @@ import (
 //go:embed input.txt
 var input []byte
 
-func NextUInt(in []byte, i int) (j int, n int) {
-	j = i
-	for ; '0' <= in[j] && in[j] <= '9'; j++ {
-		n = 10*n + int(in[j]-'0')
-	}
-	return
-}
-
-func NextLine(in []byte, i int) int {
-	for in[i] != '\n' {
-		i++
-	}
-	i++
-	return i
-}
-
 func Parts(in []byte) (int, int) {
 	t := 0
 	n := 0
@@ -41,7 +25,7 @@ func Parts(in []byte) (int, int) {
 	min := 70000000
 	need := 30000000 - (min - t)
 	i := 0
-	i = NextLine(in, i)
+	i = ChompToNextLine(in, i)
 	Size(in, i, need, &min, &p1)
 	return p1, min
 }
@@ -50,7 +34,7 @@ func Size(in []byte, i int, need int, min *int, p1 *int) (int, int) {
 	c := 0
 	for i < len(in) {
 		if '0' <= in[i] && in[i] <= '9' {
-			j, n := NextUInt(in, i)
+			j, n := ChompUInt[int](in, i)
 			i = j + 1
 			c += n
 		} else if in[i+5] == '.' {
@@ -58,7 +42,7 @@ func Size(in []byte, i int, need int, min *int, p1 *int) (int, int) {
 			return i, c
 		} else if in[i+2] == 'c' {
 			i += 6
-			i = NextLine(in, i)
+			i = ChompToNextLine(in, i)
 			j, s := Size(in, i, need, min, p1)
 			if s < 100000 {
 				*p1 += s
@@ -69,7 +53,7 @@ func Size(in []byte, i int, need int, min *int, p1 *int) (int, int) {
 			i = j
 			continue
 		}
-		i = NextLine(in, i)
+		i = ChompToNextLine(in, i)
 	}
 	return i, c
 }

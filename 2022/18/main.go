@@ -27,13 +27,13 @@ func Parts(in []byte) (int, int) {
 	mz := 0
 	for i := 0; i < len(in); {
 		var x, y, z int
-		i, x = NextUInt(in, i)
+		i, x = ChompOneOrTwoCharUInt[int](in, i)
 		x += 2
 		i++
-		i, y = NextUInt(in, i)
+		i, y = ChompOneOrTwoCharUInt[int](in, i)
 		y += 2
 		i++
-		i, z = NextUInt(in, i)
+		i, z = ChompOneOrTwoCharUInt[int](in, i)
 		z += 2
 		i++
 		pos[j] = NewPos(x, y, z)
@@ -127,14 +127,6 @@ func main() {
 		fmt.Printf("Part 1: %d\n", p1)
 		fmt.Printf("Part 2: %d\n", p2)
 	}
-}
-
-func NextUInt(in []byte, i int) (j int, n int) {
-	j = i
-	for ; '0' <= in[j] && in[j] <= '9'; j++ {
-		n = 10*n + int(in[j]-'0')
-	}
-	return
 }
 
 var benchmark = false

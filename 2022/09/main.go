@@ -13,16 +13,6 @@ var input []byte
 
 type Int int
 
-var isDigit = [256]bool{48: true, 49: true, 50: true, 51: true, 52: true, 53: true, 54: true, 55: true, 56: true, 57: true}
-
-func NextUInt(in []byte, i int) (j int, n int) {
-	j = i
-	for ; isDigit[in[j]]; j++ {
-		n = 10*n + int(in[j]&0xf)
-	}
-	return
-}
-
 func Move(h, t Pos) (Pos, bool) {
 	dx, dy := h.x-t.x, h.y-t.y
 	if dx <= 1 && dx >= -1 && dy <= 1 && dy >= -1 {
@@ -52,7 +42,7 @@ func Parts(in []byte) (int, int) {
 	t := [10]Pos{}
 	for i := 0; i < len(in); i++ {
 		ch := in[i]
-		j, n := NextUInt(in, i+2)
+		j, n := ChompUInt[int](in, i+2)
 		i = j
 		inc := Inc[ch]
 		var dragged bool

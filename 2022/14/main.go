@@ -43,9 +43,9 @@ func Parts(in []byte) (int, int) {
 	minx, maxx, maxy := int32(math.MaxInt32), int32(math.MinInt32), int32(math.MinInt32)
 	m := Occupied{}
 	for i := 0; i < len(in); i++ {
-		j, x := NextUInt(in, i)
+		j, x := ChompUInt[int32](in, i)
 		i = j + 1
-		j, y := NextUInt(in, i)
+		j, y := ChompUInt[int32](in, i)
 		i = j
 		m.Add(x, y)
 		if minx > x {
@@ -59,9 +59,9 @@ func Parts(in []byte) (int, int) {
 		}
 		for i < len(in) && in[i] != '\n' {
 			i += 4
-			j, nx := NextUInt(in, i)
+			j, nx := ChompUInt[int32](in, i)
 			i = j + 1
-			j, ny := NextUInt(in, i)
+			j, ny := ChompUInt[int32](in, i)
 			i = j
 			var ix Int
 			if nx > x {
@@ -133,14 +133,6 @@ func main() {
 		fmt.Printf("Part 1: %d\n", p1)
 		fmt.Printf("Part 2: %d\n", p2)
 	}
-}
-
-func NextUInt(in []byte, i int) (j int, n int32) {
-	j = i
-	for ; '0' <= in[j] && in[j] <= '9'; j++ {
-		n = 10*n + int32(in[j]-'0')
-	}
-	return
 }
 
 var benchmark = false

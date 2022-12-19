@@ -10,22 +10,14 @@ import (
 //go:embed input.txt
 var input []byte
 
-func NextUInt(in []byte, i int) (j int, n int) {
-	j = i
-	for ; '0' <= in[j] && in[j] <= '9'; j++ {
-		n = 10*n + int(in[j]-'0')
-	}
-	return
-}
-
 func Parts(in []byte) (int, int) {
 	p1, p2 := 0, 0
 	for i := 0; i < len(in); {
-		var l0, h0, l1, h1 int
-		i, l0 = NextUInt(in, i)
-		i, h0 = NextUInt(in, i+1)
-		i, l1 = NextUInt(in, i+1)
-		i, h1 = NextUInt(in, i+1)
+		var l0, h0, l1, h1 int32
+		i, l0 = ChompUInt[int32](in, i)
+		i, h0 = ChompUInt[int32](in, i+1)
+		i, l1 = ChompUInt[int32](in, i+1)
+		i, h1 = ChompUInt[int32](in, i+1)
 		if l0 >= l1 && h0 <= h1 || l1 >= l0 && h1 <= h0 {
 			p1++
 		}

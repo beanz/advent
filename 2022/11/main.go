@@ -40,7 +40,7 @@ func NextMonkey(in []byte, i int) (int, Monkey) {
 	items2 := [32]int{}
 	l := 0
 	for {
-		k, n := NextUInt(in, j)
+		k, n := ChompUInt[int](in, j)
 		j = k
 		items[l] = n
 		items2[l] = n
@@ -55,7 +55,7 @@ func NextMonkey(in []byte, i int) (int, Monkey) {
 	var operand int
 	switch in[j] {
 	case '+':
-		k, n := NextUInt(in, j+2)
+		k, n := ChompUInt[int](in, j+2)
 		j = k + 1
 		op = ADD
 		operand = n
@@ -64,18 +64,18 @@ func NextMonkey(in []byte, i int) (int, Monkey) {
 			op = SQ
 			j += 6
 		} else {
-			k, n := NextUInt(in, j+2)
+			k, n := ChompUInt[int](in, j+2)
 			j = k + 1
 			op = MUL
 			operand = n
 		}
 	}
 	j += 21
-	k, div := NextUInt(in, j)
+	k, div := ChompUInt[int](in, j)
 	j = k + 30
-	k, tm := NextUInt(in, j)
+	k, tm := ChompUInt[int](in, j)
 	j = k + 31
-	k, fm := NextUInt(in, j)
+	k, fm := ChompUInt[int](in, j)
 	j = k + 1
 	return j, Monkey{0, l, items, l, items2, div, op, operand, tm, fm}
 }
@@ -122,8 +122,8 @@ func (mb *Business) Solve(rounds, reduce int) int {
 		}
 	}
 	m1, m2 := 0, 0
-	for _, m := range mb.mk {
-		c := m.c
+	for i := 0; i < mb.l; i++ {
+		c := mb.mk[i].c
 		if c > m1 {
 			c, m1 = m1, c
 		}
@@ -159,14 +159,6 @@ func main() {
 		fmt.Printf("Part 1: %d\n", p1)
 		fmt.Printf("Part 2: %d\n", p2)
 	}
-}
-
-func NextUInt(in []byte, i int) (j int, n int) {
-	j = i
-	for ; '0' <= in[j] && in[j] <= '9'; j++ {
-		n = 10*n + int(in[j]-'0')
-	}
-	return
 }
 
 var benchmark = false

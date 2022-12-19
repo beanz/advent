@@ -32,7 +32,7 @@ func Parts(in []byte) (int, int) {
 	for i := 0; i < len(in); i++ {
 		id := [2]byte{in[i+6], in[i+7]}
 		names = append(names, id)
-		j, r := NextUInt(in, i+23)
+		j, r := ChompOneOrTwoCharUInt[int](in, i+23)
 		if r > 0 {
 			nonZero++
 		}
@@ -126,13 +126,6 @@ func main() {
 		fmt.Printf("Part 1: %d\n", p1)
 		fmt.Printf("Part 2: %d\n", p2)
 	}
-}
-
-func NextUInt(in []byte, i int) (int, int) {
-	if '0' <= in[i+1] && in[i+1] <= '9' {
-		return i + 2, 10*int(in[i]-'0') + int(in[i+1]-'0')
-	}
-	return i + 1, int(in[i] - '0')
 }
 
 var benchmark = false

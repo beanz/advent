@@ -19,10 +19,10 @@ func Parts(in []byte) (int, [246]byte) {
 		if in[i] == 'a' {
 			var k int
 			if in[i+5] == '-' {
-				k, inc[j] = NextUInt(in, i+6)
+				k, inc[j] = ChompUInt[int](in, i+6)
 				inc[j] *= -1
 			} else {
-				k, inc[j] = NextUInt(in, i+5)
+				k, inc[j] = ChompUInt[int](in, i+5)
 			}
 			i = k + 1
 			j++
@@ -69,14 +69,6 @@ func main() {
 	if !benchmark {
 		fmt.Printf("Part 1: %d\nPart 2:\n%s", p1, string(p2[:]))
 	}
-}
-
-func NextUInt(in []byte, i int) (j int, n int) {
-	j = i
-	for ; '0' <= in[j] && in[j] <= '9'; j++ {
-		n = 10*n + int(in[j]-'0')
-	}
-	return
 }
 
 var benchmark = false

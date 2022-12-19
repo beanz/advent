@@ -13,13 +13,6 @@ var input []byte
 
 type Int int32
 
-func AbsI(x Int) Int {
-	if x < 0 {
-		return -x
-	}
-	return x
-}
-
 type Sensor struct {
 	x, y     Int
 	bx, by   Int
@@ -56,7 +49,7 @@ func SpansForRow(s []Sensor, y Int) []Span {
 	spans := [30]Span{}
 	k := 0
 	for _, sensor := range s {
-		d := sensor.md - AbsI(sensor.y-y)
+		d := sensor.md - Abs(sensor.y-y)
 		if d < 0 {
 			continue
 		}
@@ -82,11 +75,11 @@ func Parts(in []byte) (Int, int) {
 	sensors := [30]Sensor{}
 	k := 0
 	for i := 0; i < len(in); {
-		j, x := NextInt(in, i+12)
-		j, y := NextInt(in, j+4)
-		j, bx := NextInt(in, j+25)
-		j, by := NextInt(in, j+4)
-		d := AbsI(x-bx) + AbsI(y-by)
+		j, x := ChompInt[Int](in, i+12)
+		j, y := ChompInt[Int](in, j+4)
+		j, bx := ChompInt[Int](in, j+25)
+		j, by := ChompInt[Int](in, j+4)
+		d := Abs(x-bx) + Abs(y-by)
 		r1x, r1y := rotCCW(x-d-1, y)
 		r2x, r2y := rotCCW(x+d+1, y)
 		sensors[k] = Sensor{x, y, bx, by, d, r1x, r1y, r2x, r2y}
@@ -170,7 +163,7 @@ func Part2(sensors []Sensor, max Int) int {
 	for _, p := range poss {
 		near := false
 		for _, sensor := range sensors {
-			md := AbsI(sensor.x-p.x) + AbsI(sensor.y-p.y)
+			md := Abs(sensor.x-p.x) + Abs(sensor.y-p.y)
 			if md <= sensor.md {
 				near = true
 				break
@@ -189,20 +182,6 @@ func main() {
 		fmt.Printf("Part 1: %d\n", p1)
 		fmt.Printf("Part 2: %d\n", p2)
 	}
-}
-
-func NextInt(in []byte, i int) (j int, n Int) {
-	j = i
-	var m Int = 1
-	if in[j] == '-' {
-		m = -1
-		j++
-	}
-	for ; '0' <= in[j] && in[j] <= '9'; j++ {
-		n = 10*n + Int(in[j]-'0')
-	}
-	n *= m
-	return
 }
 
 var benchmark = false

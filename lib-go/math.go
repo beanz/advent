@@ -1,6 +1,6 @@
 package aoc
 
-func Abs(x int) int {
+func Abs[T AoCSigned](x T) T {
 	if x < 0 {
 		return -x
 	}
