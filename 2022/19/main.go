@@ -12,7 +12,8 @@ import (
 var input []byte
 
 type Blueprint struct {
-	ore_ore, clay_ore, obs_ore, obs_clay, geode_ore, geode_obs int
+	oreOre, clayOre, obsOre, obsClay, geodeOre, geodeObs int
+	maxOre                                               int
 }
 
 func Read(in []byte) []Blueprint {
@@ -20,12 +21,13 @@ func Read(in []byte) []Blueprint {
 	for i := 0; i < len(in); i++ {
 		bp := Blueprint{}
 		j, _ := ChompUInt[int](in, i+10)
-		j, bp.ore_ore = ChompUInt[int](in, j+23)
-		j, bp.clay_ore = ChompUInt[int](in, j+28)
-		j, bp.obs_ore = ChompUInt[int](in, j+32)
-		j, bp.obs_clay = ChompUInt[int](in, j+9)
-		j, bp.geode_ore = ChompUInt[int](in, j+30)
-		j, bp.geode_obs = ChompUInt[int](in, j+9)
+		j, bp.oreOre = ChompUInt[int](in, j+23)
+		j, bp.clayOre = ChompUInt[int](in, j+28)
+		j, bp.obsOre = ChompUInt[int](in, j+32)
+		j, bp.obsClay = ChompUInt[int](in, j+9)
+		j, bp.geodeOre = ChompUInt[int](in, j+30)
+		j, bp.geodeObs = ChompUInt[int](in, j+9)
+		bp.maxOre = MaxInt(bp.oreOre, bp.clayOre, bp.obsOre, bp.geodeOre)
 		res = append(res, bp)
 		i = j + 10
 	}
@@ -49,15 +51,15 @@ type Search struct {
 func Solve(bp Blueprint, maxTime int) int {
 	todo := []Search{{maxTime, 0, [4]int{0, 0, 0, 0}, [4]int{1, 0, 0, 0}}}
 	max := 0
-	pruneLen := 20000
+	pruneLen := 8000
 	if maxTime == 24 {
-		pruneLen = 2000
+		pruneLen = 200
 	}
 	pruneTime := maxTime - 1
 	for len(todo) != 0 {
 		if todo[0].t == pruneTime {
 			pruneTime--
-			if len(todo) > pruneLen {
+			if len(todo) > pruneLen*2 {
 				sort.Slice(todo, func(i, j int) bool {
 					return todo[i].score > todo[j].score
 				})
@@ -87,11 +89,11 @@ func Solve(bp Blueprint, maxTime int) int {
 				cur.robots[GEODE],
 			},
 		})
-		if cur.inv[ORE] >= bp.geode_ore && cur.inv[OBSIDIAN] >= bp.geode_obs {
+		if cur.inv[ORE] >= bp.geodeOre && cur.inv[OBSIDIAN] >= bp.geodeObs {
 			todo = append(todo, Search{
 				t:     cur.t - 1,
 				score: nscore,
-				inv:   [4]int{no - bp.geode_ore, nc, nob - bp.geode_obs, ng},
+				inv:   [4]int{no - bp.geodeOre, nc, nob - bp.geodeObs, ng},
 				robots: [4]int{
 					cur.robots[ORE],
 					cur.robots[CLAY],
@@ -100,11 +102,11 @@ func Solve(bp Blueprint, maxTime int) int {
 				},
 			})
 		}
-		if cur.inv[ORE] >= bp.obs_ore && cur.inv[CLAY] >= bp.obs_clay {
+		if cur.robots[OBSIDIAN] < bp.geodeObs && cur.inv[ORE] >= bp.obsOre && cur.inv[CLAY] >= bp.obsClay {
 			todo = append(todo, Search{
 				t:     cur.t - 1,
 				score: nscore,
-				inv:   [4]int{no - bp.obs_ore, nc - bp.obs_clay, nob, ng},
+				inv:   [4]int{no - bp.obsOre, nc - bp.obsClay, nob, ng},
 				robots: [4]int{
 					cur.robots[ORE],
 					cur.robots[CLAY],
@@ -113,11 +115,11 @@ func Solve(bp Blueprint, maxTime int) int {
 				},
 			})
 		}
-		if cur.inv[ORE] >= bp.clay_ore {
+		if cur.robots[CLAY] < bp.obsClay && cur.inv[ORE] >= bp.clayOre {
 			todo = append(todo, Search{
 				t:     cur.t - 1,
 				score: nscore,
-				inv:   [4]int{no - bp.clay_ore, nc, nob, ng},
+				inv:   [4]int{no - bp.clayOre, nc, nob, ng},
 				robots: [4]int{
 					cur.robots[ORE],
 					cur.robots[CLAY] + 1,
@@ -126,11 +128,11 @@ func Solve(bp Blueprint, maxTime int) int {
 				},
 			})
 		}
-		if cur.inv[ORE] >= bp.ore_ore {
+		if cur.robots[ORE] < bp.maxOre && cur.inv[ORE] >= bp.oreOre {
 			todo = append(todo, Search{
 				t:     cur.t - 1,
 				score: nscore,
-				inv:   [4]int{no - bp.ore_ore, nc, nob, ng},
+				inv:   [4]int{no - bp.oreOre, nc, nob, ng},
 				robots: [4]int{
 					cur.robots[ORE] + 1,
 					cur.robots[CLAY],

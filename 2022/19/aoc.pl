@@ -16,13 +16,16 @@ my $i = $reader->($file);
 my $i2 = $reader->($file);
 
 use constant {
-  ORE => 0,
-  CLY => 1,
-  CLAY => 1,
-  OBS => 2,
-  GEO => 3,
+  ORE_ORE => 0,
+  CLAY_ORE => 1,
+  OBS_ORE => 2,
+  OBS_CLAY => 3,
+  GEO_ORE => 4,
+  GEO_OBS => 5,
+  MAX_ORE => 6,
 
   P1_TIME => 24,
+  P2_TIME => 32,
 };
 
 sub read_stuff {
@@ -33,20 +36,11 @@ sub read_stuff {
     my $l = $in->[$i];
     my @ints = ($l =~ m!(\d+)!g);
     my $num = shift @ints;
-    my @costs = (
-      $ints[0],    # ore
-      $ints[1],    # clay
-      [$ints[2], $ints[3]],    # obsidian
-      [$ints[4], $ints[5]],    # geode
-    );
-    $m{$num} = \@costs;
+    push @ints, max($ints[ORE_ORE], $ints[CLAY_ORE], $ints[OBS_ORE], $ints[GEO_ORE]);
+    $m{$num} = \@ints;
   }
   return \%m;
 }
-
-my @TYPES = (ORE, CLY, OBS, GEO);
-my @NAMES = (qw/ore cly obs geo/);
-sub tn {$NAMES[$_[0]]}
 
 sub score {
   my $s = 0;
@@ -58,7 +52,7 @@ sub score {
 
 sub solve {
   my ($m, $n, $time, $prune_len) = @_;
-  $prune_len //= 2000;
+  $prune_len //= $time <= 24 ? 200 : 8000;
   my $bp = $m->{$n};
 
   my @todo = ([$time, 0, 1, 0, 0, 0, 0, 0, 0, 0]);
@@ -86,42 +80,32 @@ sub solve {
     my ($no, $nc, $nob, $ng) = ($o + $ro, $c + $rc, $ob + $rob, $g + $rg);
     my $nscore = score($ng, $rg, $nob, $rob, $nc, $no);
     push @todo, [$t - 1, $nscore, $ro, $rc, $rob, $rg, $no, $nc, $nob, $ng];
-    if ($o >= $bp->[GEO]->[0] && $ob >= $bp->[GEO]->[1]) {
-
-      #print "can buy geode robot\n";
+    if ($o >= $bp->[GEO_ORE] && $ob >= $bp->[GEO_OBS]) {
       push @todo,
         [
-        $t - 1, $nscore, $ro, $rc,
-        $rob, $rg + 1, $no - $bp->[GEO]->[0], $nc,
-        $nob - $bp->[GEO]->[1], $ng
+        $t - 1, $nscore,
+        $ro, $rc, $rob, $rg + 1,
+        $no - $bp->[GEO_ORE], $nc, $nob - $bp->[GEO_OBS], $ng
         ];
     }
-    if ($o >= $bp->[OBS]->[0] && $c >= $bp->[OBS]->[1]) {
-
-      #print "can buy obsidian robot\n";
+    if ($o >= $bp->[OBS_ORE] && $c >= $bp->[OBS_CLAY] && $rob < $bp->[GEO_OBS]) {
       push @todo,
         [
         $t - 1, $nscore, $ro, $rc, $rob + 1, $rg,
-        $no - $bp->[OBS]->[0],
-        $nc - $bp->[OBS]->[1],
-        $nob, $ng
+        $no - $bp->[OBS_ORE], $nc - $bp->[OBS_CLAY], $nob, $ng
         ];
     }
-    if ($o >= $bp->[CLAY]) {
-
-      #print "can buy clay robot\n";
+    if ($o >= $bp->[CLAY_ORE] && $rc < $bp->[OBS_CLAY]) {
       push @todo,
         [
-        $t - 1, $nscore, $ro, $rc + 1, $rob, $rg, $no - $bp->[CLAY],
-        $nc, $nob, $ng
+        $t - 1, $nscore, $ro, $rc + 1, $rob, $rg,
+        $no - $bp->[CLAY_ORE], $nc, $nob, $ng
         ];
     }
-    if ($o >= $bp->[ORE]) {
-
-      #print "can buy ore robot\n";
+    if ($o >= $bp->[ORE_ORE] && $ro < $bp->[MAX_ORE]) {
       push @todo,
         [
-        $t - 1, $nscore, $ro + 1, $rc, $rob, $rg, $no - $bp->[ORE],
+        $t - 1, $nscore, $ro + 1, $rc, $rob, $rg, $no - $bp->[ORE_ORE],
         $nc, $nob, $ng
         ];
     }
@@ -135,14 +119,14 @@ sub calc {
   my ($in) = @_;
   my $c = 0;
   for my $num (keys %$in) {
-    $c += $num * solve($in, $num, 24);
+    $c += $num * solve($in, $num, P1_TIME);
   }
   return $c;
 }
 
 sub solve2 {
   my ($m, $n) = @_;
-  solve($m, $n, 32, 20000);
+  solve($m, $n, P2_TIME);
 }
 
 sub calc2 {
