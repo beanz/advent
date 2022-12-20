@@ -13,60 +13,57 @@ var input []byte
 
 const BIG = 811589153
 
-func mod(n, m int) int {
-	a := n % m
-	if a < 0 {
-		a += m
-	}
-	return a
-}
+type Int = int16
 
-func Pretty(nums []int, idx []int, key int) string {
+func Pretty(nums []int, idx []int) string {
 	var sb strings.Builder
 	for _, i := range idx {
-		fmt.Fprintf(&sb, "%d, ", nums[i]*key)
+		fmt.Fprintf(&sb, "%d, ", nums[i])
 	}
 	s := sb.String()
 	return s[:len(s)-2]
 }
 
-func Mix(nums []int, rounds int, key int) int {
-	ln := len(nums)
-	idx := make([]int, ln)
-	for n := 0; n < ln; n++ {
-		idx[n] = n
+func Mix(nums []Int, rounds int, key int) int {
+	ln := Int(len(nums))
+	idx := [5000]int16{}
+	var i Int
+	for i = 0; i < ln; i++ {
+		idx[i] = i
 	}
 	for r := 0; r < rounds; r++ {
-		for i := 0; i < ln; i++ {
-			num := nums[i] * key
+		var i Int
+		for i = 0; i < ln; i++ {
+			num := int(nums[i]) * key
 			j := 0
 			for ; idx[j] != i; j++ {
 			}
-			idx = append(idx[:j], idx[j+1:]...)
-			n := mod(j+num, ln-1) // -1 because we've removed one
-			idx = append(idx[:n], append([]int{i}, idx[n:]...)...)
-			//fmt.Printf("  %s\n", Pretty(nums, idx, key))
+			copy(idx[j:ln-1], idx[j+1:])
+			n := Mod(j+num, int(ln-1)) // -1 because we've removed one
+			copy(idx[n+1:ln], idx[n:ln-1])
+			idx[n] = i
+			//fmt.Printf("  %s\n", Pretty(nums, idx))
 		}
 	}
-	zero := 0
+	var zero Int
 	for ; nums[zero] != 0; zero++ {
 	}
 	nZero := 0
 	for ; idx[nZero] != zero; nZero++ {
 	}
-	return nums[idx[mod(nZero+1000, ln)]]*key + nums[idx[mod(nZero+2000, ln)]]*key + nums[idx[mod(nZero+3000, ln)]]*key
+	return int(nums[idx[Mod(nZero+1000, int(ln))]])*key + int(nums[idx[Mod(nZero+2000, int(ln))]])*key + int(nums[idx[Mod(nZero+3000, int(ln))]])*key
 }
 
 func Parts(in []byte) (int, int) {
-	nums := make([]int, 0, 5000)
-	nums2 := make([]int, 0, 5000)
+	nums := [5000]Int{}
+	l := 0
 	for i := 0; i < len(in); i++ {
-		j, n := ChompInt[int](in, i)
+		j, n := ChompInt[Int](in, i)
 		i = j
-		nums = append(nums, n)
-		nums2 = append(nums2, n)
+		nums[l] = n
+		l++
 	}
-	return Mix(nums, 1, 1), Mix(nums2, 10, BIG)
+	return Mix(nums[:l], 1, 1), Mix(nums[:l], 10, BIG)
 }
 
 func main() {

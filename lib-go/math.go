@@ -7,6 +7,15 @@ func Abs[T AoCSigned](x T) T {
 	return x
 }
 
+func Mod[T AoCSigned](n, m T) T {
+	a := n % m
+	if a < 0 {
+		a += m
+	}
+	return a
+}
+
+
 func Abs64(a int64) int64 {
 	if a < 0 {
 		return -a
