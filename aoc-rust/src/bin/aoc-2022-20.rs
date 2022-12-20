@@ -15,19 +15,11 @@ fn mix(nums: &[isize], rounds: usize, key: isize) -> isize {
             }
             let ni = (j as isize + num).rem_euclid((len - 1) as isize) as usize;
             if ni > j {
-                for k in j..ni {
-                    (idx[k], idx[k + 1]) = (idx[k + 1], idx[k]);
-                }
+                idx.copy_within(j + 1..ni + 1, j);
             } else if ni < j {
-                let mut k = j - 1;
-                loop {
-                    (idx[k], idx[k + 1]) = (idx[k + 1], idx[k]);
-                    if k == ni {
-                        break;
-                    }
-                    k -= 1;
-                }
+                idx.copy_within(ni..j, ni + 1);
             }
+            idx[ni] = i;
             //pretty(&nums, &idx[0..len], key);
         }
     }

@@ -41,11 +41,10 @@ func Mix(nums []Int, rounds int, key int) int {
 			n := Mod(j+num, int(ln-1)) // -1 because we've removed one
 			if j < n {
 				copy(idx[j:n], idx[j+1:n+1])
-				idx[n] = i
 			} else {
 				copy(idx[n+1:j+1], idx[n:j])
-				idx[n] = i
 			}
+			idx[n] = i
 			//fmt.Printf("  %s\n", Pretty(nums, idx))
 		}
 	}
