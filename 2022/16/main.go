@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"math/bits"
 	"sort"
 
 	. "github.com/beanz/advent/lib-go"
@@ -13,24 +14,23 @@ var input []byte
 
 type Cave struct {
 	rate int
-	next [][2]byte
-}
-
-type Path struct {
-	from int
-	to   int
+	next []int
 }
 
 type Key struct {
 	pos, t, todo int
 }
 
+func charsToId(a, b byte) int {
+	return int(a-'A')*26 + int(b-'A')
+}
+
 func Parts(in []byte) (int, int) {
-	caves := map[[2]byte]*Cave{}
-	names := [][2]byte{}
+	caves := map[int]*Cave{}
+	names := []int{}
 	nonZero := 0
 	for i := 0; i < len(in); i++ {
-		id := [2]byte{in[i+6], in[i+7]}
+		id := charsToId(in[i+6], in[i+7])
 		names = append(names, id)
 		j, r := ChompOneOrTwoCharUInt[int](in, i+23)
 		if r > 0 {
@@ -43,7 +43,7 @@ func Parts(in []byte) (int, int) {
 			i++
 		}
 		for {
-			nc := [2]byte{in[i], in[i+1]}
+			nc := charsToId(in[i], in[i+1])
 			cave.next = append(cave.next, nc)
 			i += 2
 			if in[i] != ',' {
@@ -55,37 +55,39 @@ func Parts(in []byte) (int, int) {
 	sort.Slice(names, func(i, j int) bool {
 		return caves[names[i]].rate > caves[names[j]].rate
 	})
-	idToIndex := map[[2]byte]int{}
+	idToIndex := [676]int{}
 	for i, id := range names {
 		idToIndex[id] = i
 	}
-
-	dist := make(map[Path]int, len(caves)*len(caves))
+	Path := func(i, j int) int {
+		return 64*i + j
+	}
+	dist := [64 * 64]int{}
 	for i := 0; i < len(caves); i++ {
 		for j := i + 1; j < len(caves); j++ {
-			dist[Path{i, j}] = len(caves) + 1
-			dist[Path{j, i}] = len(caves) + 1
+			dist[Path(i, j)] = len(caves) + 1
+			dist[Path(j, i)] = len(caves) + 1
 		}
 	}
 	for i, id := range names {
 		for _, n := range caves[id].next {
-			dist[Path{i, idToIndex[n]}] = 1
+			dist[Path(i, idToIndex[n])] = 1
 		}
 	}
 	for i := 0; i < len(caves); i++ {
 		for j := 0; j < len(caves); j++ {
 			for k := j + 1; k < len(caves); k++ {
-				d := dist[Path{j, k}]
-				d2 := dist[Path{j, i}] + dist[Path{i, k}]
+				d := dist[Path(j, k)]
+				d2 := dist[Path(j, i)] + dist[Path(i, k)]
 				if d > d2 {
 					d = d2
 				}
-				dist[Path{j, k}] = d
-				dist[Path{k, j}] = d
+				dist[Path(j, k)] = d
+				dist[Path(k, j)] = d
 			}
 		}
 	}
-	mem := map[Key]int{}
+	mem := make(map[Key]int, 1320000)
 	var search func(cave, t int, todo int) int
 	search = func(cave, t int, todo int) int {
 		if res, ok := mem[Key{cave, t, todo}]; ok {
@@ -94,7 +96,7 @@ func Parts(in []byte) (int, int) {
 		max := 0
 		for i := 0; i < nonZero; i++ {
 			if todo&(1<<i) != 0 {
-				nt := t - dist[Path{cave, i}] - 1 // -1 for open
+				nt := t - dist[Path(cave, i)] - 1 // -1 for open
 				if nt > 0 {
 					pres := search(i, nt, todo^(1<<i))
 					pres += caves[names[i]].rate * nt
@@ -107,12 +109,16 @@ func Parts(in []byte) (int, int) {
 		mem[Key{cave, t, todo}] = max
 		return max
 	}
+	start := charsToId('A', 'A')
 	allTodo := (1 << nonZero) - 1
-	p1 := search(idToIndex[[2]byte{'A', 'A'}], 30, allTodo)
+	p1 := search(idToIndex[start], 30, allTodo)
 	p2 := 0
 	for m := 0; m < allTodo+1; m++ {
-		pres := search(idToIndex[[2]byte{'A', 'A'}], 26, m)
-		pres += search(idToIndex[[2]byte{'A', 'A'}], 26, allTodo^m)
+		if bits.OnesCount(uint(m)) != (nonZero+1)/2 {
+			continue
+		}
+		pres := search(idToIndex[start], 26, m)
+		pres += search(idToIndex[start], 26, allTodo^m)
 		if pres > p2 {
 			p2 = pres
 		}
