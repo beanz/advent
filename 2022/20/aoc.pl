@@ -59,6 +59,7 @@ sub mix {
   $mul //= 1;
   my ($j, $n) = by_idx($m, $i);
   $n *= $mul;
+  print "moving $n\n" if (DEBUG>1);
   while ($m->[0]->[IDX] != $i) {
     push @{$m}, shift @{$m};
   }
@@ -67,6 +68,7 @@ sub mix {
     push @{$m}, shift @{$m};
   }
   push @$m, $it;
+  pp($m, $mul) if (DEBUG>1);
 }
 
 sub calc {
