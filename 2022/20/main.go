@@ -21,10 +21,17 @@ func mod(n, m int) int {
 	return a
 }
 
-func Pretty(nums []int, idx []int, key int) string {
+type Elt struct {
+	num      int
+	pre, nxt int
+}
+
+func Pretty(elts []Elt) string {
 	var sb strings.Builder
-	for _, i := range idx {
-		fmt.Fprintf(&sb, "%d, ", nums[i]*key)
+	elt := elts[0]
+	for range elts {
+		fmt.Fprintf(&sb, "%d, ", elt.num)
+		elt = elts[elt.nxt]
 	}
 	s := sb.String()
 	return s[:len(s)-2]
@@ -32,29 +39,53 @@ func Pretty(nums []int, idx []int, key int) string {
 
 func Mix(nums []int, rounds int, key int) int {
 	ln := len(nums)
-	idx := make([]int, ln)
-	for n := 0; n < ln; n++ {
-		idx[n] = n
+	elts := make([]Elt, ln)
+	zero := 0
+	for i, n := range nums {
+		if n == 0 {
+			zero = i
+		}
+		elts[i] = Elt{n * key, i - 1, i + 1}
 	}
+	elts[0].pre = ln - 1
+	elts[ln-1].nxt = 0
+	//fmt.Printf("  %s\n", Pretty(elts))
 	for r := 0; r < rounds; r++ {
-		for i := 0; i < ln; i++ {
-			num := nums[i] * key
-			j := 0
-			for ; idx[j] != i; j++ {
+		for i, elt := range elts {
+			num := elt.num
+			//fmt.Printf("moving %d pre=%d nxt=%d\n", num, elt.pre, elt.nxt)
+			elts[elt.nxt].pre = elt.pre
+			elts[elt.pre].nxt = elt.nxt
+			mix := mod(num, ln-1)
+			nxt := elt.nxt
+			for i := 0; i < mix; i++ {
+				nxt = elts[nxt].nxt
 			}
-			idx = append(idx[:j], idx[j+1:]...)
-			n := mod(j+num, ln-1) // -1 because we've removed one
-			idx = append(idx[:n], append([]int{i}, idx[n:]...)...)
-			//fmt.Printf("  %s\n", Pretty(nums, idx, key))
+			pre := elts[nxt].pre
+			elts[i].nxt = nxt
+			elts[i].pre = pre
+			elts[pre].nxt = i
+			elts[nxt].pre = i
+			//fmt.Printf("  %s\n", Pretty(elts))
 		}
 	}
-	zero := 0
-	for ; nums[zero] != 0; zero++ {
+	s := 0
+	elt := elts[zero]
+	for i := 0; i < 1000; i++ {
+		elt = elts[elt.nxt]
 	}
-	nZero := 0
-	for ; idx[nZero] != zero; nZero++ {
+	//fmt.Printf("%d\n", elt.num)
+	s += elt.num
+	for i := 0; i < 1000; i++ {
+		elt = elts[elt.nxt]
 	}
-	return nums[idx[mod(nZero+1000, ln)]]*key + nums[idx[mod(nZero+2000, ln)]]*key + nums[idx[mod(nZero+3000, ln)]]*key
+	//fmt.Printf("%d\n", elt.num)
+	s += elt.num
+	for i := 0; i < 1000; i++ {
+		elt = elts[elt.nxt]
+	}
+	//fmt.Printf("%d\n", elt.num)
+	return s + elt.num
 }
 
 func Parts(in []byte) (int, int) {
