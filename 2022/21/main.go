@@ -32,19 +32,19 @@ type Node struct {
 const HUMN = 136877
 
 func Parts(in []byte) (int, int) {
-	nodes := map[int]Node{}
+	nodes := map[int]*Node{}
 	for i := 0; i < len(in); {
 		id := ChompCharId(in, i, 4, 26, 'a')
 		i += 6
 		if '0' <= in[i] && in[i] <= '9' {
 			j, n := ChompUInt[int](in, i)
-			nodes[id] = Node{val: n}
+			nodes[id] = &Node{val: n}
 			i = j + 1
 			continue
 		}
 		left := ChompCharId(in, i, 4, 26, 'a')
 		right := ChompCharId(in, i+7, 4, 26, 'a')
-		nodes[id] = Node{left: left, right: right, op: in[i+5]}
+		nodes[id] = &Node{left: left, right: right, op: in[i+5]}
 		i += 12
 	}
 	root := Id('r', 'o', 'o', 't')
@@ -58,27 +58,34 @@ func Parts(in []byte) (int, int) {
 	return left + right, Balance(nodes, nodes[root].left, right)
 }
 
-func Part1(nodes map[int]Node, id int) (int, bool) {
+func Part1(nodes map[int]*Node, id int) (int, bool) {
 	if nodes[id].op == 0 {
 		return nodes[id].val, id == HUMN
 	}
 	left, lHumn := Part1(nodes, nodes[id].left)
 	right, rHumn := Part1(nodes, nodes[id].right)
+	var val int
 	switch nodes[id].op {
 	case '+':
-		return left + right, lHumn || rHumn
+		val = left + right
 	case '-':
-		return left - right, lHumn || rHumn
+		val = left - right
 	case '*':
-		return left * right, lHumn || rHumn
+		val = left * right
 	case '/':
-		return left / right, lHumn || rHumn
+		val = left / right
 	default:
 		panic("unreachable")
 	}
+	if !lHumn && !rHumn {
+		nodes[id].op = 0
+		nodes[id].val = val
+		return val, false
+	}
+	return val, true
 }
 
-func Balance(nodes map[int]Node, id, value int) int {
+func Balance(nodes map[int]*Node, id, value int) int {
 	if id == HUMN {
 		return value
 	}
