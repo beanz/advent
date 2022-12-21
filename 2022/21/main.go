@@ -22,6 +22,15 @@ func ChompCharId(in []byte, i int, l int, mul int, off byte) int {
 	return id
 }
 
+func ChompId(m map[int]int, in []byte, i int, l int, mul int, off byte) int {
+	v := ChompCharId(in, i, l, mul, off)
+	if id, ok := m[v]; ok {
+		return id
+	}
+	m[v] = len(m)
+	return m[v]
+}
+
 type Node struct {
 	val   int
 	left  int
@@ -29,12 +38,15 @@ type Node struct {
 	op    byte
 }
 
-const HUMN = 136877
+const HUMN = 1
 
 func Parts(in []byte) (int, int) {
-	nodes := map[int]*Node{}
+	idToIndex := make(map[int]int, 2048)
+	root := ChompId(idToIndex, []byte("root"), 0, 4, 26, 'a')
+	ChompId(idToIndex, []byte("humn"), 0, 4, 26, 'a') // 1th id
+	nodes := [2048]*Node{}
 	for i := 0; i < len(in); {
-		id := ChompCharId(in, i, 4, 26, 'a')
+		id := ChompId(idToIndex, in, i, 4, 26, 'a')
 		i += 6
 		if '0' <= in[i] && in[i] <= '9' {
 			j, n := ChompUInt[int](in, i)
@@ -42,23 +54,23 @@ func Parts(in []byte) (int, int) {
 			i = j + 1
 			continue
 		}
-		left := ChompCharId(in, i, 4, 26, 'a')
-		right := ChompCharId(in, i+7, 4, 26, 'a')
+		left := ChompId(idToIndex, in, i, 4, 26, 'a')
+		right := ChompId(idToIndex, in, i+7, 4, 26, 'a')
 		nodes[id] = &Node{left: left, right: right, op: in[i+5]}
 		i += 12
 	}
-	root := Id('r', 'o', 'o', 't')
-	left, leftHasHumn := Part1(nodes, nodes[root].left)
-	right, rightHasHumn := Part1(nodes, nodes[root].right)
+	nodesSlice := nodes[:len(idToIndex)]
+	left, leftHasHumn := Part1(nodesSlice, nodes[root].left)
+	right, rightHasHumn := Part1(nodesSlice, nodes[root].right)
 	if rightHasHumn {
 		left, right = right, left
 	} else if !leftHasHumn {
 		panic("unreachable")
 	}
-	return left + right, Balance(nodes, nodes[root].left, right)
+	return left + right, Balance(nodesSlice, nodes[root].left, right)
 }
 
-func Part1(nodes map[int]*Node, id int) (int, bool) {
+func Part1(nodes []*Node, id int) (int, bool) {
 	if nodes[id].op == 0 {
 		return nodes[id].val, id == HUMN
 	}
@@ -85,7 +97,7 @@ func Part1(nodes map[int]*Node, id int) (int, bool) {
 	return val, true
 }
 
-func Balance(nodes map[int]*Node, id, value int) int {
+func Balance(nodes []*Node, id, value int) int {
 	if id == HUMN {
 		return value
 	}
