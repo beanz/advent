@@ -4,7 +4,6 @@ import (
 	_ "embed"
 	"fmt"
 	"strings"
-	"time"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -147,11 +146,11 @@ func (b *Board) String() string {
 
 func (b *Board) Move() bool {
 	ix, iy := b.p.dir.Inc()
-	nx, ny := Mod(b.p.x+ix, b.w), Mod(b.p.y+iy, b.h)
+	nx, ny := NeverToBigMod(b.p.x+ix, b.w), NeverToBigMod(b.p.y+iy, b.h)
 	sq := b.Get(nx, ny)
 	//fmt.Printf("%v => %d,%d %v %v\n", b.p, nx, ny, sq, sq == Empty)
 	for sq == Invalid {
-		nx, ny = Mod(nx+ix, b.w), Mod(ny+iy, b.h)
+		nx, ny = NeverToBigMod(nx+ix, b.w), NeverToBigMod(ny+iy, b.h)
 		sq = b.Get(nx, ny)
 	}
 	if sq != Empty {
@@ -224,10 +223,6 @@ func (b *Board) Part(moveFn func() bool) int {
 		}
 		for k := 0; k < n; k++ {
 			blocked := moveFn()
-			if VISUAL() {
-				fmt.Printf("%s\n", b.String())
-				time.Sleep(500 * time.Millisecond)
-			}
 			if blocked {
 				break
 			}

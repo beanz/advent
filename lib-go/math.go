@@ -15,6 +15,14 @@ func Mod[T AoCSigned](n, m T) T {
 	return a
 }
 
+func NeverToBigMod[T AoCSigned](n, m T) T {
+	if n < 0 {
+		return n + m
+	} else if n >= m {
+		return n - m
+	}
+	return n
+}
 
 func Abs64(a int64) int64 {
 	if a < 0 {
