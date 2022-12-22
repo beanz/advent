@@ -179,13 +179,13 @@ sub move {
   return 1;
 }
 
-sub calc {
-  my ($in) = @_;
+sub solve {
+  my ($in, $fn) = @_;
   while ($in->{walk} ne "") {
     if ($in->{walk} =~ s/^(\d+)//) {
       my $n = $1;
       for (0 .. $n - 1) {
-        my $blocked = move($in);
+        my $blocked = $fn->($in);
         if ($ENV{A}) {
           pp($in);
           select undef, undef, undef, 0.5;
@@ -210,6 +210,14 @@ sub calc {
   }
   return 1000 * ($in->{pos}->[Y] + 1) + 4 * ($in->{pos}->[X] + 1) +
     facing($in->{dir});
+}
+
+sub calc {
+  solve($_[0], \&move);
+}
+
+sub calc2 {
+  solve($_[0], \&move2);
 }
 
 sub wrap {
@@ -333,39 +341,6 @@ sub dir_idx {
     return 3;
   }
   die;
-}
-
-sub calc2 {
-  my ($in) = @_;
-  while ($in->{walk} ne "") {
-    if ($in->{walk} =~ s/^(\d+)//) {
-      my $n = $1;
-      for (0 .. $n - 1) {
-        my $blocked = move2($in);
-        if ($ENV{A}) {
-          pp($in);
-          select undef, undef, undef, 0.5;
-        }
-        last if ($blocked);
-      }
-    } else {
-      my $turn = substr $in->{walk}, 0, 1, '';
-      my ($dx, $dy) = @{$in->{dir}};
-      if ($turn eq "R") {
-        $in->{dir} = [-$dy, $dx];
-      } elsif ($turn eq "L") {
-        $in->{dir} = [$dy, -$dx];
-      } else {
-        $in->{pos} = [2, 4];
-      }
-      if ($ENV{A}) {
-        pp($in);
-        select undef, undef, undef, 0.5;
-      }
-    }
-  }
-  return 1000 * ($in->{pos}->[Y] + 1) + 4 * ($in->{pos}->[X] + 1) +
-    facing($in->{dir});
 }
 
 testPart1() if (TEST);
