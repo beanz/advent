@@ -17,8 +17,8 @@ type Cave struct {
 	next []int
 }
 
-type Key struct {
-	pos, t, todo int
+func key(cave, t, todo int) int {
+	return (((todo << 6) + cave) << 5) + t
 }
 
 func charsToId(a, b byte) int {
@@ -87,10 +87,11 @@ func Parts(in []byte) (int, int) {
 			}
 		}
 	}
-	mem := make(map[Key]int, 1320000)
+	mem := make(map[int]int, 1320000)
 	var search func(cave, t int, todo int) int
 	search = func(cave, t int, todo int) int {
-		if res, ok := mem[Key{cave, t, todo}]; ok {
+		k := key(cave, t, todo)
+		if res, ok := mem[k]; ok {
 			return res
 		}
 		max := 0
@@ -106,19 +107,19 @@ func Parts(in []byte) (int, int) {
 				}
 			}
 		}
-		mem[Key{cave, t, todo}] = max
+		mem[k] = max
 		return max
 	}
-	start := charsToId('A', 'A')
+	start := idToIndex[charsToId('A', 'A')]
 	allTodo := (1 << nonZero) - 1
-	p1 := search(idToIndex[start], 30, allTodo)
+	p1 := search(start, 30, allTodo)
 	p2 := 0
 	for m := 0; m < allTodo+1; m++ {
 		if bits.OnesCount(uint(m)) != (nonZero+1)/2 {
 			continue
 		}
-		pres := search(idToIndex[start], 26, m)
-		pres += search(idToIndex[start], 26, allTodo^m)
+		pres := search(start, 26, m)
+		pres += search(start, 26, allTodo^m)
 		if pres > p2 {
 			p2 = pres
 		}
