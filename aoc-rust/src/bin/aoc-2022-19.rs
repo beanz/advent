@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 const ORE: usize = 0;
 const CLAY: usize = 1;
 const OBSIDIAN: usize = 2;
@@ -24,29 +26,38 @@ struct Blueprint {
 
 impl Blueprint {
     fn solve(&self, max_time: usize) -> usize {
-        let mut todo = vec![Search {
+        let mut todo = VecDeque::with_capacity(35000);
+        todo.push_front(Search {
             t: max_time,
             score: 0,
             inv: [0; 4],
             robots: [1, 0, 0, 0],
-        }];
+        });
         let mut max = 0;
+        let mut max_guess = 0;
         let prune_len = if max_time == 24 { 200 } else { 8000 };
         let mut prune_time: isize = max_time as isize - 1;
-        while !todo.is_empty() {
-            if todo[0].t == prune_time as usize {
+        while let Some(cur) = todo.pop_front() {
+            if cur.t == prune_time as usize {
                 prune_time -= 1;
                 if todo.len() > prune_len * 2 {
-                    todo.select_nth_unstable_by(prune_len, |a, b| b.score.cmp(&a.score));
+                    todo.make_contiguous().sort_by(|a, b| b.score.cmp(&a.score));
                     todo.truncate(prune_len);
                 }
             }
-            let cur = todo.remove(0);
             if cur.inv[GEODE] > max {
                 max = cur.inv[GEODE];
             }
             if cur.t == 0 {
                 continue;
+            }
+            let min_poss_geodes = cur.inv[GEODE] + cur.t * cur.robots[GEODE];
+            let max_poss_geodes = min_poss_geodes + ((cur.t - 1) * (cur.t - 1) + cur.t - 1) / 2;
+            if max_poss_geodes < max_guess {
+                continue;
+            }
+            if min_poss_geodes > max_guess {
+                max_guess = min_poss_geodes;
             }
             let (no, nc, nob, ng) = (
                 cur.inv[ORE] + cur.robots[ORE],
@@ -59,7 +70,7 @@ impl Blueprint {
                     + nc)
                     * 100
                     + no;
-            todo.push(Search {
+            todo.push_back(Search {
                 t: cur.t - 1,
                 score: nscore,
                 inv: [no, nc, nob, ng],
@@ -71,7 +82,7 @@ impl Blueprint {
                 ],
             });
             if cur.inv[ORE] >= self.geo_ore && cur.inv[OBSIDIAN] >= self.geo_obs {
-                todo.push(Search {
+                todo.push_back(Search {
                     t: cur.t - 1,
                     score: nscore,
                     inv: [no - self.geo_ore, nc, nob - self.geo_obs, ng],
@@ -87,7 +98,7 @@ impl Blueprint {
                 && cur.inv[ORE] >= self.obs_ore
                 && cur.inv[CLAY] >= self.obs_clay
             {
-                todo.push(Search {
+                todo.push_back(Search {
                     t: cur.t - 1,
                     score: nscore,
                     inv: [no - self.obs_ore, nc - self.obs_clay, nob, ng],
@@ -100,7 +111,7 @@ impl Blueprint {
                 });
             }
             if cur.robots[CLAY] < self.obs_clay && cur.inv[ORE] >= self.clay_ore {
-                todo.push(Search {
+                todo.push_back(Search {
                     t: cur.t - 1,
                     score: nscore,
                     inv: [no - self.clay_ore, nc, nob, ng],
@@ -113,7 +124,7 @@ impl Blueprint {
                 });
             }
             if cur.robots[ORE] < self.max_ore && cur.inv[ORE] >= self.ore_ore {
-                todo.push(Search {
+                todo.push_back(Search {
                     t: cur.t - 1,
                     score: nscore,
                     inv: [no - self.ore_ore, nc, nob, ng],
