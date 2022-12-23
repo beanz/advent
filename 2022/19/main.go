@@ -51,6 +51,7 @@ type Search struct {
 func Solve(bp Blueprint, maxTime int) int {
 	todo := []Search{{maxTime, 0, [4]int{0, 0, 0, 0}, [4]int{1, 0, 0, 0}}}
 	max := 0
+	max_guess := 0
 	pruneLen := 8000
 	if maxTime == 24 {
 		pruneLen = 200
@@ -75,6 +76,14 @@ func Solve(bp Blueprint, maxTime int) int {
 		}
 		if cur.t == 0 {
 			continue
+		}
+		min_poss_geodes := cur.inv[GEODE] + cur.t*cur.robots[GEODE]
+		max_poss_geodes := min_poss_geodes + ((cur.t-1)*(cur.t-1)+cur.t-1)/2
+		if max_poss_geodes < max_guess {
+			continue
+		}
+		if min_poss_geodes > max_guess {
+			max_guess = min_poss_geodes
 		}
 		no, nc, nob, ng := cur.inv[ORE]+cur.robots[ORE], cur.inv[CLAY]+cur.robots[CLAY], cur.inv[OBSIDIAN]+cur.robots[OBSIDIAN], cur.inv[GEODE]+cur.robots[GEODE]
 		nscore := ((((ng*100+cur.robots[GEODE])*100+nob)*100+cur.robots[OBSIDIAN])*100+nc)*100 + no
