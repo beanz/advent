@@ -243,7 +243,7 @@ sub wrap {
     return ($in->{dim} - 1 - $y, 0);
   }
   if ($old == DOWN && $new == LEFT) {
-    return ($in->{dim}-1, $x);
+    return ($in->{dim} - 1, $x);
   }
   if ($old == LEFT && $new == DOWN) {
     return ($y, 0);
@@ -252,7 +252,7 @@ sub wrap {
     return (0, $in->{dim} - 1 - $y);
   }
   if ($old == RIGHT && $new == LEFT) {
-    return ($in->{dim}-1, $in->{dim} - 1 - $y);
+    return ($in->{dim} - 1, $in->{dim} - 1 - $y);
   }
   if ($old == RIGHT && $new == UP) {
     return ($y, $in->{dim} - 1);
@@ -263,6 +263,7 @@ sub wrap {
 sub move2 {
   my ($in) = @_;
   my ($cx, $cy, $f) = face($in, @{$in->{pos}});
+
   #print "move2 $cx,$cy $f\n";
   my $ncx = $cx + $in->{dir}->[X];
   my $ncy = $cy + $in->{dir}->[Y];
@@ -270,37 +271,50 @@ sub move2 {
   my $dir;
   if ($ncy < 0) {
     ($f, $dir) = @{$in->{nface}->[$f]->[UP]};
+
     #print "up $ncx,$ncy $in->{dim} @{$ndir} $dir $f\n";
     ($ncx, $ncy) = wrap($in, $ncx, $ncy, off2dir($ndir), $dir);
+
     #print "UP $ncx,$ncy $in->{dim} @{$ndir} $dir\n";
     $ndir = dir2off($dir);
+
     #print "$ncx,$ncy $dir => @{$ndir}\n";
   }
   if ($ncy == $in->{dim}) {
     ($f, $dir) = @{$in->{nface}->[$f]->[DOWN]};
+
     #print "down $ncx,$ncy $in->{dim} @{$ndir} $dir $f\n";
     ($ncx, $ncy) = wrap($in, $ncx, $ncy, off2dir($ndir), $dir);
+
     #print "DOWN $ncx,$ncy $in->{dim} @{$ndir} $dir\n";
     $ndir = dir2off($dir);
+
     #print "$ncx,$ncy $dir => @{$ndir}\n";
   }
   if ($ncx < 0) {
     ($f, $dir) = @{$in->{nface}->[$f]->[LEFT]};
+
     #print "left $ncx,$ncy $in->{dim} @{$ndir} $dir $f\n";
     ($ncx, $ncy) = wrap($in, $ncx, $ncy, off2dir($ndir), $dir);
+
     #print "LEFT $ncx,$ncy $in->{dim} @{$ndir} $dir\n";
     $ndir = dir2off($dir);
+
     #print "$ncx,$ncy $dir => @{$ndir}\n";
   }
   if ($ncx == $in->{dim}) {
     ($f, $dir) = @{$in->{nface}->[$f]->[RIGHT]};
+
     #print "right $ncx,$ncy $in->{dim} @{$ndir} $dir $f\n";
     ($ncx, $ncy) = wrap($in, $ncx, $ncy, off2dir($ndir), $dir);
+
     #print "RIGHT $ncx,$ncy $in->{dim} @{$ndir} $dir\n";
     $ndir = dir2off($dir);
+
     #print "$ncx,$ncy $f $dir => @{$ndir}\n";
   }
   my ($nx, $ny) = flat($in, $ncx, $ncy, $f);
+
   #print "$nx,$ny\n";
   if ($in->{m}->[$ny]->[$nx] eq '.') {
     $in->{pos}->[X] = $nx;
