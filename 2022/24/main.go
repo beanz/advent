@@ -18,9 +18,9 @@ type Search struct {
 }
 
 func S(x, y, t int, start, end bool) Search {
-	k := x
-	k = (k << 10) + y
-	k = (k << 10) + t
+	k := t
+	k = (k << 7) + x
+	k = (k << 5) + y
 	k = (k << 1)
 	if start {
 		k++
@@ -38,7 +38,7 @@ func Parts(in []byte) (int, int) {
 	for ; m.GetXY(sx, sy) != '.'; sx++ {
 	}
 	w, h := m.Width(), m.Height()
-	b := [1000][3400]bool{}
+	b := [1000][3200]bool{}
 	for sy := 1; sy < h-1; sy++ {
 		for sx := 1; sx < w-1; sx++ {
 			ch := m.GetXY(sx, sy)
@@ -80,14 +80,14 @@ func Parts(in []byte) (int, int) {
 	todoArray := [6400]Search{}
 	todo := NewDeque(todoArray[0:])
 	todo.Push(S(sx, sy, 0, false, false))
-	seen := make(map[int]struct{}, 10000)
+	seen := [16777216]bool{}
 	p1, p2 := 0, 0
 	for todo.Len() > 0 {
 		cur := todo.Pop()
-		if _, ok := seen[cur.k]; ok {
+		if seen[cur.k] {
 			continue
 		}
-		seen[cur.k] = struct{}{}
+		seen[cur.k] = true
 		if cur.y == h-1 {
 			if cur.start && cur.end {
 				p2 = cur.t
@@ -110,13 +110,12 @@ func Parts(in []byte) (int, int) {
 			if m.GetXY(nx, ny) == '#' {
 				continue
 			}
-			if b[cur.t+1][m.XYToIndex(nx, ny)] {
+			if ny < h-1 && b[cur.t+1][m.XYToIndex(nx, ny)] {
 				continue
 			}
 			s := S(nx, ny, cur.t+1, cur.start, cur.end)
 			todo.Push(s)
 		}
-
 	}
 	return p1, p2
 }
