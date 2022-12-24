@@ -1,3 +1,4 @@
+use ahash::RandomState;
 use std::collections::HashMap;
 
 use smallvec::SmallVec;
@@ -19,6 +20,43 @@ struct Search {
     cave: usize,
     t: usize,
     todo: usize,
+}
+
+struct Caves<'a> {
+    valves: &'a SmallVec<[Valve; 64]>,
+    dist: &'a [[usize; 64]; 64],
+    non_zero: usize,
+    mem: HashMap<Search, usize, RandomState>,
+}
+
+impl<'a> Caves<'a> {
+    fn search(&mut self, s: &Search) -> usize {
+        if let Some(res) = self.mem.get(s) {
+            return *res;
+        }
+        let mut max = 0;
+        for i in 0..self.non_zero {
+            if s.todo & (1 << i) != 0 {
+                if s.t < self.dist[s.cave][i] + 1 {
+                    continue;
+                }
+                let nt = s.t - self.dist[s.cave][i] - 1; // -1 for open
+                if nt > 0 {
+                    let mut pres = self.search(&Search {
+                        cave: i,
+                        t: nt,
+                        todo: s.todo ^ (1 << i),
+                    });
+                    pres += self.valves[i].rate * nt;
+                    if max < pres {
+                        max = pres;
+                    }
+                }
+            }
+        }
+        self.mem.insert(*s, max);
+        max
+    }
 }
 
 fn parts(inp: &[u8]) -> (usize, usize) {
@@ -78,80 +116,37 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     }
     let start = *(id_to_index.get(&valve_id(b'A', b'A')).expect("has AA"));
     let all_todo = (1 << non_zero) - 1;
-    let p1 = search(
-        &Search {
-            cave: start,
-            t: 30,
-            todo: all_todo,
-        },
-        &valves,
-        &dist,
+    let mut c = Caves {
+        valves: &valves,
+        dist: &dist,
         non_zero,
-    );
+        mem: HashMap::with_capacity_and_hasher(1320000, RandomState::new()),
+    };
+    let p1 = c.search(&Search {
+        cave: start,
+        t: 30,
+        todo: all_todo,
+    });
     let mut p2 = 0;
     for m in 0..all_todo + 1 {
         if m.count_ones() != ((non_zero + 1) / 2) as u32 {
             continue;
         }
-        let mut pres = search(
-            &Search {
-                cave: start,
-                t: 26,
-                todo: m,
-            },
-            &valves,
-            &dist,
-            non_zero,
-        );
-        pres += search(
-            &Search {
-                cave: start,
-                t: 26,
-                todo: all_todo ^ m,
-            },
-            &valves,
-            &dist,
-            non_zero,
-        );
+        let mut pres = c.search(&Search {
+            cave: start,
+            t: 26,
+            todo: m,
+        });
+        pres += c.search(&Search {
+            cave: start,
+            t: 26,
+            todo: all_todo ^ m,
+        });
         if pres > p2 {
             p2 = pres
         }
     }
     (p1, p2)
-}
-
-fn search(
-    s: &Search,
-    valves: &SmallVec<[Valve; 64]>,
-    dist: &[[usize; 64]; 64],
-    non_zero: usize,
-) -> usize {
-    let mut max = 0;
-    for i in 0..non_zero {
-        if s.todo & (1 << i) != 0 {
-            if s.t < dist[s.cave][i] + 1 {
-                continue;
-            }
-            let nt = s.t - dist[s.cave][i] - 1; // -1 for open
-            if nt > 0 {
-                let mut pres = search(
-                    &Search {
-                        cave: i,
-                        t: nt,
-                        todo: s.todo ^ (1 << i),
-                    },
-                    valves,
-                    dist,
-                    non_zero,
-                );
-                pres += valves[i].rate * nt;
-                if max < pres {
-                    max = pres;
-                }
-            }
-        }
-    }
-    max
 }
 
 fn main() {
