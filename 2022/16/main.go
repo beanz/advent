@@ -87,12 +87,12 @@ func Parts(in []byte) (int, int) {
 			}
 		}
 	}
-	mem := make(map[int]int, 1320000)
+	mem := [67200000]int16{}
 	var search func(cave, t int, todo int) int
 	search = func(cave, t int, todo int) int {
 		k := key(cave, t, todo)
-		if res, ok := mem[k]; ok {
-			return res
+		if res := mem[k]; res != 0 {
+			return int(res - 1)
 		}
 		max := 0
 		for i := 0; i < nonZero; i++ {
@@ -107,7 +107,7 @@ func Parts(in []byte) (int, int) {
 				}
 			}
 		}
-		mem[k] = max
+		mem[k] = int16(max + 1)
 		return max
 	}
 	start := idToIndex[charsToId('A', 'A')]
