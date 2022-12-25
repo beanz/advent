@@ -24,6 +24,16 @@ func NeverToBigMod[T AoCSigned](n, m T) T {
 	return n
 }
 
+func Min[T AoCInt](a ...T) T {
+	min := a[0]
+	for i := 1; i < len(a); i++ {
+		if a[i] < min {
+			min = a[i]
+		}
+	}
+	return min
+}
+
 func Max[T AoCInt](a ...T) T {
 	max := a[0]
 	for i := 1; i < len(a); i++ {
@@ -73,8 +83,8 @@ func ModExp(b, e, m uint) uint {
 	return res
 }
 
-func Product(ints ...int) int {
-	p := 1
+func Product[T AoCInt](ints ...T) T {
+	var p T = 1
 	for _, x := range ints {
 		p *= x
 	}
@@ -89,8 +99,8 @@ func Product64(ints ...int64) int64 {
 	return p
 }
 
-func Sum(ints ...int) int {
-	s := 0
+func Sum[T AoCInt](ints ...T) T {
+	var s T
 	for _, x := range ints {
 		s += x
 	}
