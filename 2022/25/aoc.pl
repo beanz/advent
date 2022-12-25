@@ -12,21 +12,8 @@ $; = $" = ',';
 
 my $file = shift // "input.txt";
 
-#my $reader = \&read_stuff;
 my $reader = \&read_guess;
 my $i = $reader->($file);
-my $i2 = $reader->($file);
-
-sub read_stuff {
-  my $file = shift;
-  my $in = read_lines($file);
-  my %m = (lines => $in);
-  for my $i (0 .. (@$in - 1)) {
-    my $l = $in->[$i];
-    print "$i: $l\n";
-  }
-  return \%m;
-}
 
 my %snafu = (
   "1" => 1,
@@ -57,12 +44,6 @@ sub calc {
     $c += $n;
   }
   return ~~ reverse d2s($c);
-}
-
-sub calc2 {
-  my ($in) = @_;
-  my $c = 0;
-  return $c;
 }
 
 testPart1() if (TEST);
