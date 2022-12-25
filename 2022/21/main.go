@@ -11,10 +11,6 @@ import (
 //go:embed input.txt
 var input []byte
 
-func Id(a, b, c, d byte) int {
-	return ((int(a-'a')*26+int(b-'a'))*26+int(c-'a'))*26 + int(d-'a')
-}
-
 func ChompCharId(in []byte, i int, l int, mul int, off byte) int {
 	id := 0
 	for j := 0; j < l; j++ {
@@ -38,8 +34,6 @@ type Node struct {
 	right int
 	op    byte
 }
-
-const HUMN = 1
 
 func Parts(in []byte) (int, int) {
 	idToIndex := make(map[int]int, 2048)
