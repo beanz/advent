@@ -11,18 +11,20 @@ import (
 //go:embed input.txt
 var input []byte
 
+type Int int32
+
 type Pos struct {
-	x, y int
+	x, y Int
 }
 
-func (p Pos) Index() int {
+func (p Pos) Index() Int {
 	return (128+p.x)<<8 + (128 + p.y)
 }
 
 type Elves struct {
 	m              [65536]bool
 	c              int
-	xm, xM, ym, yM int
+	xm, xM, ym, yM Int
 }
 
 func NewElves() *Elves {
@@ -36,20 +38,20 @@ func NewElves() *Elves {
 	}
 }
 
-func (e *Elves) Index(x, y int) int {
+func (e *Elves) Index(x, y Int) Int {
 	return (128+x)<<8 + (128 + y)
 }
 
-func (e *Elves) Contains(x, y int) bool {
+func (e *Elves) Contains(x, y Int) bool {
 	return e.m[e.Index(x, y)]
 }
 
-func (e *Elves) Visit(fn func(x, y int)) {
+func (e *Elves) Visit(fn func(x, y Int)) {
 	for y := e.ym; y <= e.yM; y++ {
 		for x := e.xm; x <= e.xM; x++ {
-			i := e.Index(x, y)
+			i := e.Index(Int(x), Int(y))
 			if e.m[i] {
-				fn(x, y)
+				fn(Int(x), Int(y))
 			}
 		}
 	}
@@ -59,7 +61,7 @@ func (e *Elves) String() string {
 	var sb strings.Builder
 	for y := e.ym; y <= e.yM; y++ {
 		for x := e.xm; x <= e.xM; x++ {
-			if e.Contains(x, y) {
+			if e.Contains(Int(x), Int(y)) {
 				fmt.Fprintf(&sb, "#")
 			} else {
 				fmt.Fprintf(&sb, ".")
@@ -70,7 +72,7 @@ func (e *Elves) String() string {
 	return sb.String()
 }
 
-func (e *Elves) Add(x, y int) {
+func (e *Elves) Add(x, y Int) {
 	e.c++
 	e.m[e.Index(x, y)] = true
 	if e.xm > x {
@@ -87,8 +89,8 @@ func (e *Elves) Add(x, y int) {
 	}
 }
 
-func (e *Elves) NeighBits(x, y int) int {
-	b := 0
+func (e *Elves) NeighBits(x, y Int) Int {
+	var b Int
 	if e.Contains(x-1, y-1) {
 		b += 1
 	}
@@ -117,7 +119,7 @@ func (e *Elves) NeighBits(x, y int) int {
 }
 
 func (e *Elves) Count() int {
-	return (1+e.xM-e.xm)*(1+e.yM-e.ym) - e.c
+	return int(1+e.xM-e.xm)*int(1+e.yM-e.ym) - e.c
 }
 
 type Board struct {
@@ -130,14 +132,14 @@ func (b *Board) String() string {
 }
 
 var (
-	checkBits = [4]int{1 + 2 + 4, 32 + 64 + 128, 1 + 8 + 32, 4 + 16 + 128}
+	checkBits = [4]Int{1 + 2 + 4, 32 + 64 + 128, 1 + 8 + 32, 4 + 16 + 128}
 	checkOff  = [4]Pos{{0, -1}, {0, 1}, {-1, 0}, {1, 0}}
 )
 
 func (b *Board) Iter() int {
 	prop := [65536]*Pos{}
-	count := [65536]int{}
-	b.elves.Visit(func(x, y int) {
+	count := [65536]Int{}
+	b.elves.Visit(func(x, y Int) {
 		p := Pos{x, y}
 		nb := b.elves.NeighBits(p.x, p.y)
 		if nb == 0 {
@@ -155,7 +157,7 @@ func (b *Board) Iter() int {
 	})
 	next := NewElves()
 	moved := 0
-	b.elves.Visit(func(x, y int) {
+	b.elves.Visit(func(x, y Int) {
 		p := Pos{x, y}
 		np := prop[p.Index()]
 		if np == nil {
@@ -178,7 +180,7 @@ func (b *Board) Iter() int {
 }
 
 func Parts(in []byte) (int, int) {
-	x, y := 0, 0
+	var x, y Int
 	elves := NewElves()
 	b := Board{elves: elves}
 	for _, ch := range in {
