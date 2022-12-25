@@ -11,9 +11,11 @@ import (
 //go:embed input.txt
 var input []byte
 
+type Int uint8
+
 type Blueprint struct {
-	oreOre, clayOre, obsOre, obsClay, geodeOre, geodeObs int
-	maxOre                                               int
+	oreOre, clayOre, obsOre, obsClay, geodeOre, geodeObs Int
+	maxOre                                               Int
 }
 
 func Read(in []byte) []Blueprint {
@@ -21,13 +23,13 @@ func Read(in []byte) []Blueprint {
 	for i := 0; i < len(in); i++ {
 		bp := Blueprint{}
 		j, _ := ChompUInt[int](in, i+10)
-		j, bp.oreOre = ChompUInt[int](in, j+23)
-		j, bp.clayOre = ChompUInt[int](in, j+28)
-		j, bp.obsOre = ChompUInt[int](in, j+32)
-		j, bp.obsClay = ChompUInt[int](in, j+9)
-		j, bp.geodeOre = ChompUInt[int](in, j+30)
-		j, bp.geodeObs = ChompUInt[int](in, j+9)
-		bp.maxOre = MaxInt(bp.oreOre, bp.clayOre, bp.obsOre, bp.geodeOre)
+		j, bp.oreOre = ChompUInt[Int](in, j+23)
+		j, bp.clayOre = ChompUInt[Int](in, j+28)
+		j, bp.obsOre = ChompUInt[Int](in, j+32)
+		j, bp.obsClay = ChompUInt[Int](in, j+9)
+		j, bp.geodeOre = ChompUInt[Int](in, j+30)
+		j, bp.geodeObs = ChompUInt[Int](in, j+9)
+		bp.maxOre = Max(bp.oreOre, bp.clayOre, bp.obsOre, bp.geodeOre)
 		res = append(res, bp)
 		i = j + 10
 	}
@@ -42,16 +44,16 @@ const (
 )
 
 type Search struct {
-	t      int
+	t      Int
 	score  int
-	inv    [4]int
-	robots [4]int
+	inv    [4]Int
+	robots [4]Int
 }
 
-func Solve(bp Blueprint, maxTime int) int {
-	todo := []Search{{maxTime, 0, [4]int{0, 0, 0, 0}, [4]int{1, 0, 0, 0}}}
-	max := 0
-	max_guess := 0
+func Solve(bp Blueprint, maxTime Int) Int {
+	todo := []Search{{maxTime, 0, [4]Int{0, 0, 0, 0}, [4]Int{1, 0, 0, 0}}}
+	var max Int
+	var max_guess Int
 	pruneLen := 8000
 	if maxTime == 24 {
 		pruneLen = 200
@@ -86,12 +88,12 @@ func Solve(bp Blueprint, maxTime int) int {
 			max_guess = min_poss_geodes
 		}
 		no, nc, nob, ng := cur.inv[ORE]+cur.robots[ORE], cur.inv[CLAY]+cur.robots[CLAY], cur.inv[OBSIDIAN]+cur.robots[OBSIDIAN], cur.inv[GEODE]+cur.robots[GEODE]
-		nscore := ((((ng*100+cur.robots[GEODE])*100+nob)*100+cur.robots[OBSIDIAN])*100+nc)*100 + no
+		nscore := ((((int(ng)*100+int(cur.robots[GEODE]))*100+int(nob))*100+int(cur.robots[OBSIDIAN]))*100+int(nc))*100 + int(no)
 		todo = append(todo, Search{
 			t:     cur.t - 1,
 			score: nscore,
-			inv:   [4]int{no, nc, nob, ng},
-			robots: [4]int{
+			inv:   [4]Int{no, nc, nob, ng},
+			robots: [4]Int{
 				cur.robots[ORE],
 				cur.robots[CLAY],
 				cur.robots[OBSIDIAN],
@@ -102,8 +104,8 @@ func Solve(bp Blueprint, maxTime int) int {
 			todo = append(todo, Search{
 				t:     cur.t - 1,
 				score: nscore,
-				inv:   [4]int{no - bp.geodeOre, nc, nob - bp.geodeObs, ng},
-				robots: [4]int{
+				inv:   [4]Int{no - bp.geodeOre, nc, nob - bp.geodeObs, ng},
+				robots: [4]Int{
 					cur.robots[ORE],
 					cur.robots[CLAY],
 					cur.robots[OBSIDIAN],
@@ -115,8 +117,8 @@ func Solve(bp Blueprint, maxTime int) int {
 			todo = append(todo, Search{
 				t:     cur.t - 1,
 				score: nscore,
-				inv:   [4]int{no - bp.obsOre, nc - bp.obsClay, nob, ng},
-				robots: [4]int{
+				inv:   [4]Int{no - bp.obsOre, nc - bp.obsClay, nob, ng},
+				robots: [4]Int{
 					cur.robots[ORE],
 					cur.robots[CLAY],
 					cur.robots[OBSIDIAN] + 1,
@@ -128,8 +130,8 @@ func Solve(bp Blueprint, maxTime int) int {
 			todo = append(todo, Search{
 				t:     cur.t - 1,
 				score: nscore,
-				inv:   [4]int{no - bp.clayOre, nc, nob, ng},
-				robots: [4]int{
+				inv:   [4]Int{no - bp.clayOre, nc, nob, ng},
+				robots: [4]Int{
 					cur.robots[ORE],
 					cur.robots[CLAY] + 1,
 					cur.robots[OBSIDIAN],
@@ -141,8 +143,8 @@ func Solve(bp Blueprint, maxTime int) int {
 			todo = append(todo, Search{
 				t:     cur.t - 1,
 				score: nscore,
-				inv:   [4]int{no - bp.oreOre, nc, nob, ng},
-				robots: [4]int{
+				inv:   [4]Int{no - bp.oreOre, nc, nob, ng},
+				robots: [4]Int{
 					cur.robots[ORE] + 1,
 					cur.robots[CLAY],
 					cur.robots[OBSIDIAN],
@@ -158,13 +160,13 @@ func Parts(in []byte) (int, int) {
 	bp := Read(in)
 	p1 := 0
 	for i, bp := range bp {
-		p1 += (i + 1) * Solve(bp, 24)
+		p1 += (i + 1) * int(Solve(bp, 24))
 	}
 	p2 := 1
-	p2 *= Solve(bp[0], 32)
-	p2 *= Solve(bp[1], 32)
+	p2 *= int(Solve(bp[0], 32))
+	p2 *= int(Solve(bp[1], 32))
 	if len(bp) > 2 {
-		p2 *= Solve(bp[2], 32)
+		p2 *= int(Solve(bp[2], 32))
 	}
 	return p1, p2
 }

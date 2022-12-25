@@ -24,6 +24,16 @@ func NeverToBigMod[T AoCSigned](n, m T) T {
 	return n
 }
 
+func Max[T AoCInt](a ...T) T {
+	max := a[0]
+	for i := 1; i < len(a); i++ {
+		if a[i] > max {
+			max = a[i]
+		}
+	}
+	return max
+}
+
 func Abs64(a int64) int64 {
 	if a < 0 {
 		return -a

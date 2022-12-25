@@ -26,8 +26,8 @@ func TestSolve(t *testing.T) {
 		file string
 		data []byte
 		bp   int
-		time int
-		res  int
+		time Int
+		res  Int
 	}{
 		{"test1.txt", test1, 1, 18, 0},
 		{"test1.txt", test1, 1, 19, 1},
