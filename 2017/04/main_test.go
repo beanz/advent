@@ -20,7 +20,7 @@ func TestPart1(t *testing.T) {
 }
 
 func TestPart2(t *testing.T) {
-	assert.Equal(t, 3, Part2(ReadLines("test-2.txt")))
+	assert.Equal(t, 3, Part2(ReadLines("test2.txt")))
 	assert.Equal(t, 208, Part2(ReadLines("input.txt")))
 }
 

@@ -33,8 +33,8 @@ func TestPart1(t *testing.T) {
 }
 
 func TestPart2(t *testing.T) {
-	assert.Equal(t, 1, NewGame(ReadLines("test-2.txt")).Part2())
-	assert.Equal(t, 0, NewGame(ReadLines("test-2a.txt")).Part2())
+	assert.Equal(t, 1, NewGame(ReadLines("test2.txt")).Part2())
+	assert.Equal(t, 0, NewGame(ReadLines("test2a.txt")).Part2())
 	assert.Equal(t, 567, NewGame(ReadLines("input.txt")).Part2())
 }
 

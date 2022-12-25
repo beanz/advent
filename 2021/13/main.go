@@ -3,8 +3,9 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	. "github.com/beanz/advent/lib-go"
 	"strings"
+
+	. "github.com/beanz/advent/lib-go"
 )
 
 //go:embed input.txt
@@ -23,8 +24,8 @@ type Fold struct {
 }
 
 type Game struct {
-	m    map[int]struct{}
-	f    []Fold
+	m  map[int]struct{}
+	f  []Fold
 	wh [2]int
 }
 
@@ -48,7 +49,7 @@ LOOP:
 			if y > h {
 				h = y
 			}
-			p = append(p, [2]int{x,y})
+			p = append(p, [2]int{x, y})
 			y = 0
 			if in[i+1] == '\n' {
 				i += 2
@@ -73,7 +74,7 @@ LOOP:
 			y = 0
 		}
 	}
-	wh := [2]int{w,h}
+	wh := [2]int{w, h}
 	fold, f := f[0], f[1:]
 	m := make(map[int]struct{}, 1024)
 	for _, v := range p {
@@ -86,7 +87,7 @@ LOOP:
 		}
 		m[v[0]+(v[1]<<12)] = struct{}{}
 	}
-	wh[fold.axis] = fold.n -1
+	wh[fold.axis] = fold.n - 1
 	return &Game{m, f, wh}
 }
 
@@ -109,7 +110,7 @@ func (g *Game) Parts() (int, string) {
 	p1 := len(g.m)
 	for _, f := range g.f {
 		for xy := range g.m {
-			v := [2]int{xy%4096, xy>>12}
+			v := [2]int{xy % 4096, xy >> 12}
 			if v[f.axis] > f.n {
 				delete(g.m, xy)
 				v[f.axis] = f.n - (v[f.axis] - f.n)
