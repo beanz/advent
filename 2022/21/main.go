@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"math/big"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -43,7 +44,7 @@ const HUMN = 1
 func Parts(in []byte) (int, int) {
 	idToIndex := make(map[int]int, 2048)
 	root := ChompId(idToIndex, []byte("root"), 0, 4, 26, 'a')
-	ChompId(idToIndex, []byte("humn"), 0, 4, 26, 'a') // 1th id
+	humn := ChompId(idToIndex, []byte("humn"), 0, 4, 26, 'a') // 1th id
 	nodes := [2048]*Node{}
 	for i := 0; i < len(in); {
 		id := ChompId(idToIndex, in, i, 4, 26, 'a')
@@ -60,22 +61,48 @@ func Parts(in []byte) (int, int) {
 		i += 12
 	}
 	nodesSlice := nodes[:len(idToIndex)]
-	left, leftHasHumn := Part1(nodesSlice, nodes[root].left)
-	right, rightHasHumn := Part1(nodesSlice, nodes[root].right)
-	if rightHasHumn {
-		left, right = right, left
-	} else if !leftHasHumn {
-		panic("unreachable")
+	p1, _ := Part1(nodesSlice, root, humn)
+	nodes[0].op = '-'
+	nodes[1].val = 0
+	fZero := Part2(nodesSlice, root)
+	nodes[1].val = 1
+	fOne := Part2(nodesSlice, root)
+	fZeroSubOne := big.NewRat(0, 1)
+	fZeroSubOne.Sub(fZero, fOne)
+	ans := big.NewRat(0, 1)
+	ans.Quo(fZero, fZeroSubOne)
+	if !ans.IsInt() {
+		panic("not integer")
 	}
-	return left + right, Balance(nodesSlice, nodes[root].left, right)
+	return p1, int(ans.Num().Int64())
 }
 
-func Part1(nodes []*Node, id int) (int, bool) {
+func Part2(nodes []*Node, id int) *big.Rat {
 	if nodes[id].op == 0 {
-		return nodes[id].val, id == HUMN
+		return big.NewRat(int64(nodes[id].val), 1)
 	}
-	left, lHumn := Part1(nodes, nodes[id].left)
-	right, rHumn := Part1(nodes, nodes[id].right)
+	left := Part2(nodes, nodes[id].left)
+	right := Part2(nodes, nodes[id].right)
+	val := big.NewRat(0, 1)
+	switch nodes[id].op {
+	case '+':
+		val = val.Add(left, right)
+	case '-':
+		val = val.Sub(left, right)
+	case '*':
+		val = val.Mul(left, right)
+	case '/':
+		val = val.Quo(left, right)
+	}
+	return val
+}
+
+func Part1(nodes []*Node, id int, humn int) (int, bool) {
+	if nodes[id].op == 0 {
+		return nodes[id].val, id == humn
+	}
+	left, lhumn := Part1(nodes, nodes[id].left, humn)
+	right, rhumn := Part1(nodes, nodes[id].right, humn)
 	var val int
 	switch nodes[id].op {
 	case '+':
@@ -89,55 +116,11 @@ func Part1(nodes []*Node, id int) (int, bool) {
 	default:
 		panic("unreachable")
 	}
-	if !lHumn && !rHumn {
-		nodes[id].op = 0
+	if !lhumn && !rhumn {
 		nodes[id].val = val
-		return val, false
+		nodes[id].op = 0
 	}
-	return val, true
-}
-
-func Balance(nodes []*Node, id, value int) int {
-	if id == HUMN {
-		return value
-	}
-	left, lHumn := Part1(nodes, nodes[id].left)
-	right, rHumn := Part1(nodes, nodes[id].right)
-	switch nodes[id].op {
-	case '+':
-		if lHumn {
-			return Balance(nodes, nodes[id].left, value-right)
-		} else if rHumn {
-			return Balance(nodes, nodes[id].right, value-left)
-		} else {
-			panic("unreachable")
-		}
-	case '*':
-		if lHumn {
-			return Balance(nodes, nodes[id].left, value/right)
-		} else if rHumn {
-			return Balance(nodes, nodes[id].right, value/left)
-		} else {
-			panic("unreachable")
-		}
-	case '/':
-		if lHumn {
-			return Balance(nodes, nodes[id].left, value*right)
-		} else if rHumn {
-			return Balance(nodes, nodes[id].right, value*left)
-		} else {
-			panic("unreachable")
-		}
-	case '-':
-		if lHumn {
-			return Balance(nodes, nodes[id].left, value+right)
-		} else if rHumn {
-			return Balance(nodes, nodes[id].right, left-value)
-		} else {
-			panic("unreachable")
-		}
-	}
-	return value
+	return val, lhumn || rhumn
 }
 
 func main() {
