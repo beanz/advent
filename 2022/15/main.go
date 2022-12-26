@@ -15,7 +15,6 @@ type Int int32
 
 type Sensor struct {
 	x, y     Int
-	bx, by   Int
 	md       Int
 	r1x, r1y Int
 	r2x, r2y Int
@@ -71,7 +70,15 @@ func SpansForRow(s []Sensor, y Int) []Span {
 	return spans[:j+1]
 }
 
-func Parts(in []byte) (Int, int) {
+func Parts(in []byte) (int, int) {
+	var testY Int = 2000000
+	var max Int = 4000000
+	if len(in) < 800 {
+		testY = 10 // example
+		max = 20
+	}
+	on_y_l := 0
+	on_y := [4]Int{}
 	sensors := [30]Sensor{}
 	k := 0
 	for i := 0; i < len(in); {
@@ -79,36 +86,25 @@ func Parts(in []byte) (Int, int) {
 		j, y := ChompInt[Int](in, j+4)
 		j, bx := ChompInt[Int](in, j+25)
 		j, by := ChompInt[Int](in, j+4)
+		if by == testY {
+			if on_y_l == 0 || on_y[on_y_l-1] != bx {
+				on_y[on_y_l] = bx
+				on_y_l++
+			}
+		}
 		d := Abs(x-bx) + Abs(y-by)
 		r1x, r1y := rotCCW(x-d-1, y)
 		r2x, r2y := rotCCW(x+d+1, y)
-		sensors[k] = Sensor{x, y, bx, by, d, r1x, r1y, r2x, r2y}
+		sensors[k] = Sensor{x, y, d, r1x, r1y, r2x, r2y}
 		k++
 		i = j + 1
 	}
-	var y Int = 2000000
-	var max Int = 4000000
-	if k < 15 {
-		y = 10 // example
-		max = 20
-	}
-	return Part1(sensors[:k], y), Part2(sensors[:k], max)
-}
-
-func Part1(sensors []Sensor, y Int) Int {
-	done := make(map[Int]struct{}, 30)
-	for _, s := range sensors {
-		if s.by == y {
-			done[s.bx] = struct{}{}
-		}
-	}
-	beaconCount := len(done)
-	spans := SpansForRow(sensors, y)
-	p1 := Int(-beaconCount)
+	spans := SpansForRow(sensors[:k], testY)
+	p1 := -on_y_l
 	for _, span := range spans {
-		p1 += span.e - span.s
+		p1 += int(span.e - span.s)
 	}
-	return p1
+	return p1, Part2(sensors[:k], max)
 }
 
 func Part2(sensors []Sensor, max Int) int {
