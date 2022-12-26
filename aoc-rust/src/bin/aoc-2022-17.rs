@@ -1,5 +1,4 @@
-use ahash::RandomState;
-use std::collections::HashMap;
+use heapless::FnvIndexMap;
 use std::fmt;
 
 #[derive(Debug, Clone, Copy)]
@@ -170,8 +169,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let last = 1000000000000usize;
     let mut cycle_top = 0;
     let mut p1 = 0;
-    let mut seen: HashMap<usize, (usize, usize), RandomState> =
-        HashMap::with_capacity_and_hasher(4096, RandomState::new());
+    let mut seen = FnvIndexMap::<usize, (usize, usize), 4096>::new();
     while round <= 5 {
         ch.fall();
         round += 1;
@@ -192,7 +190,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
                     cycle_top = n * diff_top;
                 }
             }
-            seen.insert(k, (round, ch.top));
+            _ = seen.insert(k, (round, ch.top));
         }
         round += 1;
     }

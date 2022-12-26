@@ -25,6 +25,7 @@ nom = "7.1.1"
 nohash-hasher = "0.2.0"
 stats_alloc = "0.1.10"
 smallvec = "1.10.0"
+heapless = "0.7.16"
 
 [profile.release]
 debug = true
