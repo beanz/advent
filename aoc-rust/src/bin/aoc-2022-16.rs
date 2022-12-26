@@ -5,45 +5,45 @@ use smallvec::SmallVec;
 
 #[derive(Clone, Debug)]
 struct Valve {
-    id: usize,
-    bit: usize,
-    rate: usize,
-    next: SmallVec<[usize; 5]>,
+    id: u32,
+    bit: u32,
+    rate: u32,
+    next: SmallVec<[u32; 5]>,
 }
 
-fn valve_id(a: u8, b: u8) -> usize {
-    ((a as usize) << 8) + (b as usize)
+fn valve_id(a: u8, b: u8) -> u32 {
+    ((a as u32) << 8) + (b as u32)
 }
 
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 struct Search {
-    cave: usize,
-    t: usize,
-    todo: usize,
+    cave: u32,
+    t: u32,
+    todo: u32,
 }
 
 struct Caves<'a> {
     valves: &'a SmallVec<[Valve; 64]>,
-    dist: &'a [[usize; 64]; 64],
+    dist: &'a [[u32; 64]; 64],
     non_zero: usize,
-    mem: HashMap<Search, usize, RandomState>,
+    mem: HashMap<Search, u32, RandomState>,
 }
 
 impl<'a> Caves<'a> {
-    fn search(&mut self, s: &Search) -> usize {
+    fn search(&mut self, s: &Search) -> u32 {
         if let Some(res) = self.mem.get(s) {
             return *res;
         }
         let mut max = 0;
         for i in 0..self.non_zero {
             if s.todo & (1 << i) != 0 {
-                if s.t < self.dist[s.cave][i] + 1 {
+                if s.t < self.dist[s.cave as usize][i] + 1 {
                     continue;
                 }
-                let nt = s.t - self.dist[s.cave][i] - 1; // -1 for open
+                let nt = s.t - self.dist[s.cave as usize][i] - 1; // -1 for open
                 if nt > 0 {
                     let mut pres = self.search(&Search {
-                        cave: i,
+                        cave: i as u32,
                         t: nt,
                         todo: s.todo ^ (1 << i),
                     });
@@ -65,7 +65,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let mut non_zero = 0;
     while i < inp.len() {
         let id = valve_id(inp[i + 6], inp[i + 7]);
-        let (j, rate) = aoc::read::uint::<usize>(inp, i + 23);
+        let (j, rate) = aoc::read::uint::<u32>(inp, i + 23);
         i = j + 24;
         if inp[i] == b' ' {
             i += 1;
@@ -73,7 +73,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         if rate != 0 {
             non_zero += 1;
         }
-        let mut next = SmallVec::<[usize; 5]>::new();
+        let mut next = SmallVec::<[u32; 5]>::new();
         loop {
             let nc = valve_id(inp[i], inp[i + 1]);
             next.push(nc);
@@ -93,16 +93,16 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     }
     valves.sort_by(|a, b| b.rate.cmp(&a.rate));
     let mut bit = 1;
-    let mut id_to_index: HashMap<usize, usize> = HashMap::default();
+    let mut id_to_index: HashMap<u32, u32> = HashMap::default();
     for (i, mut valve) in valves.iter_mut().enumerate() {
         valve.bit = bit;
-        id_to_index.insert(valve.id, i);
+        id_to_index.insert(valve.id, i as u32);
         bit <<= 1;
     }
-    let mut dist: [[usize; 64]; 64] = [[99999999; 64]; 64];
+    let mut dist: [[u32; 64]; 64] = [[99999999; 64]; 64];
     for i in 0..valves.len() {
         for nc in &valves[i].next {
-            dist[i][*id_to_index.get(&nc).expect("value unknown?")] = 1;
+            dist[i][*id_to_index.get(&nc).expect("value unknown?") as usize] = 1;
         }
     }
     for k in 0..valves.len() {
@@ -146,7 +146,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             p2 = pres
         }
     }
-    (p1, p2)
+    (p1 as usize, p2 as usize)
 }
 
 fn main() {
