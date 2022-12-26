@@ -3,7 +3,6 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	"sort"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -12,9 +11,8 @@ import (
 var input []byte
 
 type Pkt struct {
-	val     int
-	list    []Pkt
-	special bool
+	val  int
+	list []Pkt
 }
 
 func Comp(l Pkt, r Pkt) int {
@@ -71,39 +69,35 @@ func NextPkt(in []byte, i int) (int, Pkt) {
 	return j, Pkt{val: n, list: nil}
 }
 
-type Pkts []Pkt
-
-func (p Pkts) Len() int           { return len(p) }
-func (p Pkts) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
-func (p Pkts) Less(i, j int) bool { return Comp(p[i], p[j]) == -1 }
-
 func Parts(in []byte) (int, int) {
-	pkt2 := Pkt{special: true, list: []Pkt{{val: 2}}}
-	pkt6 := Pkt{special: true, list: []Pkt{{val: 6}}}
-	pkts := make([]Pkt, 0, 300)
-	pkts = append(pkts, pkt2, pkt6)
-	for i := 0; i < len(in); i++ {
-		if in[i] == '\n' {
-			continue
-		}
-		j, pkt := NextPkt(in, i)
-		i = j
-		pkts = append(pkts, pkt)
-	}
+	pkt2 := Pkt{list: []Pkt{{val: 2}}}
+	pkt6 := Pkt{list: []Pkt{{val: 6}}}
 	p1 := 0
-	for i := 2; i < len(pkts); i += 2 {
-		if Comp(pkts[i], pkts[i+1]) == -1 {
-			p1 += (i / 2)
+	n := 1
+	c2 := 1 // 1 indexed
+	c6 := 2 // 1 indexed and pkt2 is before it
+	for i := 0; i < len(in); {
+		j, pktA := NextPkt(in, i)
+		j, pktB := NextPkt(in, j+1)
+		i = j + 2
+		if Comp(pktA, pktB) == -1 {
+			p1 += n
 		}
-	}
-	sort.Sort(Pkts(pkts))
-	p2 := 1
-	for i := 0; i < len(pkts); i++ {
-		if pkts[i].special {
-			p2 *= i + 1
+		if Comp(pktA, pkt2) == -1 {
+			c2++
+			c6++
+		} else if Comp(pktA, pkt6) == -1 {
+			c6++
 		}
+		if Comp(pktB, pkt2) == -1 {
+			c2++
+			c6++
+		} else if Comp(pktB, pkt6) == -1 {
+			c6++
+		}
+		n++
 	}
-	return p1, p2
+	return p1, c2 * c6
 }
 
 func main() {

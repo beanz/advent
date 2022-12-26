@@ -23,29 +23,35 @@ fn read(inp: &[u8], i: usize) -> (usize, Pkt) {
 }
 
 fn parts(inp: &[u8]) -> (usize, usize) {
-    let mut pkts: Vec<Pkt> = vec![];
-    let mut i = 0;
-    while i < inp.len() {
-        if inp[i] == b'\n' {
-            i += 1;
-            continue;
-        }
-        let (j, pkt) = read(inp, i);
-        i = j;
-        pkts.push(pkt);
-    }
-    let mut p1 = 0;
-    for i in 0..pkts.len() / 2 {
-        if let Ordering::Less = pkts[i * 2].cmp(&pkts[i * 2 + 1]) {
-            p1 += 1 + i;
-        }
-    }
-    pkts.sort();
     let pkt2 = Pkt::List(vec![Pkt::Num(2)]);
     let pkt6 = Pkt::List(vec![Pkt::Num(6)]);
-    let i = pkts.partition_point(|pkt| pkt < &pkt2) + 1; // zero indexed
-    let j = pkts.partition_point(|pkt| pkt < &pkt6) + 2; // zero indexed and inc for i insertion
-    (p1, i * j)
+    let mut i = 0;
+    let mut p1 = 0;
+    let mut i2 = 1; // 1 indexed
+    let mut i6 = 2; // 1 indexed and 2 is before it
+    let mut n = 1;
+    while i < inp.len() {
+        let (j, pkt_a) = read(inp, i);
+        let (j, pkt_b) = read(inp, j + 1);
+        i = j + 2;
+        if let Ordering::Less = pkt_a.cmp(&pkt_b) {
+            p1 += n;
+        }
+        if let Ordering::Less = pkt_a.cmp(&pkt2) {
+            i2 += 1;
+            i6 += 1;
+        } else if let Ordering::Less = pkt_a.cmp(&pkt6) {
+            i6 += 1;
+        }
+        if let Ordering::Less = pkt_b.cmp(&pkt2) {
+            i2 += 1;
+            i6 += 1;
+        } else if let Ordering::Less = pkt_b.cmp(&pkt6) {
+            i6 += 1;
+        }
+        n += 1;
+    }
+    (p1, i2 * i6)
 }
 
 fn main() {
