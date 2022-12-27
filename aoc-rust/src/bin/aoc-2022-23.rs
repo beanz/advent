@@ -16,7 +16,8 @@ impl Pos {
 #[derive(Clone, Debug)]
 struct Elves {
     m: [bool; 65536],
-    c: usize,
+    el: [Pos; 3000],
+    l: usize,
     x_min: i16,
     x_max: i16,
     y_min: i16,
@@ -27,33 +28,37 @@ impl Elves {
     fn new() -> Elves {
         Elves {
             m: [false; 65536],
-            c: 0,
+            el: [Pos { x: 0, y: 0 }; 3000],
+            l: 0,
             x_min: std::i16::MAX,
             x_max: std::i16::MIN,
             y_min: std::i16::MAX,
             y_max: std::i16::MIN,
         }
     }
+    fn reset_bounds(&mut self) {
+        self.x_min = std::i16::MAX;
+        self.x_max = std::i16::MIN;
+        self.y_min = std::i16::MAX;
+        self.y_max = std::i16::MIN;
+    }
     fn contains(&self, x: i16, y: i16) -> bool {
         self.m[Pos::new(x, y).index()]
     }
-    fn visit<F>(&self, mut f: F)
-    where
-        F: FnMut(Pos),
-    {
-        for y in self.y_min..=self.y_max {
-            for x in self.x_min..=self.x_max {
-                let p = Pos::new(x, y);
-                if self.m[p.index()] {
-                    f(p)
-                }
-            }
-        }
-    }
     fn add(&mut self, x: i16, y: i16) {
-        self.c += 1;
         let p = Pos::new(x, y);
         self.m[p.index()] = true;
+        self.el[self.l] = p;
+        self.l += 1;
+        self.bound(x, y)
+    }
+    fn mov(&mut self, i: usize, p: Pos, np: Pos) {
+        self.m[p.index()] = false;
+        self.m[np.index()] = true;
+        self.el[i] = np;
+        self.bound(np.x, np.y)
+    }
+    fn bound(&mut self, x: i16, y: i16) {
         if self.x_min > x {
             self.x_min = x
         }
@@ -96,7 +101,7 @@ impl Elves {
         b
     }
     fn count(&self) -> usize {
-        ((1 + self.x_max - self.x_min) as usize) * ((1 + self.y_max - self.y_min) as usize) - self.c
+        ((1 + self.x_max - self.x_min) as usize) * ((1 + self.y_max - self.y_min) as usize) - self.l
     }
 }
 
@@ -110,12 +115,13 @@ impl<'a> Board<'a> {
     fn iter(&mut self) -> usize {
         let mut prop: [Option<Pos>; 65536] = [None; 65536];
         let mut count: [usize; 65536] = [0; 65536];
-        self.elves.visit(|p| {
+        for j in 0..self.elves.l {
+            let p = self.elves.el[j];
             const CHECK_BITS: [usize; 4] = [1 + 2 + 4, 32 + 64 + 128, 1 + 8 + 32, 4 + 16 + 128];
             const CHECK_OFFSET: [[i16; 2]; 4] = [[0, -1], [0, 1], [-1, 0], [1, 0]];
             let nb = self.elves.neighbits(p.x, p.y);
             if nb == 0 {
-                return;
+                continue;
             }
             for i in 0..4 {
                 let j = (self.ri + i) % 4;
@@ -127,20 +133,20 @@ impl<'a> Board<'a> {
                     break;
                 }
             }
-        });
+        }
         let mut moved = 0;
-        let mut next = Elves::new();
-        self.elves.visit(|p| {
+        self.elves.reset_bounds();
+        for j in 0..self.elves.l {
+            let p = self.elves.el[j];
             if let Some(np) = prop[p.index()] {
                 if count[np.index()] == 1 {
-                    next.add(np.x, np.y);
+                    self.elves.mov(j, p, np);
                     moved += 1;
-                    return;
+                    continue;
                 }
             }
-            next.add(p.x, p.y);
-        });
-        *self.elves = next.clone();
+            self.elves.bound(p.x, p.y);
+        }
         self.ri += 1;
         if self.ri == 4 {
             self.ri = 0;
