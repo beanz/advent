@@ -26,6 +26,7 @@ type Elves struct {
 	el             [3000]Pos
 	l              int
 	xm, xM, ym, yM Int
+	ri             int
 }
 
 func NewElves() *Elves {
@@ -37,6 +38,7 @@ func NewElves() *Elves {
 		xM: -999999999,
 		ym: 999999999,
 		yM: -999999999,
+		ri: 0,
 	}
 }
 
@@ -132,30 +134,21 @@ func (e *Elves) Count() int {
 	return int(1+e.xM-e.xm)*int(1+e.yM-e.ym) - e.l
 }
 
-type Board struct {
-	elves *Elves
-	ri    int
-}
-
-func (b *Board) String() string {
-	return b.elves.String()
-}
-
 var (
 	checkBits = [4]Int{1 + 2 + 4, 32 + 64 + 128, 1 + 8 + 32, 4 + 16 + 128}
 	checkOff  = [4]Pos{{0, -1}, {0, 1}, {-1, 0}, {1, 0}}
 )
 
-func (b *Board) Iter() int {
+func (e *Elves) Iter() int {
 	prop := [65536]*Pos{}
 	count := [65536]Int{}
-	for _, p := range b.elves.el[:b.elves.l] {
-		nb := b.elves.NeighBits(p.x, p.y)
+	for _, p := range e.el[:e.l] {
+		nb := e.NeighBits(p.x, p.y)
 		if nb == 0 {
 			continue
 		}
 		for i := 0; i < 4; i++ {
-			j := (b.ri + i) % 4
+			j := (e.ri + i) % 4
 			if nb&checkBits[j] == 0 {
 				np := Pos{p.x + checkOff[j].x, p.y + checkOff[j].y}
 				prop[p.Index()] = &np
@@ -165,24 +158,24 @@ func (b *Board) Iter() int {
 		}
 	}
 	moved := 0
-	b.elves.ResetBounds()
-	for i, p := range b.elves.el[:b.elves.l] {
+	e.ResetBounds()
+	for i, p := range e.el[:e.l] {
 		pi := p.Index()
 		np := prop[pi]
 		if np == nil {
-			b.elves.Bound(p.x, p.y)
+			e.Bound(p.x, p.y)
 			continue
 		}
 		if count[np.Index()] > 1 {
-			b.elves.Bound(p.x, p.y)
+			e.Bound(p.x, p.y)
 			continue
 		}
-		b.elves.Move(i, p, *np)
+		e.Move(i, p, *np)
 		moved++
 	}
-	b.ri++
-	if b.ri == 4 {
-		b.ri = 0
+	e.ri++
+	if e.ri == 4 {
+		e.ri = 0
 	}
 	return moved
 }
@@ -190,7 +183,6 @@ func (b *Board) Iter() int {
 func Parts(in []byte) (int, int) {
 	var x, y Int
 	elves := NewElves()
-	b := Board{elves: elves}
 	for _, ch := range in {
 		switch ch {
 		case '#':
@@ -205,11 +197,11 @@ func Parts(in []byte) (int, int) {
 	}
 	p1 := -1
 	var r = 1
-	//fmt.Printf("%s\n", b.String())
+	//fmt.Printf("%s\n", elves.String())
 	for ; r < 10000; r++ {
-		moved := b.Iter()
+		moved := elves.Iter()
 		if r == 10 {
-			p1 = b.elves.Count()
+			p1 = elves.Count()
 		}
 		if moved == 0 {
 			break
