@@ -11,14 +11,16 @@ import (
 //go:embed input.txt
 var input []byte
 
-type Int int32
+type Int int8
+type Idx uint16
+type HalfIdx uint8
 
 type Pos struct {
 	x, y Int
 }
 
-func (p Pos) Index() Int {
-	return (128+p.x)<<8 + (128 + p.y)
+func (p Pos) Index() Idx {
+	return Idx(HalfIdx(p.x))<<8 + Idx(HalfIdx(p.y))
 }
 
 type Elves struct {
@@ -34,23 +36,23 @@ func NewElves() *Elves {
 		m:  [65536]bool{},
 		el: [3000]Pos{},
 		l:  0,
-		xm: 999999999,
-		xM: -999999999,
-		ym: 999999999,
-		yM: -999999999,
+		xm: 127,
+		xM: -128,
+		ym: 127,
+		yM: -128,
 		ri: 0,
 	}
 }
 
 func (e *Elves) ResetBounds() {
-	e.xm = 999999999
-	e.xM = -999999999
-	e.ym = 999999999
-	e.yM = -999999999
+	e.xm = 127
+	e.xM = -128
+	e.ym = 127
+	e.yM = -128
 }
 
-func (e *Elves) Index(x, y Int) Int {
-	return (128+x)<<8 + (128 + y)
+func (e *Elves) Index(x, y Int) Idx {
+	return Idx(HalfIdx(x))<<8 + Idx(HalfIdx(y))
 }
 
 func (e *Elves) Contains(x, y Int) bool {
@@ -101,8 +103,8 @@ func (e *Elves) Bound(x, y Int) {
 	}
 }
 
-func (e *Elves) NeighBits(x, y Int) Int {
-	var b Int
+func (e *Elves) NeighBits(x, y Int) byte {
+	var b byte
 	if e.Contains(x-1, y-1) {
 		b += 1
 	}
@@ -135,7 +137,7 @@ func (e *Elves) Count() int {
 }
 
 var (
-	checkBits = [4]Int{1 + 2 + 4, 32 + 64 + 128, 1 + 8 + 32, 4 + 16 + 128}
+	checkBits = [4]byte{1 + 2 + 4, 32 + 64 + 128, 1 + 8 + 32, 4 + 16 + 128}
 	checkOff  = [4]Pos{{0, -1}, {0, 1}, {-1, 0}, {1, 0}}
 )
 
