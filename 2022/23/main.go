@@ -23,19 +23,28 @@ func (p Pos) Index() Int {
 
 type Elves struct {
 	m              [65536]bool
-	c              int
+	el             [3000]Pos
+	l              int
 	xm, xM, ym, yM Int
 }
 
 func NewElves() *Elves {
 	return &Elves{
 		m:  [65536]bool{},
-		c:  0,
+		el: [3000]Pos{},
+		l:  0,
 		xm: 999999999,
 		xM: -999999999,
 		ym: 999999999,
 		yM: -999999999,
 	}
+}
+
+func (e *Elves) ResetBounds() {
+	e.xm = 999999999
+	e.xM = -999999999
+	e.ym = 999999999
+	e.yM = -999999999
 }
 
 func (e *Elves) Index(x, y Int) Int {
@@ -44,17 +53,6 @@ func (e *Elves) Index(x, y Int) Int {
 
 func (e *Elves) Contains(x, y Int) bool {
 	return e.m[e.Index(x, y)]
-}
-
-func (e *Elves) Visit(fn func(x, y Int)) {
-	for y := e.ym; y <= e.yM; y++ {
-		for x := e.xm; x <= e.xM; x++ {
-			i := e.Index(Int(x), Int(y))
-			if e.m[i] {
-				fn(Int(x), Int(y))
-			}
-		}
-	}
 }
 
 func (e *Elves) String() string {
@@ -73,8 +71,20 @@ func (e *Elves) String() string {
 }
 
 func (e *Elves) Add(x, y Int) {
-	e.c++
 	e.m[e.Index(x, y)] = true
+	e.el[e.l] = Pos{x, y}
+	e.l++
+	e.Bound(x, y)
+}
+
+func (e *Elves) Move(i int, p Pos, np Pos) {
+	e.m[p.Index()] = false
+	e.m[np.Index()] = true
+	e.el[i] = np
+	e.Bound(np.x, np.y)
+}
+
+func (e *Elves) Bound(x, y Int) {
 	if e.xm > x {
 		e.xm = x
 	}
@@ -119,7 +129,7 @@ func (e *Elves) NeighBits(x, y Int) Int {
 }
 
 func (e *Elves) Count() int {
-	return int(1+e.xM-e.xm)*int(1+e.yM-e.ym) - e.c
+	return int(1+e.xM-e.xm)*int(1+e.yM-e.ym) - e.l
 }
 
 type Board struct {
@@ -139,11 +149,10 @@ var (
 func (b *Board) Iter() int {
 	prop := [65536]*Pos{}
 	count := [65536]Int{}
-	b.elves.Visit(func(x, y Int) {
-		p := Pos{x, y}
+	for _, p := range b.elves.el[:b.elves.l] {
 		nb := b.elves.NeighBits(p.x, p.y)
 		if nb == 0 {
-			return
+			continue
 		}
 		for i := 0; i < 4; i++ {
 			j := (b.ri + i) % 4
@@ -154,24 +163,23 @@ func (b *Board) Iter() int {
 				break
 			}
 		}
-	})
-	next := NewElves()
+	}
 	moved := 0
-	b.elves.Visit(func(x, y Int) {
-		p := Pos{x, y}
-		np := prop[p.Index()]
+	b.elves.ResetBounds()
+	for i, p := range b.elves.el[:b.elves.l] {
+		pi := p.Index()
+		np := prop[pi]
 		if np == nil {
-			next.Add(p.x, p.y)
-			return
+			b.elves.Bound(p.x, p.y)
+			continue
 		}
 		if count[np.Index()] > 1 {
-			next.Add(p.x, p.y)
-			return
+			b.elves.Bound(p.x, p.y)
+			continue
 		}
-		next.Add(np.x, np.y)
+		b.elves.Move(i, p, *np)
 		moved++
-	})
-	b.elves = next
+	}
 	b.ri++
 	if b.ri == 4 {
 		b.ri = 0
