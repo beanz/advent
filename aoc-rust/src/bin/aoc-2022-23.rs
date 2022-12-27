@@ -1,15 +1,15 @@
 #[derive(Debug, Clone, Copy)]
 struct Pos {
-    x: i16,
-    y: i16,
+    x: i8,
+    y: i8,
 }
 
 impl Pos {
-    fn new(x: i16, y: i16) -> Pos {
+    fn new(x: i8, y: i8) -> Pos {
         Pos { x, y }
     }
     fn index(&self) -> usize {
-        (((self.x + 128) as usize) << 8) + ((self.y + 128) as usize)
+        (((self.x as i16 + 128) as usize) << 8) + ((self.y as i16 + 128) as usize)
     }
 }
 
@@ -18,10 +18,11 @@ struct Elves {
     m: [bool; 65536],
     el: [Pos; 3000],
     l: usize,
-    x_min: i16,
-    x_max: i16,
-    y_min: i16,
-    y_max: i16,
+    x_min: i8,
+    x_max: i8,
+    y_min: i8,
+    y_max: i8,
+    ri: usize,
 }
 
 impl Elves {
@@ -30,22 +31,23 @@ impl Elves {
             m: [false; 65536],
             el: [Pos { x: 0, y: 0 }; 3000],
             l: 0,
-            x_min: std::i16::MAX,
-            x_max: std::i16::MIN,
-            y_min: std::i16::MAX,
-            y_max: std::i16::MIN,
+            x_min: std::i8::MAX,
+            x_max: std::i8::MIN,
+            y_min: std::i8::MAX,
+            y_max: std::i8::MIN,
+            ri: 0,
         }
     }
     fn reset_bounds(&mut self) {
-        self.x_min = std::i16::MAX;
-        self.x_max = std::i16::MIN;
-        self.y_min = std::i16::MAX;
-        self.y_max = std::i16::MIN;
+        self.x_min = std::i8::MAX;
+        self.x_max = std::i8::MIN;
+        self.y_min = std::i8::MAX;
+        self.y_max = std::i8::MIN;
     }
-    fn contains(&self, x: i16, y: i16) -> bool {
+    fn contains(&self, x: i8, y: i8) -> bool {
         self.m[Pos::new(x, y).index()]
     }
-    fn add(&mut self, x: i16, y: i16) {
+    fn add(&mut self, x: i8, y: i8) {
         let p = Pos::new(x, y);
         self.m[p.index()] = true;
         self.el[self.l] = p;
@@ -58,7 +60,7 @@ impl Elves {
         self.el[i] = np;
         self.bound(np.x, np.y)
     }
-    fn bound(&mut self, x: i16, y: i16) {
+    fn bound(&mut self, x: i8, y: i8) {
         if self.x_min > x {
             self.x_min = x
         }
@@ -72,7 +74,7 @@ impl Elves {
             self.y_max = y
         }
     }
-    fn neighbits(&self, x: i16, y: i16) -> usize {
+    fn neighbits(&self, x: i8, y: i8) -> usize {
         let mut b = 0;
         if self.contains(x - 1, y - 1) {
             b += 1;
@@ -103,23 +105,14 @@ impl Elves {
     fn count(&self) -> usize {
         ((1 + self.x_max - self.x_min) as usize) * ((1 + self.y_max - self.y_min) as usize) - self.l
     }
-}
-
-#[derive(Debug)]
-struct Board<'a> {
-    elves: &'a mut Elves,
-    ri: usize,
-}
-
-impl<'a> Board<'a> {
     fn iter(&mut self) -> usize {
         let mut prop: [Option<Pos>; 65536] = [None; 65536];
-        let mut count: [usize; 65536] = [0; 65536];
-        for j in 0..self.elves.l {
-            let p = self.elves.el[j];
+        let mut count: [u8; 65536] = [0; 65536];
+        for j in 0..self.l {
+            let p = self.el[j];
             const CHECK_BITS: [usize; 4] = [1 + 2 + 4, 32 + 64 + 128, 1 + 8 + 32, 4 + 16 + 128];
-            const CHECK_OFFSET: [[i16; 2]; 4] = [[0, -1], [0, 1], [-1, 0], [1, 0]];
-            let nb = self.elves.neighbits(p.x, p.y);
+            const CHECK_OFFSET: [[i8; 2]; 4] = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+            let nb = self.neighbits(p.x, p.y);
             if nb == 0 {
                 continue;
             }
@@ -135,17 +128,17 @@ impl<'a> Board<'a> {
             }
         }
         let mut moved = 0;
-        self.elves.reset_bounds();
-        for j in 0..self.elves.l {
-            let p = self.elves.el[j];
+        self.reset_bounds();
+        for j in 0..self.l {
+            let p = self.el[j];
             if let Some(np) = prop[p.index()] {
                 if count[np.index()] == 1 {
-                    self.elves.mov(j, p, np);
+                    self.mov(j, p, np);
                     moved += 1;
                     continue;
                 }
             }
-            self.elves.bound(p.x, p.y);
+            self.bound(p.x, p.y);
         }
         self.ri += 1;
         if self.ri == 4 {
@@ -171,16 +164,12 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             _ => x += 1,
         }
     }
-    let mut b = Board {
-        elves: &mut elves,
-        ri: 0,
-    };
     let mut p1 = 0;
     let mut p2 = 0;
     for r in 1..10000 {
-        let moved = b.iter();
+        let moved = elves.iter();
         if r == 10 {
-            p1 = b.elves.count();
+            p1 = elves.count();
         }
         if moved == 0 {
             p2 = r;
