@@ -1,15 +1,15 @@
-fn parts(inp: &[u8]) -> (usize, usize) {
+fn parts(inp: &[u8]) -> (isize, isize) {
     let mut p1 = 0;
     let mut p2 = 0;
     let mut i = 0;
     while i < inp.len() {
         let a = (inp[i] - b'A') as isize;
-        let b = (inp[i + 2] - b'X') as isize;
+        let b = (inp[i + 2] & 0x3) as isize;
         p1 += b + 1 + 3 * ((4 + b - a) % 3);
         p2 += 3 * b + 1 + (a + b + 2) % 3;
         i += 4;
     }
-    (p1 as usize, p2 as usize)
+    (p1, p2)
 }
 
 fn main() {

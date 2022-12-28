@@ -10,12 +10,15 @@ import (
 //go:embed input.txt
 var input []byte
 
-func Parts(inp []byte) (int, int) {
-	p1, p2 := 0, 0
-	s1 := []int{4, 8, 3, 0, 1, 5, 9, 0, 7, 2, 6}
-	s2 := []int{3, 4, 8, 0, 1, 5, 9, 0, 2, 6, 7}
+type Int int32
+
+func Parts(inp []byte) (Int, Int) {
+	var p1 Int
+	var p2 Int
+	s1 := []Int{0, 0, 0, 0, 4, 8, 3, 0, 1, 5, 9, 0, 7, 2, 6}
+	s2 := []Int{0, 0, 0, 0, 3, 4, 8, 0, 1, 5, 9, 0, 2, 6, 7}
 	for i := 0; i < len(inp); i += 4 {
-		j := int(inp[i]-'A')<<2 + int(inp[i+2]-'X')
+		j := Int(inp[i]&0x3)<<2 + Int(inp[i+2]&0x3)
 		p1 += s1[j]
 		p2 += s2[j]
 	}

@@ -24,8 +24,8 @@ func TestParts(t *testing.T) {
 	tests := []struct {
 		file string
 		data []byte
-		p1   int
-		p2   int
+		p1   Int
+		p2   Int
 	}{
 		{"test1.txt", test1, 15, 12},
 		{"input.txt", input, 9651, 10560},
