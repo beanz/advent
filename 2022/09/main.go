@@ -42,7 +42,7 @@ func Parts(in []byte) (int, int) {
 	t := [10]Pos{}
 	for i := 0; i < len(in); i++ {
 		ch := in[i]
-		j, n := ChompUInt[int](in, i+2)
+		j, n := ChompOneOrTwoCharUInt[int](in, i+2)
 		i = j
 		inc := Inc[ch]
 		var dragged bool

@@ -48,8 +48,7 @@ func Parts(in []byte) (int, [246]byte) {
 		j++
 		if j == 20 {
 			p1 += (i + 1) * x
-		}
-		if j == 40 {
+		} else if j == 40 {
 			p2[bi] = '\n'
 			j = 0
 			bi++
