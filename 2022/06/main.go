@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"math/bits"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -10,29 +11,24 @@ import (
 //go:embed input.txt
 var input []byte
 
-func Parts(in []byte) (int, int) {
-	p1 := Part(in, 4, 0)
-	return p1, Part(in, 14, p1-4)
+func Parts(in []byte) (uint32, uint32) {
+	p1 := Part(in, 4)
+	return p1, Part(in, 14)
 }
 
-func Part(in []byte, l int, offset int) int {
-	for i := offset; i < len(in)-l; i++ {
-		ok := true
-	LOOP:
-		for j := i; j < i+l; j++ {
-			for k := j + 1; k < i+l; k++ {
-				if in[j] == in[k] {
-					ok = false
-					i = j
-					break LOOP
-				}
-			}
+func Part(in []byte, l int) uint32 {
+	var n uint32
+	for i := 0; i < len(in); i++ {
+		n ^= 1 << uint32(in[i]&0x1f)
+		if i < l {
+			continue
 		}
-		if ok {
-			return i + l
+		n ^= 1 << uint32(in[i-l]&0x1f)
+		if bits.OnesCount32(n) == l {
+			return uint32(i + 1)
 		}
 	}
-	return -1
+	return 1
 }
 
 func main() {

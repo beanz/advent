@@ -1,24 +1,21 @@
-fn parts(inp: &[u8]) -> (usize, usize) {
-    let p1 = part(inp, 4, 0);
-    (p1, part(inp, 14, p1 - 4))
+fn parts(inp: &[u8]) -> (u32, u32) {
+    let p1 = part(inp, 4);
+    (p1, part(inp, 14))
 }
-fn part(inp: &[u8], l: usize, o: usize) -> usize {
-    let mut i = o;
-    while i < inp.len() - l {
-        let mut set = 0;
-        for ch in inp.iter().skip(i).take(l) {
-            let bit = 1 << (ch - b'a') as usize;
-            if set & bit != 0 {
-                //i = j;
-                set = 0;
-                break;
-            }
-            set |= bit;
-        }
-        if set != 0 {
-            return i + l;
-        }
+fn part(inp: &[u8], l: usize) -> u32 {
+    let mut i: usize = 0;
+    let mut n: u32 = 0;
+    while i < l {
+        n ^= 1 << (inp[i] & 0x1f) as u32;
         i += 1;
+    }
+    while i < inp.len() {
+        n ^= 1 << (inp[i] & 0x1f) as u32;
+        n ^= 1 << (inp[i - l] & 0x1f) as u32;
+        i += 1;
+        if n.count_ones() as usize == l {
+            return i as u32;
+        }
     }
     1
 }
