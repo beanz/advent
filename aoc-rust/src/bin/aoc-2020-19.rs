@@ -1,18 +1,20 @@
+use smallvec::{smallvec, SmallVec};
+
 #[derive(Debug, PartialEq, Clone)]
 enum Rule {
     Char(u8),
     Alt(Vec<Vec<usize>>),
 }
 
-use std::collections::HashMap;
-struct Mess<'a> {
-    rules: HashMap<usize, Rule>,
-    messages: &'a [u8],
+const INIT: Option<Rule> = None;
+
+struct Mess<'a, 'b> {
+    rules: &'a mut [Option<Rule>; 135],
+    messages: &'b [u8],
 }
 
-impl<'a> Mess<'a> {
-    fn new(inp: &[u8]) -> Mess {
-        let mut rules: HashMap<usize, Rule> = HashMap::default();
+impl<'a, 'b> Mess<'a, 'b> {
+    fn new(inp: &'b [u8], rules: &'a mut [Option<Rule>; 135]) -> Mess<'a, 'b> {
         let mut i = 0;
         while inp[i] != b'\n' {
             let mut rn = 0;
@@ -22,7 +24,7 @@ impl<'a> Mess<'a> {
             }
             i += 2;
             if inp[i] == b'"' {
-                rules.insert(rn, Rule::Char(inp[i + 1]));
+                rules[rn] = Some(Rule::Char(inp[i + 1]));
                 i += 4;
                 continue;
             }
@@ -44,7 +46,7 @@ impl<'a> Mess<'a> {
                 }
                 i += 2;
             }
-            rules.insert(rn, Rule::Alt(alt));
+            rules[rn] = Some(Rule::Alt(alt));
             i += 1;
             continue;
         }
@@ -55,7 +57,7 @@ impl<'a> Mess<'a> {
         }
     }
     fn valid(&self, i: usize, rn: usize) -> Option<Vec<usize>> {
-        let rule = self.rules.get(&rn).expect("no such rule");
+        let rule = self.rules[rn].as_ref().expect("no such rule");
         match rule {
             Rule::Char(ch) => {
                 if self.messages[i] == *ch {
@@ -67,9 +69,9 @@ impl<'a> Mess<'a> {
             Rule::Alt(alt) => {
                 let mut sol = vec![];
                 for a in alt {
-                    let mut cur = vec![i];
+                    let mut cur: SmallVec<[usize; 10]> = smallvec![i];
                     for srn in a {
-                        let mut next = vec![];
+                        let mut next = smallvec![];
                         for j in &cur {
                             let s = self.valid(*j, *srn);
                             if let Some(js) = s {
@@ -82,10 +84,9 @@ impl<'a> Mess<'a> {
                     }
                     for j in &cur {
                         // shortcut
-                        //if self.messages[*j] == b'\n' {
-                        //    eprintln!("shortcut");
-                        //    return Some(vec![*j]);
-                        //}
+                        if self.messages[*j] == b'\n' {
+                            return Some(vec![*j]);
+                        }
                         sol.push(*j);
                     }
                 }
@@ -125,7 +126,7 @@ impl<'a> Mess<'a> {
             vec![42, 42, 42, 42],
             vec![42, 42, 42, 42, 42],
         ]);
-        self.rules.insert(8, r8);
+        self.rules[8] = Some(r8);
         let r11 = Rule::Alt(vec![
             vec![42, 31],
             vec![42, 42, 31, 31],
@@ -133,7 +134,7 @@ impl<'a> Mess<'a> {
             vec![42, 42, 42, 42, 31, 31, 31, 31],
             vec![42, 42, 42, 42, 42, 31, 31, 31, 31, 31],
         ]);
-        self.rules.insert(11, r11);
+        self.rules[11] = Some(r11);
         (p1, self.matches())
     }
 }
@@ -141,7 +142,8 @@ impl<'a> Mess<'a> {
 fn main() {
     let inp = std::fs::read(aoc::input_file()).expect("read error");
     aoc::benchme(|bench: bool| {
-        let mut mess = Mess::new(&inp);
+        let mut rules: [Option<Rule>; 135] = [INIT; 135];
+        let mut mess = Mess::new(&inp, &mut rules);
         let (p1, p2) = mess.parts();
         if !bench {
             println!("Part 1: {}", p1);
@@ -156,13 +158,14 @@ mod tests {
 
     #[test]
     fn parts_works() {
+        let mut rules: [Option<Rule>; 135] = [INIT; 135];
         let inp = std::fs::read("../2020/19/test0.txt").expect("read error");
-        assert_eq!(Mess::new(&inp).parts(), (1, 1));
+        assert_eq!(Mess::new(&inp, &mut rules).parts(), (1, 1));
         let inp = std::fs::read("../2020/19/test1.txt").expect("read error");
-        assert_eq!(Mess::new(&inp).parts(), (1, 1));
+        assert_eq!(Mess::new(&inp, &mut rules).parts(), (1, 1));
         let inp = std::fs::read("../2020/19/test2.txt").expect("read error");
-        assert_eq!(Mess::new(&inp).parts(), (2, 2));
+        assert_eq!(Mess::new(&inp, &mut rules).parts(), (2, 2));
         let inp = std::fs::read("../2020/19/input.txt").expect("read error");
-        assert_eq!(Mess::new(&inp).parts(), (285, 412));
+        assert_eq!(Mess::new(&inp, &mut rules).parts(), (285, 412));
     }
 }
