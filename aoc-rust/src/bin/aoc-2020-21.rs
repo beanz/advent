@@ -1,3 +1,4 @@
+use ahash::RandomState;
 use std::collections::HashMap;
 use std::collections::HashSet;
 
@@ -6,8 +7,10 @@ const ID_LEN: usize = 9;
 fn parts(inp: &[u8]) -> (usize, [u8; 46], usize) {
     let mut ln = 0;
     let mut i = 0;
-    let mut al_line: HashMap<usize, HashSet<usize>> = HashMap::new();
-    let mut in_line: HashMap<usize, HashSet<usize>> = HashMap::new();
+    let mut al_line: HashMap<usize, HashSet<usize>, RandomState> =
+        HashMap::with_capacity_and_hasher(8, RandomState::new());
+    let mut in_line: HashMap<usize, HashSet<usize>, RandomState> =
+        HashMap::with_capacity_and_hasher(200, RandomState::new());
     while i < inp.len() {
         while inp[i] != b'(' {
             let (j, n) = read_id(inp, i, ID_LEN);
@@ -32,7 +35,8 @@ fn parts(inp: &[u8]) -> (usize, [u8; 46], usize) {
     }
     //eprintln!("al: {:?}", al_line);
     //eprintln!("in: {:?}", in_line);
-    let mut poss: HashMap<usize, HashSet<usize>> = HashMap::new();
+    let mut poss: HashMap<usize, HashSet<usize>, RandomState> =
+        HashMap::with_capacity_and_hasher(8, RandomState::new());
     for (ing, in_lines) in &in_line {
         for (al, al_lines) in &al_line {
             let mut maybe_this = true;
