@@ -437,6 +437,8 @@ rs2022: $(filter aoc-rust/target/release/aoc-2022-%,${RS_LOG})
 	cp $< $@
 %/input3.txt: input/%/input3.txt
 	cp $< $@
+%/input-amf.txt: input/%/input-amf.txt
+	cp $< $@
 %/maze.txt: input/%/maze.txt
 	cp $< $@
 %/monster.txt: input/%/monster.txt
