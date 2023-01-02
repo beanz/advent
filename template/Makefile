@@ -221,7 +221,7 @@ aoc-rs-rel: $(RS_SRC)
 
 test-rs: $(RS_SRC)
 	( cd ../../aoc-rust && \
-	  cargo test --bin "$(basename $(notdir $<))" )
+	  RUST_MIN_STACK=8388608 cargo test --bin "$(basename $(notdir $<))" )
 
 prof-rs: $(RS_SRC)
 	( cd ../../aoc-rust && \
