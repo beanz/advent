@@ -1,3 +1,5 @@
+use arrayvec::ArrayVec;
+
 #[derive(Debug, Clone, Copy, Default)]
 struct Line {
     x: i16,
@@ -7,8 +9,8 @@ struct Line {
 }
 
 fn parts(inp: &[u8]) -> (u32, u32) {
-    let mut hor: Vec<Line> = Vec::new();
-    let mut vrt: Vec<Line> = Vec::new();
+    let mut hor = ArrayVec::<Line, 320>::new();
+    let mut vrt = ArrayVec::<Line, 320>::new();
     let mut x = 0i16;
     let mut y = 0i16;
     let mut step = 0u32;
