@@ -4,7 +4,7 @@ use std::collections::VecDeque;
 
 fn parts(inp: &[u8]) -> (usize, usize) {
     let basin = Basin::new(inp);
-    return basin.parts();
+    basin.parts()
 }
 
 struct Basin<'a> {
@@ -56,11 +56,11 @@ impl<'a> Basin<'a> {
         let mut w = 0;
         let mut sx = 0;
         let sy = 0;
-        for i in 0..inp.len() {
-            if inp[i] == b'.' {
+        for (i, ch) in inp.iter().enumerate() {
+            if *ch == b'.' {
                 sx = i;
             }
-            if inp[i] == b'\n' {
+            if *ch == b'\n' {
                 w = i;
                 break;
             }
@@ -80,7 +80,7 @@ impl<'a> Basin<'a> {
                 };
                 let (mut x, mut y) = (sx, sy);
                 snow[0][x] |= 2 << y;
-                for t in 1..1000 {
+                for sn in snow.iter_mut().skip(1) {
                     (x, y) = ((x as isize + ix) as usize, (y as isize + iy) as usize);
                     if x == 0 {
                         x = w - 2;
@@ -94,7 +94,7 @@ impl<'a> Basin<'a> {
                     if y == h - 1 {
                         y = 1;
                     }
-                    snow[t][x] |= 2 << y;
+                    sn[x] |= 2 << y;
                 }
             }
         }

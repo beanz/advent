@@ -84,7 +84,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         }
         i += 1;
     }
-    (p1 as usize, p2 as usize)
+    (p1, p2)
 }
 
 fn main() {

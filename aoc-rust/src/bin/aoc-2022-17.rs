@@ -77,8 +77,8 @@ impl<'a> Chamber<'a> {
         r
     }
     fn hit(&self, rows: &[u8], x: usize, y: usize) -> bool {
-        for i in 0..rows.len() {
-            if self.m[y + i] & (rows[i] >> x) != 0 {
+        for (i, row) in rows.iter().enumerate() {
+            if self.m[y + i] & (row >> x) != 0 {
                 return true;
             }
         }
@@ -91,15 +91,13 @@ impl<'a> Chamber<'a> {
         loop {
             let jet = self.jet();
             if jet == b'<' {
-                if x > 0 && !self.hit(&r.rows, x - 1, y) {
+                if x > 0 && !self.hit(r.rows, x - 1, y) {
                     x -= 1;
                 }
-            } else {
-                if x < 7 - w && !self.hit(&r.rows, x + 1, y) {
-                    x += 1;
-                }
+            } else if x < 7 - w && !self.hit(r.rows, x + 1, y) {
+                x += 1;
             }
-            if !self.hit(&r.rows, x, y - 1) {
+            if !self.hit(r.rows, x, y - 1) {
                 y -= 1;
             } else {
                 break;
@@ -122,7 +120,7 @@ impl<'a> Chamber<'a> {
         k <<= 7;
         k += self.m[y - 1] as usize;
         k <<= 7;
-        k += self.m[y - 0] as usize;
+        k += self.m[y] as usize;
         k <<= 14;
         k += self.jet_i * 8 + self.rock_i;
         k
@@ -146,7 +144,7 @@ impl<'a> fmt::Display for Chamber<'a> {
                 }
                 bit >>= 1;
             }
-            write!(f, "\n")?;
+            writeln!(f)?;
             if y == bottom {
                 break;
             }

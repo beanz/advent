@@ -13,7 +13,7 @@ struct Sensor {
     r2y: isize,
 }
 
-#[derive(Debug, PartialEq, Clone, Eq, Ord)]
+#[derive(Debug, PartialEq, Clone, Eq)]
 struct Span {
     s: isize,
     e: isize,
@@ -21,7 +21,13 @@ struct Span {
 
 impl PartialOrd for Span {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        return Some(self.s.cmp(&other.s));
+        Some(self.s.cmp(&other.s))
+    }
+}
+
+impl Ord for Span {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.s.cmp(&other.s)
     }
 }
 

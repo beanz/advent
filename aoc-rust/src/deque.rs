@@ -15,6 +15,7 @@ where
     T: Clone + std::fmt::Debug + Default,
 {
     /// Return an empty array
+    #[allow(clippy::uninit_assumed_init)]
     fn default() -> Deque<T, N> {
         unsafe {
             Deque {

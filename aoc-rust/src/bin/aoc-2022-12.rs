@@ -10,8 +10,8 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let mut todo2 = Deque::<Search, 100>::default();
     let mut e = 0;
     let mut s = 0;
-    for i in 0..inp.len() {
-        match inp[i] {
+    for (i, ch) in inp.iter().enumerate() {
+        match ch {
             b'S' => {
                 s = i;
                 todo1.push(Search {
@@ -149,6 +149,7 @@ where
     T: Clone + std::fmt::Debug + Default,
 {
     /// Return an empty array
+    #[allow(clippy::uninit_assumed_init)]
     fn default() -> Deque<T, N> {
         unsafe {
             Deque {

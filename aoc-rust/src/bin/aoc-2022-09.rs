@@ -43,18 +43,18 @@ impl Point {
     fn mov(&mut self, hx: isize, hy: isize) -> bool {
         let dx = hx - self.x;
         let dy = hy - self.y;
-        if dx <= 1 && dx >= -1 && dy <= 1 && dy >= -1 {
+        if (-1..=1).contains(&dx) && (-1..=1).contains(&dy) {
             return false;
         }
-        if dx > 0 {
-            self.x += 1
-        } else if dx < 0 {
-            self.x -= 1
+        match 0.cmp(&dx) {
+            std::cmp::Ordering::Greater => self.x -= 1,
+            std::cmp::Ordering::Less => self.x += 1,
+            _ => {}
         }
-        if dy > 0 {
-            self.y += 1
-        } else if dy < 0 {
-            self.y -= 1
+        match 0.cmp(&dy) {
+            std::cmp::Ordering::Greater => self.y -= 1,
+            std::cmp::Ordering::Less => self.y += 1,
+            _ => {}
         }
         true
     }

@@ -45,6 +45,14 @@ where
     (i, m * n)
 }
 
+pub fn skip_next_line(inp: &[u8], i: usize) -> usize {
+    let mut i = i;
+    while inp[i] != b'\n' {
+        i += 1;
+    }
+    i + 1
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -102,7 +102,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let mut dist: [[u32; 64]; 64] = [[99999999; 64]; 64];
     for i in 0..valves.len() {
         for nc in &valves[i].next {
-            dist[i][*id_to_index.get(&nc).expect("value unknown?") as usize] = 1;
+            dist[i][*id_to_index.get(nc).expect("value unknown?") as usize] = 1;
         }
     }
     for k in 0..valves.len() {
