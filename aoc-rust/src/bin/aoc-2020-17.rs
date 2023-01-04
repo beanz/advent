@@ -40,6 +40,7 @@ impl Pocket {
     fn neighbours(&self, p: &Point) -> Vec<Point> {
         let mut nb = Vec::with_capacity(87);
         const NB: [i8; 3] = [-1, 0, 1];
+        #[allow(clippy::bool_to_int_with_if)]
         let qlo = if self.part2 { 0 } else { 1 };
         let qhi = if self.part2 { 3 } else { 2 };
         for oq in &NB[qlo..qhi] {

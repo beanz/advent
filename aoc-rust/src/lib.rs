@@ -75,7 +75,7 @@ static GLOBAL: &StatsAlloc<System> = &INSTRUMENTED_SYSTEM;
 pub fn benchme(mut fun: impl FnMut(bool)) {
     let bench = is_benchmark();
     let start = Instant::now();
-    let reg = Region::new(&GLOBAL);
+    let reg = Region::new(GLOBAL);
     let mut iterations = 0;
     loop {
         fun(bench);

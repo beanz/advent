@@ -15,7 +15,7 @@ fn parts(inp: &[u8]) -> (usize, [u8; 46], usize) {
         while inp[i] != b'(' {
             let (j, n) = read_id(inp, i, ID_LEN);
             i = j;
-            let e = in_line.entry(n).or_insert_with(|| HashSet::new());
+            let e = in_line.entry(n).or_insert_with(HashSet::new);
             e.insert(ln);
             i += 1;
         }
@@ -23,7 +23,7 @@ fn parts(inp: &[u8]) -> (usize, [u8; 46], usize) {
         loop {
             let (j, n) = read_id(inp, i, ID_LEN);
             i = j;
-            let e = al_line.entry(n).or_insert_with(|| HashSet::new());
+            let e = al_line.entry(n).or_insert_with(HashSet::new);
             e.insert(ln);
             if inp[i] == b')' {
                 i += 2;
@@ -47,7 +47,7 @@ fn parts(inp: &[u8]) -> (usize, [u8; 46], usize) {
                 }
             }
             if maybe_this {
-                let e = poss.entry(*ing).or_insert_with(|| HashSet::new());
+                let e = poss.entry(*ing).or_insert_with(HashSet::new);
                 e.insert(*al);
             }
         }
@@ -72,7 +72,7 @@ fn parts(inp: &[u8]) -> (usize, [u8; 46], usize) {
         }
         let (ing, al) = res[res.len() - 1];
         poss.remove(&ing);
-        for (_, als) in &mut poss {
+        for als in poss.values_mut() {
             als.remove(&al);
         }
         //eprintln!("poss: {:?}", poss);

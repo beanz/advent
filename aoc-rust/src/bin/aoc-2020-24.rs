@@ -1,7 +1,6 @@
 use heapless::FnvIndexSet;
 
 const DIRS: [(i8, i8); 7] = [(0, 0), (1, 0), (0, -1), (-1, -1), (-1, 0), (0, 1), (1, 1)];
-const OFFS: [i32; 6] = [-256, 1, 257, 256, -1, -257];
 
 fn parts(inp: &[u8]) -> (usize, usize) {
     let mut i = 0;
@@ -84,9 +83,11 @@ impl HexPointTop {
     fn index(&self) -> usize {
         self.v as usize
     }
+    #[allow(dead_code)]
     fn q(&self) -> i8 {
         ((self.v >> 8) as u8) as i8
     }
+    #[allow(dead_code)]
     fn r(&self) -> i8 {
         ((self.v & 0xff) as u8) as i8
     }

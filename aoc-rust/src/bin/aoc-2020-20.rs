@@ -42,8 +42,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     //eprintln!("{:?}", tiles.len());
     let mut p1: usize = 1;
     let mut starter = None;
-    for i in 0..tiles.len() {
-        let mut t = &mut tiles[i];
+    for (i, t) in tiles.iter_mut().enumerate() {
         let mut c = 0;
         let mut re = SmallVec::<[usize; 2]>::new();
         for j in 0..4 {
@@ -289,14 +288,13 @@ impl<'a> Tile<'a> {
             edge[6] |= if l[9][j] == b'#' { 1 << j } else { 0 };
             edge[7] |= if l[j][0] == b'#' { 1 << j } else { 0 };
         }
-        let t = Tile {
+        Tile {
             num,
             edge,
             l,
             orient: Orient::R0,
             used: false,
-        };
-        t
+        }
     }
     #[allow(dead_code)]
     fn pretty(&self) {

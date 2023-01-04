@@ -56,13 +56,11 @@ fn next_monkey(inp: &[u8], i: usize) -> (usize, Monkey) {
     let (mut j, op) = if inp[j] == b'+' {
         let (k, n) = aoc::read::uint::<usize>(inp, j + 2);
         (k + 1, Op::Add(n))
+    } else if inp[j + 2] == b'o' {
+        (j + 6, Op::Sq)
     } else {
-        if inp[j + 2] == b'o' {
-            (j + 6, Op::Sq)
-        } else {
-            let (k, n) = aoc::read::uint::<usize>(inp, j + 2);
-            (k + 1, Op::Mul(n))
-        }
+        let (k, n) = aoc::read::uint::<usize>(inp, j + 2);
+        (k + 1, Op::Mul(n))
     };
     j += 21;
     let (mut j, div) = aoc::read::uint::<usize>(inp, j);
@@ -141,10 +139,10 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         i = j;
     }
     let p1 = solve(&mut mk, l, 20, 0);
-    for i in 0..l {
-        mk[i].items = mk[i].items2;
-        mk[i].l = mk[i].l2;
-        mk[i].c = 0;
+    for e in mk.iter_mut().take(l) {
+        e.items = e.items2;
+        e.l = e.l2;
+        e.c = 0;
     }
     (p1, solve(&mut mk, l, 10000, lcm))
 }

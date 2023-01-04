@@ -61,9 +61,9 @@ impl<'a, 'b> Mess<'a, 'b> {
         match rule {
             Rule::Char(ch) => {
                 if self.messages[i] == *ch {
-                    return Some(vec![i + 1]);
+                    Some(vec![i + 1])
                 } else {
-                    return None;
+                    None
                 }
             }
             Rule::Alt(alt) => {
@@ -93,7 +93,7 @@ impl<'a, 'b> Mess<'a, 'b> {
                 if !sol.is_empty() {
                     return Some(sol);
                 }
-                return None;
+                None
             }
         }
     }

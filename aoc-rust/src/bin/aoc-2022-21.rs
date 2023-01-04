@@ -119,8 +119,8 @@ mod tests {
     #[test]
     fn parts_works() {
         let inp = std::fs::read("../2022/21/test1.txt").expect("read error");
-        assert_eq!(parts(&inp), (10, 20));
+        assert_eq!(parts(&inp), (152, 301));
         let inp = std::fs::read("../2022/21/input.txt").expect("read error");
-        assert_eq!(parts(&inp), (100, 200));
+        assert_eq!(parts(&inp), (41857219607906, 3916936880448));
     }
 }

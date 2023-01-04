@@ -5,7 +5,6 @@ const DOWN: Dir = 1;
 const LEFT: Dir = 2;
 const UP: Dir = 3;
 
-const WALL: u8 = b'#';
 const EMPTY: u8 = b'.';
 const INVALID: u8 = b' ';
 
@@ -145,7 +144,7 @@ impl<'a> Board<'a> {
         if x as usize >= self.m[y as usize].len() {
             return INVALID;
         }
-        return self.m[y as usize][x as usize];
+        self.m[y as usize][x as usize]
     }
     fn mov(&mut self) -> bool {
         let (ix, iy) = inc(self.cur.dir);
@@ -296,7 +295,7 @@ impl<'a> Board<'a> {
                 }
             }
         }
-        return self.cur.password();
+        self.cur.password()
     }
 }
 

@@ -13,7 +13,6 @@ fn parts(inp: &[u8]) -> (isize, isize) {
     let mut ic = IntCode {
         pc: 0,
         prog: &mut prog,
-        l,
         base: 0,
         output: 0,
     };
@@ -21,7 +20,6 @@ fn parts(inp: &[u8]) -> (isize, isize) {
     let mut ic = IntCode {
         pc: 0,
         prog: &mut prog2,
-        l,
         base: 0,
         output: 0,
     };
@@ -38,7 +36,6 @@ struct Inst {
 struct IntCode<'a, const CAP: usize> {
     pc: usize,
     prog: &'a mut [isize; CAP],
-    l: usize,
     base: isize,
     output: isize,
 }
@@ -79,10 +76,10 @@ impl<'a, const CAP: usize> IntCode<'a, CAP> {
                     }
                 }
                 7 => {
-                    self.prog[inst.addr[2]] = if inst.param[0] < inst.param[1] { 1 } else { 0 };
+                    self.prog[inst.addr[2]] = (inst.param[0] < inst.param[1]).into();
                 }
                 8 => {
-                    self.prog[inst.addr[2]] = if inst.param[0] == inst.param[1] { 1 } else { 0 };
+                    self.prog[inst.addr[2]] = (inst.param[0] == inst.param[1]).into();
                 }
                 9 => {
                     self.base += inst.param[0];

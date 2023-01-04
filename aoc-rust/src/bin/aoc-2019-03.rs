@@ -59,7 +59,7 @@ fn parts(inp: &[u8]) -> (u32, u32) {
                 let (min_x, max_x) = (h.x.min(h.x + h.d), h.x.max(h.x + h.d));
                 let (min_y, max_y) = (y.min(y + d), y.max(y + d));
                 if min_x < x && x < max_x && min_y < h.y && h.y < max_y {
-                    let md = x.abs() as u32 + h.y.abs() as u32;
+                    let md = x.unsigned_abs() as u32 + h.y.unsigned_abs() as u32;
                     if md < p1 {
                         p1 = md;
                     }
@@ -75,7 +75,7 @@ fn parts(inp: &[u8]) -> (u32, u32) {
                 let (min_y, max_y) = (v.y.min(v.y + v.d), v.y.max(v.y + v.d));
                 let (min_x, max_x) = (x.min(x + d), x.max(x + d));
                 if min_y < y && y < max_y && min_x < v.x && v.x < max_x {
-                    let md = v.x.abs() as u32 + y.abs() as u32;
+                    let md = v.x.unsigned_abs() as u32 + y.unsigned_abs() as u32;
                     if md < p1 {
                         p1 = md;
                     }

@@ -1,5 +1,5 @@
 #[derive(Debug, PartialEq)]
-enum FSM {
+enum Fsm {
     Start,
     End,
     BirthYear,
@@ -25,12 +25,12 @@ fn validate_range(min: usize, max: usize, value: &[u8]) -> bool {
     min <= n && n <= max
 }
 
-fn validate(state: &FSM, value: &[u8]) -> bool {
+fn validate(state: &Fsm, value: &[u8]) -> bool {
     match state {
-        FSM::BirthYear => validate_range(1920, 2002, value),
-        FSM::IssueYear => validate_range(2010, 2020, value),
-        FSM::ExpYear => validate_range(2020, 2030, value),
-        FSM::Height => {
+        Fsm::BirthYear => validate_range(1920, 2002, value),
+        Fsm::IssueYear => validate_range(2010, 2020, value),
+        Fsm::ExpYear => validate_range(2020, 2030, value),
+        Fsm::Height => {
             let l = value.len();
             match (value[l - 2], value[l - 1]) {
                 (b'c', b'm') => validate_range(150, 193, &value[0..(l - 2)]),
@@ -38,10 +38,10 @@ fn validate(state: &FSM, value: &[u8]) -> bool {
                 _ => false,
             }
         }
-        FSM::HairColor => {
+        Fsm::HairColor => {
             value.len() == 7 // #[0-9a-f]{6} no test actually required
         }
-        FSM::EyeColor => {
+        Fsm::EyeColor => {
             if value.len() == 3 {
                 matches!(
                     (value[0], value[1], value[2]),
@@ -57,7 +57,7 @@ fn validate(state: &FSM, value: &[u8]) -> bool {
                 false
             }
         }
-        FSM::PassportID => value.len() == 9 && validate_range(1, 999999999, value),
+        Fsm::PassportID => value.len() == 9 && validate_range(1, 999999999, value),
         _ => false,
     }
 }
@@ -65,14 +65,14 @@ fn validate(state: &FSM, value: &[u8]) -> bool {
 fn parts(inp: &[u8]) -> (usize, usize) {
     let mut p1 = 0;
     let mut p2 = 0;
-    let mut state = FSM::Start;
+    let mut state = Fsm::Start;
     let mut vp1 = 0;
     let mut vp2 = 0;
     let mut j = 0;
     for i in 0..inp.len() {
         match inp[i] {
             b'\n' | b' ' => {
-                if state == FSM::End {
+                if state == Fsm::End {
                     if vp1 == 7 {
                         p1 += 1;
                     }
@@ -81,50 +81,50 @@ fn parts(inp: &[u8]) -> (usize, usize) {
                     }
                     vp1 = 0;
                     vp2 = 0;
-                    state = FSM::Start;
+                    state = Fsm::Start;
                 } else {
                     if validate(&state, &inp[j..i]) {
                         vp2 += 1;
                     }
-                    if state != FSM::CountryID {
+                    if state != Fsm::CountryID {
                         vp1 += 1;
                     }
-                    state = FSM::End;
+                    state = Fsm::End;
                 }
             }
             b':' => {
                 j = i + 1;
                 match (inp[i - 3], inp[i - 2], inp[i - 1]) {
                     (b'b', b'y', b'r') => {
-                        state = FSM::BirthYear;
+                        state = Fsm::BirthYear;
                     }
                     (b'i', b'y', b'r') => {
-                        state = FSM::IssueYear;
+                        state = Fsm::IssueYear;
                     }
                     (b'e', b'y', b'r') => {
-                        state = FSM::ExpYear;
+                        state = Fsm::ExpYear;
                     }
                     (b'h', b'g', b't') => {
-                        state = FSM::Height;
+                        state = Fsm::Height;
                     }
                     (b'h', b'c', b'l') => {
-                        state = FSM::HairColor;
+                        state = Fsm::HairColor;
                     }
                     (b'e', b'c', b'l') => {
-                        state = FSM::EyeColor;
+                        state = Fsm::EyeColor;
                     }
                     (b'p', b'i', b'd') => {
-                        state = FSM::PassportID;
+                        state = Fsm::PassportID;
                     }
                     (_, _, _) => {
-                        state = FSM::CountryID;
+                        state = Fsm::CountryID;
                     }
                 }
             }
             _ => {}
         }
     }
-    if state == FSM::End {
+    if state == Fsm::End {
         if vp1 == 7 {
             p1 += 1;
         }

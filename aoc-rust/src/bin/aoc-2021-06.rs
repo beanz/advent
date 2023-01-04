@@ -26,7 +26,7 @@ impl Fish {
         }
         let mut p1 = 0;
         for n in fish {
-            p1 += n as usize;
+            p1 += n;
         }
 
         for _ in 81..=256 {
@@ -40,7 +40,7 @@ impl Fish {
         }
         let mut p2 = 0;
         for n in fish {
-            p2 += n as usize;
+            p2 += n;
         }
 
         (p1, p2)

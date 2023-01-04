@@ -25,11 +25,11 @@ fn parts(inp: &[u8]) -> (usize, usize) {
 fn combat(d: [&[u8]; 2], part2: bool) -> (usize, Vec<u8>) {
     //let mut round = 1;
     let mut d: [_; 2] = [
-        SmallVec::<[u8; 64]>::from_slice(&d[0]),
-        SmallVec::<[u8; 64]>::from_slice(&d[1]),
+        SmallVec::<[u8; 64]>::from_slice(d[0]),
+        SmallVec::<[u8; 64]>::from_slice(d[1]),
     ];
     let mut seen: HashSet<usize> = HashSet::new();
-    while d[0].len() > 0 && d[1].len() > 0 {
+    while !d[0].is_empty() && !d[1].is_empty() {
         //eprintln!("{}: d1={:x?} d2={:x?}", round, d[0], d[1]);
         let k = score(&d[0]) * (31 + score(&d[1]));
         if seen.contains(&k) {
@@ -51,17 +51,15 @@ fn combat(d: [&[u8]; 2], part2: bool) -> (usize, Vec<u8>) {
             //eprintln!("{}: subgame", round);
             let res = combat([&sd[0], &sd[1]], true);
             res.0
-        } else if c[0] > c[1] {
-            0
         } else {
-            1
+            usize::from(c[0] < c[1])
         };
         //eprintln!("{}: p{}!", round, w + 1);
         d[w].push(c[w]);
         d[w].push(c[1 - w]);
         //round += 1;
     }
-    if d[0].len() > 0 {
+    if !d[0].is_empty() {
         (0, d[0].to_vec())
     } else {
         (1, d[1].to_vec())

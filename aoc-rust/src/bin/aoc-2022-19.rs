@@ -164,8 +164,8 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         i = j + 11;
     }
     let mut p1 = 0;
-    for i in 0..k {
-        p1 += (i + 1) * bp[i].solve(24);
+    for (i, e) in bp.iter().enumerate().take(k) {
+        p1 += (i + 1) * e.solve(24);
     }
     let mut p2 = 1;
     p2 *= bp[0].solve(32);

@@ -27,12 +27,12 @@ fn has_five(sum: &[u8], d: u8) -> bool {
     false
 }
 
-struct OTP<'a> {
+struct Otp<'a> {
     salt: &'a [u8],
 }
-impl<'a> OTP<'a> {
-    fn new(inp: &[u8]) -> OTP {
-        OTP {
+impl<'a> Otp<'a> {
+    fn new(inp: &[u8]) -> Otp {
+        Otp {
             salt: &inp[0..inp.len() - 1],
         }
     }
@@ -64,8 +64,8 @@ impl<'a> OTP<'a> {
                 r
             }
         };
-        for i in 0..1001 {
-            ring[i] = next_md5(&mut num_str);
+        for r in &mut ring {
+            *r = next_md5(&mut num_str);
         }
         let mut ring_i = 0;
         let mut n = 1;
@@ -94,7 +94,7 @@ impl<'a> OTP<'a> {
 fn main() {
     let inp = std::fs::read(aoc::input_file()).expect("read error");
     aoc::benchme(|bench: bool| {
-        let otp = OTP::new(&inp);
+        let otp = Otp::new(&inp);
         let (p1, p2) = otp.parts();
         if !bench {
             println!("Part 1: {}", p1);

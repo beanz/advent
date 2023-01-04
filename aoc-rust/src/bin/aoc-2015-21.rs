@@ -189,10 +189,10 @@ impl Battle {
                     let me = Fighter::new(100, e.damage, e.armor);
                     let victory = me.beats(&boss);
                     if victory && e.cost < min {
-                        min = e.cost as usize
+                        min = e.cost;
                     }
                     if !victory && e.cost > max {
-                        max = e.cost as usize
+                        max = e.cost;
                     }
                 }
             }

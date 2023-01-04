@@ -1,23 +1,23 @@
 fn mix(nums: &[isize], rounds: usize, key: isize) -> isize {
     let len = nums.len();
     let mut idx: [usize; 5000] = [0; 5000];
-    for i in 0..len {
-        idx[i] = i;
+    for (i, e) in idx.iter_mut().enumerate().take(len) {
+        *e = i;
     }
     //pretty(&nums, &idx[0..len], key);
     for _ in 0..rounds {
-        for i in 0..len {
-            let num = nums[i] * key;
+        for (i, n) in nums.iter().enumerate().take(len) {
+            let num = n * key;
             //eprintln!("moving {}", num);
             let mut j = 0;
             while idx[j] != i {
                 j += 1
             }
             let ni = (j as isize + num).rem_euclid((len - 1) as isize) as usize;
-            if ni > j {
-                idx.copy_within(j + 1..ni + 1, j);
-            } else if ni < j {
-                idx.copy_within(ni..j, ni + 1);
+            match ni.cmp(&j) {
+                std::cmp::Ordering::Greater => idx.copy_within(j + 1..ni + 1, j),
+                std::cmp::Ordering::Less => idx.copy_within(ni..j, ni + 1),
+                _ => {}
             }
             idx[ni] = i;
             //pretty(&nums, &idx[0..len], key);
