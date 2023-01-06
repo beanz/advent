@@ -82,8 +82,8 @@ sub calc {
 if (TEST) {
   my @test_cases =
     (
-     [ "test1a.txt", 10, 179 ],
-     [ "test1b.txt", 100, 1940 ],
+     [ "test1.txt", 10, 179 ],
+     [ "test2.txt", 100, 1940 ],
     );
   for my $tc (@test_cases) {
     my $res = calc(parse_input(read_lines($tc->[0])), $tc->[1]);
@@ -152,7 +152,7 @@ sub calc2 {
 if (TEST) {
   my @test_cases =
     (
-     [ "test1a.txt", 2772 ],
+     [ "test1.txt", 2772 ],
      [ "test2.txt", 4686774924 ],
     );
   for my $tc (@test_cases) {

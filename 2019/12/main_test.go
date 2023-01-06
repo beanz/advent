@@ -1,29 +1,29 @@
 package main
 
 import (
-    _ "embed"
-	"github.com/stretchr/testify/assert"
+	_ "embed"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-//go:embed test1a.txt
-var test1a []byte
-//go:embed test1b.txt
-var test1b []byte
+//go:embed test1.txt
+var test1 []byte
+
 //go:embed test2.txt
 var test2 []byte
 
 type TestCase1 struct {
 	file  string
-    data  []byte
+	data  []byte
 	steps int
 	res   int
 }
 
 func TestPart1(t *testing.T) {
 	tests := []TestCase1{
-		{"test1a.txt", test1a, 10, 179},
-		{"test1b.txt", test1b, 100, 1940},
+		{"test1.txt", test1, 10, 179},
+		{"test2.txt", test2, 100, 1940},
 		{"input.txt", input, 1000, 8044},
 	}
 	for _, tc := range tests {
@@ -34,13 +34,13 @@ func TestPart1(t *testing.T) {
 
 type TestCase2 struct {
 	file string
-    data []byte
+	data []byte
 	res  int64
 }
 
 func TestPart2(t *testing.T) {
 	tests := []TestCase2{
-		{"test1a.txt", test1a, 2772},
+		{"test1.txt", test1, 2772},
 		{"test2.txt", test2, 4686774924},
 		{"input.txt", input, 362375881472136},
 	}

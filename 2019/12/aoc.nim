@@ -85,9 +85,9 @@ proc parseFile(ls: seq[string]): seq[Moon] =
   return res
 
 if runTests():
-  assert part1(parseFile(aoclib.readLines("test1a.txt")), 10) == 179
-  assert part1(parseFile(aoclib.readLines("test1b.txt")), 100) == 1940
-  assert part2(parseFile(aoclib.readLines("test1a.txt"))) == 2772
+  assert part1(parseFile(aoclib.readLines("test1.txt")), 10) == 179
+  assert part1(parseFile(aoclib.readLines("test2.txt")), 100) == 1940
+  assert part2(parseFile(aoclib.readLines("test1.txt"))) == 2772
   assert part2(parseFile(aoclib.readLines("test2.txt"))) == 4686774924
 
 const input = staticRead"input.txt"

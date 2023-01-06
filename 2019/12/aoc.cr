@@ -122,9 +122,9 @@ def parse(s)
   end
 end
 
-aeq(part1(parse(File.read("test1a.txt")),10), 179)
-aeq(part1(parse(File.read("test1b.txt")),100), 1940)
-aeq(part2(parse(File.read("test1a.txt"))), 2772)
+aeq(part1(parse(File.read("test1.txt")),10), 179)
+aeq(part1(parse(File.read("test2.txt")),100), 1940)
+aeq(part2(parse(File.read("test1.txt"))), 2772)
 aeq(part2(parse(File.read("test2.txt"))), 4686774924)
 
 input = {{ read_file("input.txt") }}
