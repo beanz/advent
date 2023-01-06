@@ -1,0 +1,93 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use v5.34;
+
+# for day 13: aoc-intcode-disas 379 14 639 10000 <input.txt
+
+use constant {
+  OP_ADD => 1,
+  OP_MUL => 2,
+  OP_IN => 3,
+  OP_OUT => 4,
+  OP_JNZ => 5,
+  OP_JZ => 6,
+  OP_LT => 7,
+  OP_EQ => 8,
+  OP_BASE => 9,
+  OP_HALT => 99,
+};
+
+$_ = <STDIN>;
+my @i = m!(-?\d+)!g;
+
+my %skip = @ARGV;
+my %prog = (ip => 0, in => \@i, skip => \%skip);
+while ($prog{ip} < scalar @{$prog{in}}) {
+  decode(\%prog);
+}
+
+sub op_str {
+  return "halt" if ($_[0] == 99);
+  return [qw/noop add mul in out jnz jz lt eq base/]->[$_[0]];
+}
+
+sub arity {
+  return 0 if ($_[0] == 99);
+  return [0, 3, 3, 1, 1, 2, 2, 3, 3, 1]->[$_[0]];
+}
+
+sub inst_str {
+  my ($p) = @_;
+  my $raw = $p->{in}->[$p->{ip}];
+  my $extra = "";
+  if ( ($raw == 1106 && $p->{in}->[$p->{ip} + 1] == 0)
+    || ($raw == 1105 && $p->{in}->[$p->{ip} + 1] == 1))
+  {
+    my $sub = $p->{in}->[$p->{ip} + 2];
+    $extra .= " calling sub";
+  }
+  if ($raw == 2106) {
+    $extra .= " return";
+  }
+  if ($raw == 109) {
+    my $arg = $p->{in}->[$p->{ip} + 1];
+    if ($arg > 8) {
+      # probably initial set rather than stack offset
+    } elsif ($arg > 0) {
+      $extra .= " sub ***";
+    }
+  }
+  my $op = $raw % 100;
+  my $arity = arity($op);
+  my $op_str = op_str($op);
+  my @args;
+  my $div = 100;
+  for my $i (0 .. $arity - 1) {
+    my $mode = int($raw / $div) % 10;
+    push @args,
+      [qw/pos imm rel/]->[$mode] . "(" . $p->{in}->[$p->{ip} + 1 + $i] . ")";
+    $div *= 10;
+  }
+  my $arg_str = join " ", @args;
+  return (sprintf("%5d %-4s %s%s", $raw, $op_str, $arg_str, $extra), $arity);
+}
+
+sub decode {
+  my ($p) = @_;
+  my $skip = $p->{skip}->{$p->{ip}};
+  if ($skip) {
+
+    # printf "%5d: skipping %d\n", $p->{ip}, $skip;
+    for my $j (0 .. ($skip - 1)) {
+      my $da = $p->{ip} + $j;
+      next unless ($da < scalar @{$p->{in}});
+      printf "%5d: data %d\n", $da, $p->{in}->[$da];
+    }
+    $p->{ip} += $skip;
+    return;
+  }
+  my ($str, $arity) = inst_str($p);
+  printf "%5d: %s\n", $p->{ip}, $str;
+  $p->{ip} += 1 + $arity;
+}

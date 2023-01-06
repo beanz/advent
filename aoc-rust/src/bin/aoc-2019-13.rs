@@ -1,6 +1,23 @@
 use heapless::Deque;
 
 const PROG_CAP: usize = 4096;
+const WIDTH_ADDR: usize = 49;
+const HEIGHT_ADDR: usize = 60;
+//const CREDIT_OPERAND_2_ADDR: usize = 379;
+//const CREDIT_OPERAND_1_ADDR: usize = 380;
+//const INPUT_CMP_ADDR: usize = 381;
+//const DRAW_X_ADDR: usize = 382;
+//const DRAW_Y_ADDR: usize = 383;
+//const INPUT_ADDR: usize = 384;
+//const CREDIT_RESULT_ADDR: usize = 385;
+//const SCORE_ADDR: usize = 386;
+const REMAINING_BLOCKS_ADDR: usize = 387;
+//const BALL_X: usize = 388;
+//const BALL_Y: usize = 389;
+//const PAD_X: usize = 392;
+const INST_A_ADDR: usize = 611;
+const INST_B_ADDR: usize = 615;
+const MAP_ADDR: usize = 639;
 
 fn parts(inp: &[u8]) -> (isize, isize) {
     let mut prog: [isize; PROG_CAP] = [0; PROG_CAP];
@@ -12,17 +29,40 @@ fn parts(inp: &[u8]) -> (isize, isize) {
         l += 1;
         i = j + 1;
     }
-    let (w, h) = (prog[49] as usize, prog[60] as usize);
-    for x in 1..w - 1 {
-        prog[639 + (h - 2) * w + x] = 3;
+    let p1 = prog[REMAINING_BLOCKS_ADDR];
+    let (w, h) = (prog[WIDTH_ADDR] as usize, prog[HEIGHT_ADDR] as usize);
+    //eprintln!("{}x{}", w, h);
+    let a = match prog[INST_A_ADDR] {
+        21101 => prog[INST_A_ADDR + 1] + prog[INST_A_ADDR + 2],
+        21102 => prog[INST_A_ADDR + 1] * prog[INST_A_ADDR + 2],
+        _ => unreachable!("unexpected var a instruction"),
+    } as usize;
+    let b = match prog[INST_B_ADDR] {
+        21101 => prog[INST_B_ADDR + 1] + prog[INST_B_ADDR + 2],
+        21102 => prog[INST_B_ADDR + 1] * prog[INST_B_ADDR + 2],
+        _ => unreachable!("unexpected var b instruction"),
+    } as usize;
+    //eprintln!("f(x,y) = (x*{}+y) * {} + {}", h, a, b);
+    let map_len = w * h;
+    let score_table_addr = MAP_ADDR + map_len;
+    let mut score = 0;
+    for y in 0..h {
+        for x in 1..w - 1 {
+            if prog[MAP_ADDR + y * w + x] == 2 {
+                score += prog[score_table_addr + ((x * h + y) * a + b) % map_len];
+            }
+        }
     }
-    let p1 = prog[387];
-    prog[0] = 2;
-    run(&mut prog);
-    let p2 = prog[386];
-    (p1, p2)
+    //for x in 1..w - 1 {
+    //    prog[MAP_ADDR + (h - 2) * w + x] = 3;
+    //}
+    //prog[0] = 2;
+    //run(&mut prog);
+    //let p2 = prog[SCORE_ADDR];
+    (p1, score)
 }
 
+#[allow(dead_code)]
 fn run(prog: &mut [isize; PROG_CAP]) {
     let inp = &mut Deque::<isize, 5>::new();
     inp.push_back(0).expect("input full?");
