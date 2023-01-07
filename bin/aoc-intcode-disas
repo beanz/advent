@@ -40,37 +40,75 @@ sub arity {
 sub inst_str {
   my ($p) = @_;
   my $raw = $p->{in}->[$p->{ip}];
-  my $extra = "";
-  if ( ($raw == 1106 && $p->{in}->[$p->{ip} + 1] == 0)
-    || ($raw == 1105 && $p->{in}->[$p->{ip} + 1] == 1))
-  {
-    my $sub = $p->{in}->[$p->{ip} + 2];
-    $extra .= " calling sub";
-  }
-  if ($raw == 2106) {
-    $extra .= " return";
-  }
-  if ($raw == 109) {
-    my $arg = $p->{in}->[$p->{ip} + 1];
-    if ($arg > 8) {
-      # probably initial set rather than stack offset
-    } elsif ($arg > 0) {
-      $extra .= " sub ***";
-    }
-  }
   my $op = $raw % 100;
   my $arity = arity($op);
-  my $op_str = op_str($op);
-  my @args;
-  my $div = 100;
+  my (@args) = map {$p->{in}->[$p->{ip} + $_]} (1 .. $arity);
+  my (@mode) = map {mode($raw, $_ - 1)} (1 .. $arity);
+  my @args_str;
   for my $i (0 .. $arity - 1) {
-    my $mode = int($raw / $div) % 10;
-    push @args,
-      [qw/pos imm rel/]->[$mode] . "(" . $p->{in}->[$p->{ip} + 1 + $i] . ")";
-    $div *= 10;
+    push @args_str, arg_str($mode[$i], $args[$i]);
   }
-  my $arg_str = join " ", @args;
-  return (sprintf("%5d %-4s %s%s", $raw, $op_str, $arg_str, $extra), $arity);
+  my $arg_str = join " ", @args_str;
+  my $op_str = op_str($op);
+  my $extra = "";
+  if ($raw == 109) {
+    if ($args[0] > 8) {
+
+      # probably initial set rather than stack offset
+    } elsif ($args[0] > 0) {
+      $extra .= ' sub ***';
+    }
+  }
+  if ( ($raw == 1106 && $args[0] == 0)
+    || ($raw == 1105 && $args[0] == 1))
+  {
+    $op_str = 'jmp';
+    $arg_str = $args_str[1];
+    $raw = '20';
+  } elsif ((($raw == 2106 && $args[0] == 0) || ($raw == 2105 && $args[0] != 0))
+    && $args[1] == 0)
+  {
+    $extra .= " return";
+    $op_str = 'ret';
+    $arg_str = $args_str[1];
+    $raw = '21';
+  } elsif ($raw == 1101 || $raw == 21101) {
+    $op_str = 'seti';
+    $arg_str = 'imm(' . ($args[0] + $args[1]) . ') ' . $args_str[2];
+    $raw = '30';
+  } elsif ($raw == 1102 || $raw == 21102) {
+    $op_str = 'seti';
+    $arg_str = 'imm(' . ($args[0] * $args[1]) . ') ' . $args_str[2];
+    $raw = '30';
+  } elsif (($op == 1 && $mode[0] == 1 && $args[0] == 0)
+    || ($op == 2 && $mode[0] == 1 && $args[0] == 1))
+  {
+    $op_str = 'set';
+    $arg_str = join ' ', $args_str[1], $args_str[2];
+    $raw = '31';
+  } elsif (($op == 1 && $mode[1] == 1 && $args[1] == 0)
+    || ($op == 2 && $mode[1] == 1 && $args[1] == 1))
+  {
+    $op_str = 'set';
+    $arg_str = join ' ', $args_str[0], $args_str[2];
+    $raw = '31';
+  }
+  return (sprintf('%5d %-4s %s%s', $raw, $op_str, $arg_str, $extra), $arity);
+}
+
+sub mode {
+  my ($raw, $i) = @_;
+  my $div = [100, 1000, 10000]->[$i];
+  int($raw / $div) % 10;
+}
+
+sub mode_str {
+  [qw/pos imm rel/]->[$_[0]];
+}
+
+sub arg_str {
+  my ($mode, $arg) = @_;
+  mode_str($mode) . "(" . $arg . ")";
 }
 
 sub decode {
