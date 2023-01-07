@@ -104,6 +104,14 @@ sub inst_str {
     $op_str = 'set';
     $arg_str = join ' ', $args_str[0], $args_str[2];
     $raw = '31';
+  } elsif ($raw == 101 && $args[0] == 1) {
+    $op_str = 'inc';
+    $arg_str = join ' ', $args_str[1], $args_str[2];
+    $raw = '32';
+  } elsif ($raw == 1001 && $args[1] == 1) {
+    $op_str = 'inc';
+    $arg_str = join ' ', $args_str[0], $args_str[2];
+    $raw = '32';
   }
   return (sprintf('%5d %-4s %s%s', $raw, $op_str, $arg_str, $extra), $arity);
 }
@@ -176,6 +184,9 @@ sub read_file {
       $prog{reg_name}->{$2} = $1;
     } elsif (/^(L_\w+) (\d+)$/) {
       $prog{label}->{$2} = $1;
+    } elsif (/^(L_\w+) @(\d+)$/) {
+      my $addr = $prog{in}->[$2];
+      $prog{label}->{$addr} = $1;
     } else {
       warn "unsupported cfg line: '$_'";
     }

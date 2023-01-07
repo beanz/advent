@@ -5,33 +5,67 @@ const MAP_SIZE: usize = 4096;
 
 fn parts(inp: &[u8]) -> (usize, [u8; 252], usize) {
     let mut prog: [isize; PROG_CAP] = [0; PROG_CAP];
-    let mut prog2: [isize; PROG_CAP] = [0; PROG_CAP];
     let mut l = 0;
     let mut i = 0;
     while i < inp.len() {
         let (j, n) = aoc::read::int::<isize>(inp, i);
         prog[l] = n;
-        prog2[l] = n;
         l += 1;
         i = j + 1;
     }
-    let mut map = FnvIndexMap::<(i8, i8), bool, MAP_SIZE>::new();
-    run(&mut prog, 0, &mut map);
-    let mut map2 = FnvIndexMap::<(i8, i8), bool, MAP_SIZE>::new();
-    run(&mut prog2, 1, &mut map2);
+    // part 2 is read only so we do it first
     let mut p2 = [b'.'; 252];
+    let part2_addr = prog[4] as usize;
+    let mut data = [0usize; 6];
+    for (i, offset) in [6, 17, 64, 75, 98, 109].iter().enumerate() {
+        let addr = part2_addr + offset;
+        data[i] = match prog[addr] as usize {
+            21101 => prog[addr + 1] + prog[addr + 2],
+            21102 => prog[addr + 1] * prog[addr + 2],
+            _ => unreachable!("unexpected part 2 instruction"),
+        } as usize;
+    }
+    plot(0, 0, 1, data[0], &mut p2);
+    plot(20, 0, 1, data[1], &mut p2);
+    plot(41, 3, -1, data[2], &mut p2);
+    plot(21, 3, -1, data[3], &mut p2);
+    plot(0, 4, 1, data[4], &mut p2);
+    plot(20, 4, 1, data[5], &mut p2);
     let p2l = 252;
     for y in 0..6usize {
         p2[y * 42 + 41] = b'\n';
-        for x in 0..41usize {
-            if let Some(v) = map2.get(&(x as i8, y as i8)) {
-                if *v {
-                    p2[y * 42 + x] = b'#';
-                }
-            }
-        }
     }
+    // now we do part 1
+    let mut map = FnvIndexMap::<(i8, i8), bool, MAP_SIZE>::new();
+    run(&mut prog, 0, &mut map);
     (map.len(), p2, p2l)
+}
+
+fn plot(x: usize, y: usize, d: isize, data: usize, p2: &mut [u8; 252]) {
+    let (mut x, mut y) = (x, y);
+    let mut bit = 1 << 39;
+    while bit != 0 {
+        x = (x as isize + d) as usize;
+        if data & bit != 0 {
+            p2[y * 42 + x] = b'#'
+        }
+        bit >>= 1;
+        y = (y as isize + d) as usize;
+        if data & bit != 0 {
+            p2[y * 42 + x] = b'#'
+        }
+        bit >>= 1;
+        x = (x as isize + d) as usize;
+        if data & bit != 0 {
+            p2[y * 42 + x] = b'#'
+        }
+        bit >>= 1;
+        y = (y as isize - d) as usize;
+        if data & bit != 0 {
+            p2[y * 42 + x] = b'#'
+        }
+        bit >>= 1;
+    }
 }
 
 fn run(
