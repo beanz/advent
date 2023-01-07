@@ -3,8 +3,6 @@ use strict;
 use warnings;
 use v5.34;
 
-# for day 13: aoc-intcode-disas 379 14 639 10000 <input.txt
-
 use constant {
   OP_ADD => 1,
   OP_MUL => 2,
@@ -18,14 +16,14 @@ use constant {
   OP_HALT => 99,
 };
 
-$_ = <STDIN>;
-my @i = m!(-?\d+)!g;
-
-my %skip = @ARGV;
-my %prog = (ip => 0, in => \@i, skip => \%skip);
-while ($prog{ip} < scalar @{$prog{in}}) {
-  decode(\%prog);
+my ($file) = shift || usage();
+my $dir = ($file =~ m!^(.*/)! ? $1 : './');
+my ($cfg) = shift || $dir . 'disassembly.cfg';
+my $prog = read_file($file, $cfg);
+while ($prog->{ip} < scalar @{$prog->{in}}) {
+  decode($prog);
 }
+print "R: @{[sort {$a<=>$b} keys %{$prog->{reg}}]}\n";
 
 sub op_str {
   return "halt" if ($_[0] == 99);
@@ -46,6 +44,13 @@ sub inst_str {
   my (@mode) = map {mode($raw, $_ - 1)} (1 .. $arity);
   my @args_str;
   for my $i (0 .. $arity - 1) {
+    if ($mode[$i] == 0) {
+      if (exists $p->{reg_name}->{$args[$i]}) {
+        push @args_str, $p->{reg_name}->{$args[$i]};
+        next;
+      }
+      $p->{reg}->{$args[$i]}++;
+    }
     push @args_str, arg_str($mode[$i], $args[$i]);
   }
   my $arg_str = join " ", @args_str;
@@ -64,7 +69,14 @@ sub inst_str {
   {
     $op_str = 'jmp';
     $arg_str = $args_str[1];
+    if (exists $p->{label}->{$args[1]}) {
+      $arg_str = $p->{label}->{$args[1]} . '/' . $args[1];
+    }
     $raw = '20';
+  } elsif ($raw == 1005 || $raw == 1006) {
+    if (exists $p->{label}->{$args[1]}) {
+      $arg_str = $args_str[0] . ' ' . $p->{label}->{$args[1]} . '/' . $args[1];
+    }
   } elsif ((($raw == 2106 && $args[0] == 0) || ($raw == 2105 && $args[0] != 0))
     && $args[1] == 0)
   {
@@ -116,16 +128,59 @@ sub decode {
   my $skip = $p->{skip}->{$p->{ip}};
   if ($skip) {
 
-    # printf "%5d: skipping %d\n", $p->{ip}, $skip;
-    for my $j (0 .. ($skip - 1)) {
-      my $da = $p->{ip} + $j;
-      next unless ($da < scalar @{$p->{in}});
-      printf "%5d: data %d\n", $da, $p->{in}->[$da];
+    my $start = $p->{ip};
+    my $end = $p->{ip} + $skip;
+    if ($end > scalar @{$p->{in}}) {
+      $end = scalar @{$p->{in}};
+    }
+    for my $addr ($start .. $end - 1) {
+      if (exists $p->{label}->{$addr}) {
+        print $p->{label}->{$addr}, ":\n";
+      }
+      my $extra =
+        exists $p->{reg_name}->{$addr} ? " " . $p->{reg_name}->{$addr} : "";
+      printf "%5d: data %d%s\n", $addr, $p->{in}->[$addr], $extra;
     }
     $p->{ip} += $skip;
     return;
+  }
+  if (exists $p->{label}->{$p->{ip}}) {
+    print $p->{label}->{$p->{ip}}, ":\n";
   }
   my ($str, $arity) = inst_str($p);
   printf "%5d: %s\n", $p->{ip}, $str;
   $p->{ip} += 1 + $arity;
 }
+
+sub usage {
+  die "Usage: $0 <file> [<cfg>]\n@_";
+}
+
+sub read_file {
+  my ($file, $cfg) = @_;
+  open my $fh, '<', $file or usage("failed to open $file: $!\n");
+  $_ = <$fh>;
+  close $fh;
+  my @i = m!(-?\d+)!g;
+  my %prog = (ip => 0, in => \@i, skip => {}, reg_name => {}, label => {});
+  return \%prog unless (-e $cfg);
+
+  open $fh, '<', $cfg or usage("failed to open $cfg $!\n");
+  while (<$fh>) {
+    if (/^DATA (\d+) (\d+)(?: (.*))?\s*$/) {
+      $prog{skip}->{$1} = $2;
+      if (defined $3) {
+        $prog{label}->{$1} = $3;
+      }
+    } elsif (/^(R_\w+) (\d+)$/) {
+      $prog{reg_name}->{$2} = $1;
+    } elsif (/^(L_\w+) (\d+)$/) {
+      $prog{label}->{$2} = $1;
+    } else {
+      warn "unsupported cfg line: '$_'";
+    }
+  }
+  close $fh;
+  return \%prog;
+}
+
