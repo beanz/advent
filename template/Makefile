@@ -2,7 +2,7 @@ DAY=$(notdir $(CURDIR))
 YEAR=$(notdir $(patsubst %/,%,$(dir $(CURDIR))))
 HERE=$(YEAR)/$(DAY)
 
-CC=clang++-12
+CC=clang++-15
 CR_DIR=/usr
 CR_LIB=$(CR_DIR)/share/crystal/src:../../lib-cr
 CR=$(CR_DIR)/bin/crystal
@@ -101,6 +101,9 @@ hyperfine: ${HYPERFINE}
 
 aoc-cpp: cpp/aoc.cpp ../../lib-cpp/*.hpp cpp/input.h
 	$(CC) -I../../lib-cpp -o $@ $<
+
+aoc-cpp-rel: cpp/aoc.cpp ../../lib-cpp/*.hpp cpp/input.h
+	$(CC) -I../../lib-cpp -O3 -o $@ $<
 
 cpp/input.h: input.txt
 	xxd -i $< $@
