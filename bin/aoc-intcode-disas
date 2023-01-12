@@ -141,6 +141,12 @@ sub decode {
     print $p->{label}->{$p->{ip}}, ":\n";
   }
   my ($str, $arity) = inst_str($p);
+  for my $r (@{$p->{replace}}) {
+    my $find = $r->{find};
+    my $replace = $r->{replace};
+    my $guard = $r->{guard};
+    $str =~ s/$find/$replace/ if ($str =~ $guard);
+  }
   printf "%5d: %s\n", $p->{ip}, $str;
   $p->{ip} += 1 + $arity;
 }
@@ -237,6 +243,8 @@ sub read_file {
 
   open $fh, '<', $cfg or usage("failed to open $cfg $!\n");
   while (<$fh>) {
+    s!\s*\#.*$!!;
+    next if (/^\s*$/);
     s!\@(\d+)\*\@(\d+)!$prog{in}->[$1]*$prog{in}->[$2]!eg;
     s!\@(\d+)\+\@(\d+)!$prog{in}->[$1]+$prog{in}->[$2]!eg;
     s!\@(\d+)!$prog{in}->[$1]!eg;
@@ -251,6 +259,8 @@ sub read_file {
       $prog{reg_name}->{$2} = $1;
     } elsif (/^(L_\w+) (\d+)$/) {
       $prog{label}->{$2} = $1;
+    } elsif (/^REPLACE (.*)!(.*)!(.*)$/) {
+      push @{$prog{replace}}, {find => $1, replace => $2, guard => $3};
     } else {
       warn "unsupported cfg line: '$_'";
     }
