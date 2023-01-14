@@ -64,8 +64,8 @@ sub inst_str {
       $extra .= ' sub ***';
     }
   }
-  if ( ($raw == 1106 && $args[0] == 0)
-    || ($raw == 1105 && $args[0] == 1))
+  if ( (($raw == 1106 || $raw == 106) && $args[0] == 0)
+    || (($raw == 1105 || $raw == 105) && $args[0] == 1))
   {
     $op_str = 'jmp';
     $arg_str = $args_str[1];
@@ -85,10 +85,12 @@ sub inst_str {
     $arg_str = $args_str[1];
     $raw = '21';
   } elsif ($raw == 1101 || $raw == 21101) {
+    $extra = " ".join ",", $raw, @args;
     $op_str = 'seti';
     $arg_str = 'imm(' . ($args[0] + $args[1]) . ') ' . $args_str[2];
     $raw = '30';
   } elsif ($raw == 1102 || $raw == 21102) {
+    $extra = " ".join ",", $raw, @args;
     $op_str = 'seti';
     $arg_str = 'imm(' . ($args[0] * $args[1]) . ') ' . $args_str[2];
     $raw = '30';
