@@ -156,7 +156,7 @@ sub decode {
 sub skip {
   my ($p, $skip) = @_;
   my $start = $p->{ip};
-  my $end = $p->{ip} + $skip->{end};
+  my $end = $skip->{end};
   if ($end > scalar @{$p->{in}}) {
     $end = scalar @{$p->{in}};
   }
@@ -168,6 +168,18 @@ sub skip {
       }
       my $len = $p->{in}->[$addr];
       my $s = join "", map {chr($p->{in}->[$addr + $_])} 1 .. $len;
+      $s =~ s/([^ -~])/sprintf '\x%02x', ord($1)/ge;
+      printf "%5d: len=%d %s\n", $addr, $len, $s;
+      $addr += $len + 1;
+    }
+  } elsif ($skip->{type} eq "length+cipher201925") {
+    my $addr = $start;
+    while ($addr < $end) {
+      if (exists $p->{label}->{$addr}) {
+        print $p->{label}->{$addr}, ":\n";
+      }
+      my $len = $p->{in}->[$addr];
+      my $s = join "", map {chr($p->{in}->[$addr + $_]+($len+$_-1))} 1 .. $len;
       $s =~ s/([^ -~])/sprintf '\x%02x', ord($1)/ge;
       printf "%5d: len=%d %s\n", $addr, $len, $s;
       $addr += $len + 1;
@@ -227,7 +239,7 @@ sub skip {
     }
 
   }
-  $p->{ip} += $skip->{end};
+  $p->{ip} = $skip->{end};
 }
 
 sub usage {
@@ -252,10 +264,16 @@ sub read_file {
     s!\@(\d+)!$prog{in}->[$1]!eg;
     s!(\d+)\*(\d+)!$1*$2!eg;
     s!(\d+)\+(\d+)!$1+$2!eg;
-    if (/^DATA (\d+) (\d+)(?: (\S+)(?: (\S+))?)?\s*$/) {
-      $prog{skip}->{$1} = {end => $2, type => $4 // "simple"};
-      if (defined $3) {
-        $prog{label}->{$1} = $3;
+    if (/^DATA (\d+) (A?\d+)(?: (\S+)(?: (\S+))?)?\s*$/) {
+      my ($start, $end, $label, $type) = ($1, $2, $3//'_', $4//"simple");
+      if ($end =~ s/^A//) {
+        $end = $end+1;
+      } else {
+        $end += $start;
+      }
+      $prog{skip}->{$start} = {end => $end, type => $type};
+      if ($label ne '_') {
+        $prog{label}->{$start} = $label;
       }
     } elsif (/^(R_\w+) (\d+)$/) {
       $prog{reg_name}->{$2} = $1;
