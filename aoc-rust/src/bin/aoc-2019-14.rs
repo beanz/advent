@@ -21,10 +21,10 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         i = j + 1;
         fact.insert(a, (n, ing));
     }
-    let p1 = ore_for(1, &mut fact);
+    let p1 = ore_for(1, &fact);
     let target = 1_000_000_000_000;
     let mut upper = 1;
-    while ore_for(upper, &mut fact) < target {
+    while ore_for(upper, &fact) < target {
         upper *= 2;
     }
     let mut lower = upper / 2;
@@ -33,7 +33,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         if mid == lower {
             break;
         }
-        if ore_for(mid, &mut fact) > target {
+        if ore_for(mid, &fact) > target {
             upper = mid;
         } else {
             lower = mid;
@@ -48,7 +48,7 @@ fn ore_for(n: usize, fact: &HashMap<u32, (usize, Vec<(usize, u32)>)>) -> usize {
     let mut total: HashMap<u32, usize> = HashMap::new();
     let (_, fuel) = read_id(&[b'F', b'U', b'E', b'L', b' '], 0, 27, b'@');
     let (_, ore) = read_id(&[b'O', b'R', b'E', b' '], 0, 27, b'@');
-    requirements(fuel, n, &fact, &mut total, &mut surplus, ore);
+    requirements(fuel, n, fact, &mut total, &mut surplus, ore);
     *total.get(&ore).expect("should have produced ore")
 }
 
@@ -79,7 +79,7 @@ fn requirements(
     *(surplus.entry(chem).or_default()) += leftover;
     for (n, ch) in ing {
         *(total.entry(*ch).or_default()) += n * required;
-        requirements(*ch, n * required, &fact, total, surplus, last);
+        requirements(*ch, n * required, fact, total, surplus, last);
     }
 }
 

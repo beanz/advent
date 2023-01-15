@@ -54,8 +54,8 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     maze[sy + 1] |= sxbit;
     //dump(inp, &maze, w, h);
     let mut p2 = 0;
-    for qi in 0..4 {
-        p2 += find(inp, &maze, qi, quad_keys[qi], sx, sy, w1);
+    for (qi, qk) in quad_keys.iter().enumerate().take(4) {
+        p2 += find(inp, &maze, qi, *qk, sx, sy, w1);
     }
     (p1, p2)
 }
@@ -118,13 +118,13 @@ fn find(
     .expect("heap full");
     while let Some(mut cur) = todo.pop() {
         let ch = inp[cur.x + cur.y * w1];
-        if b'A' <= ch && ch <= b'Z' {
+        if (b'A'..=b'Z').contains(&ch) {
             let kbit = 1 << (ch - b'A');
             if cur.keys & kbit == 0 && quad_keys & kbit != 0 {
                 //eprintln!("  blocked by door {}", ch as char);
                 continue;
             }
-        } else if b'a' <= ch && ch <= b'z' {
+        } else if (b'a'..=b'z').contains(&ch) {
             let kbit = 1 << (ch - b'a');
             if cur.keys & kbit == 0 {
                 //eprintln!("  found key {}", ch as char);

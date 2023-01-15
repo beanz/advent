@@ -1,5 +1,7 @@
 const PROG_CAP: usize = 5120;
+#[allow(dead_code)]
 const ITEM_TABLE: usize = 4601;
+#[allow(dead_code)]
 const ROOM_LIST: usize = 3124;
 const ITEM_DATA: usize = 1902;
 const CUTOFF_A: usize = 1352;

@@ -53,7 +53,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             if i == j {
                 continue;
             }
-            if let Some(ri) = r.intersect(&o) {
+            if let Some(ri) = r.intersect(o) {
                 if i < j {
                     for y in ri.y as usize..ri.ym as usize {
                         for x in ri.x as usize..ri.xm as usize {
@@ -71,11 +71,8 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         }
     }
     let mut p1 = 0;
-    for i in 0..65536 {
-        if area[i] == 0 {
-            continue;
-        }
-        p1 += area[i].count_ones() as usize;
+    for e in &area {
+        p1 += e.count_ones() as usize;
     }
 
     (p1, p2)

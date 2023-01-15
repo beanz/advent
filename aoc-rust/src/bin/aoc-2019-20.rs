@@ -14,10 +14,10 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let mut maze: [u128; MAZE_MAX] = [u128::MAX; MAZE_MAX];
     let mut xbit = 1u128;
     for x in 0..w {
-        for y in 0..h {
+        for (y, m) in maze.iter_mut().enumerate().take(h) {
             let i = x + y * w1;
             if inp[i] != b'#' {
-                maze[y] -= xbit;
+                *m -= xbit;
             }
         }
         xbit <<= 1;
@@ -29,7 +29,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let (mut ex, mut ey) = (0, 0);
     let mut id2pos = FnvIndexMap::<usize, (usize, usize), 128>::new();
     let mut portals = FnvIndexMap::<(usize, usize), (usize, usize, usize), 128>::new();
-    let is_portal = |ch| b'A' <= ch && ch <= b'Z';
+    let is_portal = |ch| (b'A'..=b'Z').contains(&ch);
     let mut add_outer_portal =
         |id2pos: &mut FnvIndexMap<usize, (usize, usize), 128>, a: u8, b: u8, x: usize, y: usize| {
             //eprintln!(
@@ -59,15 +59,15 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             add_outer_portal(&mut id2pos, inp[bottom - w1], inp[bottom], x, h - 3);
         }
     }
-    for y in 0..h {
+    for (y, m) in maze.iter_mut().enumerate().take(h) {
         let left = y * w1;
         if is_portal(inp[left]) {
-            maze[y] |= 1 << 1;
+            *m |= 1 << 1;
             add_outer_portal(&mut id2pos, inp[left], inp[left + 1], 2, y);
         }
         let right = (w - 1) + y * w1;
         if is_portal(inp[right]) {
-            maze[y] |= 1 << w - 2;
+            *m |= 1 << (w - 2);
             add_outer_portal(&mut id2pos, inp[right - 1], inp[right], w - 3, y);
         }
     }

@@ -30,9 +30,7 @@ impl Nic {
             return None;
         }
         for j in 0..self.buf_len {
-            if self.buf[j].is_none() {
-                return None;
-            }
+            self.buf[j]?;
         }
         self.ready = false;
         match &self.op {

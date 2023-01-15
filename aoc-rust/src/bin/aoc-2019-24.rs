@@ -45,10 +45,8 @@ fn parts(inp: &[u8]) -> (u32, usize) {
             let mut i = 1;
             for y in 0..5 {
                 for x in 0..5 {
-                    if x != 2 || y != 2 {
-                        if life2(now, d, x, y) {
-                            next[d] += i;
-                        }
+                    if (x != 2 || y != 2) && life2(now, d, x, y) {
+                        next[d] += i;
                     }
                     i <<= 1;
                 }
@@ -88,10 +86,8 @@ fn life2(n: &[u32; 512], d: usize, x: usize, y: usize) -> bool {
         for xa in 0..5 {
             c += usize::from(bug(n[d + 1], xa, 4));
         }
-    } else {
-        if y > 0 {
-            c += usize::from(bug(n[d], x, y - 1));
-        }
+    } else if y > 0 {
+        c += usize::from(bug(n[d], x, y - 1));
     }
 
     // neighbours below
@@ -101,10 +97,8 @@ fn life2(n: &[u32; 512], d: usize, x: usize, y: usize) -> bool {
         for xa in 0..5 {
             c += usize::from(bug(n[d + 1], xa, 0));
         }
-    } else {
-        if y < 5 {
-            c += usize::from(bug(n[d], x, y + 1));
-        }
+    } else if y < 5 {
+        c += usize::from(bug(n[d], x, y + 1));
     }
 
     // neighbours left
@@ -114,10 +108,8 @@ fn life2(n: &[u32; 512], d: usize, x: usize, y: usize) -> bool {
         for ya in 0..5 {
             c += usize::from(bug(n[d + 1], 4, ya));
         }
-    } else {
-        if x > 0 {
-            c += usize::from(bug(n[d], x - 1, y));
-        }
+    } else if x > 0 {
+        c += usize::from(bug(n[d], x - 1, y));
     }
 
     // neighbours right
@@ -127,10 +119,8 @@ fn life2(n: &[u32; 512], d: usize, x: usize, y: usize) -> bool {
         for ya in 0..5 {
             c += usize::from(bug(n[d + 1], 0, ya));
         }
-    } else {
-        if x < 5 {
-            c += usize::from(bug(n[d], x + 1, y));
-        }
+    } else if x < 5 {
+        c += usize::from(bug(n[d], x + 1, y));
     }
     c == 1 || (!bug(n[d], x, y) && c == 2)
 }

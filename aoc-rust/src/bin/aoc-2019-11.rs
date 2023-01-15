@@ -90,7 +90,7 @@ fn run(
         let rc = ic.run();
         match rc {
             ICState::ProducedOutput => {
-                let v: bool = (ic.output == 1).into();
+                let v: bool = ic.output == 1;
                 if col {
                     map.insert((x, y), v).expect("map full");
                     col = false;

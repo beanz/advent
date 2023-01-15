@@ -50,14 +50,14 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             sum += cur[i] as isize;
         }
         for i in 0..l {
-            let n = ((if sum < 0 { -1 * sum } else { sum }) % 10) as u8;
+            let n = ((if sum < 0 { -sum } else { sum }) % 10) as u8;
             sum -= cur[i] as isize;
             cur[i] = n;
         }
     }
     let mut p2 = 0;
-    for i in 0..8 {
-        p2 = p2 * 10 + (cur[i] as usize);
+    for v in cur.iter().take(8) {
+        p2 = p2 * 10 + (*v as usize);
     }
     (p1, p2)
 }

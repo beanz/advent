@@ -28,11 +28,8 @@ fn run(prog: &mut [isize; PROG_CAP], input: isize) -> isize {
         output: 0,
         done: false,
     };
-    loop {
-        match ic.run() {
-            ICState::ProducedOutput => return ic.output,
-            _ => break,
-        }
+    if let ICState::ProducedOutput = ic.run() {
+        return ic.output;
     }
     -1
 }
