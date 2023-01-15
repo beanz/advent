@@ -1,30 +1,33 @@
-use std::collections::HashSet;
-
 use smallvec::SmallVec;
 
 fn parts(inp: &[u8]) -> (i32, i32) {
     let mut p1 = 0;
     let mut i = 0;
-    let mut nums = SmallVec::<[i32; 1024]>::new();
-    let mut seen: HashSet<i32> = HashSet::new();
+    let mut acc = SmallVec::<[i32; 1024]>::new();
     while i < inp.len() {
         let (j, n) = aoc::read::int::<i32>(inp, i);
         p1 += n;
-        nums.push(n);
-        seen.insert(p1);
+        acc.push(p1);
         i = j + 1;
     }
-    let mut p2 = p1;
-    'outer: loop {
-        for n in &nums {
-            p2 += n;
-            if seen.contains(&p2) {
-                break 'outer;
+    let mut p: Option<(usize, i32)> = None;
+    for i in 0..acc.len() {
+        for j in i + 1..acc.len() {
+            let d = acc[i].abs_diff(acc[j]) as i32;
+            if d % p1 == 0 {
+                let q = d / p1;
+                if let Some((_, oq)) = p {
+                    if q < oq {
+                        p = Some((i.max(j), q));
+                    }
+                } else {
+                    p = Some((i.max(j), q));
+                }
             }
-            seen.insert(p2);
         }
     }
-    (p1, p2)
+    let p = p.expect("part 2 cycle?");
+    (p1, acc[p.0])
 }
 
 fn main() {
