@@ -11,7 +11,7 @@ func ChompUInt[T AoCInt](in []byte, i int) (j int, n T) {
 	if !('0' <= in[j] && in[j] <= '9') {
 		panic("not a number")
 	}
-	for ; '0' <= in[j] && in[j] <= '9'; j++ {
+	for ; j < len(in) && '0' <= in[j] && in[j] <= '9'; j++ {
 		n = T(10)*n + T(in[j]&0xf)
 	}
 	return
@@ -23,11 +23,13 @@ func ChompInt[T AoCSigned](in []byte, i int) (int, T) {
 	if in[j] == '-' {
 		negative = true
 		j++
+	} else if in[j] == '+' {
+		j++
 	}
 	if !('0' <= in[j] && in[j] <= '9') {
 		panic("not a number")
 	}
-	for ; '0' <= in[j] && in[j] <= '9'; j++ {
+	for ; j < len(in) && '0' <= in[j] && in[j] <= '9'; j++ {
 		n = T(10)*n + T(in[j]&0xf)
 	}
 	if negative {

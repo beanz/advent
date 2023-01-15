@@ -10,42 +10,36 @@ import (
 //go:embed input.txt
 var input []byte
 
-func Part1(changes []int) int {
-	s := 0
-	for _, c := range changes {
-		s += c
+type Int int32
+
+func Parts(in []byte) (Int, Int) {
+	var p1 Int
+	acc := make([]Int, 0, 1024)
+	for i := 0; i < len(in); {
+		j, n := ChompInt[Int](in, i)
+		p1 += n
+		acc = append(acc, p1)
+		i = j + 1
 	}
-	return s
-}
-
-func Part2(changes []int) int {
-	s := 0
-	m := make(map[int]bool)
-
-	for {
-		for _, c := range changes {
-			s += c
-			if _, ok := m[s]; ok {
-				return s
+	ri, rq := -1, Int(99999999)
+	for i := range acc {
+		for j := i + 1; j < len(acc); j++ {
+			d := Abs(acc[i] - acc[j])
+			if d%p1 == 0 {
+				q := d / p1
+				if q < rq {
+					ri, rq = MaxInt(i, j), q
+				}
 			}
-			m[s] = true
 		}
 	}
-}
-
-func ReadInput(file string) []int {
-	lines := ReadLines(file)
-	return ReadInts(lines)
+	return p1, acc[ri]
 }
 
 func main() {
-	changes := Ints(InputString(input))
-	p1 := Part1(changes)
+	p1, p2 := Parts(InputBytes(input))
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
-	}
-	p2 := Part2(changes)
-	if !benchmark {
 		fmt.Printf("Part 2: %d\n", p2)
 	}
 }
