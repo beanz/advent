@@ -28,9 +28,16 @@ where
     let mut n: T = 0.into();
     let mut i = i;
     let mut m: T = 1.into();
-    if i < inp.len() && inp[i] == b'-' {
-        m = -m;
-        i += 1;
+    debug_assert!(i < inp.len(), "index too large: {} < {}", i, inp.len());
+    match inp[i] {
+        b'-' => {
+            m = -m;
+            i += 1;
+        }
+        b'+' => {
+            i += 1;
+        }
+        _ => {}
     }
     debug_assert!(
         i < inp.len() && b'0' <= inp[i] && inp[i] <= b'9',
@@ -38,9 +45,14 @@ where
         i,
         inp.len()
     );
-    while i < inp.len() && b'0' <= inp[i] && inp[i] <= b'9' {
-        n = n * 10.into() + (inp[i] - b'0').into();
-        i += 1;
+    while i < inp.len() {
+        let c = inp[i].wrapping_sub(b'0');
+        if c <= 9 {
+            n = n * 10.into() + c.into();
+            i += 1;
+            continue;
+        }
+        break;
     }
     (i, m * n)
 }
