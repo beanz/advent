@@ -19,9 +19,12 @@ type Game struct {
 }
 
 func NewGame(lines []string) *Game {
-	g := &Game{[]Point{}, NewBoundingBox(),
-		SimpleReadInts(lines[0])[0], false}
-	for _, line := range lines[1:] {
+	b := 10000
+	if len(lines) <= 10 {
+		b = 32
+	}
+	g := &Game{[]Point{}, NewBoundingBox(), b, false}
+	for _, line := range lines {
 		coords := SimpleReadInts(line)
 		p := Point{coords[0], coords[1]}
 		g.c = append(g.c, p)

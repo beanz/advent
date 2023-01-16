@@ -12,7 +12,7 @@ my @i = @{read_lines($file)};
 my @i2 = @{[@i]};
 
 my @p;
-my $bound = sqrt(shift @i);
+my $bound = @i > 10 ? 100 : 6;
 for (@i) {
   push @p, [split /, /];
 }
@@ -93,7 +93,7 @@ for my $i (0..$#p) {
 }
 print 'Part 1: ', $max, "\n";
 
-my $d = shift @i2;
+my $d = @i2 > 10 ? 10000 : 32;
 @p = ();
 my @min;
 my @max;
