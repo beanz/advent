@@ -27,5 +27,12 @@ stats_alloc = "0.1.10"
 smallvec = "1.10.0"
 heapless = "0.7.16"
 
+[dev-dependencies]
+criterion = "0.4"
+
+[[bench]]
+name = "read"
+harness = false
+
 [profile.release]
 debug = true

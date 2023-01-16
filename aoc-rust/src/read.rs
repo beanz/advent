@@ -9,9 +9,14 @@ where
     let mut n: T = 0.into();
     let mut i = i;
     debug_assert!(i < inp.len() && b'0' <= inp[i] && inp[i] <= b'9');
-    while i < inp.len() && b'0' <= inp[i] && inp[i] <= b'9' {
-        n = n * 10.into() + (inp[i] & 0xf).into();
-        i += 1;
+    while i < inp.len() {
+        let c = inp[i].wrapping_sub(b'0');
+        if c <= 9 {
+            n = n * 10.into() + c.into();
+            i += 1;
+            continue;
+        }
+        break;
     }
     (i, n)
 }
@@ -27,11 +32,11 @@ where
 {
     let mut n: T = 0.into();
     let mut i = i;
-    let mut m: T = 1.into();
+    let mut neg = false;
     debug_assert!(i < inp.len(), "index too large: {} < {}", i, inp.len());
     match inp[i] {
         b'-' => {
-            m = -m;
+            neg = true;
             i += 1;
         }
         b'+' => {
@@ -54,7 +59,7 @@ where
         }
         break;
     }
-    (i, m * n)
+    (i, if neg { -n } else { n })
 }
 
 pub fn skip_next_line(inp: &[u8], i: usize) -> usize {
