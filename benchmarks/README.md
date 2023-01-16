@@ -137,7 +137,7 @@ Day 25 | **🔴 1.46s** | 1.93s | 212ms / 43.8 MB | 202ms | 31µs / None
 Day 01 | 1.7ms / None | 1.38ms / None
 Day 02 | 9.46ms / 2.8 MB | 814µs / None
 Day 03 | 195ms / 64.2 MB | **🔴 9.26ms** / None
-Day 04 | 6.34ms / 400 KB | -
+Day 04 | 6.34ms / 400 KB | 27.7µs / None
 Day 05 | 447ms / 48.3 MB | -
 Day 06 | 57.7ms / 19.5 KB | -
 Day 07 | 293µs / 68.7 KB | -
@@ -420,7 +420,7 @@ Day 25 | 202ms | 48.7ms
 Day 01 | 4.66µs / None | 90.6µs / 34.9 KB | 2.28µs / 16.4 KB | 1.38ms / None | 1.37µs / None | 251µs / 144 KB | 27.5µs / None | 11.1µs / None
 Day 02 | 131µs / 16.0 KB | 145µs / 3.8 KB | 18µs / 2.0 KB | 814µs / None | 2.3ms / None | 73.6µs / 24.6 KB | 1.56µs / None | 1.06µs / None
 Day 03 | 968µs / 279 KB | 491µs / 183 KB | 21.8µs / 14.3 KB | **🔴 9.26ms** / None | 60.8µs / None | 5.97µs / None | 51.5µs / 2.0 KB | 37.9µs / None
-Day 04 | **🔴 2.1s** / 159 MB | 2.94ms / 634 KB | 5ms / 2.0 MB | - | 989µs / None | 85.9µs / None | 115µs / 102 KB | 12.3µs / None
+Day 04 | **🔴 2.1s** / 159 MB | 2.94ms / 634 KB | 5ms / 2.0 MB | 27.7µs / None | 989µs / None | 85.9µs / None | 115µs / 102 KB | 12.3µs / None
 Day 05 | 384µs / None | **🔴 8.97s** / **🔴 689 MB** | 56ms / 24.9 KB | - | 6.23µs / None | 99.4µs / 12.4 KB | 1.07ms / 8.2 KB | 8.35µs / None
 Day 06 | 55.7ms / 19.2 KB | 1.45ms / 5.8 KB | 2.35ms / 1.8 MB | - | 231µs / 163 KB | 28.4µs / None | 1.48µs / 512 B | 10.6µs / None
 Day 07 | 437µs / 148 KB | 4.96ms / 1.0 MB | 1.17ms / 523 KB | - | 847µs / 102 KB | 434µs / 281 KB | 35µs / 3.2 KB | 24µs / None
