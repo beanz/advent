@@ -9,7 +9,6 @@ use Carp::Always qw/carp verbose/;
 my $file = shift // "input.txt";
 my @i = @{read_lines($file)};
 
-my $j = shift @i;
 my %dep;
 my %todo;
 for (@i) {
@@ -40,8 +39,12 @@ while (@available_work) {
 }
 print 'Part 1: ', $s, "\n";
 
-my $workload = $j;
-my $workers = shift @i;
+my $workload = 60;
+my $workers = 5;
+if (@i < 10) {
+  $workload = 0;
+  $workers = 2;
+}
 print 'Part 2: ', run($workload, $workers, \@i), "\n";
 
 sub run {

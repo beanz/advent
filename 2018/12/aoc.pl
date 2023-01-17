@@ -9,7 +9,7 @@ use Carp::Always qw/carp verbose/;
 my $file = shift // "input.txt";
 my @i = @{read_lines($file)};
 
-my $gen = shift @i;
+my $gen = @i < 20 ? 20 : 50000000000;
 my $state = shift @i;
 $state =~ s/.*: //;
 #print STDERR $state, "\n";

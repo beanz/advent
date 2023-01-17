@@ -63,6 +63,9 @@ type Cells struct {
 
 func NewCells(in []byte) *Cells {
 	ints := FastInts(in, 7)
+	if len(ints) == 1 {
+		ints = append(ints, 1, 300, 1, 1, 300, 300)
+	}
 	return &Cells{ints[0], ints[1], ints[2],
 		ints[3], ints[5], ints[4], ints[6], NewCellCache(ints[2], ints[0]),
 		false,
@@ -89,7 +92,7 @@ func (c *Cells) Solve(minSize, maxSize int) (int, int, int) {
 	for size := minSize; size <= maxSize; size++ {
 		for x := c.xmin - 1; x < c.xmax-size+1; x++ {
 			if c.debug {
-			fmt.Printf("%3d %3d\r", size, x)
+				fmt.Printf("%3d %3d\r", size, x)
 			}
 			for y := c.ymin - 1; y < c.ymax-size+1; y++ {
 				l := c.LevelSquare(x, y, size)
@@ -99,7 +102,7 @@ func (c *Cells) Solve(minSize, maxSize int) (int, int, int) {
 			}
 		}
 	}
-	return maxX+1, maxY+1, mSize
+	return maxX + 1, maxY + 1, mSize
 }
 
 func (c *Cells) Part1() string {

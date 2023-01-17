@@ -10,6 +10,9 @@ use constant { VX => 2, VY => 3 };
 my $file = shift // "input.txt";
 my @i = @{read_lines($file)};
 
+if (@i == 1) {
+  push @i, "1 300", "1 1", "300 300";
+}
 {
   my $serial = $i[0];
   my $size = 3;

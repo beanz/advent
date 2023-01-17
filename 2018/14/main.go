@@ -12,10 +12,10 @@ import (
 var input []byte
 
 type RecipeState struct {
-	recipes   []byte
-	e0, e1    int
-	si        int
-	end []byte
+	recipes []byte
+	e0, e1  int
+	si      int
+	end     []byte
 }
 
 func (r *RecipeState) len() int {
@@ -55,8 +55,8 @@ type Game struct {
 }
 
 func NewGame(lines []string) *Game {
-	g := &Game{[]byte(lines[1]), SimpleReadInts(lines[1])[0],
-		[]byte(lines[0]), false}
+	g := &Game{[]byte(lines[0]), SimpleReadInts(lines[0])[0],
+		[]byte("37"), false}
 	return g
 }
 
@@ -86,11 +86,11 @@ func (g *Game) Part2() int {
 	}
 	end := make([]byte, len(g.endString))
 	for i := 0; i < len(g.endString); i++ {
-		end[i] = g.endString[i]-'0'
+		end[i] = g.endString[i] - '0'
 	}
 	s := RecipeState{state, 0, 1, 0, end}
 	i := -1
-	for ; s.len() < 30000000; {
+	for s.len() < 30000000 {
 		s.next()
 		if i = s.hasEnd(); i != -1 {
 			break

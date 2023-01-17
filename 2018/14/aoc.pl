@@ -12,8 +12,8 @@ use constant {
 my $file = shift // "input.txt";
 my @i = @{read_lines($file)};
 
-my $r = $i[0];
-my $end = $i[1];
+my $r = 37;
+my $end = $i[0];
 
 my $e1 = 1;
 my $e2 = 0;

@@ -19,10 +19,13 @@ type Game struct {
 }
 
 func NewGame(lines []string) *Game {
-	gen := SimpleReadInt64s(lines[0])[0]
-	state := lines[1][15:]
+	var gen int64 = 50000000000
+	if len(lines) < 20 {
+		gen = 20
+	}
+	state := lines[0][15:]
 	rules := map[string]bool{}
-	for _, line := range lines[2:] {
+	for _, line := range lines[1:] {
 		words := strings.Split(line, " => ")
 		if len(words) == 2 && words[1] == "#" {
 			rules[words[0]] = true

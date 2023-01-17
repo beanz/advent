@@ -22,9 +22,15 @@ type Game struct {
 }
 
 func NewGame(lines []string) *Game {
+	workload := 60
+	workers := 5
+	if len(lines) < 10 {
+		workload = 0
+		workers = 2
+	}
 	g := &Game{map[string]map[string]bool{}, map[string]bool{}, []string{},
-		SimpleReadInts(lines[0])[0], SimpleReadInts(lines[1])[0], false}
-	for _, line := range lines[2:] {
+		workload, workers, false}
+	for _, line := range lines {
 		words := strings.Split(line, " ")
 		req := words[1]
 		step := words[7]
