@@ -50,21 +50,42 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         }
     }
     let d = if points.len() > 10 { 10000 } else { 32 } as u32;
-    let b = aoc::isqrt(d as usize) as i32;
 
     let mut p2 = 0;
-    for y in miny - b..maxy + b {
-        for x in minx - b..maxx + b {
-            let mut mds = 0;
-            for (px, py) in &points {
-                mds += px.abs_diff(x) + py.abs_diff(y);
-            }
-            if mds < d {
-                p2 += 1;
+    let (mx, my) = ((maxx - minx) / 2, (maxy - miny) / 2);
+    let mut dim = 0;
+    loop {
+        let mut finished = true;
+        for y in my - dim..my + dim + 1 {
+            for x in &[mx - dim, mx + dim] {
+                let mut mds = 0;
+                for (px, py) in &points {
+                    mds += px.abs_diff(*x) + py.abs_diff(y);
+                }
+                if mds < d {
+                    p2 += 1;
+                    finished = false;
+                }
             }
         }
+        for x in mx - dim + 1..mx + dim {
+            for y in &[my - dim, my + dim] {
+                let mut mds = 0;
+                for (px, py) in &points {
+                    mds += px.abs_diff(x) + py.abs_diff(*y);
+                }
+                if mds < d {
+                    p2 += 1;
+                    finished = false;
+                }
+            }
+        }
+        if finished {
+            break;
+        }
+        dim += 1;
     }
-    (p1 as usize, p2)
+    (p1 as usize, p2 - 1)
 }
 
 fn closest(p: &[(i32, i32)], x: i32, y: i32) -> Option<usize> {
