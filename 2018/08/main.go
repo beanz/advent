@@ -26,8 +26,9 @@ func (p *parseState) next() int {
 	return v
 }
 
-func NewGame(lines []string) *Game {
-	g := &Game{parseState{SimpleReadInts(lines[0]), 0}, false}
+func NewGame(in []byte) *Game {
+	ints := FastInts(in, 18000)
+	g := &Game{parseState{ints, 0}, false}
 	return g
 }
 
@@ -45,6 +46,7 @@ func (p *parseState) Part1Parse() int {
 }
 
 func (g *Game) Part1() int {
+	g.p.i = 0
 	return g.p.Part1Parse()
 }
 
@@ -72,16 +74,16 @@ func (p *parseState) Part2Parse() int {
 }
 
 func (g *Game) Part2() int {
+	g.p.i = 0
 	return g.p.Part2Parse()
 }
 
 func main() {
-	g := NewGame(InputLines(input))
+	g := NewGame(InputBytes(input))
 	p1 := g.Part1()
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
 	}
-	g = NewGame(InputLines(input))
 	p2 := g.Part2()
 	if !benchmark {
 		fmt.Printf("Part 2: %d\n", p2)
