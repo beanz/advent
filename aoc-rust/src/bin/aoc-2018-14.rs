@@ -29,6 +29,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         for j in 0..end.len() {
             if recipes[i + j] != end[j] - b'0' {
                 found = false;
+                break;
             }
         }
         if found {
@@ -47,14 +48,19 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             recipes.push(n);
         }
         elf.0 += 1 + (v0 as usize);
-        elf.0 %= recipes.len();
+        while elf.0 >= recipes.len() {
+            elf.0 -= recipes.len()
+        }
         elf.1 += 1 + (v1 as usize);
-        elf.1 %= recipes.len();
+        while elf.1 >= recipes.len() {
+            elf.1 -= recipes.len()
+        }
         while search_i < recipes.len() - end.len() {
             let mut found = true;
             for j in 0..end.len() {
                 if recipes[search_i + j] != end[j] - b'0' {
                     found = false;
+                    break;
                 }
             }
             if found {
