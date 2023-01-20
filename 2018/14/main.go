@@ -27,11 +27,18 @@ func (r *RecipeState) next() {
 	v1 := r.recipes[r.e1]
 	n := v0 + v1
 	if n >= 10 {
-		r.recipes = append(r.recipes, n/10)
+		r.recipes = append(r.recipes, 1, n-10)
+	} else {
+		r.recipes = append(r.recipes, n)
 	}
-	r.recipes = append(r.recipes, n%10)
-	r.e0 = (r.e0 + int(v0) + 1) % len(r.recipes)
-	r.e1 = (r.e1 + int(v1) + 1) % len(r.recipes)
+	r.e0 = (r.e0 + int(v0) + 1)
+	if r.e0 >= len(r.recipes) {
+		r.e0 -= len(r.recipes)
+	}
+	r.e1 = (r.e1 + int(v1) + 1)
+	for r.e1 >= len(r.recipes) {
+		r.e1 -= len(r.recipes)
+	}
 }
 
 func (r *RecipeState) hasEnd() int {
