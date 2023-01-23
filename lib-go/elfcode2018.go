@@ -6,18 +6,18 @@ import (
 )
 
 type Inst struct {
-	op string
-	a  int
-	b  int
-	c  int
+	Op string
+	A  int
+	B  int
+	C  int
 }
 
 func (i *Inst) String() string {
-	return fmt.Sprintf("%s %d %d %d", i.op, i.a, i.b, i.c)
+	return fmt.Sprintf("%s %d %d %d", i.Op, i.A, i.B, i.C)
 }
 
 type ElfProg2018 struct {
-	prog  []*Inst
+	Prog  []*Inst
 	IP    int
 	Reg   [6]int
 	bound int
@@ -25,7 +25,7 @@ type ElfProg2018 struct {
 }
 
 func (g *ElfProg2018) String() string {
-	return fmt.Sprintf("ip=%d %v %s", g.IP, g.Reg, g.prog[0])
+	return fmt.Sprintf("ip=%d %v %s", g.IP, g.Reg, g.Prog[0])
 }
 
 func NewElfProg2018(lines []string) *ElfProg2018 {
@@ -33,72 +33,72 @@ func NewElfProg2018(lines []string) *ElfProg2018 {
 		[6]int{}, SimpleReadInts(lines[0])[0], false}
 	for _, l := range lines[1:] {
 		args := SimpleReadInts(l)
-		g.prog = append(g.prog,
+		g.Prog = append(g.Prog,
 			&Inst{strings.Split(l, " ")[0], args[0], args[1], args[2]})
 	}
 	return g
 }
 
 func (g *ElfProg2018) Run(fn func(*ElfProg2018) bool) int {
-	for g.IP < len(g.prog) {
-		inst := g.prog[g.IP]
+	for g.IP < len(g.Prog) {
+		inst := g.Prog[g.IP]
 		g.Reg[g.bound] = g.IP
-		switch inst.op {
+		switch inst.Op {
 		case "addr":
-			g.Reg[inst.c] = g.Reg[inst.a] + g.Reg[inst.b]
+			g.Reg[inst.C] = g.Reg[inst.A] + g.Reg[inst.B]
 		case "addi":
-			g.Reg[inst.c] = g.Reg[inst.a] + inst.b
+			g.Reg[inst.C] = g.Reg[inst.A] + inst.B
 		case "mulr":
-			g.Reg[inst.c] = g.Reg[inst.a] * g.Reg[inst.b]
+			g.Reg[inst.C] = g.Reg[inst.A] * g.Reg[inst.B]
 		case "muli":
-			g.Reg[inst.c] = g.Reg[inst.a] * inst.b
+			g.Reg[inst.C] = g.Reg[inst.A] * inst.B
 		case "banr":
-			g.Reg[inst.c] = g.Reg[inst.a] & g.Reg[inst.b]
+			g.Reg[inst.C] = g.Reg[inst.A] & g.Reg[inst.B]
 		case "bani":
-			g.Reg[inst.c] = g.Reg[inst.a] & inst.b
+			g.Reg[inst.C] = g.Reg[inst.A] & inst.B
 		case "borr":
-			g.Reg[inst.c] = g.Reg[inst.a] | g.Reg[inst.b]
+			g.Reg[inst.C] = g.Reg[inst.A] | g.Reg[inst.B]
 		case "bori":
-			g.Reg[inst.c] = g.Reg[inst.a] | inst.b
+			g.Reg[inst.C] = g.Reg[inst.A] | inst.B
 		case "setr":
-			g.Reg[inst.c] = g.Reg[inst.a]
+			g.Reg[inst.C] = g.Reg[inst.A]
 		case "seti":
-			g.Reg[inst.c] = inst.a
+			g.Reg[inst.C] = inst.A
 		case "gtir":
-			if inst.a > g.Reg[inst.b] {
-				g.Reg[inst.c] = 1
+			if inst.A > g.Reg[inst.B] {
+				g.Reg[inst.C] = 1
 			} else {
-				g.Reg[inst.c] = 0
+				g.Reg[inst.C] = 0
 			}
 		case "gtri":
-			if g.Reg[inst.a] > inst.b {
-				g.Reg[inst.c] = 1
+			if g.Reg[inst.A] > inst.B {
+				g.Reg[inst.C] = 1
 			} else {
-				g.Reg[inst.c] = 0
+				g.Reg[inst.C] = 0
 			}
 		case "gtrr":
-			if g.Reg[inst.a] > g.Reg[inst.b] {
-				g.Reg[inst.c] = 1
+			if g.Reg[inst.A] > g.Reg[inst.B] {
+				g.Reg[inst.C] = 1
 			} else {
-				g.Reg[inst.c] = 0
+				g.Reg[inst.C] = 0
 			}
 		case "eqir":
-			if inst.a == g.Reg[inst.b] {
-				g.Reg[inst.c] = 1
+			if inst.A == g.Reg[inst.B] {
+				g.Reg[inst.C] = 1
 			} else {
-				g.Reg[inst.c] = 0
+				g.Reg[inst.C] = 0
 			}
 		case "eqri":
-			if g.Reg[inst.a] == inst.b {
-				g.Reg[inst.c] = 1
+			if g.Reg[inst.A] == inst.B {
+				g.Reg[inst.C] = 1
 			} else {
-				g.Reg[inst.c] = 0
+				g.Reg[inst.C] = 0
 			}
 		case "eqrr":
-			if g.Reg[inst.a] == g.Reg[inst.b] {
-				g.Reg[inst.c] = 1
+			if g.Reg[inst.A] == g.Reg[inst.B] {
+				g.Reg[inst.C] = 1
 			} else {
-				g.Reg[inst.c] = 0
+				g.Reg[inst.C] = 0
 			}
 		}
 		g.IP = g.Reg[g.bound]

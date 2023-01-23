@@ -12,9 +12,10 @@ var input []byte
 
 func Part1(e *ElfProg2018) int {
 	found := -1
+	reg := e.Prog[0].C
 	e.Run(func(e *ElfProg2018) bool {
 		if e.IP == 28 {
-			found = e.Reg[5]
+			found = e.Reg[reg]
 			return true
 		}
 		return false
@@ -25,9 +26,10 @@ func Part1(e *ElfProg2018) int {
 func Part2Slow(e *ElfProg2018) int {
 	seen := map[int]bool{}
 	prev := -1
+	reg := e.Prog[0].C
 	e.Run(func(e *ElfProg2018) bool {
 		if e.IP == 28 {
-			v := e.Reg[5]
+			v := e.Reg[reg]
 			if seen[v] {
 				return true
 			}
@@ -157,7 +159,7 @@ func main() {
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
 	}
-	p2 := Part2(nil)
+	p2 := Part2(e)
 	if !benchmark {
 		fmt.Printf("Part 2: %d\n", p2)
 	}
