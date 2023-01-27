@@ -158,8 +158,8 @@ Day 21 | 634ms / 448 KB | 362µs / None
 Day 22 | **🔴 7.23s** / **🔴 240 MB** | 25.7ms / None
 Day 23 | 381ms / 1.7 MB | 138ms / None
 Day 24 | 191ms / 42.6 MB | 88.3ms / None
-Day 25 | 17.5ms / 996 KB | -
-*Total* | *11.4s / 1.0 GB* | *947ms / 99.4 MB*
+Day 25 | 18.3ms / 997 KB | 4.57ms / None
+*Total* | *11.4s / 1.0 GB* | *952ms / 99.4 MB*
 
 ![Graph for year 2018](y2018.svg)
 
@@ -348,7 +348,7 @@ Day 21 | 629µs / 277 KB | 263ms / 48.2 MB | 111ms / 37.7 MB | 634ms / 448 KB | 
 Day 22 | **🔴 2.65s** / **🔴 1.1 GB** | 32.1ms / 391 KB | 99.6ms / 526 KB | **🔴 7.23s** / **🔴 240 MB** | 397µs / 111 KB | 93.1ms / 44.0 MB | 9.41ms / 3.8 MB | 897µs / None
 Day 23 | 45.6µs / 9.3 KB | 10.4µs / 9.0 KB | 3.51ms / 4.6 KB | 381ms / 1.7 MB | 14.9ms / 4.7 MB | **🔴 1.55s** / 32.0 MB | **🔴 520ms** / **🔴 199 MB** | 99.9ms / 2.0 MB
 Day 24 | 233ms / 61.1 MB | 65.3ms / 27.3 MB | 234ms / 59.9 MB | 191ms / 42.6 MB | 331ms / **🔴 196 MB** | 204ms / 7.9 MB | 3.78µs / 656 B | 127ms / 16.8 MB
-Day 25 | 7.59µs / 6.1 KB | 151ms / 17.9 KB | 55.7ms / 15.3 KB | 17.5ms / 996 KB | 212ms / 43.8 MB | 48.4ms / 336 B | 52.1ms / None | 2.99µs / None
+Day 25 | 7.59µs / 6.1 KB | 151ms / 17.9 KB | 55.7ms / 15.3 KB | 18.3ms / 997 KB | 212ms / 43.8 MB | 48.4ms / 336 B | 52.1ms / None | 2.99µs / None
 *Total* | *11.4s / 2.2 GB* | *20.4s / 314 MB* | *3.5s / 430 MB* | *11.4s / 1.0 GB* | *2.36s / 873 MB* | *3.6s / 757 MB* | *1.67s / 234 MB* | *757ms / 209 MB*
 
 
@@ -441,8 +441,8 @@ Day 21 | 66.5µs / 16.9 KB | 55.9ms / 4.4 MB | - | 362µs / None | 11.3µs / Non
 Day 22 | 780ms / **🔴 234 MB** | 25.6ms / 194 KB | - | 25.7ms / None | 14µs / None | 56.2ms / 15.1 MB | 19.6ms / 2.3 MB | 670µs / None
 Day 23 | 9.78µs / 1.2 KB | 9.21µs / 21.1 KB | - | 138ms / None | 24.1µs / None | **🔴 457ms** / None | **🔴 1.61s** / **🔴 165 MB** | 87.6ms / None
 Day 24 | 13.9ms / 10.0 MB | 7.62ms / 3.8 MB | - | 88.3ms / None | 11.4ms / None | 125ms / None | 16.7µs / 576 B | 146ms / 19.2 MB
-Day 25 | 633ns / 32.0 B | 12.5ms / 7.3 KB | - | - | 31µs / None | 43.9ms / None | 39.5ms / 19.4 KB | 6.67µs / None
-*Total* | *7.79s / 994 MB* | *20.5s / 1.7 GB* | *3.03s / 55.6 MB* | *947ms / 99.4 MB* | *635ms / 95.6 MB* | *1.52s / 108 MB* | *1.9s / 321 MB* | *747ms / 123 MB*
+Day 25 | 633ns / 32.0 B | 12.5ms / 7.3 KB | - | 4.57ms / None | 31µs / None | 43.9ms / None | 39.5ms / 19.4 KB | 6.67µs / None
+*Total* | *7.79s / 994 MB* | *20.5s / 1.7 GB* | *3.03s / 55.6 MB* | *952ms / 99.4 MB* | *635ms / 95.6 MB* | *1.52s / 108 MB* | *1.9s / 321 MB* | *747ms / 123 MB*
 
 
 ## Zig
