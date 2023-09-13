@@ -174,9 +174,9 @@ const Game = struct {
 };
 
 test "seen" {
-    const test1 = aoc.readChunks(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readChunks(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const inp = aoc.readChunks(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readChunks(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
 
     var seen = std.AutoHashMap(usize, bool).init(aoc.talloc);
@@ -210,9 +210,9 @@ test "seen" {
 }
 
 test "examples" {
-    const test1 = aoc.readChunks(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readChunks(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const inp = aoc.readChunks(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readChunks(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
 
     var g1 = try Game.init(aoc.talloc, test1);
@@ -226,7 +226,7 @@ test "examples" {
 }
 
 fn day22(inp: []const u8, bench: bool) anyerror!void {
-    const chunks = aoc.readChunks(aoc.halloc, inp);
+    const chunks = try aoc.readChunks(aoc.halloc, inp);
     defer aoc.halloc.free(chunks);
     var g = try Game.init(aoc.halloc, chunks);
     defer g.deinit();

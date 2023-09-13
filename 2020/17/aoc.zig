@@ -15,23 +15,23 @@ const Map = struct {
     const NB = [_]i8{ -1, 0, 1 };
 
     pub fn index(x: i8, y: i8, z: i8, q: i8) usize {
-        return @intCast(usize, x) + MAX * (@intCast(usize, y) + MAX * (@intCast(usize, z) + MAX * @intCast(usize, q)));
+        return @as(usize, @intCast(x)) + MAX * (@as(usize, @intCast(y)) + MAX * (@as(usize, @intCast(z)) + MAX * @as(usize, @intCast(q))));
     }
 
     pub fn fromInput(alloc: std.mem.Allocator, inp: [][]const u8) !*Map {
         var m = try alloc.create(Map);
         m.alloc = alloc;
-        std.mem.set(bool, m.cur[0..], false);
-        std.mem.set(bool, m.new[0..], false);
-        var size: i8 = @intCast(i8, inp.len);
+        @memset(m.cur[0..], false);
+        @memset(m.new[0..], false);
+        var size: i8 = @intCast(inp.len);
         m.w = size;
         var s2: i8 = size >> 1;
         m.w2 = s2;
         var y: i8 = 0;
         while (y < inp.len) : (y += 1) {
             var x: i8 = 0;
-            while (x < inp[@intCast(usize, y)].len) : (x += 1) {
-                if (inp[@intCast(usize, y)][@intCast(usize, x)] == '#') {
+            while (x < inp[@intCast(y)].len) : (x += 1) {
+                if (inp[@intCast(y)][@intCast(x)] == '#') {
                     m.Set(OFF - s2 + x, OFF - s2 + y, OFF, OFF);
                 }
             }
@@ -119,7 +119,7 @@ const Map = struct {
 
     pub fn Iter(self: *Map, iter: i8, part2: bool) usize {
         var n: usize = 0;
-        std.mem.set(bool, self.new[0..], false);
+        @memset(self.new[0..], false);
 
         var xystart: i8 = OFF - (1 + self.w2 + iter);
         var xyend: i8 = OFF + (2 + self.w2 + iter);
@@ -181,11 +181,11 @@ const Map = struct {
 };
 
 test "part1" {
-    const test0 = aoc.readLines(aoc.talloc, aoc.test0file);
+    const test0 = try aoc.readLines(aoc.talloc, aoc.test0file);
     defer aoc.talloc.free(test0);
-    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readLines(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readLines(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
 
     var t1m = Map.fromInput(aoc.talloc, test1) catch unreachable;
@@ -206,7 +206,7 @@ test "part1" {
 }
 
 fn day17(inp: []const u8, bench: bool) anyerror!void {
-    const lines = aoc.readLines(aoc.halloc, inp);
+    const lines = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(lines);
     var m = try Map.fromInput(aoc.halloc, lines);
     var p1 = m.Part1();

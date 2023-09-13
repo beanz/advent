@@ -35,7 +35,7 @@ fn syntax(in: []const u8) ![2]usize {
         }
     }
     var scores = p2.slice();
-    std.sort.sort(usize, scores, {}, aoc.usizeLessThan);
+    std.mem.sort(usize, scores, {}, std.sort.asc(usize));
     r[1] = scores[scores.len / 2];
     return r;
 }

@@ -4,7 +4,7 @@ const aoc = @import("aoc-lib.zig");
 fn calc(alloc: std.mem.Allocator, nums: []const usize, maxTurn: usize) usize {
     var lastSeen = alloc.alloc(usize, maxTurn) catch unreachable;
     defer alloc.free(lastSeen);
-    std.mem.set(usize, lastSeen, 0);
+    @memset(lastSeen, 0);
     var n: usize = undefined;
     var p: usize = undefined;
     var t: usize = 1;

@@ -10,10 +10,10 @@ pub fn parts(inp: anytype) ![2]usize {
     var b = try std.BoundedArray(u16, 2048).init(0);
     var lines = try aoc.BoundedInts(u16, &b, inp);
     var m1: [1048576]u2 = undefined;
-    std.mem.set(u2, m1[0..], 0);
+    @memset(m1[0..], 0);
     var c1: usize = 0;
     var m2: [1048576]u2 = undefined;
-    std.mem.set(u2, m2[0..], 0);
+    @memset(m2[0..], 0);
     var c2: usize = 0;
     var i: usize = 0;
     while (i < lines.len) : (i += 4) {

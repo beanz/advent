@@ -2,11 +2,11 @@ const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
 test "examples" {
-    const map = aoc.readLines(aoc.talloc, aoc.test1file);
+    const map = try aoc.readLines(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(map);
     try aoc.assertEq(@as(usize, 7), part1(map));
     try aoc.assertEq(@as(usize, 336), part2(map));
-    const map2 = aoc.readLines(aoc.talloc, aoc.inputfile);
+    const map2 = try aoc.readLines(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(map2);
     try aoc.assertEq(@as(usize, 169), part1(map2));
     try aoc.assertEq(@as(usize, 7560370818), part2(map2));
@@ -47,7 +47,7 @@ fn part2(map: [][]const u8) usize {
 }
 
 fn day03(inp: []const u8, bench: bool) anyerror!void {
-    const map = aoc.readLines(aoc.halloc, inp);
+    const map = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(map);
     var p1 = part1(map);
     var p2 = part2(map);

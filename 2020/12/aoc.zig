@@ -101,7 +101,7 @@ const Nav = struct {
         var l = inp.len;
         var inst = try alloc.alloc(Inst, l);
         var nav = try alloc.create(Nav);
-        for (inp) |line, i| {
+        for (inp, 0..) |line, i| {
             const n = try std.fmt.parseUnsigned(usize, line[1..], 10);
             inst[i].act = line[0];
             inst[i].val = n;
@@ -232,9 +232,9 @@ fn part2(alloc: std.mem.Allocator, in: [][]const u8) usize {
 }
 
 test "examples" {
-    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readLines(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readLines(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
 
     try aoc.assertEq(@as(usize, 25), part1(aoc.talloc, test1));
@@ -245,7 +245,7 @@ test "examples" {
 }
 
 fn day12(inp: []const u8, bench: bool) anyerror!void {
-    const lines = aoc.readLines(aoc.halloc, inp);
+    const lines = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(lines);
     var p1 = part1(aoc.halloc, lines);
     var p2 = part2(aoc.halloc, lines);

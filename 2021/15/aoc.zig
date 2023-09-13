@@ -5,8 +5,8 @@ fn get(bm: *aoc.ByteMap, x: usize, y: usize) usize {
     var mw = bm.width();
     var mh = bm.height();
     var v = bm.getXY(x % mw, y % mh) - '0';
-    v += @intCast(u8, x / mw);
-    v += @intCast(u8, y / mh);
+    v += @as(u8, @intCast(x / mw));
+    v += @as(u8, @intCast(y / mh));
     while (v > 9) : (v -= 9) {}
     return @as(usize, v);
 }
@@ -34,7 +34,7 @@ pub fn solve(alloc: std.mem.Allocator, bm: *aoc.ByteMap, dim: usize) !usize {
     var size = w * h;
     var dist = try alloc.alloc(usize, size);
     defer alloc.free(dist);
-    std.mem.set(usize, dist[0..], aoc.maxInt(usize));
+    @memset(dist[0..], aoc.maxInt(usize));
     var qsize = (w + h) * 9;
     var q = try alloc.alloc(std.ArrayList([2]usize), qsize);
     var i: usize = 0;

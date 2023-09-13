@@ -55,11 +55,11 @@ const Cup = struct {
             l += 1;
         }
         var res = c.alloc.alloc(u8, l) catch unreachable;
-        res[0] = @intCast(u8, c.val) + '0';
+        res[0] = @as(u8, @intCast(c.val)) + '0';
         n = c.cw;
         var i: usize = 1;
         while (n != c) : (n = n.cw) {
-            res[i] = @intCast(u8, n.val) + '0';
+            res[i] = @as(u8, @intCast(n.val)) + '0';
             i += 1;
         }
         return res;
@@ -75,7 +75,7 @@ const Cup = struct {
         var i: usize = 0;
         n = c.cw;
         while (n != c) : (n = n.cw) {
-            res[i] = @intCast(u8, n.val) + '0';
+            res[i] = @as(u8, @intCast(n.val)) + '0';
             i += 1;
         }
         return res;
@@ -185,9 +185,9 @@ const Game = struct {
 };
 
 test "part1" {
-    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readLines(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readLines(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
 
     var gt = try Game.init(aoc.halloc, test1);
@@ -204,9 +204,9 @@ test "part1" {
 }
 
 test "part2" {
-    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readLines(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readLines(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
 
     var gt = try Game.init(aoc.halloc, test1);
@@ -228,7 +228,7 @@ test "part2" {
 }
 
 fn day23(inp: []const u8, bench: bool) anyerror!void {
-    const lines = aoc.readLines(aoc.halloc, inp);
+    const lines = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(lines);
     var g = try Game.init(aoc.halloc, lines);
     defer g.deinit();

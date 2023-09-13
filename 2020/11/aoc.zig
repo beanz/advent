@@ -2,11 +2,11 @@ const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
 test "examples" {
-    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readLines(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const test2 = aoc.readLines(aoc.talloc, aoc.test2file);
+    const test2 = try aoc.readLines(aoc.talloc, aoc.test2file);
     defer aoc.talloc.free(test2);
-    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readLines(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
 
     var map = Map.fromInput(aoc.talloc, test1) catch unreachable;
@@ -55,8 +55,8 @@ const Map = struct {
         m.h = h;
         m.w = w;
         m.alloc = alloc;
-        for (inp) |line, y| {
-            for (line) |s, x| {
+        for (inp, 0..) |line, y| {
+            for (line, 0..) |s, x| {
                 if (s == 'L') {
                     map[y * w + x] = .empty;
                 } else if (s == '#') {
@@ -189,7 +189,7 @@ fn part2(alloc: std.mem.Allocator, in: [][]const u8) usize {
 }
 
 fn day11(inp: []const u8, bench: bool) anyerror!void {
-    const lines = aoc.readLines(aoc.halloc, inp);
+    const lines = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(lines);
     var p1 = part1(aoc.halloc, lines);
     var p2 = part2(aoc.halloc, lines);

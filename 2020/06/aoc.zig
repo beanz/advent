@@ -2,12 +2,12 @@ const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
 test "examples" {
-    const test1 = aoc.readChunks(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readChunks(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
     try aoc.assertEq(@as(usize, 11), part1(aoc.talloc, test1));
     try aoc.assertEq(@as(usize, 6), part2(aoc.talloc, test1));
 
-    const inp = aoc.readChunks(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readChunks(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
     try aoc.assertEq(@as(usize, 6506), part1(aoc.talloc, inp));
     try aoc.assertEq(@as(usize, 3243), part2(aoc.talloc, inp));
@@ -60,7 +60,7 @@ fn part2(alloc: std.mem.Allocator, inp: anytype) usize {
 }
 
 fn day06(inp: []const u8, bench: bool) anyerror!void {
-    var dec = aoc.readChunks(aoc.halloc, inp);
+    var dec = try aoc.readChunks(aoc.halloc, inp);
     defer aoc.halloc.free(dec);
     var p1 = part1(aoc.halloc, dec);
     var p2 = part2(aoc.halloc, dec);

@@ -35,9 +35,9 @@ const Matcher = struct {
                         const v = try std.fmt.parseUnsigned(usize, vs, 10);
                         try ov.append(v);
                     }
-                    try opt.append(ov.toOwnedSlice());
+                    try opt.append(try ov.toOwnedSlice());
                 }
-                try r.put(n, Rule{ .opt = opt.toOwnedSlice() });
+                try r.put(n, Rule{ .opt = try opt.toOwnedSlice() });
             }
         }
         var vs = std.mem.split(u8, in[1], "\n");
@@ -49,7 +49,7 @@ const Matcher = struct {
         var self = try alloc.create(Matcher);
         self.alloc = alloc;
         self.rules = r;
-        self.values = vl.toOwnedSlice();
+        self.values = try vl.toOwnedSlice();
         return self;
     }
 
@@ -152,13 +152,13 @@ const Matcher = struct {
 };
 
 test "examples" {
-    const test0 = aoc.readChunks(aoc.talloc, aoc.test0file);
+    const test0 = try aoc.readChunks(aoc.talloc, aoc.test0file);
     defer aoc.talloc.free(test0);
-    const test1 = aoc.readChunks(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readChunks(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const test2 = aoc.readChunks(aoc.talloc, aoc.test2file);
+    const test2 = try aoc.readChunks(aoc.talloc, aoc.test2file);
     defer aoc.talloc.free(test2);
-    const inp = aoc.readChunks(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readChunks(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
 
     var m = try Matcher.init(aoc.talloc, test0);
@@ -179,7 +179,7 @@ test "examples" {
 }
 
 fn day19(inp: []const u8, bench: bool) anyerror!void {
-    const chunks = aoc.readChunks(aoc.halloc, inp);
+    const chunks = try aoc.readChunks(aoc.halloc, inp);
     defer aoc.halloc.free(chunks);
     var m = try Matcher.init(aoc.halloc, chunks);
     var p1 = m.Part1();

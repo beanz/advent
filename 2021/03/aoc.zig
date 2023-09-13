@@ -11,8 +11,8 @@ const Diag = struct {
         var nums = try allocator.alloc(usize, inp.len);
         var diag = try allocator.create(Diag);
         diag.bits = inp[0].len - 1;
-        diag.maxbit = @intCast(usize, (@as(u64, 1) << @intCast(u6, diag.bits)));
-        for (inp) |line, i| {
+        diag.maxbit = @intCast((@as(u64, 1) << @as(u6, @intCast(diag.bits))));
+        for (inp, 0..) |line, i| {
             nums[i] = try std.fmt.parseUnsigned(usize, line, 2);
         }
         diag.nums = nums;
@@ -85,9 +85,9 @@ const Diag = struct {
 };
 
 test "examples" {
-    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readLines(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readLines(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
 
     var t = Diag.fromInput(aoc.talloc, test1) catch unreachable;
@@ -101,7 +101,7 @@ test "examples" {
 }
 
 fn day03(inp: []const u8, bench: bool) anyerror!void {
-    var lines = aoc.readLines(aoc.halloc, inp);
+    var lines = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(lines);
     var diag = try Diag.fromInput(aoc.halloc, lines);
     defer diag.deinit();

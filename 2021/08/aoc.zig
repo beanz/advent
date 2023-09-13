@@ -49,7 +49,7 @@ const Signal = struct {
             }
         }
         //aoc.print("{any} {any}\n", .{ occur, occur6 }) catch unreachable;
-        for (occur) |o, i| {
+        for (occur, 0..) |o, i| {
             switch (o) {
                 6 => {
                     self.map[i] = @as(u8, 'b');
@@ -165,7 +165,7 @@ const Signals = struct {
             var sig = try Signal.init(alloc, l);
             try sigs.append(sig);
         }
-        self.signals = sigs.toOwnedSlice();
+        self.signals = try sigs.toOwnedSlice();
         return self;
     }
 

@@ -63,7 +63,7 @@ fn lava(alloc: std.mem.Allocator, in: []const u8) ![2]usize {
             try sizes.append(size);
         }
     }
-    std.sort.sort(usize, sizes.items, {}, aoc.usizeLessThan);
+    std.mem.sort(usize, sizes.items, {}, std.sort.asc(usize));
     r[1] = (sizes.items[sizes.items.len - 3] *
         sizes.items[sizes.items.len - 2] *
         sizes.items[sizes.items.len - 1]);

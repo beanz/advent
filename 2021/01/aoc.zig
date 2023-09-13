@@ -52,8 +52,8 @@ test "vector" {
     aoc.print("v2={}\n", .{v2});
     var v3 = v1 < v2;
     aoc.print("v3={}\n", .{v3});
-    var zeros: std.meta.Vector(9, u16) = @splat(9, @as(u16, 0));
-    var ones: std.meta.Vector(9, u16) = @splat(9, @as(u16, 1));
+    var zeros: std.meta.Vector(9, u16) = @splat(@as(u16, 0));
+    var ones: std.meta.Vector(9, u16) = @splat(@as(u16, 1));
     var sel = @select(u16, v3, ones, zeros);
     aoc.print("sel={}\n", .{sel});
     try aoc.assertEq(@as(u32, 7), @reduce(.Add, sel));

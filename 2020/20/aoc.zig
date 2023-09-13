@@ -23,14 +23,14 @@ const Tile = struct {
             var x = try alloc.dupe(u8, line);
             try ls.append(x);
         }
-        s.lines = ls.toOwnedSlice();
+        s.lines = try ls.toOwnedSlice();
         s.width = s.lines.len;
         s.calc_edges();
         return s;
     }
 
     pub fn deinit(s: *Tile) void {
-        for (s.lines) |_, i| {
+        for (s.lines, 0..) |_, i| {
             s.alloc.free(s.lines[i]);
         }
         s.alloc.free(s.lines);
@@ -270,7 +270,7 @@ const Water = struct {
     }
 
     fn isqrt(x: usize) usize {
-        const ix = @intCast(isize, x);
+        const ix = @as(isize, @intCast(x));
         var q: isize = 1;
         while (q <= ix) {
             q <<= 2;
@@ -286,7 +286,7 @@ const Water = struct {
                 r += q;
             }
         }
-        return @intCast(usize, r);
+        return @as(usize, @intCast(r));
     }
 
     pub fn Image(s: *Water) [][]const u8 {
@@ -341,10 +341,10 @@ const Water = struct {
         return res;
     }
 
-    pub fn Part2(s: *Water) usize {
+    pub fn Part2(s: *Water) anyerror!usize {
         var image = s.Image();
         defer {
-            for (image) |_, j| {
+            for (image, 0..) |_, j| {
                 s.alloc.free(image[j]);
             }
             s.alloc.free(image);
@@ -355,7 +355,7 @@ const Water = struct {
             }
             std.debug.print("\n", .{});
         }
-        const monster = aoc.readLines(s.alloc, @embedFile("monster.txt"));
+        const monster = try aoc.readLines(s.alloc, @embedFile("monster.txt"));
         defer s.alloc.free(monster);
         const mh = monster.len;
         const mw = monster[0].len;
@@ -399,7 +399,7 @@ const Water = struct {
             } else {
                 var old = image;
                 defer {
-                    for (old) |_, j| {
+                    for (old, 0..) |_, j| {
                         s.alloc.free(old[j]);
                     }
                     s.alloc.free(old);
@@ -413,9 +413,9 @@ const Water = struct {
 };
 
 test "part1" {
-    const test1 = aoc.readChunks(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readChunks(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const inp = aoc.readChunks(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readChunks(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
 
     var wt = try Water.init(aoc.talloc, test1);
@@ -428,26 +428,26 @@ test "part1" {
 }
 
 test "part2" {
-    const test1 = aoc.readChunks(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readChunks(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const inp = aoc.readChunks(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readChunks(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
     var wt = try Water.init(aoc.talloc, test1);
     defer wt.deinit();
-    try aoc.assertEq(@as(usize, 273), wt.Part2());
+    try aoc.assertEq(@as(usize, 273), try wt.Part2());
 
     var w = try Water.init(aoc.talloc, inp);
     defer w.deinit();
-    try aoc.assertEq(@as(usize, 2173), w.Part2());
+    try aoc.assertEq(@as(usize, 2173), try w.Part2());
 }
 
 fn day20(inp: []const u8, bench: bool) anyerror!void {
-    const chunks = aoc.readChunks(aoc.halloc, inp);
+    const chunks = try aoc.readChunks(aoc.halloc, inp);
     defer aoc.halloc.free(chunks);
     var w = try Water.init(aoc.halloc, chunks);
     defer w.deinit();
     var p1 = w.Part1();
-    var p2 = w.Part2();
+    var p2 = try w.Part2();
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

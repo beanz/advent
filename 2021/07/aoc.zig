@@ -2,7 +2,7 @@ const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
 fn fuel1(a: usize, b: usize) usize {
-    return aoc.absCast(@intCast(isize, a) - @intCast(isize, b));
+    return aoc.absCast(@as(isize, @intCast(a)) - @as(isize, @intCast(b)));
 }
 
 test "fuel1" {
@@ -27,7 +27,7 @@ fn fuelsum1(p: usize, inp: []const usize) usize {
 }
 
 fn part1(inp: []usize) usize {
-    std.sort.sort(usize, inp, {}, aoc.usizeLessThan);
+    std.mem.sort(usize, inp, {}, std.sort.asc(usize));
     return fuelsum1(inp[inp.len / 2], inp);
 }
 

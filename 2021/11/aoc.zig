@@ -11,19 +11,19 @@ fn parts(alloc: std.mem.Allocator, in: []const u8, p1Days: usize) ![2]usize {
     var c: usize = 0;
     var day: usize = 1;
     while (true) : (day += 1) {
-        for (oct) |ch, i| {
+        for (oct, 0..) |ch, i| {
             if (ch != '\n') {
                 oct[i] += 1;
             }
         }
         //aoc.print("{s}\n", .{oct}) catch unreachable;
-        for (oct) |ch, i| {
+        for (oct, 0..) |ch, i| {
             if (ch > '9' and ch != '~') {
                 flash(oct, i, w, h);
             }
         }
         var p2: usize = 0;
-        for (oct) |ch, i| {
+        for (oct, 0..) |ch, i| {
             if (ch != '~') {
                 continue;
             }
@@ -44,8 +44,8 @@ fn parts(alloc: std.mem.Allocator, in: []const u8, p1Days: usize) ![2]usize {
 }
 
 fn flash(oct: []u8, i: usize, w: usize, h: usize) void {
-    var x = @intCast(isize, i % (w + 1));
-    var y = @intCast(isize, i / (w + 1));
+    var x = @as(isize, @intCast(i % (w + 1)));
+    var y = @as(isize, @intCast(i / (w + 1)));
     //aoc.print("flash {},{}\n{s}\n", .{ x, y, oct }) catch unreachable;
     oct[i] = '~';
     for ([3]isize{ x - 1, x, x + 1 }) |nx| {
@@ -56,7 +56,7 @@ fn flash(oct: []u8, i: usize, w: usize, h: usize) void {
             if (nx < 0 or ny < 0 or nx >= w or ny >= h) {
                 continue;
             }
-            var ni = @intCast(usize, nx) + @intCast(usize, ny) * (w + 1);
+            var ni = @as(usize, @intCast(nx)) + @as(usize, @intCast(ny)) * (w + 1);
             if (oct[ni] == '~') {
                 continue;
             }

@@ -51,7 +51,7 @@ const Paper = struct {
                 else => {},
             }
         }
-        paper.folds = folds.toOwnedSlice();
+        paper.folds = try folds.toOwnedSlice();
         //aoc.print("{any}\n", .{paper}) catch unreachable;
         paper.points = points;
         return paper;
@@ -89,7 +89,7 @@ const Paper = struct {
             _ = try self.nextFold();
         }
         var s = try self.alloc.alloc(u8, @as(usize, self.bb[0] + 1) * @as(usize, self.bb[1]));
-        std.mem.set(u8, s, ' ');
+        @memset(s, ' ');
         var y: u11 = 0;
         while (y < self.bb[1]) : (y += 1) {
             var x: u11 = 0;

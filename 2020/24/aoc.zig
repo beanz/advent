@@ -2,14 +2,14 @@ const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
 pub fn HexTile(q: i8, r: i8) usize {
-    return @intCast(usize, ((@intCast(i32, q) + 127) << 8) + (@intCast(i32, r) + 127));
+    return @as(usize, @intCast(((@as(i32, @intCast(q)) + 127) << 8) + (@as(i32, @intCast(r)) + 127)));
 }
 
 pub fn Q(ht: usize) i8 {
-    return @intCast(i8, @intCast(i32, (ht >> 8)) - 127);
+    return @as(i8, @intCast(@as(i32, @intCast(ht >> 8)) - 127));
 }
 pub fn R(ht: usize) i8 {
-    return @intCast(i8, @intCast(i32, (ht & 0xff)) - 127);
+    return @as(i8, @intCast(@as(i32, @intCast(ht & 0xff)) - 127));
 }
 
 pub fn HexTileNeighbours(ht: usize) [6]usize {
@@ -221,9 +221,9 @@ const HexLife = struct {
 };
 
 test "hex life part1" {
-    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readLines(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readLines(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
 
     var gt = try HexLife.init(aoc.talloc, test1);
@@ -235,9 +235,9 @@ test "hex life part1" {
 }
 
 test "hex life part2" {
-    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readLines(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readLines(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
 
     var gt = try HexLife.init(aoc.talloc, test1);
@@ -253,7 +253,7 @@ test "hex life part2" {
 }
 
 fn day24(inp: []const u8, bench: bool) anyerror!void {
-    const lines = aoc.readLines(aoc.halloc, inp);
+    const lines = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(lines);
     var g = try HexLife.init(aoc.halloc, lines);
     defer g.deinit();

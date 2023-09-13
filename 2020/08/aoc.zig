@@ -12,7 +12,7 @@ const HH = struct {
     pub fn fromInput(inp: anytype, alloc: std.mem.Allocator) !*HH {
         var code = try alloc.alloc(Inst, inp.len);
         var hh = try alloc.create(HH);
-        for (inp) |line, ip| {
+        for (inp, 0..) |line, ip| {
             var it = std.mem.split(u8, line, " ");
             const opstr = it.next().?;
             const arg = try aoc.parseInt(i64, it.next().?, 10);
@@ -49,7 +49,7 @@ const HH = struct {
     pub fn clone(self: *HH) !*HH {
         var code = try self.alloc.alloc(Inst, self.code.len);
         var hh = try self.alloc.create(HH);
-        for (self.code) |inst, ip| {
+        for (self.code, 0..) |inst, ip| {
             code[ip].op = inst.op;
             code[ip].arg = inst.arg;
         }
@@ -99,9 +99,9 @@ const HH = struct {
 };
 
 test "examples" {
-    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readLines(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readLines(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
 
     try aoc.assertEq(@as(i64, 5), part1(aoc.talloc, test1));
@@ -121,7 +121,7 @@ fn part1(alloc: std.mem.Allocator, inp: anytype) i64 {
 fn part2(alloc: std.mem.Allocator, inp: anytype) i64 {
     var hh = HH.fromInput(inp, alloc) catch unreachable;
     defer hh.deinit();
-    for (hh.code) |_, ip| {
+    for (hh.code, 0..) |_, ip| {
         var mhh = hh.clone() catch unreachable;
         defer mhh.deinit();
         if (!mhh.fixOp(ip)) {
@@ -136,7 +136,7 @@ fn part2(alloc: std.mem.Allocator, inp: anytype) i64 {
 }
 
 fn day08(inp: []const u8, bench: bool) anyerror!void {
-    var spec = aoc.readLines(aoc.halloc, inp);
+    var spec = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(spec);
     var p1 = part1(aoc.halloc, spec);
     var p2 = part2(aoc.halloc, spec);

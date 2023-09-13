@@ -150,7 +150,7 @@ pub fn splitToOwnedSlice(alloc: std.mem.Allocator, inp: []const u8, sep: []const
     return bits.toOwnedSlice();
 }
 
-pub fn readLines(alloc: std.mem.Allocator, inp: anytype) [][]const u8 {
+pub fn readLines(alloc: std.mem.Allocator, inp: anytype) anyerror![][]const u8 {
     var lines = std.ArrayList([]const u8).init(alloc);
     var lit = std.mem.split(u8, inp, "\n");
     while (lit.next()) |line| {
@@ -162,7 +162,7 @@ pub fn readLines(alloc: std.mem.Allocator, inp: anytype) [][]const u8 {
     return lines.toOwnedSlice();
 }
 
-pub fn readChunks(alloc: std.mem.Allocator, inp: anytype) [][]const u8 {
+pub fn readChunks(alloc: std.mem.Allocator, inp: anytype) anyerror![][]const u8 {
     var chunks = std.ArrayList([]const u8).init(alloc);
     var cit = std.mem.split(u8, inp, "\n\n");
     while (cit.next()) |chunk| {
@@ -178,7 +178,7 @@ pub fn readChunks(alloc: std.mem.Allocator, inp: anytype) [][]const u8 {
     return chunks.toOwnedSlice();
 }
 
-pub fn readChunkyObjects(alloc: std.mem.Allocator, inp: anytype, chunkSep: []const u8, recordSep: []const u8, fieldSep: []const u8) [](std.StringHashMap([]const u8)) {
+pub fn readChunkyObjects(alloc: std.mem.Allocator, inp: anytype, chunkSep: []const u8, recordSep: []const u8, fieldSep: []const u8) anyerror![](std.StringHashMap([]const u8)) {
     var report = std.ArrayList(std.StringHashMap([]const u8)).init(alloc);
     var cit = split(u8, inp, chunkSep);
     while (cit.next()) |chunk| {

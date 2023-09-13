@@ -16,7 +16,7 @@ const Menu = struct {
         self.ingredients = std.StringHashMap(std.AutoHashMap(usize, bool)).init(alloc);
         self.possible = std.StringHashMap(std.StringHashMap(bool)).init(alloc);
 
-        for (in) |line, i| {
+        for (in, 0..) |line, i| {
             var ls = std.mem.split(u8, line, " (contains ");
             const ingstr = ls.next().?;
             var ings = std.mem.split(u8, ingstr, " ");
@@ -111,7 +111,7 @@ const Menu = struct {
             }
         }
         var res = resList.items;
-        std.sort.sort(Result, res, {}, resultLessThan);
+        std.mem.sort(Result, res, {}, resultLessThan);
         if (resLength == 0) {
             return "";
         }
@@ -128,9 +128,9 @@ const Menu = struct {
 };
 
 test "examples" {
-    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readLines(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readLines(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
 
     var mt = Menu.init(aoc.talloc, test1) catch unreachable;
@@ -151,7 +151,7 @@ test "examples" {
 }
 
 fn day21(inp: []const u8, bench: bool) anyerror!void {
-    const lines = aoc.readLines(aoc.halloc, inp);
+    const lines = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(lines);
     var m = try Menu.init(aoc.halloc, lines);
     defer m.deinit();

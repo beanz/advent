@@ -142,7 +142,7 @@ const Mess = struct {
                         std.debug.print("found {s} at {!} ({!})\n", .{ name, col, col });
                     }
                     var bm = possible.get(name).?;
-                    bm |= bit(@intCast(i64, col));
+                    bm |= bit(@intCast(col));
                     try possible.put(name, bm);
                 }
             }
@@ -192,11 +192,11 @@ test "count1s" {
 }
 
 test "examples" {
-    const test1 = aoc.readChunks(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readChunks(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const test2 = aoc.readChunks(aoc.talloc, aoc.test2file);
+    const test2 = try aoc.readChunks(aoc.talloc, aoc.test2file);
     defer aoc.talloc.free(test2);
-    const inp = aoc.readChunks(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readChunks(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
 
     var t1m = Mess.fromInput(aoc.talloc, test1) catch unreachable;
@@ -221,10 +221,10 @@ fn day16(_: []const u8, bench: bool) anyerror!void {
     var chunks: [][]const u8 = undefined;
     var onlyDepart = true;
     if (args.next()) |_| {
-        chunks = aoc.readChunks(aoc.halloc, aoc.test2file);
+        chunks = try aoc.readChunks(aoc.halloc, aoc.test2file);
         onlyDepart = false;
     } else {
-        chunks = aoc.readChunks(aoc.halloc, aoc.inputfile);
+        chunks = try aoc.readChunks(aoc.halloc, aoc.inputfile);
     }
     defer aoc.halloc.free(chunks);
     var m = try Mess.fromInput(aoc.halloc, chunks);

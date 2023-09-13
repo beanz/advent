@@ -5,9 +5,9 @@ fn parts(alloc: std.mem.Allocator, inp: []const u8) ![2]u16 {
     var si = std.mem.indexOfScalar(u8, inp, @as(u8, '\n')) orelse unreachable;
     var calls = try aoc.Ints(alloc, u8, inp[0..si]);
     defer alloc.free(calls);
-    var rounds: [100]u8 = @splat(100, @as(u8, 101));
-    for (calls) |v, i| {
-        rounds[v] = @intCast(u8, i);
+    var rounds: @Vector(100, u8) = @splat(@as(u8, 101));
+    for (calls, 0..) |v, i| {
+        rounds[v] = @as(u8, @intCast(i));
     }
     var res = [2]u16{ 0, 0 };
     var first: u8 = 255;
@@ -18,7 +18,7 @@ fn parts(alloc: std.mem.Allocator, inp: []const u8) ![2]u16 {
     while (boardI < boardInts.len) : (boardI += 25) {
         var board = boardInts[boardI .. boardI + 25];
         var rl = [10]u8{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        for (board) |v, i| {
+        for (board, 0..) |v, i| {
             var round = rounds[v];
             var r = i % 5;
             var c = @divFloor(i, 5);

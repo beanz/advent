@@ -43,9 +43,9 @@ pub fn part1(s: [][]const u8) !u64 {
 }
 
 test "part1" {
-    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readLines(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readLines(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
 
     const rt = try part1(test1);
@@ -55,7 +55,7 @@ test "part1" {
 }
 
 fn day25(inp: []const u8, bench: bool) anyerror!void {
-    const lines = aoc.readLines(aoc.halloc, inp);
+    const lines = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(lines);
     var p1 = part1(lines);
     if (!bench) {

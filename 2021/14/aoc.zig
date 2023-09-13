@@ -8,13 +8,13 @@ pub fn parts(alloc: std.mem.Allocator, inp: []const u8) ![2]usize {
     i += 2;
     var middleFor = [_]u5{0} ** 676;
     while (i < inp.len) : (i += 8) {
-        middleFor[@as(usize, inp[i] - 'A') * 26 + @as(usize, inp[i + 1] - 'A')] = @intCast(u5, inp[i + 6] - 'A');
+        middleFor[@as(usize, inp[i] - 'A') * 26 + @as(usize, inp[i + 1] - 'A')] = @as(u5, @intCast(inp[i + 6] - 'A'));
     }
     var pc = std.AutoHashMap([2]u5, usize).init(alloc);
     defer pc.deinit();
     i = 0;
     while (i < init.len - 1) : (i += 1) {
-        var pair = [2]u5{ @intCast(u5, init[i] - 'A'), @intCast(u5, init[i + 1] - 'A') };
+        var pair = [2]u5{ @as(u5, @intCast(init[i] - 'A')), @as(u5, @intCast(init[i + 1] - 'A')) };
         try pc.put(pair, (pc.get(pair) orelse 0) + 1);
     }
     var npc = std.AutoHashMap([2]u5, usize).init(alloc);

@@ -115,7 +115,7 @@ pub fn readPacket(alloc: std.mem.Allocator, bits: []const u1, i: *usize) anyerro
 
 pub fn parts(alloc: std.mem.Allocator, inp: []const u8) ![2]usize {
     var bits = try alloc.alloc(u1, inp.len * 4);
-    std.mem.set(u1, bits[0..], 0);
+    @memset(bits[0..], 0);
     defer alloc.free(bits);
     var i: usize = 0;
     while (i < (inp.len - 1)) : (i += 1) {

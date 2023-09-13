@@ -38,7 +38,7 @@ pub fn RPN(alloc: std.mem.Allocator, exp: []Token) usize {
     return stack.items[stack.items.len - 1];
 }
 
-pub fn ShuntingYard(alloc: std.mem.Allocator, s: []const u8, isPart2: bool) []Token {
+pub fn ShuntingYard(alloc: std.mem.Allocator, s: []const u8, isPart2: bool) anyerror![]Token {
     var output = std.ArrayList(Token).init(alloc);
     defer output.deinit();
     var operator = std.ArrayList(Token).init(alloc);
@@ -107,24 +107,24 @@ pub fn ShuntingYard(alloc: std.mem.Allocator, s: []const u8, isPart2: bool) []To
     return output.toOwnedSlice();
 }
 
-pub fn Calc(alloc: std.mem.Allocator, s: []const u8, isPart2: bool) usize {
-    var sy = ShuntingYard(alloc, s, isPart2);
+pub fn Calc(alloc: std.mem.Allocator, s: []const u8, isPart2: bool) anyerror!usize {
+    var sy = try ShuntingYard(alloc, s, isPart2);
     defer alloc.free(sy);
     return RPN(alloc, sy);
 }
 
-pub fn part1(alloc: std.mem.Allocator, s: [][]const u8) usize {
+pub fn part1(alloc: std.mem.Allocator, s: [][]const u8) anyerror!usize {
     var t: usize = 0;
     for (s) |l| {
-        t += Calc(alloc, l, false);
+        t += try Calc(alloc, l, false);
     }
     return t;
 }
 
-pub fn part2(alloc: std.mem.Allocator, s: [][]const u8) usize {
+pub fn part2(alloc: std.mem.Allocator, s: [][]const u8) anyerror!usize {
     var t: usize = 0;
     for (s) |l| {
-        t += Calc(alloc, l, true);
+        t += try Calc(alloc, l, true);
     }
     return t;
 }
@@ -184,22 +184,22 @@ test "Calc2" {
 }
 
 test "examples" {
-    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readLines(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readLines(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
 
-    try aoc.assertEq(@as(usize, 26457), part1(aoc.talloc, test1));
-    try aoc.assertEq(@as(usize, 694173), part2(aoc.talloc, test1));
-    try aoc.assertEq(@as(usize, 510009915468), part1(aoc.talloc, inp));
-    try aoc.assertEq(@as(usize, 321176691637769), part2(aoc.talloc, inp));
+    try aoc.assertEq(@as(usize, 26457), try part1(aoc.talloc, test1));
+    try aoc.assertEq(@as(usize, 694173), try part2(aoc.talloc, test1));
+    try aoc.assertEq(@as(usize, 510009915468), try part1(aoc.talloc, inp));
+    try aoc.assertEq(@as(usize, 321176691637769), try part2(aoc.talloc, inp));
 }
 
 fn day18(inp: []const u8, bench: bool) anyerror!void {
-    const lines = aoc.readLines(aoc.halloc, inp);
+    const lines = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(lines);
-    var p1 = part1(aoc.halloc, lines);
-    var p2 = part2(aoc.halloc, lines);
+    var p1 = try part1(aoc.halloc, lines);
+    var p2 = try part2(aoc.halloc, lines);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

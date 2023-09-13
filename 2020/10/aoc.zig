@@ -27,7 +27,7 @@ test "examples" {
 fn part1(alloc: std.mem.Allocator, in: []const i64) i64 {
     var nums: []i64 = alloc.dupe(i64, in) catch unreachable;
     defer alloc.free(nums);
-    std.sort.sort(i64, nums, {}, aoc.i64LessThan);
+    std.mem.sort(i64, nums, {}, std.sort.asc(i64));
     var cj: i64 = 0;
     var c = std.AutoHashMap(i64, i64).init(alloc);
     defer c.deinit();
@@ -66,7 +66,7 @@ fn count(cj: i64, tj: i64, ni: usize, nums: []i64, state: *std.AutoHashMap(usize
 fn part2(alloc: std.mem.Allocator, in: []const i64) i64 {
     var nums: []i64 = alloc.dupe(i64, in) catch unreachable;
     defer alloc.free(nums);
-    std.sort.sort(i64, nums, {}, aoc.i64LessThan);
+    std.mem.sort(i64, nums, {}, std.sort.asc(i64));
     var state = std.AutoHashMap(usize, i64).init(alloc);
     defer state.deinit();
     return count(0, in[in.len - 1], 0, nums, &state);

@@ -58,19 +58,19 @@ const Game = struct {
     }
     pub fn part2(self: *Game) usize {
         var games: [21 * 21 * 11 * 11]usize = undefined;
-        for (games) |*v| {
+        for (&games) |*v| {
             v.* = 0;
         }
         var wins: [21 * 21 * 11 * 11]usize = undefined;
-        for (wins) |*v| {
+        for (&wins) |*v| {
             v.* = 0;
         }
         var its: i8 = 40;
         while (its >= 0) : (its -= 1) {
-            var ts = @intCast(usize, its);
+            var ts = @as(usize, @intCast(its));
             var is1: isize = 20;
             while (is1 >= 0) : (is1 -= 1) {
-                var s1 = @intCast(usize, is1);
+                var s1 = @as(usize, @intCast(is1));
                 if (s1 > ts) {
                     continue;
                 }

@@ -13,7 +13,7 @@ const Cave = struct {
     pub fn init(alloc: std.mem.Allocator, inp: []const u8) !*Cave {
         var cave = try alloc.create(Cave);
         cave.alloc = alloc;
-        std.mem.set(u16, cave.next[0..], 0);
+        @memset(cave.next[0..], 0);
         cave.lower = 0;
         cave.max = END;
         var ids = std.StringHashMap(u16).init(alloc);
@@ -22,7 +22,7 @@ const Cave = struct {
         try ids.put("end", END);
         var start: usize = 0;
         var dash: usize = 0;
-        for (inp) |ch, i| {
+        for (inp, 0..) |ch, i| {
             switch (ch) {
                 '-' => {
                     dash = i;

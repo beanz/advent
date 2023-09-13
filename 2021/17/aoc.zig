@@ -47,7 +47,7 @@ pub fn parts(_: std.mem.Allocator, inp: []const u8) ![2]usize {
             }
         }
     }
-    return [2]usize{ @intCast(usize, @divFloor(target[2] * (target[2] + 1), 2)), p2 };
+    return [2]usize{ @as(usize, @intCast(@divFloor(target[2] * (target[2] + 1), 2))), p2 };
 }
 
 test "parts" {

@@ -41,7 +41,7 @@ fn chinese(la: std.ArrayList(i64), ln: std.ArrayList(i64)) i64 {
     }
     var x: i64 = 0;
     var j: i64 = undefined; // place holder for egcd result we don't need
-    for (ln.items) |n, i| {
+    for (ln.items, 0..) |n, i| {
         const a = la.items[i];
         const q = @divExact(p, n);
         var y: i64 = undefined;
@@ -81,19 +81,19 @@ fn part2(alloc: std.mem.Allocator, in: [][]const u8) i64 {
 }
 
 test "examples" {
-    const test1 = aoc.readLines(aoc.talloc, aoc.test1file);
+    const test1 = try aoc.readLines(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(test1);
-    const test2 = aoc.readLines(aoc.talloc, aoc.test2file);
+    const test2 = try aoc.readLines(aoc.talloc, aoc.test2file);
     defer aoc.talloc.free(test2);
-    const test3 = aoc.readLines(aoc.talloc, aoc.test3file);
+    const test3 = try aoc.readLines(aoc.talloc, aoc.test3file);
     defer aoc.talloc.free(test3);
-    const test4 = aoc.readLines(aoc.talloc, aoc.test4file);
+    const test4 = try aoc.readLines(aoc.talloc, aoc.test4file);
     defer aoc.talloc.free(test4);
-    const test5 = aoc.readLines(aoc.talloc, aoc.test5file);
+    const test5 = try aoc.readLines(aoc.talloc, aoc.test5file);
     defer aoc.talloc.free(test5);
-    const test6 = aoc.readLines(aoc.talloc, aoc.test6file);
+    const test6 = try aoc.readLines(aoc.talloc, aoc.test6file);
     defer aoc.talloc.free(test6);
-    const inp = aoc.readLines(aoc.talloc, aoc.inputfile);
+    const inp = try aoc.readLines(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(inp);
 
     try aoc.assertEq(@as(u64, 295), part1(test1));
@@ -114,7 +114,7 @@ test "examples" {
 }
 
 fn day13(inp: []const u8, bench: bool) anyerror!void {
-    const lines = aoc.readLines(aoc.halloc, inp);
+    const lines = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(lines);
     var p1 = part1(lines);
     var p2 = part2(aoc.halloc, lines);
