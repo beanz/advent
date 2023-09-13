@@ -1,4 +1,5 @@
 DIRS=$(sort $(wildcard ????/??/))
+VPATH=input
 
 PRIVATE_INPUTS=$(sort $(wildcard input/????/??/*.txt))
 INPUTS=$(subst input/,,${PRIVATE_INPUTS})
@@ -55,12 +56,11 @@ CPP_ERR=$(subst /cpp/aoc.cpp,/aoc-cpp.err,${CPP_SRC})
 CPP_REL=$(subst /cpp/aoc.cpp,/aoc-cpp-rel,${CPP_SRC})
 CPP_BENCH=$(subst /cpp/aoc.cpp,/aoc-cpp.ns,${CPP_SRC})
 
-CC=clang++-15
-#CC=g++-7
-CR_DIR=/usr
-CR_LIB=$(CR_DIR)/share/crystal/src:../../lib-cr
-CR=$(CR_DIR)/bin/crystal
-NIM=$(HOME)/Tmp/nim-1.6.6/bin/nim
+CPP=clang++
+#CPP=g++-7
+CR_LIB=../../lib-cr
+CR=crystal
+NIM=nim
 
 TIME=../../bin/time
 
@@ -129,10 +129,10 @@ aoc-rust/target/release/aoc-%: aoc-rust/src/bin/aoc-%.rs
 	cd $(dir $@) && go build -o aoc-go main.go
 
 %/aoc-cpp: %/cpp/aoc.cpp %/cpp/input.h
-	$(CC) -I$(dir $@)../../lib-cpp -o $@ $<
+	$(CPP) -I$(dir $@)../../lib-cpp -o $@ $<
 
 %/aoc-cpp-rel: %/cpp/aoc.cpp %/cpp/input.h
-	$(CC) -I$(dir $@)../../lib-cpp -O3 -o $@ $<
+	$(CPP) -I$(dir $@)../../lib-cpp -O3 -o $@ $<
 
 %/cpp/input.h: %/input.txt
 	cd $(dir $<) && xxd -i $(notdir $<) cpp/$(notdir $@)
@@ -510,4 +510,6 @@ rs2022: $(filter aoc-rust/target/release/aoc-2022-%,${RS_LOG})
 %/test8.txt: input/%/test8.txt
 	cp $< $@
 %/test9.txt: input/%/test9.txt
+	cp $< $@
+${CURDIR}/%: input/%
 	cp $< $@
