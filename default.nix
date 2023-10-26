@@ -56,5 +56,7 @@ pkgs.mkShell {
       AlgorithmCombinatorics
       ListPriorityQueue
     ]))
+
+    (haskellPackages.ghcWithPackages (pkgs: [ pkgs.criterion ]))
   ];
 }
