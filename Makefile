@@ -167,10 +167,10 @@ aoc-rust/target/release/aoc-%: aoc-rust/src/bin/aoc-%.rs
 %/aoc-zig: %/aoc.zig %/input.txt %/aoc-lib.zig
 	cd $(dir $@) && zig build-exe --name $(notdir $@) $(notdir $<)
 
-%/aoc-lib.zig: lib-zig/aoc-lib.zig
+%/aoc-lib.zig:
 	ln -s ../../lib-zig/aoc-lib.zig $@
 
-%/aoc-zig-rel: %/aoc.zig %/input.txt
+%/aoc-zig-rel: %/aoc.zig %/input.txt %/aoc-lib.zig
 	cd $(dir $@) && zig build-exe -O ReleaseFast \
 		--name $(notdir $@) $(notdir $<)
 
