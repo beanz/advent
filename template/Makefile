@@ -2,11 +2,10 @@ DAY=$(notdir $(CURDIR))
 YEAR=$(notdir $(patsubst %/,%,$(dir $(CURDIR))))
 HERE=$(YEAR)/$(DAY)
 
-CC=clang++-15
-CR_DIR=/usr
-CR_LIB=$(CR_DIR)/share/crystal/src:../../lib-cr
-CR=$(CR_DIR)/bin/crystal
-NIM=$(HOME)/Tmp/nim-1.6.6/bin/nim
+CC=clang++
+CR_LIB=../../lib-cr
+CR=crystal
+NIM=nim
 
 ifneq (,$(wildcard main.go))
 ALL += aoc-go
