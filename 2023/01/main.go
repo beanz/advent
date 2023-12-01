@@ -44,26 +44,6 @@ func digit2(in []byte) int {
 		return 0
 	}
 	switch in[0] {
-	case '\n':
-		return -1
-	case '1':
-		return 1
-	case '2':
-		return 2
-	case '3':
-		return 3
-	case '4':
-		return 4
-	case '5':
-		return 5
-	case '6':
-		return 6
-	case '7':
-		return 7
-	case '8':
-		return 8
-	case '9':
-		return 9
 	case 'o':
 		if len(in) >= 3 && in[1] == 'n' && in[2] == 'e' {
 			return 1
@@ -119,6 +99,11 @@ func Parts(in []byte) (int, int) {
 				first = d
 			}
 			last = d
+			if first2 == 0 {
+				first2 = d
+			}
+			last2 = d
+			continue
 		}
 		d = digit2(in[i:])
 		if d != 0 {
