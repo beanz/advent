@@ -6,38 +6,20 @@ use lib "../../lib-perl";
 no warnings 'portable';
 use AoC::Helpers qw/:all/;
 
-use Carp::Always qw/carp verbose/;
-
-#use Algorithm::Combinatorics qw/permutations combinations/;
 $; = $" = ',';
 
 my $file = shift // "input.txt";
 
-#my $reader = \&read_stuff;
 my $reader = \&read_guess;
 my $i = $reader->($file);
 my $i2 = $reader->($file);
-
-sub read_stuff {
-  my $file = shift;
-  my $in = read_lines($file);
-  my %m = (lines => $in);
-  for my $i (0 .. (@$in - 1)) {
-    my $l = $in->[$i];
-    print "$i: $l\n";
-  }
-  return \%m;
-}
 
 sub calc {
   my ($in) = @_;
   my $c = 0;
   for (@$in) {
-    if (/^[\D]*(\d).*(\d)\D*$/) {
-      $c += $1 . $2;
-    } elsif (/(\d)/) {
-      $c += $1 . $1;
-    }
+    $c += 10 * $1 if (/^[\D]*?(\d)/);
+    $c += $1 if (/(\d)\D*$/);
   }
   return $c;
 }
