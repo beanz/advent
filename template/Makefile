@@ -2,7 +2,7 @@ DAY=$(notdir $(CURDIR))
 YEAR=$(notdir $(patsubst %/,%,$(dir $(CURDIR))))
 HERE=$(YEAR)/$(DAY)
 
-CC=clang++
+CCC=clang++
 CR_LIB=../../lib-cr
 CR=crystal
 NIM=nim
@@ -18,6 +18,11 @@ ifneq (,$(wildcard aoc.pl))
 ALL += aoc.pl
 #HYPERFINE += aoc.pl
 TEST += test-pl
+endif
+ifneq (,$(wildcard aoc.raku))
+ALL += aoc.raku
+#HYPERFINE += aoc.pl
+TEST += test-raku
 endif
 ifneq (,$(wildcard aoc.zig))
 ALL += aoc-zig
@@ -99,10 +104,10 @@ hyperfine: ${HYPERFINE}
 	cp $< $@
 
 aoc-cpp: cpp/aoc.cpp ../../lib-cpp/*.hpp cpp/input.h
-	$(CC) -I../../lib-cpp -o $@ $<
+	$(CCC) -I../../lib-cpp -o $@ $<
 
 aoc-cpp-rel: cpp/aoc.cpp ../../lib-cpp/*.hpp cpp/input.h
-	$(CC) -I../../lib-cpp -O3 -o $@ $<
+	$(CCC) -I../../lib-cpp -O3 -o $@ $<
 
 cpp/input.h: input.txt
 	xxd -i $< $@
@@ -192,6 +197,9 @@ test-go-fast:
 
 test-pl:
 	AoC_TEST=2 perl aoc.pl input.txt
+
+test-raku:
+	AoC_TEST=2 ./aoc.raku input.txt
 
 perl-prof:
 	perl -d:NYTProf aoc.pl input.txt
