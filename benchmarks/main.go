@@ -32,7 +32,7 @@ func makeTable(benchmarks benchmarkData) string {
 	}
 	sort.Strings(languages)
 
-	for _, year := range []string{"2022", "2021", "2020", "2019", "2018", "2017", "2016", "2015"} {
+	for _, year := range []string{"2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016", "2015"} {
 		sb.WriteByte('\n')
 		sb.WriteString("## ")
 		sb.WriteString(year)
