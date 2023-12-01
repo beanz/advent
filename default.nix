@@ -48,9 +48,13 @@ pkgs.mkShell {
     nim
     (perl.withPackages (p: [
       p.CarpAlways
+      p.DBFile
+      p.HTMLTree
       p.Inline
       p.JSON
       p.ListMoreUtils
+      p.LWP
+      p.LWPProtocolHttps
       p.MathPrimeUtil
       POEXSQueueArray
       AlgorithmCombinatorics
@@ -58,5 +62,10 @@ pkgs.mkShell {
     ]))
 
     (haskellPackages.ghcWithPackages (pkgs: [ pkgs.criterion ]))
+
+    rakudo
   ];
+  shellHook = ''
+    PATH=$PATH:$PWD/bin; export PATH
+  '';
 }
