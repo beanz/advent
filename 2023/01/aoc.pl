@@ -18,35 +18,34 @@ sub calc {
   my ($in) = @_;
   my $c = 0;
   for (@$in) {
-    $c += 10 * $1 if (/^[\D]*?(\d)/);
-    $c += $1 if (/(\d)\D*$/);
+    $c += 10 * $1 if (/^.*?(\d)/);
+    $c += $1 if (/^.*(\d)/);
   }
   return $c;
+}
+
+my %n = (
+  "one" => 1,
+  "two" => 2,
+  "three" => 3,
+  "four" => 4,
+  "five" => 5,
+  "six" => 6,
+  "seven" => 7,
+  "eight" => 8,
+  "nine" => 9,
+);
+for (1 .. 9) {
+  $n{$_} = $_;
 }
 
 sub calc2 {
   my ($in) = @_;
   my $c = 0;
+  my $p = '(' . (join '|', keys %n) . ')';
   for (@$in) {
-    my $n = 0;
-    if (
-/^[\D]*?(\d|one|two|three|four|five|six|seven|eight|nine).*(\d|one|two|three|four|five|six|seven|eight|nine)\D*$/
-      )
-    {
-      $n = $1 . $2;
-    } elsif (/(\d|one|two|three|four|five|six|seven|eight|nine)/) {
-      $n = $1 . $1;
-    }
-    $n =~ s/one/1/g;
-    $n =~ s/two/2/g;
-    $n =~ s/three/3/g;
-    $n =~ s/four/4/g;
-    $n =~ s/five/5/g;
-    $n =~ s/six/6/g;
-    $n =~ s/seven/7/g;
-    $n =~ s/eight/8/g;
-    $n =~ s/nine/9/g;
-    $c += $n;
+    $c += 10 * $n{$1} if (/^.*?$p/o);
+    $c += $n{$+} if (/^.*$p/o);
   }
   return $c;
 }
