@@ -1,4 +1,4 @@
-#!/usr/bin/perl -0l
+#!/usr/bin/env perl -0l
 
 $|=1;
 $_ = <>;

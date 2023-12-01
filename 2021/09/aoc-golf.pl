@@ -1,4 +1,4 @@
-#!/usr/bin/perl -0n
+#!/usr/bin/env perl -0n
 use warnings;
 use strict;
 my$u=undef;

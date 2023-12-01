@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use warnings;
 use strict;
 
@@ -68,7 +68,7 @@ my %inst =
   );
 
 print <<'EOF';
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use strict;
 use warnings;
 use v5.10;
