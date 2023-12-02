@@ -16,18 +16,10 @@ say "Part 1: ", $p1;
 say "Part 2: ", $p2;
 
 sub parts($in) {
-  my ($p1,$p2) = (0,0);
-  for $in.lines -> $l {
-    my $valid = 1;
-    my ($id, $sets) = $l.substr(5).split(': ');
+  [Z+] $in.lines>>.substr(5)>>.split(': ').map: -> ($id, $sets) {
     my @m = ([Zmax] .map(*<red green blue>)) given |$sets.split('; ').map(*.comb(/\w+/).reverse.pairup.Bag);
-    $p2+=[×] @m;
-    if @m[0] <= 12 && @m[1] <= 13 && @m[2] <= 14 {
-      $p1 += $id;
-    }
-    #say "id={$id} '{@m}'";
+    ($id * (@m[0] <= 12 && @m[1] <= 13 && @m[2] <= 14), [*] @m)
   }
-  return $p1,$p2
 }
 
 sub assert_eq($exp, $actual) {
