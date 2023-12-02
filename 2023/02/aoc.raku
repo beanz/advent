@@ -18,7 +18,7 @@ say "Part 2: ", $p2;
 sub parts($in) {
   [Z+] $in.lines>>.substr(5)>>.split(': ').map: -> ($id, $sets) {
     my @m = ([Zmax] .map(*<red green blue>)) given |$sets.split('; ').map(*.comb(/\w+/).reverse.pairup.Bag);
-    ($id * (@m[0] <= 12 && @m[1] <= 13 && @m[2] <= 14), [*] @m)
+    ($id * so (for @m.kv -> $i, $_ { $_ <= 12+$i}).all, [*] @m)
   }
 }
 
