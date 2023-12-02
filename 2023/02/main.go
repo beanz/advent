@@ -16,50 +16,30 @@ func Parts(in []byte) (int, int) {
 		mr, mg, mb := 1, 1, 1
 		var id int
 		i, id = ChompInt[int](in, i+5)
-		i += 2
-		possible := true
 		for in[i] != '\n' {
-			for ; in[i] != ';' && in[i] != '\n'; i++ {
-				var n int
-				i, n = ChompInt[int](in, i)
-				i++
-				switch in[i] {
-				case 'r':
-					if n > mr {
-						mr = n
-					}
-					if n > 12 {
-						possible = false
-					}
-					i += 3
-				case 'g':
-					if n > mg {
-						mg = n
-					}
-					if n > 13 {
-						possible = false
-					}
-					i += 5
-				case 'b':
-					if n > mb {
-						mb = n
-					}
-					if n > 14 {
-						possible = false
-					}
-					i += 4
+			i += 2
+			var n int
+			i, n = ChompInt[int](in, i)
+			i++
+			switch in[i] {
+			case 'r':
+				if n > mr {
+					mr = n
 				}
-				if in[i] == ';' {
-					i += 2
-					break
+				i += 3
+			case 'g':
+				if n > mg {
+					mg = n
 				}
-				if in[i] == '\n' {
-					break
+				i += 5
+			case 'b':
+				if n > mb {
+					mb = n
 				}
-				i++
+				i += 4
 			}
 		}
-		if possible {
+		if mr <= 12 && mg <= 13 && mb <= 14 {
 			p1 += id
 		}
 		p2 += mr * mg * mb
