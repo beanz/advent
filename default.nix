@@ -64,6 +64,8 @@ pkgs.mkShell {
     (haskellPackages.ghcWithPackages (pkgs: [ pkgs.criterion ]))
 
     rakudo
+
+    go_1_21
   ];
   shellHook = ''
     PATH=$PATH:$PWD/bin; export PATH
