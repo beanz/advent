@@ -3,18 +3,18 @@ const aoc = @import("aoc-lib.zig");
 
 test "digit" {
     const t: []const u8 = "12\n";
-    try aoc.assertEq(@as(u32, 1), digit(t, 0));
-    try aoc.assertEq(@as(u32, 2), digit(t, 1));
-    try aoc.assertEq(@as(u32, 99), digit(t, 2));
-    try aoc.assertEq(@as(u32, 0), digit(t, 4));
+    try aoc.assertEq(@as(u32, 1), digit(t, 0).?);
+    try aoc.assertEq(@as(u32, 2), digit(t, 1).?);
+    try aoc.assertEq(@as(u32, 99), digit(t, 2) orelse 99);
+    try aoc.assertEq(@as(u32, 0), digit(t, 4).?);
 }
 
-fn digit(inp: []const u8, i: usize) u32 {
+fn digit(inp: []const u8, i: usize) ?u32 {
     if (i >= inp.len) {
         return 0;
     }
     switch (inp[i]) {
-        '\n' => return 99,
+        '\n' => return null,
         '1', '2', '3', '4', '5', '6', '7', '8', '9' => return @as(u32, inp[i] - '0'),
         else => return 0,
     }
@@ -92,8 +92,7 @@ fn parts(inp: []const u8) ![2]u32 {
     var l2: u32 = 0;
     var i: usize = 0;
     while (i < inp.len) : (i += 1) {
-        var d = digit(inp, i);
-        if (d == 99) {
+        var d = digit(inp, i) orelse {
             p1 += f1 * 10 + l1;
             f1 = 0;
             l1 = 0;
@@ -101,7 +100,7 @@ fn parts(inp: []const u8) ![2]u32 {
             f2 = 0;
             l2 = 0;
             continue;
-        }
+        };
         if (d != 0) {
             if (f1 == 0) {
                 f1 = d;
@@ -119,7 +118,6 @@ fn parts(inp: []const u8) ![2]u32 {
                 f2 = d;
             }
             l2 = d;
-            continue;
         }
     }
 
