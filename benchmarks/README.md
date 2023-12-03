@@ -8,7 +8,7 @@ The following are the benchmarks for the Go implementations of solutions for eac
  ---:  | ---:  | ---:  | ---: 
 Day 01 | **🔴 186µs** / None | **🔴 92.8µs** / None | **🔴 74.1µs**
 Day 02 | 6.1µs / None | 2.4µs / None | 2.59µs
-Day 03 | 26.3µs / None | **🔴 25.1µs** / None | -
+Day 03 | 26.3µs / None | **🔴 25.1µs** / None | **🔴 19.7µs**
 Day 04 | - | - | -
 Day 05 | - | - | -
 Day 06 | - | - | -
@@ -31,7 +31,7 @@ Day 22 | - | - | -
 Day 23 | - | - | -
 Day 24 | - | - | -
 Day 25 | - | - | -
-*Total* | *218µs / None* | *120µs / None* | *76.7µs*
+*Total* | *218µs / None* | *120µs / None* | *96.3µs*
 
 ![Graph for year 2023](y2023.svg)
 
@@ -451,7 +451,7 @@ Day 25 | 208ns / 32.0 B | 8.01ms / 7.3 KB | 43.6ms / None | 2.17ms / None | 10.5
  ---:  | ---:  | ---:  | ---: 
 Day 01 | 337µs | 11.8µs | **🔴 74.1µs**
 Day 02 | 97.5µs | 720ns | 2.59µs
-Day 03 | 17.3µs | 50.3µs | -
+Day 03 | 17.3µs | 50.3µs | **🔴 19.7µs**
 Day 04 | 2.4ms | 53µs | -
 Day 05 | 188µs | 690µs | -
 Day 06 | 7.73ms | 873ns | -
@@ -474,5 +474,5 @@ Day 22 | 111ms | - | -
 Day 23 | **🔴 4.59s** | - | -
 Day 24 | 77.3ms | - | -
 Day 25 | 34.1ms | - | -
-*Total* | *5.43s* | *21.2ms* | *76.7µs*
+*Total* | *5.43s* | *21.2ms* | *96.3µs*
 
