@@ -70,6 +70,7 @@ sub parts {
         $x++;
       }
       if ($sch) {
+        print STDERR "F: $n $sch->[0]\n" if DEBUG;
         $p1 += $n;
         my ($sym, $sx, $sy) = @$sch;
         if ($sym eq '*') {
