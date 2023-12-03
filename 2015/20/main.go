@@ -26,7 +26,7 @@ func NumPresents(house int, part2 bool) int {
 				ints = append(ints, int(term.Prime))
 			}
 		}
-		seen := make(map[int]bool)
+		seen := make(map[int]struct{})
 		subsets := NewSubsets(len(ints))
 		for ss := subsets.Get(); !subsets.Done(); ss = subsets.Next() {
 			p := 1
@@ -36,10 +36,10 @@ func NumPresents(house int, part2 bool) int {
 			if part2 && house/p > 50 {
 				continue
 			}
-			if seen[p] {
+			if _, ok := seen[p]; ok {
 				continue
 			}
-			seen[p] = true
+			seen[p] = struct{}{}
 			s += p
 		}
 	}
