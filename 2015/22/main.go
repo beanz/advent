@@ -114,7 +114,7 @@ var AllSpells = []Spell{MagicMissile, Drain, Shield, Poison, Recharge}
 // Poison       = Spell{name: "Poison", cost: 173, turns: 6, damage: 3}
 // Recharge     = Spell{name: "Recharge", cost: 229, turns: 5, mana: 101}
 
-type ActiveSpells map[Spell]int
+type ActiveSpells [5]int
 
 type Me struct {
 	hp        int
@@ -151,7 +151,6 @@ func (s *State) Clone() *State {
 	nm := Me{
 		hp: s.me.hp, armor: s.me.armor, mana: s.me.mana,
 		manaSpent: s.me.manaSpent,
-		active:    make(map[Spell]int, len(s.me.active)),
 	}
 	for k, v := range s.me.active {
 		nm.active[k] = v
@@ -169,22 +168,25 @@ func (s *State) Turn(sp Spell) {
 			s.me.hp, s.me.armor, s.me.mana)
 		fmt.Printf("- Boss has %d hit points\n", s.boss.hp)
 	}
-	for k := range s.me.active {
+	for i, v := range s.me.active {
+		if v == 0 {
+			continue
+		}
+		k := Spell(i)
 		s.me.hp += k.Heal()
 		s.me.mana += k.Mana()
 		s.boss.hp -= k.Damage()
-		s.me.active[k]--
+		s.me.active[i]--
 		if s.debug {
 			fmt.Printf("%s active\n", k)
 		}
-		if s.me.active[k] == 0 {
+		if s.me.active[i] == 0 {
 			if k.Armor() != 0 {
 				s.me.armor -= k.Armor()
 			}
 			if s.debug {
 				fmt.Printf("%s wears off\n", k)
 			}
-			delete(s.me.active, k)
 		}
 	}
 	s.me.mana -= sp.Cost()
@@ -220,22 +222,25 @@ func (s *State) Turn(sp Spell) {
 			s.me.hp, s.me.armor, s.me.mana)
 		fmt.Printf("- Boss has %d hit points\n", s.boss.hp)
 	}
-	for k := range s.me.active {
+	for i, v := range s.me.active {
+		if v == 0 {
+			continue
+		}
+		k := Spell(i)
 		s.me.hp += k.Heal()
 		s.me.mana += k.Mana()
 		s.boss.hp -= k.Damage()
-		s.me.active[k]--
+		s.me.active[i]--
 		if s.debug {
 			fmt.Printf("%s active (%d)\n", k, s.me.active[k])
 		}
-		if s.me.active[k] == 0 {
+		if s.me.active[i] == 0 {
 			if k.Armor() != 0 {
 				s.me.armor -= k.Armor()
 			}
 			if s.debug {
 				fmt.Printf("%s wears off\n", k)
 			}
-			delete(s.me.active, k)
 		}
 	}
 	if s.boss.hp <= 0 {
@@ -259,7 +264,7 @@ func (s *State) Turn(sp Spell) {
 func (g *Game) Calc(hardMode bool) int {
 	minCost := math.MaxInt32
 	todo := []*State{{
-		&Me{hp: 50, mana: 500, active: make(map[Spell]int)},
+		&Me{hp: 50, mana: 500},
 		&Boss{hp: g.bossHp, damage: g.bossDamage},
 		g.debug,
 	}}

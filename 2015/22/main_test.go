@@ -1,15 +1,16 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	. "github.com/beanz/advent/lib-go"
 )
 
 func TestTurnsExample1(t *testing.T) {
 	s := &State{
-		&Me{hp: 10, mana: 250, active: make(map[Spell]int)},
+		&Me{hp: 10, mana: 250},
 		&Boss{hp: 13, damage: 8},
 		false,
 	}
@@ -29,7 +30,7 @@ func TestTurnsExample1(t *testing.T) {
 
 func TestTurnsExample2(t *testing.T) {
 	s := &State{
-		&Me{hp: 10, mana: 250, active: make(map[Spell]int)},
+		&Me{hp: 10, mana: 250},
 		&Boss{hp: 14, damage: 8},
 		false,
 	}
@@ -73,7 +74,7 @@ func TestTurnsExample2(t *testing.T) {
 
 func TestTurnsExample3(t *testing.T) {
 	s := &State{
-		&Me{hp: 10, mana: 250, active: make(map[Spell]int)},
+		&Me{hp: 10, mana: 250},
 		&Boss{hp: 20, damage: 8},
 		false,
 	}
