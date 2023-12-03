@@ -7,20 +7,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/beanz/advent/lib-go/intcode"
 	. "github.com/beanz/advent/lib-go"
+	"github.com/beanz/advent/lib-go/intcode"
 )
 
 //go:embed input.txt
 var input []byte
-
-type SearchRecord struct {
-	pos   Point
-	steps int
-	ic    *intcode.IntCode
-}
-
-type Search []SearchRecord
 
 type Scaffold struct {
 	m   map[Point]bool

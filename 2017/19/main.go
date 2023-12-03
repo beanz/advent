@@ -63,7 +63,7 @@ func (g *Game) Play() (string, int) {
 					cur, dir)
 			}
 		}
-		if strings.Index("ABCDEFGHIJKLMNOPQRSTUVWXYZ", string(sq)) != -1 {
+		if strings.Contains("ABCDEFGHIJKLMNOPQRSTUVWXYZ", string(sq)) {
 			letters += string(sq)
 		}
 		cur.X += dir.Dx

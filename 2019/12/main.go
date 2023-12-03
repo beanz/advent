@@ -53,16 +53,6 @@ func NewMoons(inp []byte) *Moons {
 	return &moons
 }
 
-func combinations(n, m int) [][]int {
-	res := [][]int{}
-	for i := 0; i < n; i++ {
-		for j := i + 1; j < n; j++ {
-			res = append(res, []int{i, j})
-		}
-	}
-	return res
-}
-
 func (moons *Moons) Step(axis MoonField) {
 	for i := 0; i < len(*moons); i++ {
 		for j := i + 1; j < len(*moons); j++ {

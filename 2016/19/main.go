@@ -16,7 +16,7 @@ type Game struct {
 	debug bool
 }
 
-func (g Game) pp() string {
+func (g Game) pp() string { // nolint
 	e := g.elves
 	s := ""
 	for {

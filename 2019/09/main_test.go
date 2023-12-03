@@ -3,8 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func ExampleMain() {
@@ -12,12 +13,6 @@ func ExampleMain() {
 	//Output:
 	// Part 1: 3100786347
 	// Part 2: 87023
-}
-
-type TestCase struct {
-	prog []int
-	in   int
-	out  int
 }
 
 func TestPlay(t *testing.T) {

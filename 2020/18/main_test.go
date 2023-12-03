@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -25,7 +25,7 @@ func TestPart1(t *testing.T) {
 		{"((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", 13632},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.ans, Part1Math(tc.sum), fmt.Sprintf("%s", tc.sum))
+		assert.Equal(t, tc.ans, Part1Math(tc.sum), tc.sum)
 	}
 	assert.Equal(t,
 		int64(26457), Part1(ReadLines("test1.txt")), "file test1.txt")
@@ -44,7 +44,7 @@ func TestPart2(t *testing.T) {
 		{"((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", 23340},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.ans, Part2Math(tc.sum), fmt.Sprintf("%s", tc.sum))
+		assert.Equal(t, tc.ans, Part2Math(tc.sum), tc.sum)
 	}
 	assert.Equal(t,
 		int64(694173), Part2(ReadLines("test1.txt")), "file test1.txt")

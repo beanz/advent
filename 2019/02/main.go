@@ -50,9 +50,7 @@ func (g *Game) Part1() (int, bool) {
 		default:
 			return -1, false
 		}
-		//fmt.Printf("%v\n", g.p)
 	}
-	return -1, false
 }
 
 func (g *Game) Part2() int {
@@ -62,7 +60,7 @@ func (g *Game) Part2() int {
 		prog[1] = input / 100
 		prog[2] = input % 100
 		res, valid := NewGame(prog).Part1()
-		if valid == true && res == 19690720 {
+		if valid && res == 19690720 {
 			return input
 		}
 	}

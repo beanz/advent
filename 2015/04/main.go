@@ -26,7 +26,6 @@ func calc(secret string) (int, int) {
 			}
 		}
 	}
-	return 0, 0
 }
 
 func main() {

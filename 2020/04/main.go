@@ -110,10 +110,7 @@ func validPID(v string) bool {
 		return false
 	}
 	_, err := strconv.Atoi(v)
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 func validHairColor(v string) bool {

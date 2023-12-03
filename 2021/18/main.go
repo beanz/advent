@@ -33,7 +33,7 @@ func Explode(sf []byte) ([]byte, bool) {
 				post := sf[rb:]
 				a, j := ScanUint(sf[lb+1:], 0)
 				//fmt.Printf("%s\n", sf[lb+j+2:])
-				b, j := ScanUint(sf[lb+2+j:], 0)
+				b, _ := ScanUint(sf[lb+2+j:], 0)
 				//fmt.Printf("%s / %d , %d / %s\n", pre, a, b, post)
 				n := 0
 				m := 1

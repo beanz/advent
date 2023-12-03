@@ -3,8 +3,9 @@ package main
 import (
 	"crypto/md5"
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func ExampleMain() {
@@ -45,7 +46,7 @@ func TestIntToHex(t *testing.T) {
 		b[j*2] = IntToHex((sum[j] & 0xf0) >> 4)
 		b[1+j*2] = IntToHex(sum[j] & 0xf)
 	}
-	assert.Equal(t, fmt.Sprintf("%x", sum), fmt.Sprintf("%s", b))
+	assert.Equal(t, fmt.Sprintf("%x", sum), string(b))
 }
 
 func TestStretchedMD5(t *testing.T) {

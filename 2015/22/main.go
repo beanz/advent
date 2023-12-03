@@ -130,7 +130,6 @@ type Boss struct {
 
 type Game struct {
 	bossHp, bossDamage int
-	part2              bool
 	debug              bool
 }
 
@@ -259,7 +258,7 @@ func (s *State) Turn(sp Spell) {
 
 func (g *Game) Calc(hardMode bool) int {
 	minCost := math.MaxInt32
-	todo := []*State{&State{
+	todo := []*State{{
 		&Me{hp: 50, mana: 500, active: make(map[Spell]int)},
 		&Boss{hp: g.bossHp, damage: g.bossDamage},
 		g.debug,

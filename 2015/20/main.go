@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"fmt"
+
 	"github.com/cznic/mathutil"
 
 	. "github.com/beanz/advent/lib-go"
@@ -52,7 +53,6 @@ func calc(in int, part2 bool) int {
 			return h
 		}
 	}
-	return -1
 }
 
 func main() {

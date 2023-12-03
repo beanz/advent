@@ -6,10 +6,10 @@ import (
 	"math/rand"
 	"strings"
 
-	"github.com/mxschmitt/golang-combinations"
+	combinations "github.com/mxschmitt/golang-combinations"
 
-	"github.com/beanz/advent/lib-go/intcode"
 	. "github.com/beanz/advent/lib-go"
+	"github.com/beanz/advent/lib-go/intcode"
 )
 
 //go:embed input.txt
@@ -63,8 +63,6 @@ func part1(prog []int64) int {
 					//fmt.Printf("Have all items!\n")
 					combos = combinations.All(inv)
 					continue
-				} else {
-					//fmt.Printf("Need more items (%v)!\n", inv)
 				}
 			}
 			ii := strings.Index(s, "Items")
@@ -82,8 +80,6 @@ func part1(prog []int64) int {
 						ic.InStr("take " + item + "\n")
 						//fmt.Printf("picked up %s\n", item)
 						inv = append(inv, item)
-					} else {
-						//fmt.Printf("Ignoring %s\n", item)
 					}
 				}
 			}
@@ -105,7 +101,6 @@ func part1(prog []int64) int {
 			s = ""
 		}
 	}
-	return -1
 }
 
 func main() {

@@ -63,7 +63,7 @@ func (d *Door) nextStrongPassword() string {
 	for {
 		sum := d.nextSum()
 		pos := byte(sum[5]) - 48
-		if pos > 7 || pos < 0 {
+		if pos > 7 {
 			continue
 		}
 		if pass[pos] != '_' {

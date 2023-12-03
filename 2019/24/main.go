@@ -82,7 +82,6 @@ func (g Game1) Part1() int {
 		seen[new] = true
 		g = new
 	}
-	return 1
 }
 
 type Game2 map[int]int
@@ -214,11 +213,9 @@ func (g Game2) life(d int, x int, y int) bool {
 
 func (g Game2) Part2(min int) int {
 	for m := 0; m < min; m++ {
-		depths := make([]int, 0, len(g))
 		minDepth := math.MaxInt32
 		maxDepth := math.MinInt32
 		for k := range g {
-			depths = append(depths, k)
 			if k > maxDepth {
 				maxDepth = k
 			}

@@ -77,6 +77,6 @@ func Benchmark_ChompOneOrTwoCharUInt(b *testing.B) {
 		j, _ = ChompUInt[int](in, j+1)
 		j, _ = ChompUInt[int](in, j+1)
 		j, _ = ChompUInt[int](in, j+1)
-		j, _ = ChompUInt[int](in, j+1)
+		_, _ = ChompUInt[int](in, j+1)
 	}
 }

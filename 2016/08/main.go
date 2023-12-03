@@ -3,9 +3,10 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	. "github.com/beanz/advent/lib-go"
 	"math/bits"
 	"strings"
+
+	. "github.com/beanz/advent/lib-go"
 )
 
 //go:embed input.txt
@@ -90,8 +91,7 @@ func (d *Disp) Run(in []byte) {
 			i += 5 // 'rect '
 			w, i := ScanUint(in, i)
 			i++ // 'x'
-			h, i := ScanUint(in, i)
-			i++ // '\n'
+			h, _ := ScanUint(in, i)
 			//fmt.Printf("rect %d,%d\n", w, h)
 			d.Rect(w, h)
 		case 'o':
@@ -99,16 +99,14 @@ func (d *Disp) Run(in []byte) {
 				i += 13 // 'rotate row y='
 				y, i := ScanUint(in, i)
 				i += 4 // ' by '
-				n, i := ScanUint(in, i)
-				i++ // '\n'
+				n, _ := ScanUint(in, i)
 				//fmt.Printf("rr %d,%d\n", y, n)
 				d.RotateRow(y, n)
 			} else {
 				i += 16 // 'rotate column y='
 				x, i := ScanUint(in, i)
 				i += 4 // ' by '
-				n, i := ScanUint(in, i)
-				i++ // '\n'
+				n, _ := ScanUint(in, i)
 				//fmt.Printf("rc %d,%d\n", x, n)
 				d.RotateColumn(x, n)
 			}

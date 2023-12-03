@@ -4,8 +4,8 @@ import (
 	_ "embed"
 	"fmt"
 
-	"github.com/beanz/advent/lib-go/intcode"
 	. "github.com/beanz/advent/lib-go"
+	"github.com/beanz/advent/lib-go/intcode"
 )
 
 //go:embed input.txt
@@ -19,7 +19,6 @@ func run(p []int64, input func() int64, reader func(int64, int64, int64)) {
 			o := ic.Out(3)
 			if len(o) >= 3 {
 				reader(o[0], o[1], o[2])
-				o = o[3:]
 			}
 			continue
 		} else if rc == intcode.NeedInput {
@@ -28,7 +27,6 @@ func run(p []int64, input func() int64, reader func(int64, int64, int64)) {
 		}
 		break
 	}
-	return
 }
 
 func part1(p []int64) int {

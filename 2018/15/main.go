@@ -94,23 +94,23 @@ func playerAt(players []*Player, x, y int) (*Player, bool) {
 	return nil, false
 }
 
-func red(s string) string {
+func red(s string) string { // nolint
 	return "\033[31m" + s + "\033[37m"
 }
 
-func green(s string) string {
+func green(s string) string { // nolint
 	return "\033[32m" + s + "\033[37m"
 }
 
-func clear() string {
+func clear() string { // nolint
 	return "\033[3J\033[H\033[2J"
 }
 
-func stringAt(s string, x, y int) string {
+func stringAt(s string, x, y int) string { // nolint
 	return fmt.Sprintf("\033[%d;%dH%s\033[33;1H", y+1, x+1, s)
 }
 
-func pretty(g Game) string {
+func pretty(g Game) string { // nolint
 	s := ""
 	for y := 0; y < g.h; y++ {
 		hp := []int{}
@@ -174,8 +174,8 @@ func mapAt(g Game, x, y int) byte {
 
 func emptyAdjacent(g Game, x, y int) []Location {
 	res := []Location{}
-	for _, l := range []Location{Location{x, y - 1}, Location{x - 1, y},
-		Location{x + 1, y}, Location{x, y + 1}} {
+	for _, l := range []Location{{x, y - 1}, {x - 1, y},
+		{x + 1, y}, {x, y + 1}} {
 		if mapAt(g, l.x, l.y) == '.' {
 			if _, ok := playerAt(g.players, l.x, l.y); !ok {
 				res = append(res, l)
@@ -185,7 +185,7 @@ func emptyAdjacent(g Game, x, y int) []Location {
 	return res
 }
 
-func checkVisited(v map[int]map[int]bool, l Location) bool {
+func checkVisited(v map[int]map[int]bool, l Location) bool { // nolint
 	if _, ok := v[l.y]; !ok {
 		v[l.y] = make(map[int]bool)
 	}
@@ -229,7 +229,6 @@ func move(g Game, p *Player) {
 			return
 		}
 	}
-	return
 }
 
 func turnFor(g Game, p *Player) {

@@ -44,9 +44,7 @@ func (l *LavaTubes) Calc() (int, int) {
 				}
 				l.m.Set(i, '9')
 				size++
-				for _, nb := range l.m.Neighbours(i) {
-					todo = append(todo, nb)
-				}
+				todo = append(todo, l.m.Neighbours(i)...)
 			}
 			sizes = append(sizes, size)
 			return 0, false

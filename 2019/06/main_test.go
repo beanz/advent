@@ -1,18 +1,13 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	. "github.com/beanz/advent/lib-go"
 )
-
-type TestCase struct {
-	prog  []int
-	res   int
-	valid bool
-}
 
 func TestPlay(t *testing.T) {
 

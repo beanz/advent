@@ -40,17 +40,9 @@ func NewBS(lines []string) *BS {
 				panic(err)
 			}
 			innerBag := m[2]
-			if _, ok := bs.graph[innerBag]; ok {
-				bs.graph[innerBag] = append(bs.graph[innerBag], bag)
-			} else {
-				bs.graph[innerBag] = []string{bag}
-			}
+			bs.graph[innerBag] = append(bs.graph[innerBag], bag)
 			bc := &BC{innerBag, n}
-			if _, ok := bs.revgraph[bag]; ok {
-				bs.revgraph[bag] = append(bs.revgraph[bag], bc)
-			} else {
-				bs.revgraph[bag] = []*BC{bc}
-			}
+			bs.revgraph[bag] = append(bs.revgraph[bag], bc)
 		}
 	}
 	return bs

@@ -2,8 +2,9 @@ package main
 
 import (
 	_ "embed"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	"github.com/beanz/advent/lib-go/elfprog2016"
 )
@@ -21,7 +22,7 @@ func TestPart1(t *testing.T) {
 func TestPart2(t *testing.T) {
 	prog := elfprog2016.NewElfProg(test)
 	assert.Equal(t, 3, Part2(prog))
-	prog = elfprog2016.NewElfProg(input)
+	//prog = elfprog2016.NewElfProg(input)
 	//prog = ReadElfProg2016(ReadLines("input.txt"))
 	//assert.Equal(t, 3, Part2(prog))
 }

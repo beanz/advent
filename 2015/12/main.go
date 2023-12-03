@@ -48,7 +48,6 @@ func CountObj(o interface{}) int {
 	default:
 		panic("Unsupported type: " + fmt.Sprintf("%q", o))
 	}
-	panic("Unreachable")
 }
 
 func Part2(s string) int {

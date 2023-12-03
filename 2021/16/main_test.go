@@ -2,39 +2,53 @@ package main
 
 import (
 	_ "embed"
-	assert "github.com/stretchr/testify/require"
 	"testing"
+
+	assert "github.com/stretchr/testify/require"
 )
 
 //go:embed test1a.txt
 var test1a []byte
+
 //go:embed test1b.txt
 var test1b []byte
+
 //go:embed test1c.txt
 var test1c []byte
+
 //go:embed test1d.txt
 var test1d []byte
+
 //go:embed test1e.txt
 var test1e []byte
+
 //go:embed test1f.txt
 var test1f []byte
+
 //go:embed test1g.txt
 var test1g []byte
 
 //go:embed test2a.txt
 var test2a []byte
+
 //go:embed test2b.txt
 var test2b []byte
+
 //go:embed test2c.txt
 var test2c []byte
+
 //go:embed test2d.txt
 var test2d []byte
+
 //go:embed test2e.txt
 var test2e []byte
+
 //go:embed test2f.txt
 var test2f []byte
+
 //go:embed test2g.txt
 var test2g []byte
+
 //go:embed test2h.txt
 var test2h []byte
 
@@ -42,8 +56,8 @@ var test2h []byte
 var safeinput []byte
 
 type TestCase struct {
-	file string
-	data []byte
+	file   string
+	data   []byte
 	p1, p2 int
 }
 
@@ -67,7 +81,7 @@ func TestPart1(t *testing.T) {
 		{"input.txt", input, 951, 902198718880},
 	}
 	for _, tc := range tests {
-		t.Run(tc.file, func (t *testing.T) {
+		t.Run(tc.file, func(t *testing.T) {
 			pkt := NewPacket(tc.data)
 			p1, p2 := pkt.Parts()
 			assert.Equal(t, tc.p1, p1, tc.file)
@@ -87,7 +101,7 @@ func BenchmarkMain(b *testing.B) {
 }
 
 func TestBitStream(t *testing.T) {
-	bs := NewBitStream([]byte{0xD2,0xFE,0x28})
+	bs := NewBitStream([]byte{0xD2, 0xFE, 0x28})
 	assert.Equal(t, "110100101111111000101000", bs.String())
 	n, err := bs.Num(3)
 	assert.NoError(t, err)
@@ -104,6 +118,6 @@ func TestBitStream(t *testing.T) {
 	n, err = bs.Num(5)
 	assert.NoError(t, err)
 	assert.Equal(t, 5, n)
-	n, err = bs.Num(4)
+	_, err = bs.Num(4)
 	assert.Error(t, err)
 }

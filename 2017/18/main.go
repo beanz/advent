@@ -47,14 +47,6 @@ func (g *Game) regOrImmediate(s string) (int, bool) {
 	return val, false
 }
 
-func (g *Game) regValueOrImmediate(s string) int {
-	if 'a' <= s[0] && s[0] <= 'z' {
-		return g.regs[int(byte(s[0])-'a')]
-	}
-	val, _ := strconv.Atoi(s)
-	return val
-}
-
 func NewGame(lines []string, cs, cr chan int, id int) *Game {
 	regs := make(Reg, 26)
 	g := &Game{[]Inst{}, regs, 0, 0, 0, 0, id, false}

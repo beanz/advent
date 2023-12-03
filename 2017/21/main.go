@@ -31,7 +31,7 @@ func (p Pattern) String() string {
 	s := ""
 	for _, row := range p {
 		for _, sq := range row {
-			s += fmt.Sprintf("%s", string(sq))
+			s += string(sq)
 		}
 		s += "\n"
 	}
@@ -45,7 +45,7 @@ type Game struct {
 }
 
 func (g *Game) String() string {
-	return fmt.Sprintf("%s", *g.cur)
+	return g.cur.String()
 }
 
 func (g *Game) CountOn() int {

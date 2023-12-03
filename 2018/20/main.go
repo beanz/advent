@@ -13,11 +13,6 @@ import (
 //go:embed input.txt
 var input []byte
 
-type Door struct {
-	p   Point
-	dir Compass
-}
-
 type Game struct {
 	regex string
 	bb    *BoundingBox
@@ -127,7 +122,7 @@ type Search struct {
 
 func (g *Game) Run(cutoff int) (int, int) {
 	g.Rooms()
-	todo := []Search{Search{Point{0, 0}, 0}}
+	todo := []Search{{Point{0, 0}, 0}}
 	seen := map[Point]bool{}
 	max := math.MinInt64
 	count := 0

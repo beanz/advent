@@ -14,10 +14,10 @@ var input []byte
 type Floor int
 
 const (
-	FIRST  Floor = 0
-	SECOND       = 1
-	THIRD        = 2
-	FOURTH       = 3
+	FIRST Floor = iota
+	SECOND
+	THIRD
+	FOURTH
 )
 
 func (f Floor) String() string {
@@ -87,8 +87,8 @@ func (e Element) String() string {
 type Kind int
 
 const (
-	CHIP      Kind = 0
-	GENERATOR      = 1
+	CHIP Kind = iota
+	GENERATOR
 )
 
 func (k Kind) String() string {

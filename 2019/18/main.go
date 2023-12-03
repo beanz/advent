@@ -109,9 +109,7 @@ func (v *Vault) findKeys(pos int, quad int) {
 		if 'a' <= ch && ch <= 'z' {
 			v.quadKeys[quad] = v.quadKeys[quad].Add(ch)
 		}
-		for _, np := range v.m.Neighbours(cur) {
-			search = append(search, np)
-		}
+		search = append(search, v.m.Neighbours(cur)...)
 	}
 }
 
@@ -207,11 +205,6 @@ func (v *Vault) find(pos int, quad int) int {
 
 func (v *Vault) Part1() int {
 	return v.find(v.pos, -1)
-}
-
-type QuadRecord struct {
-	startOffset Point
-	indexname   byte
 }
 
 func (v *Vault) Part2() int {

@@ -21,10 +21,6 @@ type Dec struct {
 func NewDec(chunks []string) *Dec {
 	var res []Ans
 	for _, ch := range chunks {
-		var ans Ans
-		for _, l := range strings.Split(ch, "\n") {
-			ans = append(ans, l)
-		}
 		res = append(res, strings.Split(ch, "\n"))
 	}
 	return &Dec{res, false}
