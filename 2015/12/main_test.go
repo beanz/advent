@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -24,7 +25,7 @@ func TestPart1(t *testing.T) {
 		{"{}", 0},
 	}
 	for _, tc := range tests {
-		assert.Equal(t, tc.res, Part1(tc.in), tc.in)
+		assert.Equal(t, tc.res, Part1([]byte(tc.in)), tc.in)
 	}
 }
 
@@ -41,8 +42,8 @@ func TestPart2(t *testing.T) {
 }
 
 func TestInput(t *testing.T) {
+	assert.Equal(t, 119433, Part1(input), "Part 1 on input.txt")
 	in := ReadFileLines("input.txt")[0]
-	assert.Equal(t, 119433, Part1(in), "Part 1 on input.txt")
 	assert.Equal(t, 68466, Part2(in), "Part 2 on input.txt")
 }
 

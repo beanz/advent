@@ -12,9 +12,28 @@ import (
 //go:embed input.txt
 var input []byte
 
-func Part1(s string) int {
-	ints := Ints(s)
-	return Sum(ints...)
+func Part1(in []byte) int {
+	p1 := 0
+	n := 0
+	m := 1
+	num := false
+	for _, ch := range in {
+		if '0' <= ch && ch <= '9' {
+			n = n*10 + int(ch-'0')
+			num = true
+		} else {
+			if num {
+				p1 += m * n
+				n = 0
+				m = 1
+				num = false
+			}
+		}
+		if ch == '-' {
+			m = -1
+		}
+	}
+	return p1
 }
 
 func CountObj(o interface{}) int {
@@ -65,12 +84,10 @@ func Part2(s string) int {
 
 func main() {
 	in := InputLines(input)
-	p1 := Part1(in[0])
-	if !benchmark {
-		fmt.Printf("Part 1: %d\n", p1)
-	}
+	p1 := Part1(input)
 	p2 := Part2(in[0])
 	if !benchmark {
+		fmt.Printf("Part 1: %d\n", p1)
 		fmt.Printf("Part 2: %d\n", p2)
 	}
 }
