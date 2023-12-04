@@ -2,9 +2,13 @@ package aoc
 
 import "bytes"
 
-type AoCUnsigned interface { ~uint|~uint8|~uint16|~uint32|~uint64 }
-type AoCSigned interface { ~byte|int|~int8|~int16|~int32|~int64 }
-type AoCInt interface { AoCUnsigned|AoCSigned }
+type AoCUnsigned interface {
+	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64
+}
+type AoCSigned interface {
+	~byte | int | ~int8 | ~int16 | ~int32 | ~int64
+}
+type AoCInt interface{ AoCUnsigned | AoCSigned }
 
 func ChompUInt[T AoCInt](in []byte, i int) (j int, n T) {
 	j = i
@@ -43,7 +47,7 @@ func ChompToNextLine(in []byte, i int) int {
 	if j == -1 {
 		return len(in)
 	}
-	return i+j+1
+	return i + j + 1
 }
 
 func ChompOneOrTwoCharUInt[T AoCInt](in []byte, i int) (int, T) {
@@ -53,5 +57,29 @@ func ChompOneOrTwoCharUInt[T AoCInt](in []byte, i int) (int, T) {
 	if '0' <= in[i+1] && in[i+1] <= '9' {
 		return i + 2, 10*T(in[i]&0xf) + T(in[i+1]&0xf)
 	}
-	return i + 1, T(in[i]&0xf)
+	return i + 1, T(in[i] & 0xf)
+}
+
+func VisitUints[T AoCInt](in []byte, until byte, i *int, fn func(n T)) {
+	var n T
+	var num bool
+	for {
+		switch {
+		case in[*i] == until:
+			if num {
+				fn(n)
+			}
+			return
+		case '0' <= in[*i] && in[*i] <= '9':
+			num = true
+			n = n*10 + T(in[*i]-'0')
+		default:
+			if num {
+				fn(n)
+			}
+			num = false
+			n = 0
+		}
+		*i++
+	}
 }

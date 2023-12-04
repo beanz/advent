@@ -21,30 +21,15 @@ func Parts(in []byte) (int, int) {
 			i++
 		}
 		i += 2
-		for in[i] != '|' {
-			for in[i] == ' ' {
-				i++
-			}
-			var n int
-			i, n = ChompUInt[int](in, i)
+		VisitUints[int](in, '|', &i, func(n int) {
 			c1[n] = true
-			i++
-		}
+		})
 		i += 2
-		for {
-			for in[i] == ' ' {
-				i++
-			}
-			var n int
-			i, n = ChompUInt[int](in, i)
+		VisitUints[int](in, '\n', &i, func(n int) {
 			if c1[n] {
 				p++
 			}
-			if in[i] == '\n' {
-				break
-			}
-			i++
-		}
+		})
 		if p > 0 {
 			p1 += 1 << (p - 1)
 		}
