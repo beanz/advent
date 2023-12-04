@@ -1,0 +1,84 @@
+fn parts(inp: &[u8]) -> (usize, usize) {
+    let (mut p1, mut p2) = (0, 0);
+    let mut i = 0;
+    while i < inp.len() {
+        let mut w: [bool; 256] = [false; 256];
+        let mut p = 0;
+        while inp[i] != b':' {
+            i += 1
+        }
+        i += 2;
+        visit_uint_until::<usize>(inp, &mut i, b'|', |x: usize| {
+            println!("{}\n", x);
+            w[x] = true;
+        });
+        i += 2;
+        visit_uint_until::<usize>(inp, &mut i, b'\n', |x: usize| {
+            println!("{}?\n", x);
+            if w[x] {
+                p += 1;
+            }
+        });
+        p1 += (1 << p) >> 1;
+        i += 1;
+    }
+    (p1, p2)
+}
+
+pub fn visit_uint_until<T>(inp: &[u8], i: &mut usize, exp: u8, mut visit_fn: impl FnMut(T))
+where
+    T: std::ops::Add<T>
+        + std::ops::Mul<Output = T>
+        + std::convert::From<u8>
+        + std::ops::Add<Output = T>
+        + num::Integer,
+{
+    let mut n: T = 0.into();
+    let mut num = false;
+    loop {
+        match inp[*i] {
+            ch if ch == exp => {
+                if num {
+                    visit_fn(n);
+                }
+                return;
+            }
+            b'0'..=b'9' => {
+                num = true;
+                n = n * 10.into() + (inp[*i].wrapping_sub(b'0')).into();
+            }
+            _ => {
+                if num {
+                    visit_fn(n);
+                }
+                num = false;
+                n = 0.into();
+            }
+        }
+        *i += 1;
+    }
+}
+
+fn main() {
+    let inp = std::fs::read(aoc::input_file()).expect("read error");
+    aoc::benchme(|bench: bool| {
+        let (p1, p2) = parts(&inp);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        let inp = std::fs::read("../2023/04/test1.txt").expect("read error");
+        assert_eq!(parts(&inp), (10, 20));
+        let inp = std::fs::read("../2023/04/input.txt").expect("read error");
+        assert_eq!(parts(&inp), (100, 200));
+    }
+}
