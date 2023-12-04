@@ -24,16 +24,6 @@ sub calc {
   for my $l (@$in) {
     my ($c, $a, $b) = split /[:\|]/, $l;
     my %a = map {$_ => 1} ($a =~ m/\d+/g);
-    my $n = 1;
-    for (@copies) {
-      if ($_ <= 0) {
-        next;
-      }
-      $_--;
-      $n++;
-    }
-    @copies = grep {$_ > 0} @copies;
-    print STDERR "N: $n\n" if DEBUG;
     my $p = 0;
     for my $o ($b =~ m/\d+/g) {
       if (exists $a{$o}) {
@@ -41,8 +31,15 @@ sub calc {
       }
     }
     $p1 += 2**($p - 1) if ($p);
+    my $n = 1;
+    for (@copies) {
+      $_->[0]--;
+      $n+=$_->[1];
+    }
+    @copies = grep {$_->[0] > 0} @copies;
+    print STDERR "N: $n\n" if DEBUG;
     $p2 += $n;
-    push @copies, $p for (0 .. $n - 1);
+    push @copies, [$p, $n] if ($p);
   }
   return [$p1, $p2];
 }
