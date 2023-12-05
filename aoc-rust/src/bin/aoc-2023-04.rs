@@ -11,11 +11,11 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             i += 1
         }
         i += 2;
-        visit_uint_until::<usize>(inp, &mut i, b'|', |x: usize| {
+        aoc::read::visit_uint_until::<usize>(inp, &mut i, b'|', |x: usize| {
             w[x] = true;
         });
         i += 2;
-        visit_uint_until::<usize>(inp, &mut i, b'\n', |x: usize| {
+        aoc::read::visit_uint_until::<usize>(inp, &mut i, b'\n', |x: usize| {
             if w[x] {
                 p += 1;
             }
@@ -36,40 +36,6 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     (p1, p2)
 }
 
-pub fn visit_uint_until<T>(inp: &[u8], i: &mut usize, exp: u8, mut visit_fn: impl FnMut(T))
-where
-    T: std::ops::Add<T>
-        + std::ops::Mul<Output = T>
-        + std::convert::From<u8>
-        + std::ops::Add<Output = T>
-        + num::Integer,
-{
-    let mut n: T = 0.into();
-    let mut num = false;
-    loop {
-        match inp[*i] {
-            ch if ch == exp => {
-                if num {
-                    visit_fn(n);
-                }
-                return;
-            }
-            b'0'..=b'9' => {
-                num = true;
-                n = n * 10.into() + (inp[*i].wrapping_sub(b'0')).into();
-            }
-            _ => {
-                if num {
-                    visit_fn(n);
-                }
-                num = false;
-                n = 0.into();
-            }
-        }
-        *i += 1;
-    }
-}
-
 fn main() {
     let inp = std::fs::read(aoc::input_file()).expect("read error");
     aoc::benchme(|bench: bool| {
@@ -88,8 +54,8 @@ mod tests {
     #[test]
     fn parts_works() {
         let inp = std::fs::read("../2023/04/test1.txt").expect("read error");
-        assert_eq!(parts(&inp), (10, 20));
+        assert_eq!(parts(&inp), (13, 30));
         let inp = std::fs::read("../2023/04/input.txt").expect("read error");
-        assert_eq!(parts(&inp), (100, 200));
+        assert_eq!(parts(&inp), (25183, 5667240));
     }
 }

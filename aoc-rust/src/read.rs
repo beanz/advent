@@ -70,6 +70,40 @@ pub fn skip_next_line(inp: &[u8], i: usize) -> usize {
     i + 1
 }
 
+pub fn visit_uint_until<T>(inp: &[u8], i: &mut usize, exp: u8, mut visit_fn: impl FnMut(T))
+where
+    T: std::ops::Add<T>
+        + std::ops::Mul<Output = T>
+        + std::convert::From<u8>
+        + std::ops::Add<Output = T>
+        + num::Integer,
+{
+    let mut n: T = 0.into();
+    let mut num = false;
+    loop {
+        match inp[*i] {
+            ch if ch == exp => {
+                if num {
+                    visit_fn(n);
+                }
+                return;
+            }
+            b'0'..=b'9' => {
+                num = true;
+                n = n * 10.into() + (inp[*i].wrapping_sub(b'0')).into();
+            }
+            _ => {
+                if num {
+                    visit_fn(n);
+                }
+                num = false;
+                n = 0.into();
+            }
+        }
+        *i += 1;
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
