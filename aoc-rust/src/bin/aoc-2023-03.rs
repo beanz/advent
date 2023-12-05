@@ -15,7 +15,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         }
         let mut n = (ch - b'0') as usize;
         let mut j = i + 1;
-        while is_digit(inp[j]) {
+        while j < inp.len() && is_digit(inp[j]) {
             n = n * 10 + ((inp[j] - b'0') as usize);
             j += 1;
         }

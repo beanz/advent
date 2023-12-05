@@ -29,7 +29,7 @@ fn parts(inp: []const u8) ![2]u32 {
         }
         var n = @as(u32, ch - '0');
         var j = i + 1;
-        while (isDigit(inp[j])) : (j += 1) {
+        while (j < inp.len and isDigit(inp[j])) : (j += 1) {
             n = n * 10 + @as(u32, inp[j] - '0');
         }
         var l = j - i;

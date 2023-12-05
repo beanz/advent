@@ -31,7 +31,7 @@ func Parts(in []byte) (int, int) {
 		}
 		n := int(ch - '0')
 		j := i + 1
-		for ; isDigit(in[j]); j++ {
+		for ; j < len(in) && isDigit(in[j]); j++ {
 			n = n*10 + int(in[j]-'0')
 		}
 		l := j - i
