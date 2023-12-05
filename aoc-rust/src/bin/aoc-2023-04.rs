@@ -1,6 +1,9 @@
+use smallvec::SmallVec;
+
 fn parts(inp: &[u8]) -> (usize, usize) {
     let (mut p1, mut p2) = (0, 0);
     let mut i = 0;
+    let mut copies = SmallVec::<[(usize, usize); 10]>::new();
     while i < inp.len() {
         let mut w: [bool; 256] = [false; 256];
         let mut p = 0;
@@ -9,18 +12,26 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         }
         i += 2;
         visit_uint_until::<usize>(inp, &mut i, b'|', |x: usize| {
-            println!("{}\n", x);
             w[x] = true;
         });
         i += 2;
         visit_uint_until::<usize>(inp, &mut i, b'\n', |x: usize| {
-            println!("{}?\n", x);
             if w[x] {
                 p += 1;
             }
         });
         p1 += (1 << p) >> 1;
         i += 1;
+        let mut n = 1;
+        copies.drain_filter(|(count, num)| {
+            *count -= 1;
+            n += *num;
+            *count == 0
+        });
+        p2 += n;
+        if p > 0 {
+            copies.push((p, n));
+        }
     }
     (p1, p2)
 }
