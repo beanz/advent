@@ -67,14 +67,15 @@ func Parts(in []byte) (int, int) {
 }
 
 func race(t, r int) int {
-	c := 0
-	for h := 1; h < t; h++ {
-		d := (t - h) * h
+	l := 1
+	for ; l < t; l++ {
+		d := (t - l) * l
 		if d > r {
-			c++
+			break
 		}
 	}
-	return c
+	h := t - l
+	return h - l + 1
 }
 
 func main() {
