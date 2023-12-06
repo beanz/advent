@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"math"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -67,14 +68,8 @@ func Parts(in []byte) (int, int) {
 }
 
 func race(t, r int) int {
-	l := 1
-	for ; l < t; l++ {
-		d := (t - l) * l
-		if d > r {
-			break
-		}
-	}
-	h := t - l
+	d := math.Sqrt(float64(t*t) - float64(4*(r+1)))
+	l, h := int(math.Ceil((float64(t)-d)/2)), int(math.Floor((float64(t)+d)/2))
 	return h - l + 1
 }
 
