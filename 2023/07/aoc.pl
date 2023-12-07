@@ -12,20 +12,21 @@ $; = $" = ',';
 
 my $file = shift // "input.txt";
 
-my $reader = \&read_guess;
+my $reader = \&read_stuff;
 my $i = $reader->($file);
-my $i2 = $reader->($file);
 
-my @sc = (qw/0 1 2 3 4 5 6 7 8 9 T J Q K A/);
-my %msc;
-for my $i (0 .. @sc - 1) {
-  $msc{$sc[$i]} = $i;
-}
-
-my @sc2 = (qw/J 1 2 3 4 5 6 7 8 9 T 0 Q K A/);
-my %msc2;
-for my $i (0 .. @sc2 - 1) {
-  $msc2{$sc2[$i]} = $i;
+sub read_stuff {
+  my $file = shift;
+  my $in = read_lines($file);
+  my @r;
+  for (@$in) {
+    my ($h, $b) = split/\s+/, $_;
+    $h =~ y/TJQKA/ABCDE/;
+    my $h2 = $h;
+    $h2 =~ y/B/0/;
+    push @r, [[$h, score($h)], [$h2, score2($h2)], $b, $_];
+  }
+  return \@r;
 }
 
 sub score {
@@ -58,93 +59,36 @@ sub score {
 
 sub comp {
   my ($a, $b) = @_;
-  my ($sa) = score($a);
-  my ($sb) = score($b);
+  my ($sa) = $a->[1];
+  my ($sb) = $b->[1];
   if ($sa == $sb) {
-    my @ca = split //, $a;
-    my @cb = split //, $b;
-    for my $i (0 .. 4) {
-      if ($ca[$i] eq $cb[$i]) {
-        next;
-      }
-      return $msc{$ca[$i]} <=> $msc{$cb[$i]};
-    }
-    die "equal?";
+    return $a->[0] cmp $b->[0];
   }
-  return $sb <=> $sa;
+  return $b->[1] <=> $a->[1];
 }
 
 sub score2 {
   my ($h) = @_;
   my $b = score($h);
-  if ($h !~ /J/) {
+  if ($h !~ /0/) {
     return $b;
   }
-  for (qw/1 2 3 4 5 6 7 8 9 T Q K A/) {
+  for (qw/1 2 3 4 5 6 7 8 9 A C D E/) {
     my $hh = $h;
-    $hh =~ s/J/$_/g;
+    $hh =~ s/0/$_/g;
     my $n = score($hh);
     $b = $n if ($b > $n);
   }
   return $b;
 }
 
-sub comp2 {
-  my ($a, $b) = @_;
-  my ($sa) = score2($a);
-  my ($sb) = score2($b);
-
-  if ($sa == $sb) {
-    my @ca = split //, $a;
-    my @cb = split //, $b;
-    for my $i (0 .. 4) {
-      if ($ca[$i] eq $cb[$i]) {
-        next;
-      }
-      return $msc2{$ca[$i]} <=> $msc2{$cb[$i]};
-    }
-    die "equal?";
-  }
-  return $sb <=> $sa;
-}
-
-#print score("AAAAA"), "\n";
-#print score("AA8AA"), "\n";
-#print score("23332"), "\n";
-#print score("TTT98"), "\n";
-#print score("23432"), "\n";
-#print score("A23A4"), "\n";
-#print score("23456"), "\n";
-
-#print score("33332"), "\n";
-#print score("2AAAA"), "\n";
-#print " $_\n" for (sort { comp($a, $b) } qw/33332 2AAAA/);
-
-#print score("77888"), "\n";
-#print score("77788"), "\n";
-#print " $_\n" for (sort { comp($a, $b) } qw/77888 77788/);
-
-#print " $_\n" for (sort {comp($a, $b)} qw/32T3K T55J5 KK677 KTJJT QQQJA/);
-
 sub calc {
-  my ($in) = @_;
+  my ($in, $by) = @_;
+  $by //= 0;
   my $c = 0;
-  my @s = sort {comp($a->[0], $b->[0])} @$in;
+  my @s = sort {comp($a->[$by], $b->[$by])} @$in;
   for my $i (0 .. @s - 1) {
-    my ($h, $b) = @{$s[$i]};
-    print "$h $b ", $i + 1, " ", score($h), "\n" if DEBUG;
-    $c += $b * ($i + 1);
-  }
-  return $c;
-}
-
-sub calc2 {
-  my ($in) = @_;
-  my $c = 0;
-  my @s = sort {comp2($a->[0], $b->[0])} @$in;
-  for my $i (0 .. @s - 1) {
-    my ($h, $b) = @{$s[$i]};
-    print "$h $b ", $i + 1, " ", score2($h), "\n" if DEBUG;
+    my ($h, undef, $b) = @{$s[$i]};
     $c += $b * ($i + 1);
   }
   return $c;
@@ -156,7 +100,7 @@ print "Part 1: ", calc($i), "\n";
 
 testPart2() if (TEST);
 
-print "Part 2: ", calc2($i2), "\n";
+print "Part 2: ", calc($i, 1), "\n";
 
 sub testPart1 {
   my @test_cases = (["test1.txt", 6440], ["input.txt", 256448566],);
@@ -169,7 +113,7 @@ sub testPart1 {
 sub testPart2 {
   my @test_cases = (["test1.txt", 5905], ["input.txt", 254412181],);
   for my $tc (@test_cases) {
-    my $res = calc2($reader->($tc->[0]));
-    assertEq("Test 1 [$tc->[0]]", $res, $tc->[1]);
+    my $res = calc($reader->($tc->[0]), 1);
+    assertEq("Test 2 [$tc->[0]]", $res, $tc->[1]);
   }
 }
