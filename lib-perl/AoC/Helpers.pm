@@ -40,6 +40,8 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
                                     log10
                                     ceil floor round
 
+                                    gcd lcm
+
                                     dclone
                                     min max minstr maxstr sum product pairs
                                     all any reduce
@@ -538,6 +540,22 @@ sub read_chunky_records {
   $kvs //= qr/:/;
   my $c = read_chunks($file, $rs);
   return [ map { { map { split $kvs, $_ } split $fs, $_ } } @$c ];
+}
+
+sub gcd {
+  my ($a, $b) = @_;
+  $a = abs($a);
+  $b = abs($b);
+  ($a, $b) = ($b, $a) if $a > $b;
+  while ($a) {
+    ($a, $b) = ($b % $a, $a);
+  }
+  return $b;
+}
+
+sub lcm {
+  my ($a, $b) = @_;
+  ($a && $b) and $a / gcd($a, $b) * $b or 0;
 }
 
 {

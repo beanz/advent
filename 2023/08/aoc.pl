@@ -13,10 +13,7 @@ $; = $" = ',';
 my $file = shift // "input.txt";
 
 my $reader = \&read_stuff;
-
-#my $reader = \&read_guess;
 my $i = $reader->($file);
-my $i2 = $reader->($file);
 
 sub read_stuff {
   my $file = shift;
@@ -27,7 +24,7 @@ sub read_stuff {
     $in->[$i] =~ s/[()=]\s*//g;
     $in->[$i] =~ s/,//g;
     my ($f, $l, $r) = split /\s+/, $in->[$i];
-    print "$i: $f $l $r\n";
+    print "$i: $f $l $r\n" if DEBUG;
     $m{L}->{$f} = $l;
     $m{R}->{$f} = $r;
     push @{$m{P}}, $f if ($f =~ /A$/);
@@ -36,59 +33,48 @@ sub read_stuff {
 }
 
 sub calc {
-  my ($in) = @_;
-  dd([$in], [qw/in/]);
+  my ($in, $start, $end) = @_;
+  $start //= 'AAA';
+  $end //= qr/^ZZZ$/;
   my $c = 0;
-  my $p = 'AAA';
+  my $p = $start;
   while (1) {
     my $s = $in->{S}->[($c % (@{$in->{S}}))];
     my $n = $in->{$s}->{$p};
-    print "$p $s $n\n";
+    print "$p $s $n\n" if (DEBUG > 1);
     $p = $n;
     $c++;
-    last if ($p eq 'ZZZ');
+    last if ($p =~ $end);
   }
   return $c;
 }
 
 sub calc2 {
   my ($in) = @_;
-  dd([$in], [qw/in/]);
-  my $c = 0;
   my $gc = @{$in->{P}};
-  my %c;
-  while (1) {
-    my $s = $in->{S}->[($c % (@{$in->{S}}))];
-    my $p2 = 0;
-    for my $i (0 .. ($gc - 1)) {
-      my $p = $in->{P}->[$i];
-      my $n = $in->{$s}->{$p};
-
-      #print "$p $s $n\n";
-      $in->{P}->[$i] = $n;
-      if ($n =~ /Z$/) {
-        print "Found cycle for $i ", $c + 1, "\n";
-        $c{$i} = $c + 1;
-        $p2++;
-      }
-    }
-    $c++;
-    last if ($p2 == $gc);
-    last if ($gc == keys %c);
+  my @c;
+  for my $i (0 .. ($gc - 1)) {
+    my $c = calc($in, $in->{P}->[$i], qr/Z$/);
+    print "Found cycle for $i ", $c, "\n" if DEBUG;
+    push @c, $c;
   }
-  return $c;
+  my $lcm = 1;
+  for (@c) {
+    $lcm = lcm($lcm, $_);
+  }
+  return $lcm;
 }
 
 testPart1() if (TEST);
 
-#print "Part 1: ", calc($i), "\n";
+print "Part 1: ", calc($i), "\n";
 
 testPart2() if (TEST);
 
-print "Part 2: ", calc2($i2), "\n";
+print "Part 2: ", calc2($i), "\n";
 
 sub testPart1 {
-  my @test_cases = (["test1.txt", 10], ["input.txt", 307],);
+  my @test_cases = (["test1.txt", 2], ["test2.txt", 6], ["input.txt", 20569],);
   for my $tc (@test_cases) {
     my $res = calc($reader->($tc->[0]));
     assertEq("Test 1 [$tc->[0]]", $res, $tc->[1]);
@@ -96,14 +82,9 @@ sub testPart1 {
 }
 
 sub testPart2 {
-  my @test_cases = (
-    ["test1.txt", 1, 15],
-    ["test1.txt", 2, 12],
-    ["test1.txt", 10, 37],
-    ["test1.txt", 100, 2208],
-  );
+  my @test_cases = (["test3.txt", 6], ["input.txt", 21366921060721],);
   for my $tc (@test_cases) {
     my $res = calc2($reader->($tc->[0]), $tc->[1]);
-    assertEq("Test 2 [$tc->[0] x $tc->[1]]", $res, $tc->[2]);
+    assertEq("Test 2 [$tc->[0]]", $res, $tc->[1]);
   }
 }
