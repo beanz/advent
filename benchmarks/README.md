@@ -6,14 +6,14 @@ The following are the benchmarks for the Go implementations of solutions for eac
 ## 2023
  &nbsp;  | Golang | Rust | Zig
  ---:  | ---:  | ---:  | ---: 
-Day 01 | 186µs / None | **🔴 92.8µs** / None | **🔴 74.1µs**
+Day 01 | 186µs / None | 92.8µs / None | **🔴 74.1µs**
 Day 02 | 5.88µs / None | 2.4µs / None | 2.59µs
 Day 03 | 26.7µs / None | 17.4µs / None | 14µs
 Day 04 | 33.9µs / 256 B | 18.9µs / None | **🔴 52.9µs**
 Day 05 | **🔴 4.2s** / 12.6 KB | - | -
 Day 06 | 140ns / None | 97ns / None | 89ns
 Day 07 | 370µs / 65.8 KB | - | -
-Day 08 | 1.11ms / **🔴 426 KB** | - | -
+Day 08 | 1.07ms / **🔴 426 KB** | **🔴 2.79ms** / None | -
 Day 09 | - | - | -
 Day 10 | - | - | -
 Day 11 | - | - | -
@@ -31,7 +31,7 @@ Day 22 | - | - | -
 Day 23 | - | - | -
 Day 24 | - | - | -
 Day 25 | - | - | -
-*Total* | *4.2s / 505 KB* | *132µs / None* | *144µs*
+*Total* | *4.2s / 505 KB* | *2.92ms / None* | *144µs*
 
 ![Graph for year 2023](y2023.svg)
 
@@ -363,7 +363,7 @@ Day 04 | 948ms / 56.0 B | 1.78ms / 642 KB | 1.57ms / 825 KB | 2.85ms / 399 KB | 
 Day 05 | 252µs / 34.8 KB | **🔴 3.8s** / 3.4 KB | 80.1ms / 25.5 MB | 256ms / 48.3 MB | 58.9µs / 78.8 KB | 100µs / 51.9 KB | 2.13ms / 1.1 MB | 4.76µs / None | **🔴 4.2s** / 12.6 KB
 Day 06 | 64.9ms / 252 KB | 114µs / 4.6 KB | 16.1ms / 6.6 MB | 30.1ms / 19.4 KB | 31.8ms / 18.4 MB | 3.62ms / 4.0 MB | 999ns / None | 4.73µs / None | 140ns / None
 Day 07 | 247µs / 117 KB | 1.07ms / 64.4 KB | 2.69ms / 1.0 MB | 183µs / 68.6 KB | 5.15ms / 5.5 MB | 1.32ms / 692 KB | 48.9µs / 8.2 KB | 14.2µs / None | 370µs / 65.8 KB
-Day 08 | 21.2µs / 11.4 KB | 3.71µs / 96.0 B | 617µs / 318 KB | 249µs / 162 KB | 170µs / 29.7 KB | 4.41ms / 5.5 MB | 260µs / 167 KB | 388µs / None | 1.11ms / **🔴 426 KB**
+Day 08 | 21.2µs / 11.4 KB | 3.71µs / 96.0 B | 617µs / 318 KB | 249µs / 162 KB | 170µs / 29.7 KB | 4.41ms / 5.5 MB | 260µs / 167 KB | 388µs / None | 1.07ms / **🔴 426 KB**
 Day 09 | 12.7ms / 6.2 MB | 9.8µs / None | 130µs / 49.2 KB | 203ms / 167 MB | 2.8ms / 74.6 KB | 19.2ms / 44.0 MB | 539µs / 238 KB | 233µs / None | -
 Day 10 | 60.3ms / 56.6 MB | 8.12ms / 5.5 MB | 436µs / 11.4 KB | 1.24ms / 768 KB | 15.1ms / 11.3 MB | 93.1µs / 62.2 KB | 13.4µs / 920 B | 809ns / None | -
 Day 11 | 26.8ms / 313 KB | 24.7ms / 16.8 MB | 139µs / 11.1 KB | 27.8ms / 721 KB | 2.95ms / 888 KB | 45ms / 4.6 MB | 466µs / 223 KB | 3.69ms / None | -
@@ -418,14 +418,14 @@ Day 25 | -
 ## Rust
  &nbsp;  | 2015 | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | 2023
  ---:  | ---:  | ---:  | ---:  | ---:  | ---:  | ---:  | ---:  | ---:  | ---: 
-Day 01 | 3.35µs / None | 41.3µs / 34.9 KB | 1.13µs / 16.4 KB | 692µs / None | 659ns / None | 149µs / 144 KB | 13.6µs / None | 3.78µs / None | **🔴 92.8µs** / None
+Day 01 | 3.35µs / None | 41.3µs / 34.9 KB | 1.13µs / 16.4 KB | 692µs / None | 659ns / None | 149µs / 144 KB | 13.6µs / None | 3.78µs / None | 92.8µs / None
 Day 02 | 54.2µs / 16.0 KB | 77.1µs / 3.8 KB | 8.33µs / 2.0 KB | 489µs / None | 2.04ms / None | 23.6µs / 24.6 KB | 899ns / None | 642ns / None | 2.4µs / None
 Day 03 | 537µs / 279 KB | 252µs / 183 KB | 11.3µs / 14.3 KB | 4.16ms / None | 34.4µs / None | 2.69µs / None | 19.3µs / 2.0 KB | 19.2µs / None | 17.4µs / None
 Day 04 | **🔴 1.34s** / 159 MB | 1.62ms / 634 KB | 3.11ms / 2.0 MB | 11µs / None | 520µs / None | 49.1µs / None | 54.3µs / 102 KB | 5.64µs / None | 18.9µs / None
 Day 05 | 218µs / None | **🔴 5.68s** / **🔴 689 MB** | 40.4ms / 24.9 KB | 5.11ms / None | 2.41µs / None | 64.5µs / 12.4 KB | 441µs / 8.2 KB | 3.55µs / None | -
 Day 06 | 38.4ms / 19.2 KB | 718µs / 5.8 KB | 1.31ms / 1.8 MB | 6.97ms / None | 132µs / 163 KB | 15µs / None | 739ns / 512 B | 5.83µs / None | 97ns / None
 Day 07 | 235µs / 148 KB | 2.28ms / 1.0 MB | 640µs / 523 KB | 4.16µs / None | 491µs / 102 KB | 255µs / 281 KB | 23µs / 3.3 KB | 9.67µs / None | -
-Day 08 | 34.8µs / 29.6 KB | 11.3µs / 6.2 KB | 209µs / 38.2 KB | 70.8µs / None | 19.4µs / None | 72.7µs / None | 14.6µs / 2.4 KB | 280µs / None | -
+Day 08 | 34.8µs / 29.6 KB | 11.3µs / 6.2 KB | 209µs / 38.2 KB | 70.8µs / None | 19.4µs / None | 72.7µs / None | 14.6µs / 2.4 KB | 280µs / None | **🔴 2.79ms** / None
 Day 09 | 5.16ms / 651 KB | 152µs / 361 KB | 47.3µs / 89.3 KB | 42.5ms / **🔴 64.0 MB** | 1.77ms / None | 108µs / None | 104µs / 19.6 KB | 197µs / None | -
 Day 10 | 734ms / **🔴 312 MB** | 131µs / 90.7 KB | 99.8µs / 1.1 KB | 5.71µs / None | 1.05ms / None | 696ns / None | 14.5µs / 2.5 KB | 512ns / None | -
 Day 11 | 66.5ms / 15.0 MB | 1.38s / **🔴 785 MB** | 80.6µs / None | 2.71ms / None | 536µs / None | 14.7ms / 2.0 MB | 79.8µs / 319 B | 2.36ms / None | -
@@ -443,7 +443,7 @@ Day 22 | 401ms / **🔴 234 MB** | 10.4ms / 194 KB | 56.9ms / None | 16.8ms / No
 Day 23 | 5.62µs / 1.2 KB | 4.02µs / 21.1 KB | 28.8µs / None | 65.7ms / None | 8.86µs / None | **🔴 179ms** / None | **🔴 748ms** / **🔴 165 MB** | 48.9ms / None | -
 Day 24 | 9.17ms / 10.0 MB | 4.27ms / 3.8 MB | 74.4ms / None | 50.3ms / None | 5.06ms / None | 77.6ms / None | 8.05µs / 576 B | **🔴 84.8ms** / 19.2 MB | -
 Day 25 | 208ns / 32.0 B | 8.01ms / 7.3 KB | 43.6ms / None | 2.17ms / None | 10.5µs / None | 37ms / None | 29.3ms / 19.4 KB | 1.25µs / None | -
-*Total* | *4s / 994 MB* | *12.9s / 1.7 GB* | *1.46s / 55.5 MB* | *527ms / 97.9 MB* | *329ms / 95.6 MB* | *855ms / 108 MB* | *910ms / 320 MB* | *407ms / 98.6 MB* | *132µs / None*
+*Total* | *4s / 994 MB* | *12.9s / 1.7 GB* | *1.46s / 55.5 MB* | *527ms / 97.9 MB* | *329ms / 95.6 MB* | *855ms / 108 MB* | *910ms / 320 MB* | *407ms / 98.6 MB* | *2.92ms / None*
 
 
 ## Zig
