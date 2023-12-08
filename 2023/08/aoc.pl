@@ -44,6 +44,7 @@ sub calc {
     print "$p $s $n\n" if (DEBUG > 1);
     $p = $n;
     $c++;
+    return 0 unless (defined $p);
     last if ($p =~ $end);
   }
   return $c;
