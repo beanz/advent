@@ -34,7 +34,7 @@ func TestParts(t *testing.T) {
 	}{
 		{"test1.txt", test1, 2, 2},
 		{"test2.txt", test2, 6, 6},
-		{"test3.txt", test3, 0, 6},
+		{"test3.txt", test3, 1, 6},
 		{"input.txt", input, 20569, 21366921060721},
 	}
 	for _, tc := range tests {

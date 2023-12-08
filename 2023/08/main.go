@@ -30,42 +30,29 @@ func Parts(in []byte) (int, int) {
 		mr[f] = r + 1
 		i += 17
 	}
-	p1 := 0
-	p := 0
 	mod := len(steps)
-	for {
-		if steps[p1%mod] == 'L' {
-			p = ml[p]
-		} else {
-			p = mr[p]
-		}
-		if p == 0 {
-			break
-		}
-		p--
-		p1++
-		if p == 26425 {
-			break
-		}
-	}
-	p2 := func(p int) int {
+	run := func(p int) int {
 		c := 0
 		for {
 			if steps[c%mod] == 'L' {
-				p = ml[p] - 1
+				p = ml[p]
 			} else {
-				p = mr[p] - 1
+				p = mr[p]
 			}
+			if p == 0 {
+				return 1
+			}
+			p--
 			c++
 			if (p & 0x1f) == 25 {
 				return c
 			}
 		}
 	}
-	var lcm int64 = 1
+	p1 := run(0)
+	lcm := int64(p1)
 	for _, p := range g {
-		s := p2(p)
-		lcm = LCM(int64(s), lcm)
+		lcm = LCM(int64(run(p)), lcm)
 	}
 
 	return p1, int(lcm)
