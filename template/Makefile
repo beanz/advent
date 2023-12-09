@@ -205,12 +205,14 @@ perl-prof:
 	perl -d:NYTProf aoc.pl input.txt
 	nytprofhtml --open
 
-check: ${CHECK}
+check: ${ALL}
 	@TT=$$(mktemp -d) ; \
 	GOLD=$$TT/gold.log ; \
 	./$< >$$GOLD ; \
 	echo -n "$(HERE): " ; \
 	for f in $^ ; do \
+	  test -f ".$$f.slow" && continue ; \
+		if [ "$<" == "$$f" ]; then echo -n "$$f "; continue ; fi; \
 	  echo -n "$$f "; \
 	  ./$$f >$$TT/$$f.log 2>&1 \
 	    && diff -audBbw $$GOLD $$TT/$$f.log >$$TT/$$f.diff \
