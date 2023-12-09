@@ -169,6 +169,20 @@ pub fn chompInt(comptime T: type, inp: anytype, i: *usize) anyerror!T {
     return m * n;
 }
 
+pub fn max(comptime T: type, a: T, b: T) T {
+    if (a > b) {
+        return a;
+    }
+    return b;
+}
+
+pub fn min(comptime T: type, a: T, b: T) T {
+    if (a < b) {
+        return a;
+    }
+    return b;
+}
+
 pub fn splitToOwnedSlice(alloc: std.mem.Allocator, inp: []const u8, sep: []const u8) ![][]const u8 {
     var bits = std.ArrayList([]const u8).init(alloc);
     var it = std.mem.split(u8, inp, sep);
