@@ -23,13 +23,13 @@ fn parts(inp: []const u8) ![2]u32 {
         i += 2;
         while (inp[i] != '|') : (i += 1) {
             while (inp[i] == ' ') : (i += 1) {}
-            const n = try chompUint(u8, inp, &i);
+            const n = try aoc.chompUint(u8, inp, &i);
             winners |= @as(u256, 1) << n;
         }
         i += 2;
         while (true) : (i += 1) {
             while (inp[i] == ' ') : (i += 1) {}
-            const n = try chompUint(u8, inp, &i);
+            const n = try aoc.chompUint(u8, inp, &i);
             if (winners & (@as(u256, 1) << n) != 0) {
                 p += 1;
             }
@@ -58,19 +58,6 @@ fn parts(inp: []const u8) ![2]u32 {
         }
     }
     return [2]u32{ p1, p2 };
-}
-
-fn chompUint(comptime T: type, inp: anytype, i: *usize) anyerror!T {
-    var n: T = 0;
-    std.debug.assert(i.* < inp.len and '0' <= inp[i.*] and inp[i.*] <= '9');
-    while (i.* < inp.len) : (i.* += 1) {
-        if ('0' <= inp[i.*] and inp[i.*] <= '9') {
-            n = n * 10 + @as(T, inp[i.*] - '0');
-            continue;
-        }
-        break;
-    }
-    return n;
 }
 
 fn day04(inp: []const u8, bench: bool) anyerror!void {

@@ -138,6 +138,37 @@ pub fn BoundedSignedInts(comptime T: type, b: anytype, inp: anytype) anyerror![]
     return b.slice();
 }
 
+pub fn chompUint(comptime T: type, inp: anytype, i: *usize) anyerror!T {
+    var n: T = 0;
+    std.debug.assert(i.* < inp.len and '0' <= inp[i.*] and inp[i.*] <= '9');
+    while (i.* < inp.len) : (i.* += 1) {
+        if ('0' <= inp[i.*] and inp[i.*] <= '9') {
+            n = n * 10 + @as(T, inp[i.*] - '0');
+            continue;
+        }
+        break;
+    }
+    return n;
+}
+
+pub fn chompInt(comptime T: type, inp: anytype, i: *usize) anyerror!T {
+    var n: T = 0;
+    var m: T = 1;
+    std.debug.assert(i.* < inp.len and (('0' <= inp[i.*] and inp[i.*] <= '9') or (inp[i.*] == '-')));
+    while (i.* < inp.len) : (i.* += 1) {
+        if ('0' <= inp[i.*] and inp[i.*] <= '9') {
+            n = n * 10 + @as(T, inp[i.*] - '0');
+            continue;
+        }
+        if (inp[i.*] == '-') {
+            m = -1;
+            continue;
+        }
+        break;
+    }
+    return m * n;
+}
+
 pub fn splitToOwnedSlice(alloc: std.mem.Allocator, inp: []const u8, sep: []const u8) ![][]const u8 {
     var bits = std.ArrayList([]const u8).init(alloc);
     var it = std.mem.split(u8, inp, sep);
