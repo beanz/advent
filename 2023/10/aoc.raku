@@ -20,23 +20,12 @@ say "Part 1: ", .[0], "\nPart 2: ", .[1] given calc($input);
 
 sub calc ($in) {
   my $g = $in.lines.map: {.comb};
-  my $h = $g.elems;
   my $w = $g[0].elems;
-  my ($sx,$sy) = ($_%($w+1), ($_/($w+1)).floor) given $in.index('S');
-  my $sd = [];
-  if (dirs($g, $sx, $sy-1) ∋ SOUTH) {
-    $sd.push(NORTH);
-  }
-  if (dirs($g, $sx, $sy+1) ∋ NORTH) {
-    $sd.push(SOUTH);
-  }
-  if (dirs($g, $sx-1, $sy) ∋ EAST) {
-    $sd.push(WEST);
-  }
-  if (dirs($g, $sx+1, $sy) ∋ WEST) {
-    $sd.push(EAST);
-  }
-  my $from = $sd.first;
+  my ($sx,$sy) = ($_%($w+1), ($_ div ($w+1))) given $in.index('S');
+  my $from = (reduce {
+    $^a.push($^b) if (dirs($g, |move($sx, $sy, $^b)) ∋ opposite($^b));
+    $^a
+  }, [], NORTH, SOUTH, EAST, WEST).first;
   my ($x, $y) = move($sx, $sy, $from);
   my $p1 = 1;
   my $A = ($x-$sx)*($y+$sy);
@@ -48,22 +37,17 @@ sub calc ($in) {
     $from = $step;
     $p1++;
   } 
-
-  my $l = 0;
-  my $p2 = ($A.abs div 2)-($p1 div 2)+1;
-  ($p1/2, $p2)
+  $p1 div= 2;
+  ($p1, ($A.abs div 2)-$p1+1);
 }
 
-sub move($x,$y,$d) {
+sub move($x, $y, $d) {
   given $d {
     when NORTH { [$x,$y-1] };
     when SOUTH { [$x,$y+1] };
     when EAST { [$x+1,$y] };
     when WEST { [$x-1,$y] };
   }
-}
-
-sub step($g, $x, $y, $not) {
 }
 
 sub opposite($d) {
