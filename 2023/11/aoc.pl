@@ -77,24 +77,7 @@ sub solve {
   return $s;
 }
 
-testParts() if (TEST);
+RunTests(sub { my $f = shift; calc($reader->($f), @_) }) if (TEST);
 
 my $res = calc($i);
 printf "Part 1: %s\nPart 2: %s\n", @$res;
-
-sub testParts {
-  open my $fh, "TC.txt" || die "no test case file: $@\n";
-  my $c;
-  { local $/; $c = <$fh>; }
-  chomp $c;
-  my @tc;
-  for (split /\n---END---\n/, $c) {
-    my ($args, $p1, $p2) = split/\n/;
-    my @a = split/\s+/, $args;
-    my $f = shift @a;
-    my $in = $reader->($f);
-    my $res = calc($in, @a);
-    assertEq("Test 1 [$f @a]", $res->[0], $p1);
-    assertEq("Test 2 [$f @a]", $res->[1], $p2);
-  }
-}

@@ -88,6 +88,8 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
                                     read_chunks
                                     read_chunky_records
                                     read_dense_map
+
+                                    RunTests
 ) ] );
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our $VERSION = '0.01';
@@ -106,6 +108,23 @@ sub input_path {
 
 sub input_file {
   return input_path(@ARGV ? $ARGV[0] : "input.txt");
+}
+
+sub RunTests {
+  my ($fn) = @_;
+  open my $fh, "TC.txt" || die "no test case file: $@\n";
+  my $c;
+  { local $/; $c = <$fh>; }
+  chomp $c;
+  my @tc;
+  for (split /\n---END---\n/, $c) {
+    my ($args, $p1, $p2) = split/\n/;
+    my @a = split/\s+/, $args;
+    my $f = shift @a;
+    my $res = $fn->($f, @a);
+    assertEq("Test 1 [$f @a]", $res->[0], $p1);
+    assertEq("Test 2 [$f @a]", $res->[1], $p2);
+  }
 }
 
 sub hk {
