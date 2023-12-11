@@ -24,8 +24,7 @@ const (
 )
 
 type hand struct {
-	h1, h2      Score
-	p1, p2, bid int
+	s1, s2, bid int
 	hand        []byte
 }
 
@@ -121,23 +120,19 @@ func Parts(in []byte) (int, int) {
 		case 4:
 			h2 = h1 + 1
 		}
-		hands = append(hands, hand{h1, h2, s1, s2, bid, h})
+		s1 += int(h1) << 20
+		s2 += int(h2) << 20
+		hands = append(hands, hand{s1, s2, bid, h})
 	}
 	sort.Slice(hands, func(i, j int) bool {
-		if hands[i].h1 == hands[j].h1 {
-			return hands[i].p1 < hands[j].p1
-		}
-		return hands[i].h1 < hands[j].h1
+		return hands[i].s1 < hands[j].s1
 	})
 	p1 := 0
 	for i := 0; i < len(hands); i++ {
 		p1 += (i + 1) * hands[i].bid
 	}
 	sort.Slice(hands, func(i, j int) bool {
-		if hands[i].h2 == hands[j].h2 {
-			return hands[i].p2 < hands[j].p2
-		}
-		return hands[i].h2 < hands[j].h2
+		return hands[i].s2 < hands[j].s2
 	})
 	p2 := 0
 	for i := 0; i < len(hands); i++ {
