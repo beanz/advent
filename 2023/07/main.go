@@ -28,7 +28,7 @@ type hand struct {
 	hand        []byte
 }
 
-func Parts(in []byte) (int, int) {
+func Parts(in []byte, args ...int) (int, int) {
 	hands := make([]hand, 0, 1000)
 	for i := 0; i < len(in); i++ {
 		h := in[i : i+5]

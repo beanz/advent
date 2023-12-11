@@ -82,7 +82,7 @@ sub score2 {
   return $b;
 }
 
-sub calc {
+sub solve {
   my ($in, $by) = @_;
   $by //= 0;
   my $c = 0;
@@ -94,26 +94,11 @@ sub calc {
   return $c;
 }
 
-testPart1() if (TEST);
-
-print "Part 1: ", calc($i), "\n";
-
-testPart2() if (TEST);
-
-print "Part 2: ", calc($i, 1), "\n";
-
-sub testPart1 {
-  my @test_cases = (["test1.txt", 6440], ["input.txt", 256448566],);
-  for my $tc (@test_cases) {
-    my $res = calc($reader->($tc->[0]));
-    assertEq("Test 1 [$tc->[0]]", $res, $tc->[1]);
-  }
+sub calc {
+  [solve(@_), solve(@_, 1)]
 }
 
-sub testPart2 {
-  my @test_cases = (["test1.txt", 5905], ["input.txt", 254412181],);
-  for my $tc (@test_cases) {
-    my $res = calc($reader->($tc->[0]), 1);
-    assertEq("Test 2 [$tc->[0]]", $res, $tc->[1]);
-  }
-}
+RunTests(sub { my $f = shift; calc($reader->($f), @_) }) if (TEST);
+
+my $res = calc($i);
+printf "Part 1: %s\nPart 2: %s\n", @$res;
