@@ -1,4 +1,5 @@
 fn parts(inp: &[u8]) -> (usize, usize) {
+    TODO;
     (1, 2)
 }
 

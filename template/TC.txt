@@ -1,0 +1,7 @@
+test1.txt
+10
+20
+---END---
+input.txt
+100
+200
