@@ -275,7 +275,7 @@ expect-go: aoc-go
 
 template:
 	@if [ ! -e Makefile ]; then ln -s ../../template/Makefile . ; fi ; \
-	for f in aoc.pl main.go main_test.go aoc.zig TC.txt; do \
+	for f in aoc.pl main.go main_test.go aoc.raku aoc.zig TC.txt; do \
 	  if [ ! -e $$f ]; then \
 		  echo copying $$f ; cp -p ../../template/$$f . ; \
   	fi \
