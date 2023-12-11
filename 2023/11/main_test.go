@@ -4,11 +4,8 @@ import (
 	_ "embed"
 	"testing"
 
-	assert "github.com/stretchr/testify/require"
+	"github.com/beanz/advent/lib-go/tester"
 )
-
-//go:embed test1.txt
-var test1 []byte
 
 //go:embed input.txt
 var safeinput []byte
@@ -21,22 +18,7 @@ func ExampleMain() {
 }
 
 func TestParts(t *testing.T) {
-	tests := []struct {
-		file   string
-		data   []byte
-		mul    int
-		p1, p2 int
-	}{
-		{"test1.txt", test1, 10, 374, 1030},
-		{"test1.txt", test1, 100, 374, 8410},
-		{"test1.txt", test1, 1000000, 374, 82000210},
-		{"input.txt", input, 1000000, 9918828, 692506533832},
-	}
-	for _, tc := range tests {
-		p1, p2 := Parts(tc.data, tc.mul)
-		assert.Equal(t, tc.p1, p1, tc.file)
-		assert.Equal(t, tc.p2, p2, tc.file)
-	}
+	tester.RunWithArgs(t, Parts)
 }
 
 func BenchmarkMain(b *testing.B) {
