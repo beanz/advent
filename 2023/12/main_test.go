@@ -13,8 +13,8 @@ var safeinput []byte
 func ExampleMain() {
 	main()
 	//Output:
-	// Part 1: 100
-	// Part 2: 200
+	// Part 1: 6488
+	// Part 2: 815364548481
 }
 
 func TestParts(t *testing.T) {
