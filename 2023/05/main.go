@@ -3,7 +3,6 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	"os"
 	"sort"
 
 	. "github.com/beanz/advent/lib-go"
@@ -18,9 +17,10 @@ func Parts(in []byte) (int, int) {
 	VisitUints[int](in, '\n', &i, func(n int) {
 		seeds = append(seeds, n)
 	})
-	seed_ranges := make([][2]int, 0, 10)
+	seed_ranges := make([][2]int, 0, 128)
+	mapped := make([][2]int, 0, 128)
 	for j := 0; j < len(seeds); j += 2 {
-		seed_ranges = append(seed_ranges, [2]int{seeds[j], seeds[j+1]})
+		seed_ranges = append(seed_ranges, [2]int{seeds[j], seeds[j] + seeds[j+1]})
 	}
 	i += 2
 	for i < len(in) {
@@ -30,7 +30,6 @@ func Parts(in []byte) (int, int) {
 
 		tf := make([][3]int, 0, 64)
 		for i++; i <= len(in); i++ {
-			fmt.Fprintf(os.Stderr, "I: %s\n", string(in[i:i+3]))
 			s := [3]int{}
 			j := 0
 			VisitUints[int](in, '\n', &i, func(n int) {
@@ -51,10 +50,39 @@ func Parts(in []byte) (int, int) {
 				}
 			}
 		}
-		fmt.Fprintf(os.Stderr, "%v\n", seeds)
+	OUTER:
+		for len(seed_ranges) > 0 {
+			cur := seed_ranges[0]
+			seed_ranges = seed_ranges[1:]
+			start, end := cur[0], cur[1]
+			for _, r := range tf {
+				dst, src, src_end := r[0], r[1], r[1]+r[2]
+				before_start := start
+				before_end := Min(end, src)
+				overlap_start := Max(start, src)
+				overlap_end := Min(src_end, end)
+				after_start := Max(src_end, start)
+				after_end := end
+				if overlap_end > overlap_start {
+					mapped = append(mapped, [2]int{overlap_start + dst - src, overlap_end + dst - src})
+				} else {
+					continue
+				}
+				if before_end > before_start {
+					seed_ranges = append(seed_ranges, [2]int{before_start, before_end})
+				}
+				if after_end > after_start {
+					seed_ranges = append(seed_ranges, [2]int{after_start, after_end})
+				}
+				continue OUTER
+			}
+			mapped = append(mapped, [2]int{start, end})
+		}
+		mapped, seed_ranges = seed_ranges, mapped
 	}
 	sort.Ints(seeds)
-	return seeds[0], 2
+	sort.Slice(seed_ranges, func(i, j int) bool { return seed_ranges[i][0] < seed_ranges[j][0] })
+	return seeds[0], seed_ranges[0][0]
 }
 
 func main() {
