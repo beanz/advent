@@ -4,6 +4,8 @@ import (
 	"bytes"
 	_ "embed"
 	"fmt"
+	"hash"
+	"hash/fnv"
 	"os"
 
 	. "github.com/beanz/advent/lib-go"
@@ -16,6 +18,7 @@ type Rocks struct {
 	in   []byte
 	w, h int
 	w1   int
+	hash hash.Hash32
 }
 
 func (r *Rocks) N() int {
@@ -99,18 +102,20 @@ func (r *Rocks) PP() {
 	fmt.Fprintln(os.Stderr, b.String())
 }
 
-func (r *Rocks) K() string {
-	return string(r.in)
+func (r *Rocks) K() uint32 {
+	r.hash.Reset()
+	_, _ = r.hash.Write(r.in)
+	return r.hash.Sum32()
 }
 
 func Parts(in []byte, args ...int) (int, int) {
 	w := bytes.Index(in, []byte{'\n'})
 	h := len(in) / (w + 1)
-	r := &Rocks{in, w, h, w + 1}
+	r := &Rocks{in, w, h, w + 1, fnv.New32a()}
 	p1 := r.N()
 	p2 := 0
 	tar := 1000000000
-	seen := make(map[string]int, 1024)
+	seen := make(map[uint32]int, 512)
 	for c := 1; c <= tar; c++ {
 		r.W()
 		r.S()
