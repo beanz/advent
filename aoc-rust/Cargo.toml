@@ -20,16 +20,17 @@ indexmap = "1.9.2"
 priority-queue = "1.3.0"
 rustc-hash = "1.1.0"
 arrayvec = "0.7.2"
-ahash = "0.8.2"
+ahash = "0.8.6"
 nom = "7.1.1"
 nohash-hasher = "0.2.0"
 stats_alloc = "0.1.10"
 smallvec = { version = "1.11.2", features = ["drain_filter"] }
 heapless = "0.7.16"
-
+zerocopy = "0.7.31"
 
 [dev-dependencies]
 criterion = "0.5"
+zerocopy = "0.7.31"
 
 [[bench]]
 name = "read"
