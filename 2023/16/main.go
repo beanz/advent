@@ -21,6 +21,24 @@ const (
 	LEFT  Dir = 8
 )
 
+func (d Dir) X() int {
+	if d == LEFT {
+		return -1
+	} else if d == RIGHT {
+		return 1
+	}
+	return 0
+}
+
+func (d Dir) Y() int {
+	if d == UP {
+		return -1
+	} else if d == DOWN {
+		return 1
+	}
+	return 0
+}
+
 func (d Dir) String() string {
 	switch d {
 	case UP:
@@ -50,17 +68,7 @@ func CCW(d Dir) Dir {
 }
 
 func (b beam) mov() beam {
-	switch b.d {
-	case UP:
-		return beam{b.x, b.y - 1, b.d}
-	case RIGHT:
-		return beam{b.x + 1, b.y, b.d}
-	case DOWN:
-		return beam{b.x, b.y + 1, b.d}
-	case LEFT:
-		return beam{b.x - 1, b.y, b.d}
-	}
-	panic("unreachable mov")
+	return beam{b.x + b.d.X(), b.y + b.d.Y(), b.d}
 }
 
 type beam struct {
@@ -68,8 +76,7 @@ type beam struct {
 	d    Dir
 }
 
-func Solve(m *ByteMap, x, y int, d Dir) int {
-	todo := []beam{{x, y, d}}
+func Solve(m *ByteMap, todo []beam) int {
 	seen := [14000]Dir{}
 	for len(todo) > 0 {
 		cur := todo[0]
@@ -136,10 +143,11 @@ func Solve(m *ByteMap, x, y int, d Dir) int {
 			c++
 		}
 	}
+	//pp(m, seen, beam{-1, -1, 0})
 	return c
 }
 
-func pp(m *ByteMap, seen [14000]Dir, cur beam) {
+func pp(m *ByteMap, seen [14000]Dir, cur beam) { // nolint:unused
 	var b bytes.Buffer
 	for y := 0; y < m.Height(); y++ {
 		for x := 0; x < m.Width(); x++ {
@@ -162,24 +170,34 @@ func pp(m *ByteMap, seen [14000]Dir, cur beam) {
 
 func Parts(in []byte, args ...int) (int, int) {
 	m := NewByteMap(in)
-	p1 := Solve(m, 0, 0, RIGHT)
+	todo := make([]beam, 0, 2048)
+	todo = append(todo, beam{0, 0, RIGHT})
+	p1 := Solve(m, todo)
 	p2 := 0
 	for x := 0; x < m.Width(); x++ {
-		s := Solve(m, x, 0, DOWN)
+		todo = todo[:0]
+		todo = append(todo, beam{x, 0, DOWN})
+		s := Solve(m, todo)
 		if s > p2 {
 			p2 = s
 		}
-		s = Solve(m, x, m.Height()-1, UP)
+		todo = todo[:0]
+		todo = append(todo, beam{x, m.Height() - 1, UP})
+		s = Solve(m, todo)
 		if s > p2 {
 			p2 = s
 		}
 	}
 	for y := 0; y < m.Height(); y++ {
-		s := Solve(m, 0, y, RIGHT)
+		todo = todo[:0]
+		todo = append(todo, beam{0, y, RIGHT})
+		s := Solve(m, todo)
 		if s > p2 {
 			p2 = s
 		}
-		s = Solve(m, m.Width()-1, y, LEFT)
+		todo = todo[:0]
+		todo = append(todo, beam{m.Width() - 1, y, LEFT})
+		s = Solve(m, todo)
 		if s > p2 {
 			p2 = s
 		}
