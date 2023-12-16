@@ -459,12 +459,12 @@ pub fn TestCases(comptime T: type, comptime call: fn (in: []const u8) anyerror![
         defer talloc.free(inp);
         var p1s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
         var i: usize = 0;
-        var p1 = try chompUint(usize, p1s, &i);
+        var p1 = try chompUint(T, p1s, &i);
         var p2s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
         i = 0;
-        var p2 = try chompUint(usize, p2s, &i);
+        var p2 = try chompUint(T, p2s, &i);
         var p = try call(inp);
-        try assertEq([2]usize{ p1, p2 }, p);
+        try assertEq([2]T{ p1, p2 }, p);
         if (try is.readUntilDelimiterOrEof(&buf, '\n')) |_| {
             continue;
         }

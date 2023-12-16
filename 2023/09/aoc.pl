@@ -11,6 +11,15 @@ use AoC::Helpers qw/:all/;
 $; = $" = ',';
 
 my $file = shift // "input.txt";
+my @pascal = ([1], [1, 1]);
+for my $r (2 .. 22) {
+  my @row = (1);
+  for my $c (1 .. $r - 1) {
+    push @row, ($pascal[$r - 1]->[$c - 1]) + ($pascal[$r - 1]->[$c]);
+  }
+  push @row, 1;
+  push @pascal, \@row;
+}
 
 #my $reader = \&read_stuff;
 my $reader = \&read_guess;
@@ -31,39 +40,29 @@ sub read_stuff {
 sub solve {
   my ($in) = @_;
   my $l = @$in;
-  my @d;
-  my %c;
-  for my $i (0 .. $l - 2) {
-    my $d = ($in->[$i + 1]) - ($in->[$i]);
-    push @d, $d;
-    $c{$d}++;
+  my $m = 1;
+  my ($s1, $s2) = (0, 0);
+  for my $i (0 .. $l - 1) {
+    my $tm = $pascal[$l]->[$i + 1] * $m;
+    $s1 += $tm * $in->[$l - 1 - $i];
+    $s2 += $tm * $in->[$i];
+    $m *= -1;
   }
-  if ((keys %c) == 1) {
-    return $in->[$l - 1] + $d[0];
-  }
-  return $in->[$l - 1] + solve(\@d);
+  return [$s1, $s2];
 }
 
 sub calc {
   my ($in) = @_;
   my @r;
   for (@$in) {
-    $r[0] += solve($_);
-    $r[1] += solve([reverse @$_]);
+    my $s = solve($_);
+    $r[0] += $s->[0];
+    $r[1] += $s->[1];
   }
   return \@r;
 }
 
-testParts() if (TEST);
+RunTests(sub {my $f = shift; calc($reader->($f), @_)}) if (TEST);
 
 my $r = calc($i);
 printf "Part 1: %s\nPart 2: %s\n", @$r;
-
-sub testParts {
-  my @test_cases = (["test1.txt", 114, 2], ["input.txt", 1584748274, 1026],);
-  for my $tc (@test_cases) {
-    my $res = calc($reader->($tc->[0]));
-    assertEq("Test 1 [$tc->[0]]", $res->[0], $tc->[1]);
-    assertEq("Test 2 [$tc->[0]]", $res->[1], $tc->[2]);
-  }
-}
