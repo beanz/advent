@@ -2,15 +2,13 @@ const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 const isDigit = std.ascii.isDigit;
 
-test "examples" {
-    var t1 = try parts(aoc.test1file);
-    try aoc.assertEq([2]usize{ 1320, 145 }, t1);
-    var p = try parts(aoc.inputfile);
-    try aoc.assertEq([2]usize{ 507666, 233537 }, p);
+test "testcases" {
+    try aoc.TestCases(usize, parts);
 }
 
 const lens = struct { l: usize, v: u8 };
-fn parts(inp: []const u8) ![2]usize {
+
+fn parts(inp: []const u8) anyerror![2]usize {
     var p1: usize = 0;
     var i: usize = 0;
     var b: [256 * 8]?lens = std.mem.zeroes([256 * 8]?lens);

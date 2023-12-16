@@ -2,14 +2,11 @@ const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 const isDigit = std.ascii.isDigit;
 
-test "examples" {
-    var t1 = try parts(aoc.test1file);
-    try aoc.assertEq([2]usize{ 10, 20 }, t1);
-    var p = try parts(aoc.inputfile);
-    try aoc.assertEq([2]usize{ 100, 200 }, p);
+test "testcases" {
+    try aoc.TestCases(usize, parts);
 }
 
-fn parts(inp: []const u8) ![2]usize {
+fn parts(inp: []const u8) anyerror![2]usize {
     var p1 = inp.len;
     var p2 = 2;
     TODO;

@@ -9,7 +9,7 @@ test "examples" {
     try aoc.assertEq([2]usize{ 9918828, 692506533832 }, p);
 }
 
-fn parts(inp: []const u8) ![2]usize {
+fn parts(inp: []const u8) anyerror![2]usize {
     var mul: usize = 1000000;
     var w: usize = std.mem.indexOfScalar(u8, inp, '\n') orelse unreachable;
     var h = inp.len / (w + 1);

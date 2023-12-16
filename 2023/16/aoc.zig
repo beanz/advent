@@ -2,11 +2,8 @@ const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 const isDigit = std.ascii.isDigit;
 
-test "examples" {
-    var t1 = try parts(aoc.test1file);
-    try aoc.assertEq([2]usize{ 46, 51 }, t1);
-    var p = try parts(aoc.inputfile);
-    try aoc.assertEq([2]usize{ 7111, 7831 }, p);
+test "testcases" {
+    try aoc.TestCases(usize, parts);
 }
 
 const Dir = enum(u4) {
@@ -81,7 +78,7 @@ fn solve(inp: []const u8, w: usize, h: usize, x: isize, y: isize, d: Dir) !usize
     return c;
 }
 
-fn parts(inp: []const u8) ![2]usize {
+fn parts(inp: []const u8) anyerror![2]usize {
     var w = std.mem.indexOfScalar(u8, inp, '\n') orelse unreachable;
     var h = inp.len / (w + 1);
     var p2: usize = 0;

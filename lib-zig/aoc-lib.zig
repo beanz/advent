@@ -446,3 +446,28 @@ test "bytemap" {
     try assertEq(false, bm.containsXY(0, 5));
     try assertEq(false, bm.contains(bm.xyToIndex(0, 5)));
 }
+
+pub fn TestCases(comptime T: type, comptime call: fn (in: []const u8) anyerror![2]T) anyerror!void {
+    var file = try std.fs.cwd().openFile("TC.txt", .{});
+    defer file.close();
+    var br = std.io.bufferedReader(file.reader());
+    var is = br.reader();
+    var buf: [1024]u8 = undefined;
+    while (true) {
+        var filename = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+        const inp = try std.fs.cwd().readFileAlloc(talloc, filename, std.math.maxInt(usize));
+        defer talloc.free(inp);
+        var p1s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+        var i: usize = 0;
+        var p1 = try chompUint(usize, p1s, &i);
+        var p2s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+        i = 0;
+        var p2 = try chompUint(usize, p2s, &i);
+        var p = try call(inp);
+        try assertEq([2]usize{ p1, p2 }, p);
+        if (try is.readUntilDelimiterOrEof(&buf, '\n')) |_| {
+            continue;
+        }
+        break;
+    }
+}
