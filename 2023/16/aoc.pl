@@ -38,7 +38,7 @@ sub pp {
   for my $y (0 .. @$in - 1) {
     for my $x (0 .. @{$in->[0]} - 1) {
       if ($seen->{"$x,$y"}) {
-        print "#";
+        print bold($in->[$y]->[$x]);
       } else {
         print $in->[$y]->[$x];
       }
@@ -54,44 +54,44 @@ sub solve {
   while (@todo) {
     my $cur = shift @todo;
     my ($pos, $dir) = @$cur;
-    next if ($seen{"@$pos"}->{"@$dir"});
-    $seen{"@$pos"}->{"@$dir"}++;
-    my ($nx, $ny) = ($pos->[X] + $dir->[X], $pos->[Y] + $dir->[Y]);
-    if ($nx < 0 || $nx >= @{$in->[0]} || $ny < 0 || $ny >= @{$in}) {
+    my ($x, $y) = @$pos;
+    if ($x < 0 || $x>= @{$in->[0]} || $y < 0 || $y >= @{$in}) {
       next;
     }
-    my $ch = $in->[$ny]->[$nx];
+    next if ($seen{"@$pos"}->{"@$dir"});
+    $seen{"@$pos"}->{"@$dir"}++;
+    my $ch = $in->[$y]->[$x];
     if ($dir->[Y] == 0 && $ch eq '|') {
-
-      #print "@$pos hit | splitting\n";
-      push @todo, [[$nx, $ny], ccw($dir)], [[$nx, $ny], cw($dir)];
+      push @todo, [[$x, $y-1], [0,-1]], [[$x, $y+1], [0,1]];
       next;
     }
     if ($dir->[X] == 0 && $ch eq '-') {
-
-      #print "@$pos hit - splitting\n";
-      push @todo, [[$nx, $ny], ccw($dir)], [[$nx, $ny], cw($dir)];
+      push @todo, [[$x-1, $y], [-1,0]], [[$x, $y], [1,0]];
       next;
     }
     if ($dir->[X] == 0 && $ch eq '\\') {
-      push @todo, [[$nx, $ny], ccw($dir)];
+      my $nd = ccw($dir);
+      push @todo, [[$x+$nd->[X], $y+$nd->[Y]], $nd];
       next;
     }
     if ($dir->[X] == 0 && $ch eq '/') {
-      push @todo, [[$nx, $ny], cw($dir)];
+      my $nd = cw($dir);
+      push @todo, [[$x+$nd->[X], $y+$nd->[Y]], $nd];
       next;
     }
     if ($dir->[Y] == 0 && $ch eq '\\') {
-      push @todo, [[$nx, $ny], cw($dir)];
+      my $nd = cw($dir);
+      push @todo, [[$x+$nd->[X], $y+$nd->[Y]], $nd];
       next;
     }
     if ($dir->[Y] == 0 && $ch eq '/') {
-      push @todo, [[$nx, $ny], ccw($dir)];
+      my $nd = ccw($dir);
+      push @todo, [[$x+$nd->[X], $y+$nd->[Y]], $nd];
       next;
     }
-    push @todo, [[$nx, $ny], $dir];
+    push @todo, [[$x+$dir->[X], $y+$dir->[Y]], $dir];
   }
-  pp($in, \%seen);
+  #pp($in, \%seen);
   return scalar keys %seen;
 }
 
