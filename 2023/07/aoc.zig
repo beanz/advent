@@ -3,12 +3,7 @@ const aoc = @import("aoc-lib.zig");
 const isDigit = std.ascii.isDigit;
 
 test "examples" {
-    var pt = try parts(aoc.test1file);
-    try aoc.assertEq(@as(u64, 6440), pt[0]);
-    try aoc.assertEq(@as(u64, 5905), pt[1]);
-    var p = try parts(aoc.inputfile);
-    try aoc.assertEq(@as(u64, 256448566), p[0]);
-    try aoc.assertEq(@as(u64, 254412181), p[1]);
+    try aoc.TestCases(u32, parts);
 }
 
 const HighCard: u4 = 0;
@@ -26,7 +21,7 @@ const Hand = struct {
     bid: u32,
 };
 
-fn parts(inp: []const u8) ![2]u32 {
+fn parts(inp: []const u8) anyerror![2]u32 {
     var hands = try std.BoundedArray(Hand, 1000).init(0);
     var i: usize = 0;
     while (i < inp.len) : (i += 1) {
