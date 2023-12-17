@@ -14,7 +14,7 @@ var input []byte
 func Solve(m *ByteMap, minD, maxD int16) int {
 	w, h := m.Width(), m.Height()
 	tx, ty := int16(w-1), int16(h-1)
-	pq := make(PQ, 0, 10240)
+	pq := make(PQ, 0, 81920)
 	if minD == 0 {
 		pq = append(pq, &Rec{x: 0, y: 0, d: RIGHT, loss: 0})
 	}
