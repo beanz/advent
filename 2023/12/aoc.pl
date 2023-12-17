@@ -28,42 +28,41 @@ sub read_stuff {
 #print solve('???.###', qw/1 1 3/), "\n";
 
 sub solve {
-  my ($s, @b) = @_;
-  return aux([split//,$s], [@b], 0, 0, 0);
-}
-
-no warnings 'recursion';
-sub aux {
-  my ($s, $n, $si, $ni, $l) = @_;
-  #print "@$s $si @$n $ni  $l\n";
-  state %mem;
-  my $k = "@$s $si @$n $ni $l";
-  return $mem{$k} if (exists $mem{$k});
-  if (@$s == $si) {
-    #print "end of string\n";
-    if (@$n == $ni && $l == 0) {
-      return 1;
-    }
-    if ($ni == @$n-1 && $n->[$ni] == $l) {
-      return 1;
-    }
-    return 0;
+  my ($str, @b) = @_;
+  my @s = ('.');
+  for (@b) {
+    push @s, ('#') x $_;
+    push @s, '.';
   }
-  my $r = 0;
-  if ($s->[$si] eq '.' || $s->[$si] eq '?') {
-    if ($l == 0) {
-      #print ".|? no current\n";
-      $r += aux($s, $n, $si+1, $ni, 0);
-    } elsif ($l > 0 && $ni < @$n && $n->[$ni] == $l) {
-      #print ".|? current block complete\n";
-      $r += aux($s, $n, $si+1, $ni+1, 0);
+  my $sc = {0 => 1};
+  my $nsc = {};
+  for my $ch (split//, $str) {
+    for my $s (keys %$sc) {
+      if ($ch eq '#') {
+        if ($s+1 < @s && $s[$s+1] eq '#') {
+          $nsc->{$s+1} += $sc->{$s};
+        }
+      } elsif ($ch eq '.') {
+        if ($s+1 < @s && $s[$s+1] eq '.') {
+          $nsc->{$s+1} += $sc->{$s};
+        }
+        if ($s[$s] eq '.') {
+          $nsc->{$s} += $sc->{$s};
+        }
+      } else { # ?
+        if ($s+1 < @s) {
+          $nsc->{$s+1} += $sc->{$s};
+        }
+        if ($s[$s] eq '.') {
+          $nsc->{$s} += $sc->{$s};
+        }
+      }
     }
+    $sc = $nsc;
+    $nsc ={};
+    #dd([$sc],[qw/sc/]);
   }
-  if ($s->[$si] eq '#' || $s->[$si] eq '?') {
-    $r += aux($s, $n, $si+1, $ni, $l+1);
-  }
-  $mem{$k} = $r;
-  return $r;
+  return ($sc->{@s-1}//0) + ($sc->{@s-2}//0);
 }
 
 sub calc {
@@ -80,9 +79,9 @@ sub calc {
     my $s = shift @l;
     $s = join '?', $s, $s, $s, $s, $s;
     my @n;
-    for (0..4) {
-       push @n, @l; 
-     }
+    for (0 .. 4) {
+      push @n, @l;
+    }
     $p2 += solve($s, @n);
   }
   return [$p1, $p2];
