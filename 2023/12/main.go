@@ -13,98 +13,69 @@ var input []byte
 
 func Parts(in []byte, args ...int) (int, int) {
 	p1, p2 := 0, 0
+	nums := make([]int, 0, 32)
 	for i := 0; i < len(in); {
+		start := i
 		end := bytes.Index(in[i:], []byte{' '})
-		eol := bytes.Index(in[i:], []byte{'\n'})
-		cache := [1048576]int{}
-		r1 := Solve(in[i:i+eol], end, eol-end-1, 0, 0, 0, 1, cache[:])
+		i += end + 1
+		VisitUints[int](in, '\n', &i, func(n int) {
+			nums = append(nums, n)
+		})
+		r1 := Solve(in[start:start+end], nums, 1)
 		p1 += r1
-		cache = [1048576]int{}
-		r2 := Solve(in[i:i+eol], end, eol-end-1, 0, 0, 0, 5, cache[:])
+		r2 := Solve(in[start:start+end], nums, 5)
 		p2 += r2
-		i += eol + 1
+		nums = nums[:0]
+		i++
 	}
 	return p1, p2
 }
 
-func Solve(in []byte, eos, eon, si, ni, l, mul int, cache []int) int {
-	//fmt.Fprint(os.Stderr, debug(in, eos, eon, si, ni, l, mul))
-	k := (((si << 8) + ni) << 4) + l
-	if cache[k] != 0 {
-		return cache[k] - 1
-	}
-	m_eos := eos*mul + mul - 1
-	s_mod := eos + 1
-	m_eon := eon*mul + mul - 1
-	n_mod := eon + 1
-	var nni int
-	var n int
-	if ni < m_eon {
-		nni, n = ChompUInt[int](in[eos+1+(ni%n_mod):], 0)
-		nni += ni
-		if n < l {
-			return 0
+func Solve(inO []byte, nums []int, mul int) int {
+	match := make([]byte, 0, 256)
+	match = append(match, '.')
+	for i := 0; i < len(nums)*mul; i++ {
+		for j := 0; j < nums[i%len(nums)]; j++ {
+			match = append(match, '#')
 		}
+		match = append(match, '.')
 	}
-
-	if si == m_eos {
-		if ni >= m_eon {
-			if l == 0 {
-				return 1
+	state_count := make(map[byte]int, 256)
+	next_state_count := make(map[byte]int, 256)
+	state_count[0] = 1
+	in := make([]byte, 0, mul*len(inO)+mul-1)
+	in = append(in, inO...)
+	for k := 1; k < mul; k++ {
+		in = append(in, '?')
+		in = append(in, inO...)
+	}
+	for _, ch := range in {
+		for state, count := range state_count {
+			nsi := int(state + 1)
+			if ch == '#' {
+				if nsi < len(match) && match[nsi] == '#' {
+					next_state_count[state+1] += count
+				}
+			} else if ch == '.' {
+				if nsi < len(match) && match[nsi] == '.' {
+					next_state_count[state+1] += count
+				}
+				if match[int(state)] == '.' {
+					next_state_count[state] += count
+				}
+			} else {
+				if nsi < len(match) {
+					next_state_count[state+1] += count
+				}
+				if match[int(state)] == '.' {
+					next_state_count[state] += count
+				}
 			}
-			return 0
 		}
-		if nni == m_eon && n == l {
-			return 1
-		}
-		return 0
+		next_state_count, state_count = state_count, next_state_count
+		clear(next_state_count)
 	}
-	r := 0
-	ch := in[si%s_mod]
-	if ch == '.' || ch == '?' || ch == ' ' {
-		if l == 0 {
-			r += Solve(in, eos, eon, si+1, ni, 0, mul, cache)
-		} else if l > 0 && ni < m_eon {
-			if n == l {
-				r += Solve(in, eos, eon, si+1, nni+1, 0, mul, cache)
-			}
-		}
-	}
-	if ch == '#' || ch == '?' || ch == ' ' {
-		r += Solve(in, eos, eon, si+1, ni, l+1, mul, cache)
-	}
-	cache[k] = r + 1
-	return r
-}
-
-func debug(in []byte, eos, eon, si, ni, l, mul int) string { // nolint:unused
-	var b bytes.Buffer
-	b.Write(in[:eos])
-	for i := 1; i < mul; i++ {
-		b.Write([]byte{'?'})
-		b.Write(in[:eos])
-	}
-	b.Write([]byte{' '})
-	b.Write(in[eos+1 : eos+eon+1])
-	for i := 1; i < mul; i++ {
-		b.Write([]byte{','})
-		b.Write(in[eos+1 : eos+eon+1])
-	}
-	fmt.Fprintf(&b, " si=%d ni=%d l=%d\n", si, ni, l)
-	m_eos := eos*mul + mul - 1
-	m_eon := eon*mul + mul - 1
-	for i := 0; i <= m_eos+1+m_eon; i++ {
-		switch i {
-		case si:
-			b.Write([]byte{'|'})
-		case m_eos + 1 + ni:
-			b.Write([]byte{'^'})
-		default:
-			b.Write([]byte{' '})
-		}
-	}
-	b.Write([]byte{'\n'})
-	return b.String()
+	return state_count[byte(len(match)-1)] + state_count[byte(len(match)-2)]
 }
 
 func main() {

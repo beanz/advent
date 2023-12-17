@@ -1,6 +1,6 @@
 module github.com/beanz/advent
 
-go 1.18
+go 1.21
 
 require (
 	github.com/cznic/mathutil v0.0.0-20181122101859-297441e03548
