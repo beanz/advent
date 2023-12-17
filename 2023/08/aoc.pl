@@ -44,7 +44,7 @@ sub calc {
     print "$p $s $n\n" if (DEBUG > 1);
     $p = $n;
     $c++;
-    return 0 unless (defined $p);
+    return 1 unless (defined $p);
     last if ($p =~ $end);
   }
   return $c;
@@ -66,26 +66,9 @@ sub calc2 {
   return $lcm;
 }
 
-testPart1() if (TEST);
+RunTests(sub {
+  my $f = shift; [calc($reader->($f), @_), calc2($reader->($f), @_)]
+}) if (TEST);
 
 print "Part 1: ", calc($i), "\n";
-
-testPart2() if (TEST);
-
 print "Part 2: ", calc2($i), "\n";
-
-sub testPart1 {
-  my @test_cases = (["test1.txt", 2], ["test2.txt", 6], ["input.txt", 20569],);
-  for my $tc (@test_cases) {
-    my $res = calc($reader->($tc->[0]));
-    assertEq("Test 1 [$tc->[0]]", $res, $tc->[1]);
-  }
-}
-
-sub testPart2 {
-  my @test_cases = (["test3.txt", 6], ["input.txt", 21366921060721],);
-  for my $tc (@test_cases) {
-    my $res = calc2($reader->($tc->[0]), $tc->[1]);
-    assertEq("Test 2 [$tc->[0]]", $res, $tc->[1]);
-  }
-}

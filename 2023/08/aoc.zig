@@ -3,21 +3,10 @@ const aoc = @import("aoc-lib.zig");
 const isDigit = std.ascii.isDigit;
 
 test "examples" {
-    var t1 = try parts(aoc.test1file);
-    try aoc.assertEq(@as(u64, 2), t1[0]);
-    try aoc.assertEq(@as(u64, 2), t1[1]);
-    var t2 = try parts(aoc.test2file);
-    try aoc.assertEq(@as(u64, 6), t2[0]);
-    try aoc.assertEq(@as(u64, 6), t2[1]);
-    var t3 = try parts(aoc.test3file);
-    try aoc.assertEq(@as(u64, 1), t3[0]);
-    try aoc.assertEq(@as(u64, 6), t3[1]);
-    var p = try parts(aoc.inputfile);
-    try aoc.assertEq(@as(u64, 20569), p[0]);
-    try aoc.assertEq(@as(u64, 21366921060721), p[1]);
+    try aoc.TestCases(u64, parts);
 }
 
-fn parts(inp: []const u8) ![2]u64 {
+fn parts(inp: []const u8) anyerror![2]u64 {
     var i: usize = 0;
     while (inp[i] != '\n') : (i += 1) {}
     var steps = inp[0..i];
