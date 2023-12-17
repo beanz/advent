@@ -10,7 +10,7 @@ import (
 //go:embed input.txt
 var input []byte
 
-func Parts(in []byte) (int, int) {
+func Parts(in []byte, args ...int) (int, int) {
 	p1, p2 := 0, 0
 	i := 0
 	copies := make([][2]int, 0, 8)
