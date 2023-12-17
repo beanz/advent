@@ -81,7 +81,7 @@ func digit2(in []byte) int {
 	return 0
 }
 
-func Parts(in []byte) (int, int) {
+func Parts(in []byte, args ...int) (int, int) {
 	p1, p2 := 0, 0
 	first, last := 0, 0
 	first2, last2 := 0, 0

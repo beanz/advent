@@ -12,9 +12,8 @@ my $file = shift // "input.txt";
 
 my $reader = \&read_guess;
 my $i = $reader->($file);
-my $i2 = $reader->($file);
 
-sub calc {
+sub calc1 {
   my ($in) = @_;
   my $c = 0;
   for (@$in) {
@@ -50,26 +49,12 @@ sub calc2 {
   return $c;
 }
 
-testPart1() if (TEST);
-
-print "Part 1: ", calc($i), "\n";
-
-testPart2() if (TEST);
-
-print "Part 2: ", calc2($i2), "\n";
-
-sub testPart1 {
-  my @test_cases = (["test1.txt", 142], ["input.txt", 54390],);
-  for my $tc (@test_cases) {
-    my $res = calc($reader->($tc->[0]));
-    assertEq("Test 1 [$tc->[0]]", $res, $tc->[1]);
-  }
+sub calc {
+  my ($in) = @_;
+  return [calc1($in), calc2($in)];
 }
 
-sub testPart2 {
-  my @test_cases = (["test2.txt", 281], ["input.txt", 54277],);
-  for my $tc (@test_cases) {
-    my $res = calc2($reader->($tc->[0]));
-    assertEq("Test 2 [$tc->[0]]", $res, $tc->[1]);
-  }
-}
+RunTests(sub {my $f = shift; calc($reader->($f), @_)}) if (TEST);
+
+my $res = calc($i);
+printf "Part 1: %s\nPart 2: %s\n", @$res;

@@ -71,16 +71,7 @@ test "examples" {
     var overlap1 = try parts("eightwo\n");
     try aoc.assertEq(@as(u32, 0), overlap1[0]);
     try aoc.assertEq(@as(u32, 82), overlap1[1]);
-
-    var pt = try parts(aoc.test1file);
-    try aoc.assertEq(@as(u32, 142), pt[0]);
-    try aoc.assertEq(@as(u32, 142), pt[1]);
-    var pt2 = try parts(aoc.test2file);
-    try aoc.assertEq(@as(u32, 209), pt2[0]);
-    try aoc.assertEq(@as(u32, 281), pt2[1]);
-    var p = try parts(aoc.inputfile);
-    try aoc.assertEq(@as(u32, 54390), p[0]);
-    try aoc.assertEq(@as(u32, 54277), p[1]);
+    try aoc.TestCases(u32, parts);
 }
 
 fn parts(inp: []const u8) ![2]u32 {
