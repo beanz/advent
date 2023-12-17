@@ -3,18 +3,7 @@ const aoc = @import("aoc-lib.zig");
 const isDigit = std.ascii.isDigit;
 
 test "examples" {
-    var t1 = try parts(aoc.test1file);
-    try aoc.assertEq([2]usize{ 4, 1 }, t1);
-    var t2 = try parts(aoc.test2file);
-    try aoc.assertEq([2]usize{ 8, 1 }, t2);
-    var t3 = try parts(aoc.test3file);
-    try aoc.assertEq([2]usize{ 23, 4 }, t3);
-    var t4 = try parts(aoc.test4file);
-    try aoc.assertEq([2]usize{ 70, 8 }, t4);
-    var t5 = try parts(aoc.test5file);
-    try aoc.assertEq([2]usize{ 80, 10 }, t5);
-    var p = try parts(aoc.inputfile);
-    try aoc.assertEq([2]usize{ 7086, 317 }, p);
+    try aoc.TestCases(usize, parts);
 }
 
 const Dir = enum {
@@ -25,7 +14,7 @@ const Dir = enum {
     NONE,
 };
 
-fn parts(inp: []const u8) ![2]usize {
+fn parts(inp: []const u8) anyerror![2]usize {
     var w: usize = 1 + (std.mem.indexOfScalar(u8, inp, '\n') orelse unreachable);
     var s = std.mem.indexOfScalar(u8, inp, 'S') orelse unreachable;
     var from = firstMove(inp, s, w);

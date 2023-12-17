@@ -1,20 +1,15 @@
 #!/usr/bin/env raku
+use lib '../../lib-raku';
+use AoC;
 
-my $input = slurp(@*ARGS[0] // "input.txt");
-
-if %*ENV{"AoC_TEST"} {
-  assert_eq((4, 1), calc(slurp("test1.txt")));
-  assert_eq((8, 1), calc(slurp("test2.txt")));
-  assert_eq((23, 4), calc(slurp("test3.txt")));
-  assert_eq((70, 8), calc(slurp("test4.txt")));
-  assert_eq((80, 10), calc(slurp("test5.txt")));
-  assert_eq((7086, 317), calc(slurp("input.txt")));
-}
+my $input = slurp (@*ARGS[0]//"input.txt");
 
 constant NORTH = 1;
 constant SOUTH = 2;
 constant EAST = 4;
 constant WEST = 8;
+
+RunTests(sub { calc(|@_) }) if %*ENV{"AoC_TEST"};
 
 say "Part 1: ", .[0], "\nPart 2: ", .[1] given calc($input);
 
@@ -73,12 +68,3 @@ sub dirs($g, $x, $y) {
     default { [] }
   }
 }
-
-sub assert_eq ($exp, $actual) {
-  if $actual eq $exp {
-    say "  test {$exp} == {$actual}" if %*ENV{"AoC_TEST"} > 1;
-    return;
-  }
-  die "expected {$exp}; got {$actual}";
-}
-

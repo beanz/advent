@@ -133,24 +133,7 @@ sub calc {
   return [$mx, $p2];
 }
 
-testParts() if (TEST);
+RunTests(sub {my $f = shift; calc($reader->($f), @_)}) if (TEST);
 
-my $r = calc($i);
-
-printf "Part 1: %s\nPart 2: %s\n", @$r;
-
-sub testParts {
-  my @test_cases = (
-    ["test1.txt", 4, 1],
-    ["test2.txt", 8, 1],
-    ["test3.txt", 23, 4],
-    ["test4.txt", 70, 8],
-    ["test5.txt", 80, 10],
-    ["input.txt", 7086, 317],
-  );
-  for my $tc (@test_cases) {
-    my $res = calc($reader->($tc->[0]));
-    assertEq("Test 1 [$tc->[0]]", $res->[0], $tc->[1]);
-    assertEq("Test 2 [$tc->[0]]", $res->[1], $tc->[2]);
-  }
-}
+my $res = calc($i);
+printf "Part 1: %s\nPart 2: %s\n", @$res;

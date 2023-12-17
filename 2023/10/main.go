@@ -37,7 +37,7 @@ func offsets(b byte) byte {
 	}
 }
 
-func Parts(in []byte) (int, int) {
+func Parts(in []byte, args ...int) (int, int) {
 	w := bytes.Index(in, []byte{'\n'})
 	start := bytes.Index(in, []byte{'S'})
 	w += 1
