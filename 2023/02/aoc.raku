@@ -1,15 +1,10 @@
 #!/usr/bin/env raku
+use lib '../../lib-raku';
+use AoC;
 
 my $input = slurp (@*ARGS[0]//"input.txt");
 
-if %*ENV{"AoC_TEST"} {
-  my ($p1, $p2) = parts(slurp("test1.txt"));
-  assert_eq(8, $p1);
-  assert_eq(2286, $p2);
-  ($p1, $p2) = parts(slurp("input.txt"));
-  assert_eq(2101, $p1);
-  assert_eq(58269, $p2);
-}
+RunTests(sub { parts(@_) }) if %*ENV{"AoC_TEST"};
 
 my ($p1, $p2) = parts($input);
 say "Part 1: ", $p1;
@@ -20,12 +15,4 @@ sub parts($in) {
     my @m = ([Zmax] .map(*<red green blue>)) given |$sets.split('; ').map(*.comb(/\w+/).reverse.pairup.Bag);
     ($id * so (for @m.kv -> $i, $_ { $_ <= 12+$i}).all, [*] @m)
   }
-}
-
-sub assert_eq($exp, $actual) {
-  if $actual == $exp {
-    say "  test {$exp} == {$actual}" if %*ENV{"AoC_TEST"} > 1;
-    return;
-  }
-  die "expected {$exp}; got {$actual}";
 }

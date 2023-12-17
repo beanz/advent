@@ -15,12 +15,7 @@ fn chompUint(comptime T: type, inp: anytype, i: *usize) anyerror!T {
 }
 
 test "examples" {
-    var pt = try parts(aoc.test1file);
-    try aoc.assertEq(@as(u32, 8), pt[0]);
-    try aoc.assertEq(@as(u32, 2286), pt[1]);
-    var p = try parts(aoc.inputfile);
-    try aoc.assertEq(@as(u32, 2101), p[0]);
-    try aoc.assertEq(@as(u32, 58269), p[1]);
+    try aoc.TestCases(u32, parts);
 }
 
 fn parts(inp: []const u8) ![2]u32 {

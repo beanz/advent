@@ -10,7 +10,7 @@ import (
 //go:embed input.txt
 var input []byte
 
-func Parts(in []byte) (int, int) {
+func Parts(in []byte, args ...int) (int, int) {
 	p1, p2 := 0, 0
 	for i := 0; i < len(in); {
 		mr, mg, mb := 1, 1, 1
