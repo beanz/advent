@@ -11,7 +11,7 @@ import (
 //go:embed input.txt
 var input []byte
 
-func Parts(in []byte) (int, int) {
+func Parts(in []byte, args ...int) (int, int) {
 	t := 0
 	ts := make([]int, 0, 4)
 	i := 0

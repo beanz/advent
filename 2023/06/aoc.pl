@@ -38,17 +38,7 @@ sub calc {
   return [$p1, race($r, $t)];
 }
 
-testParts() if (TEST);
+RunTests(sub {my $f = shift; calc($reader->($f), @_)}) if (TEST);
 
 my $r = calc($i);
-print "Part 1: $r->[0]\nPart 2: $r->[1]\n";
-
-sub testParts {
-  my @test_cases =
-    (["test1.txt", 288, 71516], ["input.txt", 5133600, 40651271],);
-  for my $tc (@test_cases) {
-    my $res = calc($reader->($tc->[0]));
-    assertEq("Test 1 [$tc->[0]]", $res, $tc->[1]);
-    assertEq("Test 2 [$tc->[0]]", $res, $tc->[2]);
-  }
-}
+printf "Part 1: %s\nPart 2: %s\n", @$r;
