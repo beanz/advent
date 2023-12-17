@@ -89,19 +89,9 @@ sub in_range {
   ($r->[0] <= $p && $p < $r->[1]);
 }
 
-testParts() if (TEST);
+RunTests(sub {
+  my $f = shift; [calc($reader->($f), @_), calc2($reader->($f), @_)]
+}) if (TEST);
 
-print "Part 1: ", calc($i), "\n";
-print "Part 2: ", calc2($i), "\n";
-
-sub testParts {
-  my @test_cases = (["test1.txt", 35, 46], ["input.txt", 535088217, 2],);
-  for my $tc (@test_cases) {
-    my $i = $reader->($tc->[0]);
-    my $p1 = calc($i);
-    assertEq("Test 1 [$tc->[0]]", $p1, $tc->[1]);
-    next if ($tc->[0] eq "input.txt");
-    my $p2 = calc2($i);
-    assertEq("Test 2 [$tc->[0]]", $p2, $tc->[2]);
-  }
-}
+my $r = calc($i);
+printf "Part 1: %s\nPart 2: %s\n", @$r;

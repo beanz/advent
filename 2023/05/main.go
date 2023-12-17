@@ -11,7 +11,7 @@ import (
 //go:embed input.txt
 var input []byte
 
-func Parts(in []byte) (int, int) {
+func Parts(in []byte, args ...int) (int, int) {
 	seeds := make([]int, 0, 20)
 	i := 0
 	VisitUints[int](in, '\n', &i, func(n int) {
