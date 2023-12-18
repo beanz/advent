@@ -27,57 +27,52 @@ sub calc {
   $ex //= 1000000;
   my $h = @$in;
   my $w = @{$in->[0]};
-  my %c;
-  for my $y (0 .. $h - 1) {
-    $c{Y}->{$y} = 1;
-    for my $x (0 .. $w - 1) {
-      if ($in->[$y]->[$x] ne '.') {
-        $c{Y}->{$y} = 0;
-        last;
-      }
-    }
-  }
-  for my $x (0 .. $w - 1) {
-    $c{X}->{$x} = 1;
-    for my $y (0 .. $h - 1) {
-      if ($in->[$y]->[$x] ne '.') {
-        $c{X}->{$x} = 0;
-        last;
-      }
-    }
-  }
-  return [solve($in, \%c), solve($in, \%c, $ex)];
-}
+  my @x = (0) x $w;
+  my @y = (0) x $h;
+  my @bb;
+  my $gc = 0;
 
-sub solve {
-  my ($in, $gc, $ex) = @_;
-  $ex //= 2;
-  $ex--;
-  my $h = @$in;
-  my $w = @{$in->[0]};
-  my ($ax, $ay) = (0, 0);
-  my @g;
   for my $y (0 .. $h - 1) {
     for my $x (0 .. $w - 1) {
       if ($in->[$y]->[$x] ne '.') {
-        push @g, [$ax, $ay];
+        $gc++;
+        minmax_xy(\@bb, $x, $y);
+        $x[$x]++;
+        $y[$y]++;
       }
-      $ax += 1+$ex*$gc->{X}->{$x};
-    }
-    $ax = 0;
-    $ay += 1+$ex*$gc->{Y}->{$y};
-  }
-  my $s = 0;
-  for my $i (0 .. @g - 1) {
-    for my $j (($i + 1) .. @g - 1) {
-      my $md = manhattanDistance($g[$i], $g[$j]);
-      $s += $md;
     }
   }
-  return $s;
+
+  #print "X: @x\n";
+  #print "Y: @y\n";
+  #print "GC: $gc\n";
+
+  my $dx = dist($gc, $bb[MINX], $bb[MAXX], \@x, 2);
+  my $dy = dist($gc, $bb[MINY], $bb[MAXY], \@y, 2);
+  my $dx2 = dist($gc, $bb[MINX], $bb[MAXX], \@x, $ex);
+  my $dy2 = dist($gc, $bb[MINY], $bb[MAXY], \@y, $ex);
+  return [$dx + $dy, $dx2 + $dy2];
 }
 
-RunTests(sub { my $f = shift; calc($reader->($f), @_) }) if (TEST);
+sub dist {
+  my ($gc, $min, $max, $v, $mul) = @_;
+  my $exp = 0;
+  my $d = 0;
+  my ($px, $nx) = ($min, $v->[$min]);
+  for my $x ($min + 1 .. $max) {
+    if ($v->[$x]) {
+      $d += ($x - $px + $exp) * $nx * ($gc - $nx);
+      $nx += $v->[$x];
+      $px = $x;
+      $exp = 0;
+    } else {
+      $exp += ($mul - 1);
+    }
+  }
+  return $d;
+}
+
+RunTests(sub {my $f = shift; calc($reader->($f), @_)}) if (TEST);
 
 my $res = calc($i);
 printf "Part 1: %s\nPart 2: %s\n", @$res;
