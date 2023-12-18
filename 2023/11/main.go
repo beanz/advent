@@ -59,7 +59,7 @@ func solve(bm *ByteMap, cx, cy [140]bool, mul int) int {
 	s := 0
 	for i := 0; i < len(g); i++ {
 		for j := i + 1; j < len(g); j++ {
-			s += Abs(g[i][0]-g[j][0]) + Abs(g[i][1]-g[j][1])
+			s += Abs(g[j][0]-g[i][0]) + (g[j][1] - g[i][1])
 		}
 	}
 	return s
