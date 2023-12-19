@@ -108,6 +108,7 @@ func Parts(in []byte, args ...int) (int, int) {
 		}
 		if state == 1 {
 			p2 += (cur[XHI] - cur[XLO] + 1) * (cur[MHI] - cur[MLO] + 1) * (cur[AHI] - cur[ALO] + 1) * (cur[SHI] - cur[SLO] + 1)
+			continue
 		}
 		for _, chk := range rules[state] {
 			if chk.op == 0 {
