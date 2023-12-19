@@ -1,57 +1,57 @@
-use smallvec::SmallVec;
-
 fn parts(inp: &[u8], mul: usize) -> (usize, usize) {
     let w = inp.iter().position(|&ch| ch == b'\n').unwrap();
     let h = inp.len() / (w + 1);
-    let mut cx: [bool; 140] = [true; 140];
-    let mut cy: [bool; 140] = [true; 140];
+    let mut cx: [usize; 140] = [0; 140];
+    let mut cy: [usize; 140] = [0; 140];
+    let (mut xmin, mut xmax, mut ymin, mut ymax): (usize, usize, usize, usize) = (w, 0, h, 0);
+    let mut gc = 0;
     let ch = |x: usize, y: usize| inp[y * (w + 1) + x];
     for y in 0..h {
         for x in 0..w {
             if ch(x, y) != b'.' {
-                cy[y] = false;
-                break;
+                gc += 1;
+                cx[x] += 1;
+                cy[y] += 1;
+                if x > xmax {
+                    xmax = x;
+                }
+                if x < xmin {
+                    xmin = x;
+                }
+            }
+        }
+        if cy[y] > 0 {
+            if y > ymax {
+                ymax = y;
+            }
+            if y < ymin {
+                ymin = y;
             }
         }
     }
-    for x in 0..w {
-        for y in 0..h {
-            if ch(x, y) != b'.' {
-                cx[x] = false;
-                break;
-            }
-        }
-    }
-    let (mut ax, mut ay): (usize, usize) = (0, 0);
-    let (mut ax2, mut ay2) = (0, 0);
-    let mut g = SmallVec::<[(usize, usize); 512]>::new();
-    let mut g2 = SmallVec::<[(usize, usize); 512]>::new();
-    for y in 0..h {
-        for x in 0..w {
-            if ch(x, y) != b'.' {
-                g.push((ax, ay));
-                g2.push((ax2, ay2));
-            }
-            let inc: usize = cx[x].into();
-            ax += 1 + inc;
-            ax2 += 1 + inc * (mul - 1);
-        }
-        ax = 0;
-        ax2 = 0;
-        let inc: usize = cy[y].into();
-        ay += 1 + inc;
-        ay2 += 1 + inc * (mul - 1);
-    }
-    let mut p1 = 0;
-    let mut p2 = 0;
-    for i in 0..g.len() {
-        for j in i + 1..g.len() {
-            p1 += g[i].0.abs_diff(g[j].0) + g[i].1.abs_diff(g[j].1);
-            p2 += g2[i].0.abs_diff(g2[j].0) + g2[i].1.abs_diff(g2[j].1);
-        }
-    }
+    let (dx1, dx2) = dist(gc, xmin, xmax, cx, mul);
+    let (dy1, dy2) = dist(gc, ymin, ymax, cy, mul);
+    (dx1 + dy1, dx2 + dy2)
+}
 
-    (p1, p2)
+fn dist(gc: usize, min: usize, max: usize, v: [usize; 140], mul: usize) -> (usize, usize) {
+    let (mut d1, mut d2) = (0, 0);
+    let (mut exp1, mut exp2) = (0, 0);
+    let mut px = min;
+    let mut nx = v[min];
+    for x in min + 1..=max {
+        if v[x] > 0 {
+            d1 += (x - px + exp1) * nx * (gc - nx);
+            d2 += (x - px + exp2) * nx * (gc - nx);
+            nx += v[x];
+            px = x;
+            (exp1, exp2) = (0, 0);
+        } else {
+            exp1 += 1;
+            exp2 += mul - 1;
+        }
+    }
+    (d1, d2)
 }
 
 fn main() {

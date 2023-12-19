@@ -13,72 +13,63 @@ fn parts(inp: []const u8) anyerror![2]usize {
     var mul: usize = 1000000;
     var w: usize = std.mem.indexOfScalar(u8, inp, '\n') orelse unreachable;
     var h = inp.len / (w + 1);
-    var cx = std.mem.zeroes([140]bool);
-    var cy = std.mem.zeroes([140]bool);
+    var cx = std.mem.zeroes([140]u8);
+    var cy = std.mem.zeroes([140]u8);
+    var gc: usize = 0;
+    var xmax: usize = 0;
+    var xmin: usize = w + 1;
+    var ymax: usize = 0;
+    var ymin: usize = h + 1;
     for (0..h) |y| {
         for (0..w) |x| {
             if (inp[y * (w + 1) + x] != '.') {
-                cy[y] = true;
-                break;
+                gc += 1;
+                cx[x] += 1;
+                if (x > xmax) {
+                    xmax = x;
+                }
+                if (x < xmin) {
+                    xmin = x;
+                }
+                cy[y] += 1;
+            }
+        }
+        if (cy[y] > 0) {
+            if (y > ymax) {
+                ymax = y;
+            }
+            if (y < ymin) {
+                ymin = y;
             }
         }
     }
-    for (0..w) |x| {
-        for (0..h) |y| {
-            if (inp[y * (w + 1) + x] != '.') {
-                cx[x] = true;
-                break;
-            }
-        }
-    }
-    var ax: usize = 0;
-    var ay: usize = 0;
-    var ax2: usize = 0;
-    var ay2: usize = 0;
-    var g = try std.BoundedArray([2]usize, 512).init(0);
-    var g2 = try std.BoundedArray([2]usize, 512).init(0);
-    for (0..h) |y| {
-        for (0..w) |x| {
-            if (inp[y * (w + 1) + x] != '.') {
-                try g.append([2]usize{ ax, ay });
-                try g2.append([2]usize{ ax2, ay2 });
-            }
-            ax += 1;
-            ax2 += 1;
-            if (!cx[x]) {
-                ax += 1;
-                ax2 += mul - 1;
-            }
-        }
-        ax = 0;
-        ax2 = 0;
-        ay += 1;
-        ay2 += 1;
-        if (!cy[y]) {
-            ay += 1;
-            ay2 += mul - 1;
-        }
-    }
-    var p1: usize = 0;
-    var p2: usize = 0;
-    for (0..g.len) |i| {
-        var a = g.get(i);
-        var a2 = g2.get(i);
-        for (i + 1..g.len) |j| {
-            var b = g.get(j);
-            var b2 = g2.get(j);
-            p1 += abs_diff(a[0], b[0]) + abs_diff(a[1], b[1]);
-            p2 += abs_diff(a2[0], b2[0]) + abs_diff(a2[1], b2[1]);
-        }
-    }
+    var dx = dist(gc, xmin, xmax, cx, mul);
+    var dy = dist(gc, ymin, ymax, cy, mul);
+    var p1: usize = dx[0] + dy[0];
+    var p2: usize = dx[1] + dy[1];
     return [2]usize{ p1, p2 };
 }
 
-fn abs_diff(a: usize, b: usize) usize {
-    if (a > b) {
-        return a - b;
+fn dist(gc: usize, min: usize, max: usize, v: [140]u8, mul: usize) [2]usize {
+    var exp: [2]usize = [2]usize{ 0, 0 };
+    var d: [2]usize = [2]usize{ 0, 0 };
+    var px: usize = min;
+    var nx: usize = @intCast(v[min]);
+    var x: usize = min + 1;
+    while (x <= max) : (x += 1) {
+        if (v[x] > 0) {
+            d[0] += (x - px + exp[0]) * nx * (gc - nx);
+            d[1] += (x - px + exp[1]) * nx * (gc - nx);
+            nx += v[x];
+            px = x;
+            exp[0] = 0;
+            exp[1] = 0;
+        } else {
+            exp[0] += 1;
+            exp[1] += mul - 1;
+        }
     }
-    return b - a;
+    return d;
 }
 
 fn day(inp: []const u8, bench: bool) anyerror!void {

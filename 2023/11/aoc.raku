@@ -14,55 +14,54 @@ sub calc {
   my @g = $in.lines.map: {.comb};
   my $w = @g[0].elems;
   my $h = @g.elems;
-  my %c = X => {}, Y => {};
+  my @cx = 0 xx $w;
+  my @cy = 0 xx $h;
+  my $gc = 0;
+  my ($xmin, $xmax, $ymin, $ymax) = ($w,0,$h,0);
   for (0..$h-1) -> $y {
     for (0..$w-1) -> $x {
       if @g.[$y].[$x] ne '.' {
-        %c{'Y'}.{$y}++;
-        last;
+        @cx[$x]++;
+        @cy[$y]++;
+        $gc++;
+        if $x < $xmin {
+          $xmin = $x;
+        }
+        if $x > $xmax {
+          $xmax = $x;
+        }
+      }
+    }
+    if (@cy[$y] > 0) {
+      if $y < $ymin {
+        $ymin = $y;
+      }
+      if $y > $ymax {
+        $ymax = $y;
       }
     }
   }
-  for (0..$w-1) -> $x {
-    for (0..$h-1) -> $y {
-      if @g.[$y].[$x] ne '.' {
-        %c{'X'}.{$x}++;
-        last;
-      }
-    }
-  }
-  my ($ax, $ay) = (0,0);
-  my ($ax2, $ay2) = (0,0);
-  my @g1;
-  my @g2;
-  for (0..$h-1) -> $y {
-    for (0..$w-1) -> $x {
-      if @g.[$y].[$x] ne '.' {
-        @g1.push([$ax, $ay]);
-        @g2.push([$ax2, $ay2]);
-      }
-      $ax += 1;
-      $ax2 += 1;
-      if !%c{'X'}.{$x} {
-        $ax += 1;
-        $ax2 += $mul - 1;
-      }
-    }
-    $ax = $ax2 = 0;
-    $ay += 1;
-    $ay2 += 1;
-    if !%c{'Y'}.{$y} {
-      $ay += 1;
-      $ay2 += $mul - 1;
-    }
-  }
+  my ($dx1, $dx2) = dist($gc, $xmin, $xmax, @cx, $mul);
+  my ($dy1, $dy2) = dist($gc, $ymin, $ymax, @cy, $mul);
+  ($dx1+$dy1, $dx2+$dy2)
+}
 
-  my ($p1, $p2) = 0, 0;
-  for (0..@g1.elems-1) -> $i {
-    for ($i+1 .. @g1.elems-1) -> $j {
-      $p1 += abs(@g1[$i][0]-@g1[$j][0]) + abs(@g1[$i][1]-@g1[$j][1]);
-      $p2 += abs(@g2[$i][0]-@g2[$j][0]) + abs(@g2[$i][1]-@g2[$j][1]);
+sub dist($gc, $min, $max, @v, $mul) {
+  my ($exp1, $exp2) = (0,0);
+  my ($d1, $d2) = (0,0);
+  my $px = $min;
+  my $nx = @v[$min];
+  for ($min+1 .. $max) -> $x {
+    if @v[$x] > 0 {
+      $d1 += ($x - $px + $exp1) * $nx * ($gc-$nx);
+      $d2 += ($x - $px + $exp2) * $nx * ($gc-$nx);
+      $nx += @v[$x];
+      $px = $x;
+      ($exp1, $exp2) = (0,0);
+    } else {
+      $exp1 += 1;
+      $exp2 += $mul-1;
     }
   }
-  ($p1, $p2)
+  ($d1, $d2);
 }

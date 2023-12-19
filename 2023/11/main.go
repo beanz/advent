@@ -16,53 +16,56 @@ func Parts(in []byte, args ...int) (int, int) {
 		mul = args[0]
 	}
 	bm := NewByteMap(in)
-	cx := [140]bool{}
-	cy := [140]bool{}
+	cx := [140]int{}
+	cy := [140]int{}
+	gc := 0
+	xmin, xmax, ymin, ymax := bm.Width(), 0, bm.Height(), 0
 	for y := 0; y < bm.Height(); y++ {
 		for x := 0; x < bm.Width(); x++ {
 			if bm.GetXY(x, y) != '.' {
-				cy[y] = true
-				break
+				gc++
+				cx[x]++
+				cy[y]++
+				if x > xmax {
+					xmax = x
+				}
+				if x < xmin {
+					xmin = x
+				}
+			}
+		}
+		if cy[y] > 0 {
+			if y > ymax {
+				ymax = y
+			}
+			if y < ymin {
+				ymin = y
 			}
 		}
 	}
-	for x := 0; x < bm.Width(); x++ {
-		for y := 0; y < bm.Height(); y++ {
-			if bm.GetXY(x, y) != '.' {
-				cx[x] = true
-				break
-			}
-		}
-	}
-	return solve(bm, cx, cy, 2), solve(bm, cx, cy, mul)
+	dx1, dx2 := dist(gc, xmin, xmax, cx, mul)
+	dy1, dy2 := dist(gc, ymin, ymax, cy, mul)
+	return dx1 + dy1, dx2 + dy2
 }
 
-func solve(bm *ByteMap, cx, cy [140]bool, mul int) int {
-	ax, ay := 0, 0
-	g := make([][2]int, 0, 512)
-	for y := 0; y < bm.Height(); y++ {
-		for x := 0; x < bm.Width(); x++ {
-			if bm.GetXY(x, y) != '.' {
-				g = append(g, [2]int{ax, ay})
-			}
-			ax += 1
-			if !cx[x] {
-				ax += mul - 1
-			}
-		}
-		ax = 0
-		ay += 1
-		if !cy[y] {
-			ay += mul - 1
+func dist(gc, min, max int, v [140]int, mul int) (int, int) {
+	exp1, exp2 := 0, 0
+	d1, d2 := 0, 0
+	px := min
+	nx := v[min]
+	for x := min + 1; x <= max; x += 1 {
+		if v[x] > 0 {
+			d1 += (x - px + exp1) * nx * (gc - nx)
+			d2 += (x - px + exp2) * nx * (gc - nx)
+			nx += v[x]
+			px = x
+			exp1, exp2 = 0, 0
+		} else {
+			exp1 += 1
+			exp2 += mul - 1
 		}
 	}
-	s := 0
-	for i := 0; i < len(g); i++ {
-		for j := i + 1; j < len(g); j++ {
-			s += Abs(g[j][0]-g[i][0]) + (g[j][1] - g[i][1])
-		}
-	}
-	return s
+	return d1, d2
 }
 
 func main() {
