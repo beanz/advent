@@ -87,6 +87,8 @@ fn parts(inp: []const u8) anyerror![2]usize {
                         state = chk.nxt;
                         break;
                     }
+                } else {
+                    break;
                 }
             }
         }
@@ -143,6 +145,8 @@ fn parts(inp: []const u8) anyerror![2]usize {
                         chk.val;
                 }
                 try todo.append(ntrue);
+            } else {
+                break;
             }
         }
     }
