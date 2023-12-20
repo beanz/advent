@@ -40,8 +40,8 @@ func Solve(inO []byte, nums []int, mul int) int {
 		}
 		match = append(match, '.')
 	}
-	state_count := make(map[byte]int, 256)
-	next_state_count := make(map[byte]int, 256)
+	state_count := make([]int, 256)
+	next_state_count := make([]int, 256)
 	state_count[0] = 1
 	in := make([]byte, 0, mul*len(inO)+mul-1)
 	in = append(in, inO...)
@@ -51,6 +51,9 @@ func Solve(inO []byte, nums []int, mul int) int {
 	}
 	for _, ch := range in {
 		for state, count := range state_count {
+			if count == 0 {
+				continue
+			}
 			nsi := int(state + 1)
 			if ch == '#' {
 				if nsi < len(match) && match[nsi] == '#' {
@@ -71,9 +74,9 @@ func Solve(inO []byte, nums []int, mul int) int {
 					next_state_count[state] += count
 				}
 			}
+			state_count[state] = 0
 		}
 		next_state_count, state_count = state_count, next_state_count
-		clear(next_state_count)
 	}
 	return state_count[byte(len(match)-1)] + state_count[byte(len(match)-2)]
 }
