@@ -60,11 +60,11 @@ func Parts(in []byte, args ...int) (int, int) {
 	p1 := 0
 	for ; i < len(in); i++ {
 		p := [4]int{}
-		for in[i] != '}' {
-			i++ // skip '{' or ','
-			k := key(in[i])
-			i, p[k] = ChompUInt[int](in, i+2)
-		}
+		k := 0
+		VisitUints[int](in, '\n', &i, func(n int) {
+			p[k] = n
+			k++
+		})
 		//fmt.Fprintf(os.Stderr, "P: %v\n", p)
 
 		state := IN
