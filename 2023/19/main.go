@@ -33,7 +33,7 @@ const (
 
 func Parts(in []byte, args ...int) (int, int) {
 	i := 0
-	rules := make(map[int][]Check, 512)
+	rules := make(map[int][]Check, 768)
 	for ; i < len(in); i++ {
 		id := ChompAZ(in, &i)
 		rules[id] = make([]Check, 0, 4)
@@ -97,7 +97,7 @@ func Parts(in []byte, args ...int) (int, int) {
 		i++ // skip }
 	}
 	p2 := 0
-	todo := make([][9]int, 1, 512)
+	todo := make([][9]int, 1, 768)
 	todo[0] = [9]int{IN, 1, 4000, 1, 4000, 1, 4000, 1, 4000}
 	for len(todo) > 0 {
 		cur := todo[0]
