@@ -120,37 +120,31 @@ func Parts(in []byte, args ...int) (int, int) {
 				})
 				continue
 			}
-			ntrue, nfalse := split(chk, cur)
+			ntrue := [9]int{chk.nxt,
+				cur[XLO], cur[XHI],
+				cur[MLO], cur[MHI],
+				cur[ALO], cur[AHI],
+				cur[SLO], cur[SHI],
+			}
+			if chk.op == '>' {
+				if chk.val+1 > ntrue[1+chk.key*2] {
+					ntrue[1+chk.key*2] = chk.val + 1
+				}
+				if chk.val < cur[1+chk.key*2+1] {
+					cur[1+chk.key*2+1] = chk.val
+				}
+			} else {
+				if chk.val-1 < ntrue[1+chk.key*2+1] {
+					ntrue[1+chk.key*2+1] = chk.val - 1
+				}
+				if chk.val > cur[1+chk.key*2] {
+					cur[1+chk.key*2] = chk.val
+				}
+			}
 			todo = append(todo, ntrue)
-			cur = nfalse
 		}
 	}
 	return p1, p2
-}
-
-func split(chk Check, cur [9]int) ([9]int, [9]int) {
-	ntrue, nfalse := [9]int{}, [9]int{}
-	for i, v := range cur { // deep copy
-		ntrue[i] = v
-		nfalse[i] = v
-	}
-	ntrue[STATE] = chk.nxt // true state changes
-	if chk.op == '>' {
-		if chk.val+1 > ntrue[1+chk.key*2] {
-			ntrue[1+chk.key*2] = chk.val + 1
-		}
-		if chk.val < nfalse[1+chk.key*2+1] {
-			nfalse[1+chk.key*2+1] = chk.val
-		}
-	} else {
-		if chk.val-1 < ntrue[1+chk.key*2+1] {
-			ntrue[1+chk.key*2+1] = chk.val - 1
-		}
-		if chk.val > nfalse[1+chk.key*2] {
-			nfalse[1+chk.key*2] = chk.val
-		}
-	}
-	return ntrue, nfalse
 }
 
 func key(ch byte) int {
