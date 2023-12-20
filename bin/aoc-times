@@ -1,0 +1,93 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use open qw( :std :encoding(UTF-8) );
+use JSON qw/decode_json/;
+use POSIX qw/strftime/;
+use DB_File;
+use LWP::UserAgent;
+use HTML::TreeBuilder;
+use HTTP::Cookies;
+
+sub usage {
+  die "usage: $0 [<id> [<sort> [<year>]]]\n";
+}
+
+my $cfg = cfg();
+my $lb = shift || $cfg->{'default'} || usage();
+$lb = $cfg->{$lb} if (exists $cfg->{$lb});
+my $sorttype = shift || $cfg->{'default_sort'} || "time";
+my $year = shift || $cfg->{'year'} || 2023;
+tie my %cache, 'DB_File', path('cache.db'), O_CREAT|O_RDWR, 0644;
+my $ua = LWP::UserAgent->new;
+$ua->cookie_jar(HTTP::Cookies->new(file => path('cookies.txt')));
+
+my $json = get("https://adventofcode.com/$year/leaderboard/private/view/$lb.json");
+
+sub get {
+  my $url = shift;
+  my $c = $cache{$url};
+  if (defined $c && $c =~ s/^(\d+)!// && $1 > time-600) {
+    return $c;
+  }
+  print STDERR "Fetching $url\n";
+  my $resp = $ua->get($url);
+  unless ($resp->is_success) {
+    die $resp->status_line, ": ", $resp->content, "\n";
+  }
+  $c = $resp->decoded_content;
+  $cache{$url} = time."!".$c;
+  return $c;
+}
+
+my $s = decode_json $json;
+
+for my $day (1..25) {
+  my @found;
+  my $nlen = 0;
+  for my $e (values %{$s->{members}}) {
+    my $name = $e->{name} // "Anon-".$e->{id};
+    if ($e->{completion_day_level}->{$day}) {
+      my ($t1, $t2) = ($e->{completion_day_level}->{$day}->{1}->{get_star_ts},
+                       $e->{completion_day_level}->{$day}->{2}->{get_star_ts});
+      my $ts2 = "";
+      my $sort = "999999999";
+      if (defined $t2) {
+        my @t = localtime $t2;
+        $ts2 = " ";
+        $ts2 .= $t[3] == $day ? (strftime "%H:%M:%S", @t) : (strftime "%Y-%m-%d", @t);
+        $ts2 .= " ".($t2-$t1);
+        $sort = sprintf("%09d", ($t2-$t1));
+      }
+      my @t = localtime $t1;
+      my $ts = $t[3] == $day ? (strftime "%H:%M:%S", @t) : (strftime "%Y-%m-%d", @t);
+      $nlen = length($name) if ($nlen < length($name));
+      push @found,
+        {
+         name => $name,
+         times => "$ts$ts2",
+         time => sprintf("%09d", $t1),
+         star2 => $sort,
+        };
+    }
+  }
+  last unless (@found);
+  print "Day $day\n";
+  for my $f (sort { $a->{$sorttype} cmp $b->{$sorttype} } @found) {
+    printf "%-${nlen}s %s\n", $f->{name}, $f->{times};
+  }
+  print "\n";
+}
+
+sub path { $ENV{HOME}.'/.aoc/'.$_[0] }
+
+sub cfg {
+  open my $fh, '<', path('config') or return {};
+  my %r;
+  while (<$fh>) {
+    chomp;
+    my ($k, $v) = split /:\s+/;
+    $r{$k} = $v;
+  }
+  return \%r;
+}

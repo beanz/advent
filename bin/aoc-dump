@@ -1,0 +1,66 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+no warnings 'utf8';
+use open qw( :std :encoding(UTF-8) );
+use DB_File;
+use LWP::UserAgent;
+use HTML::TreeBuilder;
+use HTTP::Cookies;
+use open ':std', ':locale';
+use v5.20;
+
+use constant
+  {
+   MIN_LEN => $ENV{AoC_MIN_LEN} // 12,
+  };
+
+my ($default_day, $default_year) = (localtime(time))[3,5];
+$default_year += 1900;
+my $day = shift // $default_day;
+my $year = shift // $default_year;
+my $just_input = shift;
+
+tie my %cache, 'DB_File', path('cache.db'), O_CREAT|O_RDWR, 0644;
+my $ua = LWP::UserAgent->new;
+$ua->cookie_jar(HTTP::Cookies->new(file => path('cookies.txt')));
+
+my $url = sprintf 'https://adventofcode.com/%d/day/%d/input', $year, $day;
+my $content = get($url);
+my $f = 'input.txt';
+open my $fh, '>', $f or die "Failed to open $f: $!\n";
+print $fh $content;
+close $fh;
+print STDERR "Wrote $f\n";
+exit if ($just_input);
+
+$url = sprintf 'https://adventofcode.com/%s/day/%s', $year, $day;
+$content = get($url);
+my $tree = HTML::TreeBuilder->new()->parse($content);
+my $i = 0;
+$tree->look_down(_tag => 'code',
+                 sub {
+                   my $t = $_[0]->as_text;
+                   return if (length $t < MIN_LEN);
+                   my $f = sprintf 'snippet%03d.txt', $i++;
+                   open my $fh, '>', $f or die "Failed to open $f: $!\n";
+                   print $fh $t;
+                   close $fh;
+                   print STDERR "Wrote $f\n";
+                   return;
+                 });
+
+sub get {
+  my $url = shift;
+  unless (exists $cache{$url}) {
+    print STDERR "Fetching $url\n";
+    my $resp = $ua->get($url);
+    unless ($resp->is_success) {
+      die $resp->status_line, ": ", $resp->content, "\n";
+    }
+    $cache{$url} = $resp->decoded_content;
+  }
+  return $cache{$url};
+}
+
+sub path { $ENV{HOME}.'/.aoc/'.$_[0] }

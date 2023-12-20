@@ -148,6 +148,16 @@ sub desc {
       $res .= $pre."Possible negative numbers ($minus_num)\n";
     }
   }
+
+  my %w;
+  for ($c =~ m/[a-zA-Z0-9]+/mg) {
+    $w{$_}++;
+  }
+  $res .= $pre.(scalar keys%w)." unique words\n";
+  if (keys %w < 10) {
+    $res .= $pre."words: ".(join ',',keys %w)."\n";
+  }
+
   return $res;
 }
 
