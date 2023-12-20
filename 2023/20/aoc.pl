@@ -55,6 +55,7 @@ sub sig {
     next if ($n eq 'output');
     for my $m (@{$in->{$n}->{O}}) {
       $c->[$sig]++;
+
       #print "$n ", $sig, "> $m\n";
       if ($m eq 'rx') {
         next;
@@ -85,6 +86,7 @@ sub sig {
 
 sub calc {
   my ($in) = @_;
+
   #dd([$in], [qw/in/]);
   my @c = (0, 0);
   my %res;
@@ -94,15 +96,22 @@ sub calc {
   my $p1 = $c[LO] * $c[HI];
   return [$p1, 0] unless (exists $in->{rx});
   my $C = 1000;
+  my @rx = keys %{$in->{rx}->{I}};
+  my @important = keys %{$in->{$rx[0]}->{I}};
   while (1) {
     sig($in, 'button', LO, \@c, \%res, $C);
-    if (exists $res{pq} && exists $res{fg} && exists $res{dk} && exists $res{fm}) {
+    my $found = 1;
+    for my $k (@important) {
+      if (exists $res{$k}) {
+        next;
+      }
+      $found = 0;
       last;
     }
+    last if ($found);
     $C++;
   }
-  my $p2 = product($res{pq}+1, $res{fg}+1, $res{dk}+1, $res{fm}+1);
-  #print "$res{pq} * $res{fg} * $res{dk} * $res{fm}\n";
+  my $p2 = product(map {$res{$_} + 1} @important);
   return [$p1, $p2];
 }
 
