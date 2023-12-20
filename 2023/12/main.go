@@ -31,7 +31,7 @@ func Parts(in []byte, args ...int) (int, int) {
 	return p1, p2
 }
 
-func Solve(inO []byte, nums []int, mul int) int {
+func Solve(in []byte, nums []int, mul int) int {
 	match := make([]byte, 0, 256)
 	match = append(match, '.')
 	for i := 0; i < len(nums)*mul; i++ {
@@ -43,36 +43,27 @@ func Solve(inO []byte, nums []int, mul int) int {
 	state_count := make([]int, 256)
 	next_state_count := make([]int, 256)
 	state_count[0] = 1
-	in := make([]byte, 0, mul*len(inO)+mul-1)
-	in = append(in, inO...)
-	for k := 1; k < mul; k++ {
-		in = append(in, '?')
-		in = append(in, inO...)
+	inLen := len(in)*mul + (mul - 1)
+	inChar := func(i int) byte {
+		if (i % (len(in) + 1)) == len(in) {
+			return '?'
+		}
+		return in[i%(len(in)+1)]
 	}
-	for _, ch := range in {
+	for i := 0; i < inLen; i++ {
+		ch := inChar(i)
 		for state, count := range state_count {
 			if count == 0 {
 				continue
 			}
 			nsi := int(state + 1)
-			if ch == '#' {
-				if nsi < len(match) && match[nsi] == '#' {
+			if nsi < len(match) {
+				if ch == '?' || ch == match[nsi] {
 					next_state_count[state+1] += count
 				}
-			} else if ch == '.' {
-				if nsi < len(match) && match[nsi] == '.' {
-					next_state_count[state+1] += count
-				}
-				if match[int(state)] == '.' {
-					next_state_count[state] += count
-				}
-			} else {
-				if nsi < len(match) {
-					next_state_count[state+1] += count
-				}
-				if match[int(state)] == '.' {
-					next_state_count[state] += count
-				}
+			}
+			if ch != '#' && match[int(state)] == '.' {
+				next_state_count[state] += count
 			}
 			state_count[state] = 0
 		}
