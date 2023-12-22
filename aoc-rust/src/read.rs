@@ -104,6 +104,36 @@ where
     }
 }
 
+pub fn visit_uints<T>(inp: &[u8], mut visit_fn: impl FnMut(T))
+where
+    T: std::ops::Add<T>
+        + std::ops::Mul<Output = T>
+        + std::convert::From<u8>
+        + std::ops::Add<Output = T>
+        + num::Integer,
+{
+    let mut n: T = 0.into();
+    let mut num = false;
+    for ch in inp {
+        match ch {
+            b'0'..=b'9' => {
+                num = true;
+                n = n * 10.into() + (ch.wrapping_sub(b'0')).into();
+            }
+            _ => {
+                if num {
+                    visit_fn(n);
+                }
+                num = false;
+                n = 0.into();
+            }
+        }
+    }
+    if num {
+        visit_fn(n);
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
