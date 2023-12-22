@@ -1,9 +1,9 @@
 #[derive(Clone, Copy)]
 enum D {
-    UP = 1,
-    RIGHT = 2,
-    DOWN = 4,
-    LEFT = 8,
+    Up = 1,
+    Right = 2,
+    Down = 4,
+    Left = 8,
 }
 use smallvec::SmallVec;
 use D::*;
@@ -19,69 +19,69 @@ fn solve(inp: &[u8], w: usize, h: usize, x: usize, y: usize, d: D) -> usize {
         }
         seen[i] |= cur.2 as u8;
         match (inp[i], cur.2) {
-            (b'.', UP) if cur.1 > 0 => {
+            (b'.', Up) if cur.1 > 0 => {
                 todo.push((cur.0, cur.1 - 1, cur.2));
             }
-            (b'.', DOWN) if cur.1 + 1 < h => {
+            (b'.', Down) if cur.1 + 1 < h => {
                 todo.push((cur.0, cur.1 + 1, cur.2));
             }
-            (b'.', LEFT) if cur.0 > 0 => {
+            (b'.', Left) if cur.0 > 0 => {
                 todo.push((cur.0 - 1, cur.1, cur.2));
             }
-            (b'.', RIGHT) if cur.0 + 1 < w => {
+            (b'.', Right) if cur.0 + 1 < w => {
                 todo.push((cur.0 + 1, cur.1, cur.2));
             }
-            (b'-', LEFT) if cur.0 > 0 => {
+            (b'-', Left) if cur.0 > 0 => {
                 todo.push((cur.0 - 1, cur.1, cur.2));
             }
-            (b'-', RIGHT) if cur.0 + 1 < w - 1 => {
+            (b'-', Right) if cur.0 + 1 < w - 1 => {
                 todo.push((cur.0 + 1, cur.1, cur.2));
             }
             (b'-', _) => {
                 if cur.0 > 0 {
-                    todo.push((cur.0 - 1, cur.1, LEFT));
+                    todo.push((cur.0 - 1, cur.1, Left));
                 }
                 if cur.0 + 1 < w {
-                    todo.push((cur.0 + 1, cur.1, RIGHT));
+                    todo.push((cur.0 + 1, cur.1, Right));
                 }
             }
-            (b'|', UP) if cur.1 > 0 => {
+            (b'|', Up) if cur.1 > 0 => {
                 todo.push((cur.0, cur.1 - 1, cur.2));
             }
-            (b'|', DOWN) if cur.1 + 1 < h => {
+            (b'|', Down) if cur.1 + 1 < h => {
                 todo.push((cur.0, cur.1 + 1, cur.2));
             }
             (b'|', _) => {
                 if cur.1 > 0 {
-                    todo.push((cur.0, cur.1 - 1, UP));
+                    todo.push((cur.0, cur.1 - 1, Up));
                 }
                 if cur.1 + 1 < h {
-                    todo.push((cur.0, cur.1 + 1, DOWN));
+                    todo.push((cur.0, cur.1 + 1, Down));
                 }
             }
-            (b'/', UP) if cur.0 + 1 < w => {
-                todo.push((cur.0 + 1, cur.1, RIGHT));
+            (b'/', Up) if cur.0 + 1 < w => {
+                todo.push((cur.0 + 1, cur.1, Right));
             }
-            (b'/', DOWN) if cur.0 > 0 => {
-                todo.push((cur.0 - 1, cur.1, LEFT));
+            (b'/', Down) if cur.0 > 0 => {
+                todo.push((cur.0 - 1, cur.1, Left));
             }
-            (b'/', LEFT) if cur.1 + 1 < h => {
-                todo.push((cur.0, cur.1 + 1, DOWN));
+            (b'/', Left) if cur.1 + 1 < h => {
+                todo.push((cur.0, cur.1 + 1, Down));
             }
-            (b'/', RIGHT) if cur.1 > 0 => {
-                todo.push((cur.0, cur.1 - 1, UP));
+            (b'/', Right) if cur.1 > 0 => {
+                todo.push((cur.0, cur.1 - 1, Up));
             }
-            (b'\\', DOWN) if cur.0 + 1 < w => {
-                todo.push((cur.0 + 1, cur.1, RIGHT));
+            (b'\\', Down) if cur.0 + 1 < w => {
+                todo.push((cur.0 + 1, cur.1, Right));
             }
-            (b'\\', UP) if cur.0 > 0 => {
-                todo.push((cur.0 - 1, cur.1, LEFT));
+            (b'\\', Up) if cur.0 > 0 => {
+                todo.push((cur.0 - 1, cur.1, Left));
             }
-            (b'\\', RIGHT) if cur.1 + 1 < h => {
-                todo.push((cur.0, cur.1 + 1, DOWN));
+            (b'\\', Right) if cur.1 + 1 < h => {
+                todo.push((cur.0, cur.1 + 1, Down));
             }
-            (b'\\', LEFT) if cur.1 > 0 => {
-                todo.push((cur.0, cur.1 - 1, UP));
+            (b'\\', Left) if cur.1 > 0 => {
+                todo.push((cur.0, cur.1 - 1, Up));
             }
             _ => {}
         }
@@ -93,30 +93,30 @@ fn solve(inp: &[u8], w: usize, h: usize, x: usize, y: usize, d: D) -> usize {
             c += 1;
         }
     }
-    return c;
+    c
 }
 
 fn parts(inp: &[u8]) -> (usize, usize) {
     let w = inp.iter().position(|&ch| ch == b'\n').unwrap();
     let h = inp.len() / (w + 1);
-    let p1 = solve(inp, w, h, 0, 0, RIGHT);
+    let p1 = solve(inp, w, h, 0, 0, Right);
     let mut p2 = 0;
     for x in 0..w {
-        let s = solve(inp, w, h, x, 0, DOWN);
+        let s = solve(inp, w, h, x, 0, Down);
         if s > p2 {
             p2 = s
         }
-        let s = solve(inp, w, h, x, h - 1, UP);
+        let s = solve(inp, w, h, x, h - 1, Up);
         if s > p2 {
             p2 = s
         }
     }
     for y in 0..h {
-        let s = solve(inp, w, h, 0, y, RIGHT);
+        let s = solve(inp, w, h, 0, y, Right);
         if s > p2 {
             p2 = s
         }
-        let s = solve(inp, w, h, w - 1, y, LEFT);
+        let s = solve(inp, w, h, w - 1, y, Left);
         if s > p2 {
             p2 = s
         }

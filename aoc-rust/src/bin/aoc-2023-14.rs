@@ -4,9 +4,7 @@ use std::hash::Hasher;
 
 fn parts(inp: &[u8]) -> (usize, usize) {
     let mut cpy: [u8; 10240] = [0; 10240];
-    for i in 0..inp.len() {
-        cpy[i] = inp[i];
-    }
+    cpy[..inp.len()].copy_from_slice(inp);
     let mut inp = cpy;
     let w = inp.iter().position(|&ch| ch == b'\n').unwrap();
     rotate_and_tilt(&mut inp, w);

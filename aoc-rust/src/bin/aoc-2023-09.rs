@@ -92,7 +92,7 @@ fn parts(inp: &[u8]) -> (isize, isize) {
             i += 1;
         }
         let l = l.as_slice();
-        let (s1, s2) = solve(&PASCAL[l.len()][0..l.len() + 1], &l);
+        let (s1, s2) = solve(&PASCAL[l.len()][0..l.len() + 1], l);
         p1 += s1;
         p2 += s2;
         i += 1;

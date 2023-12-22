@@ -6,12 +6,12 @@ fn parts(inp: &[u8], mul: usize) -> (usize, usize) {
     let (mut xmin, mut xmax, mut ymin, mut ymax): (usize, usize, usize, usize) = (w, 0, h, 0);
     let mut gc = 0;
     let ch = |x: usize, y: usize| inp[y * (w + 1) + x];
-    for y in 0..h {
-        for x in 0..w {
+    for (y, cy) in cy.iter_mut().enumerate().take(h) {
+        for (x, cx) in cx.iter_mut().enumerate().take(w) {
             if ch(x, y) != b'.' {
                 gc += 1;
-                cx[x] += 1;
-                cy[y] += 1;
+                *cx += 1;
+                *cy += 1;
                 if x > xmax {
                     xmax = x;
                 }
@@ -20,7 +20,7 @@ fn parts(inp: &[u8], mul: usize) -> (usize, usize) {
                 }
             }
         }
-        if cy[y] > 0 {
+        if *cy > 0 {
             if y > ymax {
                 ymax = y;
             }
@@ -39,11 +39,11 @@ fn dist(gc: usize, min: usize, max: usize, v: [usize; 140], mul: usize) -> (usiz
     let (mut exp1, mut exp2) = (0, 0);
     let mut px = min;
     let mut nx = v[min];
-    for x in min + 1..=max {
-        if v[x] > 0 {
+    for (x, vx) in v.iter().enumerate().take(max + 1).skip(min + 1) {
+        if *vx > 0 {
             d1 += (x - px + exp1) * nx * (gc - nx);
             d2 += (x - px + exp2) * nx * (gc - nx);
-            nx += v[x];
+            nx += vx;
             px = x;
             (exp1, exp2) = (0, 0);
         } else {

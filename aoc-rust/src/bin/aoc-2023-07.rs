@@ -3,7 +3,7 @@ use smallvec::SmallVec;
 fn parts(inp: &[u8]) -> (usize, usize) {
     let mut hands = SmallVec::<[(usize, usize, usize); 1024]>::new();
     for line in inp.split(|x| *x == b'\n') {
-        if line.len() == 0 {
+        if line.is_empty() {
             continue;
         }
         let mut cards: [(u8, usize); 5] = [(0, 0), (0, 0), (0, 0), (0, 0), (0, 0)];
@@ -41,7 +41,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         }
         cards.select_nth_unstable_by(2, |a, b| b.1.cmp(&a.1));
         // println!("{:?}", cards);
-        s1 = s1 + ((cards[0].1 * 10 + cards[1].1) << 20);
+        s1 += (cards[0].1 * 10 + cards[1].1) << 20;
         let mut n = 0;
         for i in 0..5 {
             if cards[i].0 != b'J' {
@@ -55,7 +55,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             }
         }
         // println!("{:?}", cards);
-        s2 = s2 + ((cards[0].1 * 10 + cards[1].1) << 20);
+        s2 += (cards[0].1 * 10 + cards[1].1) << 20;
         let mut bid = 0;
         for ch in &line[6..] {
             bid = 10 * bid + ((ch - b'0') as usize);

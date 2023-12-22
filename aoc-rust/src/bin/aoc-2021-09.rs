@@ -19,7 +19,7 @@ impl Lava<'_> {
         let mut risk = 0;
         let mut sizes: Vec<usize> = Vec::with_capacity(512);
         let mut todo: Vec<usize> = Vec::with_capacity(512);
-        for ch in b'0'..b'9' {
+        for ch in b'0'..=b'8' {
             for i in 0..self.m.len() {
                 if self.m[i] != ch {
                     continue;
@@ -27,8 +27,7 @@ impl Lava<'_> {
                 risk += (self.m[i] - b'0') as usize + 1;
                 let mut size = 0;
                 todo.push(i);
-                while !todo.is_empty() {
-                    let ti = todo.pop().expect("todo empty");
+                while let Some(ti) = todo.pop() {
                     if self.m[ti] == b'9' {
                         continue;
                     }

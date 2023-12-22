@@ -10,9 +10,9 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     };
     let binp = |i| {
         if i < inp.len() {
-            return inp[i];
+            inp[i]
         } else {
-            return 0;
+            0
         }
     };
     while i < inp.len() {

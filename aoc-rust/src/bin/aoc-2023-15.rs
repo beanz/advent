@@ -32,15 +32,13 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             if let Some(ii) = found {
                 b[bn].remove(ii);
             }
+        } else if let Some(ii) = found {
+            b[bn].get_mut(ii).expect("err").v = inp[j - 1] - b'0';
         } else {
-            if let Some(ii) = found {
-                b[bn].get_mut(ii).expect("err").v = inp[j - 1] - b'0';
-            } else {
-                b[bn].push(Lens {
-                    l: lb,
-                    v: inp[j - 1] - b'0',
-                });
-            }
+            b[bn].push(Lens {
+                l: lb,
+                v: inp[j - 1] - b'0',
+            });
         }
 
         i = j + 1;

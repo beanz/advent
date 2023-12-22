@@ -45,7 +45,7 @@ fn solve(s: &[u8], nums: &[usize]) -> usize {
         }
         std::mem::swap(&mut next_state_count, &mut state_count)
     }
-    return state_count[mat.len() - 1] + state_count[mat.len() - 2];
+    state_count[mat.len() - 1] + state_count[mat.len() - 2]
 }
 
 fn parts(inp: &[u8]) -> (usize, usize) {

@@ -188,7 +188,7 @@ fn chomp_id(inp: &[u8], i: &mut usize) -> usize {
             _ => break,
         }
     }
-    return id << 1;
+    id << 1
 }
 
 fn main() {

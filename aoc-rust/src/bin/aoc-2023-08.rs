@@ -23,15 +23,11 @@ fn parts(inp: &[u8]) -> (usize, u64) {
     }
     let mut p1: usize = 0;
     let mut p: u32 = 0;
-    loop {
-        if let Some(mv) = m.get(&p) {
-            if steps[p1 % steps.len()] == b'L' {
-                p = mv.0;
-            } else {
-                p = mv.1;
-            }
+    while let Some(mv) = m.get(&p) {
+        if steps[p1 % steps.len()] == b'L' {
+            p = mv.0;
         } else {
-            break;
+            p = mv.1;
         }
         p1 += 1;
         if p == 26425 {

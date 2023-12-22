@@ -120,7 +120,7 @@ where
     T: num::Integer + std::str::FromStr,
     <T as std::str::FromStr>::Err: std::fmt::Debug,
 {
-    s.split(|c| !('0'..='9').contains(&c))
+    s.split(|c: char| !c.is_ascii_digit())
         .filter(|x| !x.is_empty())
         .map(|x| x.parse::<T>().unwrap())
 }

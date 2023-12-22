@@ -6,7 +6,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let w1 = w + 1;
     let h = inp.len() as i16 / w1;
     let s = inp.iter().position(|&ch| ch == b'S').unwrap() as i16;
-    let (sx, sy) = (s % w1 as i16, s / w1 as i16);
+    let (sx, sy) = (s % w1, s / w1);
     let mut rp: HashSet<(i16, i16), RandomState> =
         HashSet::with_capacity_and_hasher(100000, RandomState::new());
     let mut np: HashSet<(i16, i16), RandomState> =
@@ -17,7 +17,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         if 0 <= x && x < w && 0 <= y && y < h {
             return inp[(x + y * w1) as usize];
         }
-        return b'#';
+        b'#'
     };
 
     for _step in 1..=64 {
@@ -47,9 +47,8 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let mut seen: [isize; 3] = [0; 3];
     let mut si = 0;
 
-    let ch_at_2 = |x: i16, y: i16| -> u8 {
-        return inp[(x.rem_euclid(w) + (y.rem_euclid(h)) * w1) as usize];
-    };
+    let ch_at_2 =
+        |x: i16, y: i16| -> u8 { inp[(x.rem_euclid(w) + (y.rem_euclid(h)) * w1) as usize] };
 
     for step in 1..=1000 {
         for (x, y) in rp.iter() {

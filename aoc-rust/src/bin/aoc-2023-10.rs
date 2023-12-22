@@ -1,10 +1,10 @@
 #[derive(PartialEq)]
 enum D {
-    NORTH = 1,
-    SOUTH = 2,
-    EAST = 4,
-    WEST = 8,
-    NONE = 0,
+    North = 1,
+    South = 2,
+    East = 4,
+    West = 8,
+    None = 0,
 }
 use D::*;
 
@@ -12,15 +12,15 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let w = 1 + inp.iter().position(|&ch| ch == b'\n').unwrap();
     let s = inp.iter().position(|&ch| ch == b'S').unwrap();
     let mut from = {
-        if s >= w && (dirs(inp[s - w]).0 == SOUTH || dirs(inp[s - w]).1 == SOUTH) {
-            NORTH
-        } else if s > 0 && (dirs(inp[s - 1]).0 == EAST || dirs(inp[s - 1]).1 == EAST) {
-            WEST
-        } else if s + w < inp.len() && (dirs(inp[s + w]).0 == NORTH || dirs(inp[s + w]).1 == NORTH)
+        if s >= w && (dirs(inp[s - w]).0 == South || dirs(inp[s - w]).1 == South) {
+            North
+        } else if s > 0 && (dirs(inp[s - 1]).0 == East || dirs(inp[s - 1]).1 == East) {
+            West
+        } else if s + w < inp.len() && (dirs(inp[s + w]).0 == North || dirs(inp[s + w]).1 == North)
         {
-            SOUTH
-        } else if s + 1 < inp.len() && (dirs(inp[s + 1]).0 == WEST || dirs(inp[s + 1]).1 == WEST) {
-            EAST
+            South
+        } else if s + 1 < inp.len() && (dirs(inp[s + 1]).0 == West || dirs(inp[s + 1]).1 == West) {
+            East
         } else {
             unreachable!("invalid start?")
         }
@@ -47,7 +47,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         }
     }
     p1 /= 2;
-    (p1, (area.abs() as usize) / 2 - p1 + 1)
+    (p1, area.unsigned_abs() / 2 - p1 + 1)
 }
 
 fn shoelace(a: isize, b: isize, w: isize) -> isize {
@@ -58,34 +58,34 @@ fn shoelace(a: isize, b: isize, w: isize) -> isize {
 
 fn mov(i: usize, w: usize, d: &D) -> usize {
     match d {
-        NORTH => i - w,
-        EAST => i + 1,
-        SOUTH => i + w,
-        WEST => i - 1,
-        NONE => unreachable!("invalid move"),
+        North => i - w,
+        East => i + 1,
+        South => i + w,
+        West => i - 1,
+        None => unreachable!("invalid move"),
     }
 }
 
 fn opposite(d: D) -> D {
     match d {
-        NORTH => SOUTH,
-        SOUTH => NORTH,
-        EAST => WEST,
-        WEST => EAST,
-        NONE => unreachable!("invalid opposite"),
+        North => South,
+        South => North,
+        East => West,
+        West => East,
+        None => unreachable!("invalid opposite"),
     }
 }
 
 fn dirs(ch: u8) -> (D, D) {
     match ch {
-        b'|' => (NORTH, SOUTH),
-        b'-' => (EAST, WEST),
-        b'L' => (NORTH, EAST),
-        b'J' => (NORTH, WEST),
-        b'7' => (SOUTH, WEST),
-        b'F' => (SOUTH, EAST),
-        b'.' => (NONE, NONE),
-        b'\n' => (NONE, NONE),
+        b'|' => (North, South),
+        b'-' => (East, West),
+        b'L' => (North, East),
+        b'J' => (North, West),
+        b'7' => (South, West),
+        b'F' => (South, East),
+        b'.' => (None, None),
+        b'\n' => (None, None),
         _ => unreachable!("invalid char"),
     }
 }

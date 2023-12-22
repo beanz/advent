@@ -9,7 +9,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         while i < inp.len() {
             match inp[i] {
                 b'\n' => {
-                    if w == None {
+                    if w.is_none() {
                         w = Some(x)
                     }
                     x = 0;
@@ -38,12 +38,12 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             for j in 0..l {
                 c += (col[i - j] ^ col[i + j + 1]).count_ones() as usize;
             }
-            if c == 0 && s1 == None {
+            if c == 0 && s1.is_none() {
                 s1 = Some(i + 1);
-            } else if c == 1 && s2 == None {
+            } else if c == 1 && s2.is_none() {
                 s2 = Some(i + 1);
             }
-            if s1 != None && s2 != None {
+            if s1.is_some() && s2.is_some() {
                 break;
             }
         }
@@ -53,12 +53,12 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             for j in 0..l {
                 c += (row[i - j] ^ row[i + j + 1]).count_ones() as usize;
             }
-            if c == 0 && s1 == None {
+            if c == 0 && s1.is_none() {
                 s1 = Some(100 * (i + 1));
-            } else if c == 1 && s2 == None {
+            } else if c == 1 && s2.is_none() {
                 s2 = Some(100 * (i + 1));
             }
-            if s1 != None && s2 != None {
+            if s1.is_some() && s2.is_some() {
                 break;
             }
         }
