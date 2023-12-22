@@ -11,8 +11,10 @@ import (
 //go:embed input.txt
 var input []byte
 
+const SIZE = 1210
+
 func Parts(in []byte, args ...int) (int, int) {
-	bricks := make([][6]int, 0, 1210)
+	bricks := make([][6]int, 0, SIZE)
 	for i := 0; i < len(in); i++ {
 		brick := [6]int{}
 		j := 0
@@ -68,8 +70,8 @@ func Parts(in []byte, args ...int) (int, int) {
 		}
 		return z
 	}
-	s := make([][]int, len(bricks))
-	sc := make([]int, len(bricks))
+	s := make([][]int, SIZE)
+	sc := make([]int, SIZE)
 	for i := 0; i < len(bricks); i++ {
 		var r []int
 		z := stopBrick(bricks[i][0], bricks[i][3], bricks[i][1], bricks[i][4]) + 1
@@ -91,7 +93,7 @@ func Parts(in []byte, args ...int) (int, int) {
 	p1, p2 := 0, 0
 	for i := 0; i < len(bricks); i++ {
 		dis := 0
-		rem := make([]int, len(bricks))
+		rem := make([]int, SIZE)
 		todo := s[i]
 		for len(todo) > 0 {
 			cur := todo[0]
