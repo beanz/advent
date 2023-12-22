@@ -29,13 +29,13 @@ func Parts(in []byte, args ...int) (int, int) {
 		return bricks[i][2] < bricks[j][2]
 	})
 	intersected := func(a, b [6]int) bool {
-		if a[0] >= b[3] || b[0] >= a[3] {
+		if a[2] >= b[5] || b[2] >= a[5] {
 			return false
 		}
 		if a[1] >= b[4] || b[1] >= a[4] {
 			return false
 		}
-		if a[2] >= b[5] || b[2] >= a[5] {
+		if a[0] >= b[3] || b[0] >= a[3] {
 			return false
 		}
 		return true
