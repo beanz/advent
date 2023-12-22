@@ -12,7 +12,7 @@ import (
 //go:embed input.txt
 var input []byte
 
-type Dir int
+type Dir int8
 
 const (
 	UP    Dir = 1
@@ -21,7 +21,7 @@ const (
 	LEFT  Dir = 8
 )
 
-func (d Dir) X() int {
+func (d Dir) X() int16 {
 	if d == LEFT {
 		return -1
 	} else if d == RIGHT {
@@ -30,7 +30,7 @@ func (d Dir) X() int {
 	return 0
 }
 
-func (d Dir) Y() int {
+func (d Dir) Y() int16 {
 	if d == UP {
 		return -1
 	} else if d == DOWN {
@@ -72,7 +72,7 @@ func (b beam) mov() beam {
 }
 
 type beam struct {
-	x, y int
+	x, y int16
 	d    Dir
 }
 
@@ -81,16 +81,16 @@ func Solve(m *ByteMap, todo []beam) int {
 	for len(todo) > 0 {
 		cur := todo[0]
 		todo = todo[1:]
-		if cur.x < 0 || cur.x >= m.Width() || cur.y < 0 || cur.y >= m.Height() {
+		if cur.x < 0 || int(cur.x) >= m.Width() || cur.y < 0 || int(cur.y) >= m.Height() {
 			continue
 		}
-		i := m.XYToIndex(cur.x, cur.y)
+		i := m.XYToIndex(int(cur.x), int(cur.y))
 		if seen[i]&cur.d != 0 {
 			continue
 		}
 		seen[i] |= cur.d
 		//pp(m, seen, cur)
-		switch m.GetXY(cur.x, cur.y) {
+		switch m.GetXY(int(cur.x), int(cur.y)) {
 		case '.':
 			todo = append(todo, cur.mov())
 		case '/':
@@ -149,13 +149,13 @@ func Solve(m *ByteMap, todo []beam) int {
 
 func pp(m *ByteMap, seen [14000]Dir, cur beam) { // nolint:unused
 	var b bytes.Buffer
-	for y := 0; y < m.Height(); y++ {
-		for x := 0; x < m.Width(); x++ {
+	for y := int16(0); y < int16(m.Height()); y++ {
+		for x := int16(0); x < int16(m.Width()); x++ {
 			if cur.x == x && cur.y == y {
 				fmt.Fprint(&b, cur.d.String())
 				continue
 			}
-			i := m.XYToIndex(x, y)
+			i := m.XYToIndex(int(x), int(y))
 			ch := m.Get(i)
 			if seen[i] != 0 {
 				fmt.Fprint(&b, Bold(string(ch)))
@@ -174,7 +174,7 @@ func Parts(in []byte, args ...int) (int, int) {
 	todo = append(todo, beam{0, 0, RIGHT})
 	p1 := Solve(m, todo)
 	p2 := 0
-	for x := 0; x < m.Width(); x++ {
+	for x := int16(0); x < int16(m.Width()); x++ {
 		todo = todo[:0]
 		todo = append(todo, beam{x, 0, DOWN})
 		s := Solve(m, todo)
@@ -182,7 +182,7 @@ func Parts(in []byte, args ...int) (int, int) {
 			p2 = s
 		}
 		todo = todo[:0]
-		todo = append(todo, beam{x, m.Height() - 1, UP})
+		todo = append(todo, beam{x, int16(m.Height() - 1), UP})
 		s = Solve(m, todo)
 		if s > p2 {
 			p2 = s
@@ -190,13 +190,13 @@ func Parts(in []byte, args ...int) (int, int) {
 	}
 	for y := 0; y < m.Height(); y++ {
 		todo = todo[:0]
-		todo = append(todo, beam{0, y, RIGHT})
+		todo = append(todo, beam{0, int16(y), RIGHT})
 		s := Solve(m, todo)
 		if s > p2 {
 			p2 = s
 		}
 		todo = todo[:0]
-		todo = append(todo, beam{m.Width() - 1, y, LEFT})
+		todo = append(todo, beam{int16(m.Width() - 1), int16(y), LEFT})
 		s = Solve(m, todo)
 		if s > p2 {
 			p2 = s
