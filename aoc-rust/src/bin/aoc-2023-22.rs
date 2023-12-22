@@ -3,9 +3,9 @@ use smallvec::SmallVec;
 const SIZE: usize = 1210;
 
 fn parts(inp: &[u8]) -> (usize, usize) {
-    let mut bricks = SmallVec::<[[usize; 6]; 2048]>::new();
+    let mut bricks = SmallVec::<[[u16; 6]; 2048]>::new();
     let mut k: usize = 0;
-    let mut cur: [usize; 6] = [0; 6];
+    let mut cur: [u16; 6] = [0; 6];
     aoc::read::visit_uints(inp, |n| {
         cur[k] = n;
         if k >= 3 {
@@ -14,12 +14,12 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         k += 1;
         if k == 6 {
             k = 0;
-            let b: [usize; 6] = [cur[0], cur[1], cur[2], cur[3], cur[4], cur[5]];
+            let b: [u16; 6] = [cur[0], cur[1], cur[2], cur[3], cur[4], cur[5]];
             bricks.push(b);
         }
     });
     bricks.sort_by(|a, b| a[2].cmp(&b[2]));
-    let intersected = |a: &[usize; 6], b: &[usize; 6]| {
+    let intersected = |a: &[u16; 6], b: &[u16; 6]| {
         if a[2] >= b[5] || b[2] >= a[5] {
             return false;
         }
@@ -31,12 +31,12 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         }
         true
     };
-    let mut height: [usize; 121] = [0; 121];
-    let stop_z = |xmin: usize, xmax: usize, ymin: usize, ymax: usize, h: &mut [usize; 121]| {
+    let mut height: [u16; 121] = [0; 121];
+    let stop_z = |xmin: u16, xmax: u16, ymin: u16, ymax: u16, h: &mut [u16; 121]| {
         let mut z = 0;
         for y in ymin..ymax {
             for x in xmin..xmax {
-                let h = h[x + 11 * y];
+                let h = h[(x + 11 * y) as usize];
                 if h > z {
                     z = h;
                 }
@@ -57,7 +57,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         let drop = bricks[i][2] - z;
         bricks[i][2] = z;
         bricks[i][5] -= drop;
-        let t: [usize; 6] = [
+        let t: [u16; 6] = [
             bricks[i][0],
             bricks[i][1],
             bricks[i][2] - 1,
@@ -67,7 +67,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         ];
         for y in bricks[i][1]..bricks[i][4] {
             for x in bricks[i][0]..bricks[i][3] {
-                height[x + y * 11] = bricks[i][5] - 1;
+                height[(x + y * 11) as usize] = bricks[i][5] - 1;
             }
         }
         let mut c = 0;
