@@ -52,18 +52,36 @@ func Parts(in []byte, args ...int) (int, int) {
 		}
 		return r
 	}
+	height := make([]int, 121)
+	hiAt := func(x, y int) int {
+		return height[x+11*y]
+	}
+	stopBrick := func(xmin, xmax, ymin, ymax int) int {
+		z := 0
+		for y := ymin; y < ymax; y++ {
+			for x := xmin; x < xmax; x++ {
+				h := hiAt(x, y)
+				if h > z {
+					z = h
+				}
+			}
+		}
+		return z
+	}
 	s := make([][]int, len(bricks))
 	sc := make([]int, len(bricks))
 	for i := 0; i < len(bricks); i++ {
 		var r []int
-		for bricks[i][2] > 1 {
-			t := [6]int{bricks[i][0], bricks[i][1], bricks[i][2] - 1, bricks[i][3], bricks[i][4], bricks[i][5] - 1}
-			r = allIntersects(i, t)
-			if r != nil {
-				break
+		z := stopBrick(bricks[i][0], bricks[i][3], bricks[i][1], bricks[i][4]) + 1
+		drop := bricks[i][2] - z
+		bricks[i][2] = z
+		bricks[i][5] -= drop
+		t := [6]int{bricks[i][0], bricks[i][1], bricks[i][2] - 1, bricks[i][3], bricks[i][4], bricks[i][5] - 1}
+		r = allIntersects(i, t)
+		for y := bricks[i][1]; y < bricks[i][4]; y++ {
+			for x := bricks[i][0]; x < bricks[i][3]; x++ {
+				height[x+y*11] = bricks[i][5] - 1
 			}
-			bricks[i][2]--
-			bricks[i][5]--
 		}
 		for _, j := range r {
 			s[j] = append(s[j], i)
