@@ -170,19 +170,19 @@ func pp(m *ByteMap, seen [14000]Dir, cur beam) { // nolint:unused
 
 func Parts(in []byte, args ...int) (int, int) {
 	m := NewByteMap(in)
-	todo := make([]beam, 0, 2048)
+	todo := make([]beam, 0, 16384)
 	todo = append(todo, beam{0, 0, RIGHT})
 	p1 := Solve(m, todo)
 	p2 := 0
-	for x := int16(0); x < int16(m.Width()); x++ {
+	for x := 0; x < m.Width(); x++ {
 		todo = todo[:0]
-		todo = append(todo, beam{x, 0, DOWN})
+		todo = append(todo, beam{int16(x), 0, DOWN})
 		s := Solve(m, todo)
 		if s > p2 {
 			p2 = s
 		}
 		todo = todo[:0]
-		todo = append(todo, beam{x, int16(m.Height() - 1), UP})
+		todo = append(todo, beam{int16(x), int16(m.Height() - 1), UP})
 		s = Solve(m, todo)
 		if s > p2 {
 			p2 = s
