@@ -1,0 +1,7 @@
+test1.txt
+5
+7
+---END---
+input.txt
+409
+61097
