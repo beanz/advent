@@ -86,7 +86,7 @@ sub calc {
   }
 
 LOOP:
-  for my $rv (0 .. 1000) {
+  for my $rv (-1000 .. 1000) {
     my @p;
     for my $i (0 .. @$in - 1) {
       my $v = ($in->[$i]->[VX] + $in->[$i]->[VY] + $in->[$i]->[VZ]);
