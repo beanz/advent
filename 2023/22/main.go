@@ -11,7 +11,7 @@ import (
 //go:embed input.txt
 var input []byte
 
-const SIZE = 1210
+const SIZE = 1400
 
 func Parts(in []byte, args ...int) (int, int) {
 	bricks := make([][6]int, 0, SIZE)
