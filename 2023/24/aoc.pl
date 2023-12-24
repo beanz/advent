@@ -42,10 +42,14 @@ sub intersect {
   return [$px, $py];
 }
 
+use ntheory qw/chinese/;
+
 sub calc {
   my ($in) = @_;
-  my $in_range = @$in < 20 ? sub { 7 <= $_[0] && $_[0] <= 27 } :
-sub { 200000000000000 <= $_[0] && $_[0] <= 400000000000000 };
+  my $in_range =
+    @$in < 20
+    ? sub {7 <= $_[0] && $_[0] <= 27}
+    : sub {200000000000000 <= $_[0] && $_[0] <= 400000000000000};
   my $p1 = 0;
   for my $i (0 .. @$in - 1) {
     for my $j ($i + 1 .. @$in - 1) {
@@ -55,20 +59,47 @@ sub { 200000000000000 <= $_[0] && $_[0] <= 400000000000000 };
       if (defined $p) {
         my $in_x = $in_range->($p->[X]);
         my $in_y = $in_range->($p->[Y]);
-        my $future_a = ($a->[VX] > 0 && $p->[X] > $a->[X]) || ($a->[VX] < 0 && $p->[X] < $a->[X]) ||($a->[VY] > 0 && $p->[Y] > $a->[Y]) || ($a->[VY] < 0 && $p->[Y] < $a->[Y]);
-        my $future_b = ($b->[VX] > 0 && $p->[X] > $b->[X]) || ($b->[VX] < 0 && $p->[X] < $b->[X]) ||($b->[VY] > 0 && $p->[Y] > $b->[Y]) || ($b->[VY] < 0 && $p->[Y] < $b->[Y]);
+        my $future_a =
+             ($a->[VX] > 0 && $p->[X] > $a->[X])
+          || ($a->[VX] < 0 && $p->[X] < $a->[X])
+          || ($a->[VY] > 0 && $p->[Y] > $a->[Y])
+          || ($a->[VY] < 0 && $p->[Y] < $a->[Y]);
+        my $future_b =
+             ($b->[VX] > 0 && $p->[X] > $b->[X])
+          || ($b->[VX] < 0 && $p->[X] < $b->[X])
+          || ($b->[VY] > 0 && $p->[Y] > $b->[Y])
+          || ($b->[VY] < 0 && $p->[Y] < $b->[Y]);
         my $future = $future_a && $future_b;
         $p1++ if ($in_x && $in_y && $future);
       }
     }
   }
   my $p2 = 0;
-  for my $i (0..2) {
-    my $t = chr(ord('A')+$i);
-    my $p = $in->[$i];
-    print "x+X*$t=$p->[X]+$p->[VX]*$t\n";
-    print "y+Y*$t=$p->[Y]+$p->[VY]*$t\n";
-    print "z+Z*$t=$p->[Z]+$p->[VZ]*$t\n";
+  if (DEBUG) {
+    for my $i (0 .. 2) {
+      my $t = chr(ord('A') + $i);
+      my $p = $in->[$i];
+      print "x+X*$t=$p->[X]+$p->[VX]*$t\n";
+      print "y+Y*$t=$p->[Y]+$p->[VY]*$t\n";
+      print "z+Z*$t=$p->[Z]+$p->[VZ]*$t\n";
+    }
+  }
+
+LOOP:
+  for my $rv (0 .. 1000) {
+    my @p;
+    for my $i (0 .. @$in - 1) {
+      my $v = ($in->[$i]->[VX] + $in->[$i]->[VY] + $in->[$i]->[VZ]);
+      my $s = ($in->[$i]->[X] + $in->[$i]->[Y] + $in->[$i]->[Z]);
+      my $dv = abs($v - $rv);
+      next LOOP if ($dv == 0);
+      push @p, [$s % $dv, $dv];
+    }
+    my $r = chinese(@p);
+    if ($r) {
+      $p2 = $r;
+      last;
+    }
   }
 
   return [$p1, $p2];
