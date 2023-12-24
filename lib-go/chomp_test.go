@@ -1,6 +1,7 @@
 package aoc
 
 import (
+	"fmt"
 	"testing"
 
 	assert "github.com/stretchr/testify/require"
@@ -79,4 +80,24 @@ func Benchmark_ChompOneOrTwoCharUInt(b *testing.B) {
 		j, _ = ChompUInt[int](in, j+1)
 		_, _ = ChompUInt[int](in, j+1)
 	}
+}
+
+func Test_VisitWords(t *testing.T) {
+	in := []byte("broadcaster -> a, b, c\n")
+	ws := make([]string, 0, 4)
+	i := 0
+	VisitWords(in, '\n', &i, func(w []byte, term byte) {
+		ws = append(ws, fmt.Sprintf("%s!%c", string(w), term))
+	})
+	assert.Equal(t, []string{"broadcaster! ", "a!,", "b!,", "c!\n"}, ws)
+}
+
+func Test_VisitSplit(t *testing.T) {
+	in := []byte("s<595:A,x<2401:R,m<3068:A,A\n")
+	ws := make([]string, 0, 4)
+	i := 0
+	VisitSplit(in, ',', '\n', &i, func(w []byte) {
+		ws = append(ws, string(w))
+	})
+	assert.Equal(t, []string{"s<595:A", "x<2401:R", "m<3068:A", "A"}, ws)
 }

@@ -83,3 +83,71 @@ func VisitUints[T AoCInt](in []byte, until byte, i *int, fn func(n T)) {
 		*i++
 	}
 }
+
+func VisitWords(in []byte, until byte, i *int, fn func(w []byte, term byte)) {
+	var word bool
+	j := 0
+	k := 0
+LOOP:
+	for {
+		switch {
+		case in[*i] == until:
+			if word {
+				fn(in[j:k+1], in[*i])
+			}
+			break LOOP
+		case 'a' <= in[*i] && in[*i] <= 'z':
+			if !word {
+				j = *i
+			}
+			word = true
+			k = *i
+		case 'A' <= in[*i] && in[*i] <= 'Z':
+			if !word {
+				j = *i
+			}
+			word = true
+			k = *i
+		case '0' <= in[*i] && in[*i] <= '9':
+			if !word {
+				j = *i
+			}
+			word = true
+			k = *i
+		default:
+			if word {
+				fn(in[j:k+1], in[*i])
+			}
+			word = false
+		}
+		*i++
+	}
+}
+
+func VisitSplit(in []byte, sep, until byte, i *int, fn func(s []byte)) {
+	var word bool
+	j := 0
+	k := 0
+LOOP:
+	for {
+		switch in[*i] {
+		case until:
+			if word {
+				fn(in[j : k+1])
+			}
+			break LOOP
+		case sep:
+			if word {
+				fn(in[j : k+1])
+			}
+			word = false
+		default:
+			if !word {
+				j = *i
+			}
+			word = true
+			k = *i
+		}
+		*i++
+	}
+}
