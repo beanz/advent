@@ -30,7 +30,7 @@ type Rec struct {
 func graph(in []byte, start, end, w, h int, part1 bool) int {
 	w1 := w + 1
 	g := make(map[int]map[int]int, 50)
-	vn := [20022]bool{}
+	visit := make([]bool, 32000)
 	offsets := [4]int{-1, 1, -w1, w1}
 	chars := [4]byte{'<', '>', '^', 'v'}
 	todo := make([]Rec, 1, 128)
@@ -69,10 +69,10 @@ func graph(in []byte, start, end, w, h int, part1 bool) int {
 				}
 				g[cur.i][cur.si] = cur.steps
 			}
-			if vn[cur.i] {
+			if visit[cur.i] {
 				continue
 			}
-			vn[cur.i] = true
+			visit[cur.i] = true
 			for _, ni := range n {
 				if _, ok := cur.visit[ni]; ok {
 					continue
@@ -90,31 +90,52 @@ func graph(in []byte, start, end, w, h int, part1 bool) int {
 		}
 	}
 
+	gn := make([][][2]int, 50)
+	gi := make(map[int]int, 50)
+	gni := 0
+	for i, nxt := range g {
+		if _, ok := gi[i]; !ok {
+			gi[i] = gni
+			gni++
+		}
+		gn[gi[i]] = make([][2]int, 0, len(nxt))
+		for ni, steps := range nxt {
+			if _, ok := gi[ni]; !ok {
+				gi[ni] = gni
+				gni++
+			}
+			gn[gi[i]] = append(gn[gi[i]], [2]int{gi[ni], steps})
+		}
+	}
+
+	endi := gi[end]
 	todo2 := make([][2]int, 1, 128)
-	todo2[0] = [2]int{start, 0}
-	visit := make([]bool, 32000)
+	todo2[0] = [2]int{gi[start], 0}
+	visit2 := make([]bool, 32000)
 	res := 0
 	for len(todo2) > 0 {
 		cur := todo2[len(todo2)-1]
 		todo2 = todo2[:len(todo2)-1]
 		i, steps := cur[0], cur[1]
 		if steps == -1 {
-			visit[i] = false
+			visit2[i] = false
 			continue
 		}
-		if i == end {
+		if i == endi {
 			if res < steps {
 				res = steps
 			}
 			continue
 		}
-		if visit[i] {
+		if visit2[i] {
 			continue
 		}
-		visit[i] = true
+		visit2[i] = true
 		todo2 = append(todo2, [2]int{i, -1})
-		for nxt, nsteps := range g[i] {
-			todo2 = append(todo2, [2]int{nxt, steps + nsteps})
+		for _, nxt := range gn[i] {
+			if !visit2[nxt[0]] {
+				todo2 = append(todo2, [2]int{nxt[0], steps + nxt[1]})
+			}
 		}
 	}
 	return res + 2
