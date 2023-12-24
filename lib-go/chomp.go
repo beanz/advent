@@ -60,6 +60,42 @@ func ChompOneOrTwoCharUInt[T AoCInt](in []byte, i int) (int, T) {
 	return i + 1, T(in[i] & 0xf)
 }
 
+func VisitInts[T AoCSigned](in []byte, until byte, i *int, fn func(n T)) {
+	var n T
+	var num bool
+	var negative bool
+	for {
+		switch {
+		case in[*i] == until:
+			if num {
+				if negative {
+					fn(-n)
+				} else {
+					fn(n)
+				}
+			}
+			return
+		case '0' <= in[*i] && in[*i] <= '9':
+			num = true
+			n = n*10 + T(in[*i]-'0')
+		case in[*i] == '-':
+			negative = true
+		default:
+			if num {
+				if negative {
+					fn(-n)
+				} else {
+					fn(n)
+				}
+			}
+			num = false
+			negative = false
+			n = 0
+		}
+		*i++
+	}
+}
+
 func VisitUints[T AoCInt](in []byte, until byte, i *int, fn func(n T)) {
 	var n T
 	var num bool
