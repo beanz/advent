@@ -1,0 +1,7 @@
+test1.txt
+54
+1
+---END---
+input.txt
+506202
+1
