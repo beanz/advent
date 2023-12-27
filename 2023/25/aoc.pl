@@ -68,16 +68,16 @@ sub find_path {
   my ($in, $start, $end, $cut) = @_;
   my @todo = [$start];
   my %v;
-  while (defined(my $cur = pop @todo)) {
+  while (defined(my $cur = shift @todo)) {
     my $n = $cur->[@$cur - 1];
     if ($n eq $end) {
       return $cur;
     }
+    $v{$n}++;
     for my $nxt (keys %{$in->{$n}}) {
       my $edge = join '!', sort ($n, $nxt);
       next if (exists $cut->{$edge});
       push @todo, [@$cur, $nxt] unless (exists $v{$nxt});
-      $v{$nxt}++;
     }
   }
   return;
@@ -85,7 +85,7 @@ sub find_path {
 
 sub find_cuts {
   my ($in, $start, $end) = @_;
-    print STDERR "checking paths between $start and $end\n" if DEBUG;
+  print STDERR "checking paths between $start and $end\n" if DEBUG;
   my %cut;
   for my $k (0 .. 2) {
     my $path = find_path($in, $start, $end, \%cut);
@@ -101,6 +101,7 @@ sub find_cuts {
   }
   my $path = find_path($in, $start, $end, \%cut);
   if (defined $path) {
+
     # still connected so both points are in same partition; try again
     return;
   }
@@ -130,6 +131,7 @@ sub calc {
   my $iter = variations(\@nodes, 2);
   my $cut;
   while (defined(my $se = $iter->next)) {
+
     #$cut = find_cuts_slow($in, $se->[0], $se->[1], {}, {});
     $cut = find_cuts($in, $se->[0], $se->[1]);
     return [$cut, 1] if ($cut);
