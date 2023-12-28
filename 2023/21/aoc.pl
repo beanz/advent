@@ -1,4 +1,5 @@
-#!/usr/bin/env perl
+#
+#/usr/bin/env perl
 use warnings FATAL => 'all';
 use strict;
 use v5.10;
@@ -40,6 +41,8 @@ sub calc {
   my ($in) = @_;
   my $p1 = 0;
   my %pos = ($in->{sx} . ',' . $in->{sy} => 1);
+  my ($c1, $c2) = (0, 0);
+  my %v;
   for my $step (1 .. 64) {
     my %np;
     for my $p (keys %pos) {
@@ -47,6 +50,8 @@ sub calc {
       for my $o ([0, 1], [0, -1], [1, 0], [-1, 0]) {
         my $nx = $x + $o->[X];
         my $ny = $y + $o->[Y];
+        next if (exists $v{$nx, $ny});
+        $v{$nx, $ny}++;
         unless (0 <= $nx && $nx < $in->{W} && 0 <= $ny && $ny < $in->{H}) {
           next;
         }
@@ -56,14 +61,18 @@ sub calc {
         $np{$nx, $ny}++;
       }
     }
-    $p1 = keys %np;
+    $p1 = $c2 + keys %np;
+    ($c1, $c2) = ($p1, $c1);
     %pos = %np;
   }
   my $p2 = 0;
   my $target = 26501365;
   my $mod = $target % $in->{W};
   %pos = ($in->{sx} . ',' . $in->{sy} => 1);
+  ($c1, $c2) = (0, 0);
+  %v = ();
   my @seen;
+
   for my $step (1 .. 1000) {
     my %np;
     for my $p (keys %pos) {
@@ -71,14 +80,18 @@ sub calc {
       for my $o ([0, 1], [0, -1], [1, 0], [-1, 0]) {
         my $nx = $x + $o->[X];
         my $ny = $y + $o->[Y];
+        next if (exists $v{$nx, $ny});
+        $v{$nx, $ny}++;
         unless ($in->{m}->[($ny % $in->{H})]->[($nx % $in->{W})] eq '.') {
           next;
         }
         $np{$nx, $ny}++;
       }
     }
-    $p2 = keys %np;
+    $p2 = $c2 + keys %np;
+    ($c1, $c2) = ($p2, $c1);
     if (($step % $in->{W}) == $mod) {
+
       #print "$step: $p2\n";
       push @seen, $p2;
       if (@seen == 3) {
