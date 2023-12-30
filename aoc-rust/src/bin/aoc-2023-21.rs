@@ -12,6 +12,9 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let mut np: HashSet<(i16, i16), RandomState> =
         HashSet::with_capacity_and_hasher(100000, RandomState::new());
     rp.insert((sx, sy));
+    let mut visit: HashSet<(i16, i16), RandomState> =
+        HashSet::with_capacity_and_hasher(100000, RandomState::new());
+    let (mut c1, mut c2): (usize, usize) = (0, 0);
     let mut p1 = 0;
     let ch_at_1 = |x: i16, y: i16| -> u8 {
         if 0 <= x && x < w && 0 <= y && y < h {
@@ -22,25 +25,32 @@ fn parts(inp: &[u8]) -> (usize, usize) {
 
     for _step in 1..=64 {
         for (x, y) in rp.iter() {
-            if ch_at_1(x - 1, *y) != b'#' {
+            if ch_at_1(x - 1, *y) != b'#' && !visit.contains(&(x - 1, *y)) {
+                visit.insert((x - 1, *y));
                 np.insert((x - 1, *y));
             }
-            if ch_at_1(x + 1, *y) != b'#' {
+            if ch_at_1(x + 1, *y) != b'#' && !visit.contains(&(x + 1, *y)) {
+                visit.insert((x + 1, *y));
                 np.insert((x + 1, *y));
             }
-            if ch_at_1(*x, y - 1) != b'#' {
+            if ch_at_1(*x, y - 1) != b'#' && !visit.contains(&(*x, y - 1)) {
+                visit.insert((*x, y - 1));
                 np.insert((*x, y - 1));
             }
-            if ch_at_1(*x, y + 1) != b'#' {
+            if ch_at_1(*x, y + 1) != b'#' && !visit.contains(&(*x, y + 1)) {
+                visit.insert((*x, y + 1));
                 np.insert((*x, y + 1));
             }
         }
         (np, rp) = (rp, np);
         np.clear();
-        p1 = rp.len();
+        p1 = c2 + rp.len();
+        (c1, c2) = (p1, c1);
     }
     rp.clear();
     rp.insert((sx, sy));
+    visit.clear();
+    (c1, c2) = (0, 0);
 
     let target = 26501365;
     let md = target % (w as usize);
@@ -52,22 +62,27 @@ fn parts(inp: &[u8]) -> (usize, usize) {
 
     for step in 1..=1000 {
         for (x, y) in rp.iter() {
-            if ch_at_2(x - 1, *y) != b'#' {
+            if ch_at_2(x - 1, *y) != b'#' && !visit.contains(&(x - 1, *y)) {
+                visit.insert((x - 1, *y));
                 np.insert((x - 1, *y));
             }
-            if ch_at_2(x + 1, *y) != b'#' {
+            if ch_at_2(x + 1, *y) != b'#' && !visit.contains(&(x + 1, *y)) {
+                visit.insert((x + 1, *y));
                 np.insert((x + 1, *y));
             }
-            if ch_at_2(*x, y - 1) != b'#' {
+            if ch_at_2(*x, y - 1) != b'#' && !visit.contains(&(*x, y - 1)) {
+                visit.insert((*x, y - 1));
                 np.insert((*x, y - 1));
             }
-            if ch_at_2(*x, y + 1) != b'#' {
+            if ch_at_2(*x, y + 1) != b'#' && !visit.contains(&(*x, y + 1)) {
+                visit.insert((*x, y + 1));
                 np.insert((*x, y + 1));
             }
         }
         (np, rp) = (rp, np);
         np.clear();
-        let c = rp.len();
+        let c = c2 + rp.len();
+        (c1, c2) = (c, c1);
         if (step % (w as usize)) == md {
             seen[si] = c as isize;
             si += 1;
