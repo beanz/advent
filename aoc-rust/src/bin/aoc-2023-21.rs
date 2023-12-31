@@ -1,5 +1,4 @@
-use ahash::RandomState;
-use std::collections::HashSet;
+use heapless::FnvIndexSet;
 
 fn parts(inp: &[u8]) -> (usize, usize) {
     let w = inp.iter().position(|&ch| ch == b'\n').unwrap() as i16;
@@ -7,13 +6,10 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let h = inp.len() as i16 / w1;
     let s = inp.iter().position(|&ch| ch == b'S').unwrap() as i16;
     let (sx, sy) = (s % w1, s / w1);
-    let mut rp: HashSet<(i16, i16), RandomState> =
-        HashSet::with_capacity_and_hasher(2000, RandomState::new());
-    let mut np: HashSet<(i16, i16), RandomState> =
-        HashSet::with_capacity_and_hasher(2000, RandomState::new());
-    rp.insert((sx, sy));
-    let mut visit: HashSet<(i16, i16), RandomState> =
-        HashSet::with_capacity_and_hasher(2000, RandomState::new());
+    let mut rp = FnvIndexSet::<(i16, i16), 2048>::new();
+    let mut np = FnvIndexSet::<(i16, i16), 2048>::new();
+    rp.insert((sx, sy)).expect("insert");
+    let mut visit = FnvIndexSet::<(i16, i16), 2048>::new();
     let (mut c1, mut c2): (usize, usize) = (1, 0);
     let mut p1 = 0;
     let ch_at_1 = |x: i16, y: i16| -> u8 {
@@ -26,20 +22,16 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     for _step in 1..=64 {
         for (x, y) in rp.iter() {
             if ch_at_1(x - 1, *y) != b'#' && !visit.contains(&(x - 1, *y)) {
-                visit.insert((x - 1, *y));
-                np.insert((x - 1, *y));
+                np.insert((x - 1, *y)).expect("insert");
             }
             if ch_at_1(x + 1, *y) != b'#' && !visit.contains(&(x + 1, *y)) {
-                visit.insert((x + 1, *y));
-                np.insert((x + 1, *y));
+                np.insert((x + 1, *y)).expect("insert");
             }
             if ch_at_1(*x, y - 1) != b'#' && !visit.contains(&(*x, y - 1)) {
-                visit.insert((*x, y - 1));
-                np.insert((*x, y - 1));
+                np.insert((*x, y - 1)).expect("insert");
             }
             if ch_at_1(*x, y + 1) != b'#' && !visit.contains(&(*x, y + 1)) {
-                visit.insert((*x, y + 1));
-                np.insert((*x, y + 1));
+                np.insert((*x, y + 1)).expect("insert");
             }
         }
         (visit, rp, np) = (rp, np, visit);
@@ -48,7 +40,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         (c1, c2) = (p1, c1);
     }
     rp.clear();
-    rp.insert((sx, sy));
+    rp.insert((sx, sy)).expect("insert");
     visit.clear();
     (c1, c2) = (1, 0);
 
@@ -63,20 +55,16 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     for step in 1..=1000 {
         for (x, y) in rp.iter() {
             if ch_at_2(x - 1, *y) != b'#' && !visit.contains(&(x - 1, *y)) {
-                visit.insert((x - 1, *y));
-                np.insert((x - 1, *y));
+                np.insert((x - 1, *y)).expect("insert");
             }
             if ch_at_2(x + 1, *y) != b'#' && !visit.contains(&(x + 1, *y)) {
-                visit.insert((x + 1, *y));
-                np.insert((x + 1, *y));
+                np.insert((x + 1, *y)).expect("insert");
             }
             if ch_at_2(*x, y - 1) != b'#' && !visit.contains(&(*x, y - 1)) {
-                visit.insert((*x, y - 1));
-                np.insert((*x, y - 1));
+                np.insert((*x, y - 1)).expect("insert");
             }
             if ch_at_2(*x, y + 1) != b'#' && !visit.contains(&(*x, y + 1)) {
-                visit.insert((*x, y + 1));
-                np.insert((*x, y + 1));
+                np.insert((*x, y + 1)).expect("insert");
             }
         }
         (visit, rp, np) = (rp, np, visit);
