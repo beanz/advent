@@ -16,11 +16,11 @@ func Parts(in []byte, args ...int) (int, int) {
 	s := int16(bytes.Index(in, []byte{'S'}))
 	w1 := int16(w + 1)
 	h := int16(len(in)) / w1
-	rp := make(map[[2]int16]struct{}, 102400)
+	rp := make(map[[2]int16]struct{}, 2048)
 	rp[[2]int16{s % w1, s / w1}] = struct{}{}
-	np := make(map[[2]int16]struct{}, 102400)
-	visit := make(map[[2]int16]struct{}, 102400)
-	c1, c2 := 0, 0
+	np := make(map[[2]int16]struct{}, 2048)
+	visit := make(map[[2]int16]struct{}, 2048)
+	c1, c2 := 1, 0
 	p1 := 0
 	chAt1 := func(x, y int16) byte {
 		if 0 <= x && x < w && 0 <= y && y < h {
@@ -51,7 +51,7 @@ func Parts(in []byte, args ...int) (int, int) {
 			}
 		}
 
-		rp, np = np, rp
+		visit, rp, np = rp, np, visit
 		clear(np)
 		p1 := c2 + len(rp)
 		c1, c2 = p1, c1
@@ -63,7 +63,7 @@ func Parts(in []byte, args ...int) (int, int) {
 	}
 	clear(rp)
 	clear(visit)
-	c1, c2 = 0, 0
+	c1, c2 = 1, 0
 	rp[[2]int16{s % w1, s / w1}] = struct{}{}
 	target := 26501365
 	mod := target % int(w)

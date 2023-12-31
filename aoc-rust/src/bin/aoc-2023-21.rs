@@ -8,13 +8,13 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let s = inp.iter().position(|&ch| ch == b'S').unwrap() as i16;
     let (sx, sy) = (s % w1, s / w1);
     let mut rp: HashSet<(i16, i16), RandomState> =
-        HashSet::with_capacity_and_hasher(100000, RandomState::new());
+        HashSet::with_capacity_and_hasher(2000, RandomState::new());
     let mut np: HashSet<(i16, i16), RandomState> =
-        HashSet::with_capacity_and_hasher(100000, RandomState::new());
+        HashSet::with_capacity_and_hasher(2000, RandomState::new());
     rp.insert((sx, sy));
     let mut visit: HashSet<(i16, i16), RandomState> =
-        HashSet::with_capacity_and_hasher(100000, RandomState::new());
-    let (mut c1, mut c2): (usize, usize) = (0, 0);
+        HashSet::with_capacity_and_hasher(2000, RandomState::new());
+    let (mut c1, mut c2): (usize, usize) = (1, 0);
     let mut p1 = 0;
     let ch_at_1 = |x: i16, y: i16| -> u8 {
         if 0 <= x && x < w && 0 <= y && y < h {
@@ -42,7 +42,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
                 np.insert((*x, y + 1));
             }
         }
-        (np, rp) = (rp, np);
+        (visit, rp, np) = (rp, np, visit);
         np.clear();
         p1 = c2 + rp.len();
         (c1, c2) = (p1, c1);
@@ -50,7 +50,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     rp.clear();
     rp.insert((sx, sy));
     visit.clear();
-    (c1, c2) = (0, 0);
+    (c1, c2) = (1, 0);
 
     let target = 26501365;
     let md = target % (w as usize);
@@ -79,7 +79,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
                 np.insert((*x, y + 1));
             }
         }
-        (np, rp) = (rp, np);
+        (visit, rp, np) = (rp, np, visit);
         np.clear();
         let c = c2 + rp.len();
         (c1, c2) = (c, c1);
