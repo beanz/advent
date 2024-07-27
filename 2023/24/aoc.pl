@@ -42,7 +42,7 @@ sub intersect {
   return [$px, $py];
 }
 
-use ntheory qw/chinese/;
+use Math::Prime::Util qw/chinese/;
 
 sub calc {
   my ($in) = @_;

@@ -1,5 +1,10 @@
 package aoc
 
+import (
+	"fmt"
+	"math/big"
+)
+
 func Abs[T AoCSigned](x T) T {
 	if x < 0 {
 		return -x
@@ -153,4 +158,58 @@ func MaxInt64(a ...int64) int64 {
 		}
 	}
 	return max
+}
+
+func EGCD[T AoCInt](a, b T, x, y *T) T {
+	if a == 0 {
+		*x, *y = 0, 1
+		return b
+	}
+	g := EGCD(b%a, a, x, y)
+	*x, *y = *y-(b/a)*(*x), *x
+	return g
+}
+
+func ChineseRemainderTheorem[T AoCInt](an [][2]T) *T {
+	p := an[0][1]
+	for _, e := range an[1:] {
+		p *= e[1]
+	}
+	var x T
+	var y T
+	var z T
+	var j T
+	for i := range an {
+		a, n := an[i][0], an[i][1]
+		q := p / n
+		z = EGCD(n, q, &j, &y)
+		if z != 1 {
+			return nil
+		}
+		x += a * y * q
+		for x < 0 {
+			x += p
+		}
+		x %= p
+	}
+	return &x
+}
+
+var one = big.NewInt(1)
+
+func CRT(a, n []*big.Int) (*big.Int, error) {
+	p := new(big.Int).Set(n[0])
+	for _, n1 := range n[1:] {
+		p.Mul(p, n1)
+	}
+	var x, q, s, z big.Int
+	for i, n1 := range n {
+		q.Div(p, n1)
+		z.GCD(nil, &s, n1, &q)
+		if z.Cmp(one) != 0 {
+			return nil, fmt.Errorf("%d not coprime", n1)
+		}
+		x.Add(&x, s.Mul(a[i], s.Mul(&s, &q)))
+	}
+	return x.Mod(&x, p), nil
 }

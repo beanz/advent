@@ -113,7 +113,7 @@ func edge(from, to int) int {
 
 func find_path(g []map[int]struct{}, start, end int, cuts []int) []int {
 	todo := make([][]int, 1, 1536)
-	todo[0] = make([]int, 1, 128)
+	todo[0] = make([]int, 1, 16)
 	todo[0][0] = start
 	visit := make([]bool, 1536)
 	for len(todo) > 0 {
@@ -131,7 +131,7 @@ func find_path(g []map[int]struct{}, start, end int, cuts []int) []int {
 			if isCut(cuts, node, nxt) {
 				continue
 			}
-			npath := make([]int, len(cur)+1, 128)
+			npath := make([]int, len(cur)+1, 16)
 			copy(npath, cur)
 			npath[len(cur)] = nxt
 			todo = append(todo, npath)

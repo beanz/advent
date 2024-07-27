@@ -133,7 +133,6 @@ fn find_path(
             todo.push(npath);
         }
     }
-    return;
 }
 
 fn is_cut(cuts: &Vec<u32, 512>, from: u16, to: u16) -> bool {

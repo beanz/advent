@@ -45,7 +45,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         }
         i += 1;
     }
-    let a = crt(&u, &m);
+    let a = aoc::math::crt(&u, &m).unwrap();
     ((bus as usize) * (min as usize), a as usize)
 }
 
@@ -58,40 +58,6 @@ fn main() {
             println!("Part 2: {}", p2);
         }
     });
-}
-
-fn egcd(a: isize, b: isize, x: &mut isize, y: &mut isize) -> isize {
-    if a == 0 {
-        (*x, *y) = (0, 1);
-        b
-    } else {
-        let g = egcd(b % a, a, x, y);
-        (*x, *y) = (*y - (b / a) * *x, *x);
-        g
-    }
-}
-
-fn crt(la: &[isize], ln: &[isize]) -> isize {
-    let mut p = 1;
-    for n in ln {
-        p *= n;
-    }
-    let mut x = 0;
-    let mut y = 0;
-    let mut z;
-    let mut j = 0;
-    for (i, n) in ln.iter().enumerate() {
-        let a = la[i];
-        let q = p / *n;
-        z = egcd(*n, q, &mut j, &mut y);
-        assert_eq!(z, 1);
-        x += a * y * q;
-        while x < 0 {
-            x += p;
-        }
-        x %= p;
-    }
-    x
 }
 
 #[cfg(test)]

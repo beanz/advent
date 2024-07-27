@@ -7,6 +7,7 @@ require (
 	github.com/erkkah/margaid v0.0.2
 	github.com/mxschmitt/golang-combinations v1.1.0
 	github.com/stretchr/testify v1.8.4
+	golang.org/x/exp v0.0.0-20231219180239-dc181d75b848
 	gonum.org/v1/gonum v0.9.3
 )
 

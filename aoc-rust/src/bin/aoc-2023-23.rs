@@ -107,7 +107,7 @@ fn graph(inp: &[u8], w: usize, part1: bool) -> usize {
     let mut visit = [false; 32000];
     let mut res = 0;
     while let Some((i, steps)) = todo.pop() {
-        if steps == None {
+        if steps.is_none() {
             visit[i] = false;
             continue;
         }

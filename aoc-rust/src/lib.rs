@@ -1,5 +1,6 @@
 pub mod deque;
 pub mod elfcomp2016;
+pub mod math;
 pub mod read;
 
 use std::env;

@@ -49,6 +49,7 @@ pkgs.mkShell {
     (perl.withPackages (p: [
       p.CarpAlways
       p.DBFile
+      p.Graph
       p.HTMLTree
       p.Inline
       p.JSON
