@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+use warnings;
+use strict;
+while (<>) {
+  chomp;
+  s/^(\s+)//;
+  my $p = $1//"";
+  if (/:=/) {
+    my ($l, $r) = split /\s+:=\s+/;
+    $_ = "let ("
+      . (join ", ", map {"mut $_"} split /,\s*/, $l) . ") = ("
+      . (join ", ", split /,\s*/, $r) . ")";
+  }
+  s/switch (\S+)/match $1/;
+  s/case (.+):/$1 =>/;
+  $_ = $p . $_;
+  $_ .= ";" unless (/[{:}>]$/ || /^\s*$/);
+  print $_, "\n";
+}

@@ -1,0 +1,32 @@
+#!/usr/bin/perl
+use warnings;
+use strict;
+while (<>) {
+  chomp;
+  s/^(\s+)//;
+  my $p = $1//"";
+  if (/:=/) {
+    my ($l, $r) = split /\s+:=\s+/;
+    my @l = split/,\s*/, $l;
+    my @r = split/,\s*/, $r;
+    if (@l != @r) {
+      statement($p, $_);
+      next;
+    }
+    for my $i (0..@l-1) {
+      my $l = "var $l[$i] : isize = $r[$i];";
+      statement($p, $l);
+    }
+    next;
+  }
+  s/switch (\S+)/match $1/;
+  s/case (.+):/$1 =>/;
+  statement($p, $_);
+}
+
+sub statement {
+  my ($p, $l) = @_;
+  $l = $p . $l;
+  $l .= ";" unless ($l =~ /[{:>;}]$/ || $l =~ /^\s*$/);
+  print $l, "\n";
+}
