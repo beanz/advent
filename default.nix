@@ -66,7 +66,7 @@ pkgs.mkShell {
 
     rakudo
 
-    go_1_21
+    go_1_22
   ];
   shellHook = ''
     PATH=$PATH:$PWD/bin; export PATH
