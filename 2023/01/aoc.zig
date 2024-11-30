@@ -65,10 +65,10 @@ fn word(inp: []const u8, i: usize) u32 {
 }
 
 test "examples" {
-    var overlap0 = try parts("twone\n");
+    const overlap0 = try parts("twone\n");
     try aoc.assertEq(@as(u32, 0), overlap0[0]);
     try aoc.assertEq(@as(u32, 21), overlap0[1]);
-    var overlap1 = try parts("eightwo\n");
+    const overlap1 = try parts("eightwo\n");
     try aoc.assertEq(@as(u32, 0), overlap1[0]);
     try aoc.assertEq(@as(u32, 82), overlap1[1]);
     try aoc.TestCases(u32, parts);
@@ -116,7 +116,7 @@ fn parts(inp: []const u8) ![2]u32 {
 }
 
 fn day01(inp: []const u8, bench: bool) anyerror!void {
-    var p = try parts(inp);
+    const p = try parts(inp);
     if (!bench) {
         aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }

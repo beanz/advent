@@ -2,14 +2,14 @@ const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
 test "examples" {
-    var report = try aoc.Ints(aoc.talloc, u16, aoc.test1file);
+    const report = try aoc.Ints(aoc.talloc, u16, aoc.test1file);
     defer aoc.talloc.free(report);
-    var p = try parts(aoc.talloc, report);
+    const p = try parts(aoc.talloc, report);
     try aoc.assertEq(@as(u64, 514579), p[0]);
     try aoc.assertEq(@as(u64, 241861950), p[1]);
-    var report2 = try aoc.Ints(aoc.talloc, u16, aoc.inputfile);
+    const report2 = try aoc.Ints(aoc.talloc, u16, aoc.inputfile);
     defer aoc.talloc.free(report2);
-    var pi = try parts(aoc.talloc, report2);
+    const pi = try parts(aoc.talloc, report2);
     try aoc.assertEq(@as(usize, 41979), pi[0]);
     try aoc.assertEq(@as(usize, 193416912), pi[1]);
 }
@@ -21,7 +21,7 @@ fn parts(alloc: std.mem.Allocator, exp: []const u16) anyerror![2]u64 {
     defer seen.deinit();
     var p1: u64 = 0;
     for (exp) |n| {
-        var rem = 2020 - n;
+        const rem = 2020 - n;
         if (seen.contains(rem)) {
             p1 = @as(u64, n) * rem;
         }
@@ -35,7 +35,7 @@ fn parts(alloc: std.mem.Allocator, exp: []const u16) anyerror![2]u64 {
         if (n > 2020) {
             continue;
         }
-        var rem = 2020 - n;
+        const rem = 2020 - n;
         if (products.get(rem)) |p| {
             return [2]u64{ p1, n * p };
         }
@@ -44,9 +44,9 @@ fn parts(alloc: std.mem.Allocator, exp: []const u16) anyerror![2]u64 {
 }
 
 fn day01(inp: []const u8, bench: bool) anyerror!void {
-    var report = try aoc.Ints(aoc.halloc, u16, inp);
+    const report = try aoc.Ints(aoc.halloc, u16, inp);
     defer aoc.halloc.free(report);
-    var p = try parts(aoc.halloc, report);
+    const p = try parts(aoc.halloc, report);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }

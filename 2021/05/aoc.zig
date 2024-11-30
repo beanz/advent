@@ -8,7 +8,7 @@ const Y2: usize = 3;
 
 pub fn parts(inp: anytype) ![2]usize {
     var b = try std.BoundedArray(u16, 2048).init(0);
-    var lines = try aoc.BoundedInts(u16, &b, inp);
+    const lines = try aoc.BoundedInts(u16, &b, inp);
     var m1: [1048576]u2 = undefined;
     @memset(m1[0..], 0);
     var c1: usize = 0;
@@ -17,13 +17,13 @@ pub fn parts(inp: anytype) ![2]usize {
     var c2: usize = 0;
     var i: usize = 0;
     while (i < lines.len) : (i += 4) {
-        var x1 = lines[i + X1];
-        var y1 = lines[i + Y1];
-        var x2 = lines[i + X2];
-        var y2 = lines[i + Y2];
+        const x1 = lines[i + X1];
+        const y1 = lines[i + Y1];
+        const x2 = lines[i + X2];
+        const y2 = lines[i + Y2];
         var x = x1;
         var y = y1;
-        var p1 = x1 == x2 or y1 == y2;
+        const p1 = x1 == x2 or y1 == y2;
         while (true) {
             const k = @as(u32, x) + (@as(u32, y) * 1024);
             switch (m2[k]) {
@@ -67,16 +67,16 @@ pub fn parts(inp: anytype) ![2]usize {
 }
 
 test "examples" {
-    var p = parts(aoc.test1file) catch unreachable;
+    const p = parts(aoc.test1file) catch unreachable;
     try aoc.assertEq(@as(usize, 5), p[0]);
     try aoc.assertEq(@as(usize, 12), p[1]);
-    var pi = parts(aoc.inputfile) catch unreachable;
+    const pi = parts(aoc.inputfile) catch unreachable;
     try aoc.assertEq(@as(usize, 6005), pi[0]);
     try aoc.assertEq(@as(usize, 23864), pi[1]);
 }
 
 fn day05(inp: []const u8, bench: bool) anyerror!void {
-    var p = parts(inp) catch unreachable;
+    const p = parts(inp) catch unreachable;
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }

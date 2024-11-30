@@ -25,7 +25,7 @@ test "validate eye color" {
 }
 
 test "examples" {
-    var test1 = try aoc.readChunkyObjects(aoc.talloc, aoc.test1file, "\n\n", "\n ", ":");
+    const test1 = try aoc.readChunkyObjects(aoc.talloc, aoc.test1file, "\n\n", "\n ", ":");
     defer {
         for (test1) |*e| {
             e.deinit();
@@ -35,7 +35,7 @@ test "examples" {
     try aoc.assertEq(@as(usize, 2), part1(test1));
     try aoc.assertEq(@as(usize, 2), part2(test1));
 
-    var test2 = try aoc.readChunkyObjects(aoc.talloc, aoc.test2file, "\n\n", "\n ", ":");
+    const test2 = try aoc.readChunkyObjects(aoc.talloc, aoc.test2file, "\n\n", "\n ", ":");
     defer {
         for (test2) |*e| {
             e.deinit();
@@ -45,7 +45,7 @@ test "examples" {
     try aoc.assertEq(@as(usize, 4), part1(test2));
     try aoc.assertEq(@as(usize, 0), part2(test2));
 
-    var test3 = try aoc.readChunkyObjects(aoc.talloc, aoc.test3file, "\n\n", "\n ", ":");
+    const test3 = try aoc.readChunkyObjects(aoc.talloc, aoc.test3file, "\n\n", "\n ", ":");
     defer {
         for (test3) |*e| {
             e.deinit();
@@ -55,7 +55,7 @@ test "examples" {
     try aoc.assertEq(@as(usize, 4), part1(test3));
     try aoc.assertEq(@as(usize, 4), part2(test3));
 
-    var inp = try aoc.readChunkyObjects(aoc.talloc, aoc.inputfile, "\n\n", "\n ", ":");
+    const inp = try aoc.readChunkyObjects(aoc.talloc, aoc.inputfile, "\n\n", "\n ", ":");
     defer {
         for (inp) |*e| {
             e.deinit();
@@ -184,15 +184,15 @@ fn part2(inp: anytype) usize {
 }
 
 fn day04(inp: []const u8, bench: bool) anyerror!void {
-    var scan = try aoc.readChunkyObjects(aoc.halloc, inp, "\n\n", "\n ", ":");
+    const scan = try aoc.readChunkyObjects(aoc.halloc, inp, "\n\n", "\n ", ":");
     defer {
         for (scan) |*e| {
             e.deinit();
         }
         aoc.halloc.free(scan);
     }
-    var p1 = part1(scan);
-    var p2 = part2(scan);
+    const p1 = part1(scan);
+    const p2 = part2(scan);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

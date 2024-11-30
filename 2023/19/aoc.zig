@@ -26,20 +26,20 @@ fn parts(inp: []const u8) anyerror![2]usize {
     var i: usize = 0;
     var rules: [SIZE]?check = std.mem.zeroes([SIZE]?check);
     while (i < inp.len) : (i += 1) {
-        var id = chompID(inp, &i);
+        const id = chompID(inp, &i);
         var k: usize = 0;
         while (inp[i] != '}') {
             i += 1;
             if (inp[i + 1] != '<' and inp[i + 1] != '>') {
-                var nxt = chompID(inp, &i);
+                const nxt = chompID(inp, &i);
                 rules[id * 4 + k] = check{ .key = 0, .op = ':', .val = 0, .nxt = nxt };
                 k += 1;
                 break;
             }
-            var key = key_ch(inp[i]);
-            var op = inp[i + 1];
+            const key = key_ch(inp[i]);
+            const op = inp[i + 1];
             i += 2;
-            var val = try aoc.chompUint(usize, inp, &i);
+            const val = try aoc.chompUint(usize, inp, &i);
             var c = check{ .key = key, .op = op, .val = val, .nxt = 0 };
             i += 1;
             c.nxt = chompID(inp, &i);
@@ -57,7 +57,7 @@ fn parts(inp: []const u8) anyerror![2]usize {
         var p: [4]usize = std.mem.zeroes([4]usize);
         while (inp[i] != '}') {
             i += 1;
-            var k = key_ch(inp[i]);
+            const k = key_ch(inp[i]);
             i += 2;
             p[@as(usize, k)] = try aoc.chompUint(usize, inp, &i);
         }
@@ -186,7 +186,7 @@ fn chompID(inp: anytype, i: *usize) usize {
 }
 
 fn day(inp: []const u8, bench: bool) anyerror!void {
-    var p = try parts(inp);
+    const p = try parts(inp);
     if (!bench) {
         aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }

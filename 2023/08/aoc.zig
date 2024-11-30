@@ -9,27 +9,27 @@ test "examples" {
 fn parts(inp: []const u8) anyerror![2]u64 {
     var i: usize = 0;
     while (inp[i] != '\n') : (i += 1) {}
-    var steps = inp[0..i];
-    var mod = i;
+    const steps = inp[0..i];
+    const mod = i;
     _ = mod;
     i += 2;
     var g = try std.BoundedArray(u16, 800).init(0);
     var ml = std.mem.zeroes([26426]u16);
     var mr = std.mem.zeroes([26426]u16);
     while (i < inp.len) : (i += 17) {
-        var f = readID(inp, i);
-        var l = readID(inp, i + 7);
-        var r = readID(inp, i + 12);
+        const f = readID(inp, i);
+        const l = readID(inp, i + 7);
+        const r = readID(inp, i + 12);
         if (inp[i + 2] == 'A' and f != 0) {
             try g.append(f);
         }
         ml[f] = l + 1; // add one so we can check for zeroes
         mr[f] = r + 1; // add one so we can check for zeroes
     }
-    var p1 = run(steps, ml, mr, 0);
+    const p1 = run(steps, ml, mr, 0);
     var p2 = p1;
     for (0..g.len) |j| {
-        var c = run(steps, ml, mr, g.get(j));
+        const c = run(steps, ml, mr, g.get(j));
         p2 = lcm(p2, c);
     }
     return [2]u64{ p1, p2 };
@@ -67,12 +67,12 @@ fn gcd(pa: u64, pb: u64) u64 {
     var a = pa;
     var b = pb;
     if (a > b) {
-        var t = a;
+        const t = a;
         a = b;
         b = t;
     }
     while (a != 0) {
-        var na = b % a;
+        const na = b % a;
         b = a;
         a = na;
     }
@@ -80,7 +80,7 @@ fn gcd(pa: u64, pb: u64) u64 {
 }
 
 fn day(inp: []const u8, bench: bool) anyerror!void {
-    var p = try parts(inp);
+    const p = try parts(inp);
     if (!bench) {
         aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }

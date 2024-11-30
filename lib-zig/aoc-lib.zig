@@ -292,7 +292,7 @@ pub fn rotateLines(lines: [][]u8) void {
     while (i < l) : (i += 1) {
         var j = i;
         while (j < l - i - 1) : (j += 1) {
-            var tmp = lines[i][j];
+            const tmp = lines[i][j];
             lines[i][j] = lines[l - j - 1][i];
             lines[l - j - 1][i] = lines[l - i - 1][l - j - 1];
             lines[l - i - 1][l - j - 1] = lines[j][l - i - 1];
@@ -305,7 +305,7 @@ pub fn reverseLines(lines: [][]const u8) void {
     const end = lines.len - 1;
     var j: usize = 0;
     while (j < lines.len / 2) {
-        var tmp = lines[j];
+        const tmp = lines[j];
         lines[j] = lines[end - j];
         lines[end - j] = tmp;
         j += 1;
@@ -339,7 +339,7 @@ pub fn BENCH() bool {
 pub fn benchme(inp: []const u8, comptime call: fn (in: []const u8, bench: bool) anyerror!void) anyerror!void {
     var it: i128 = 0;
     const is_bench = BENCH();
-    var start = @import("std").time.nanoTimestamp();
+    const start = @import("std").time.nanoTimestamp();
     var elapsed: i128 = 0;
     while (true) {
         try call(inp, is_bench);
@@ -414,13 +414,13 @@ pub const ByteMap = struct {
         self.m[x + y * self.w] += v;
     }
     pub fn visit(self: *ByteMap, call: fn (i: usize, v: u8) [2]u8) usize {
-        var changes: usize = 0;
+        const changes: usize = 0;
         var y: usize = 0;
         while (y < self.h) : (y += 1) {
             var x: usize = 0;
             while (x < self.h - 1) : (x += 1) {
-                var i = x + y * self.w;
-                var res = call(i, self.m[i]);
+                const i = x + y * self.w;
+                const res = call(i, self.m[i]);
                 if (res[1] != 0) {
                     self.m[i] = res[0];
                 }
@@ -454,16 +454,16 @@ pub fn TestCases(comptime T: type, comptime call: fn (in: []const u8) anyerror![
     var is = br.reader();
     var buf: [1024]u8 = undefined;
     while (true) {
-        var filename = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+        const filename = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
         const inp = try std.fs.cwd().readFileAlloc(talloc, filename, std.math.maxInt(usize));
         defer talloc.free(inp);
-        var p1s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+        const p1s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
         var i: usize = 0;
-        var p1 = try chompUint(T, p1s, &i);
-        var p2s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+        const p1 = try chompUint(T, p1s, &i);
+        const p2s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
         i = 0;
-        var p2 = try chompUint(T, p2s, &i);
-        var p = try call(inp);
+        const p2 = try chompUint(T, p2s, &i);
+        const p = try call(inp);
         try assertEq([2]T{ p1, p2 }, p);
         if (try is.readUntilDelimiterOrEof(&buf, '\n')) |_| {
             continue;

@@ -12,19 +12,19 @@ fn parts(inp: []const u8) anyerror![2]usize {
     var nums = try std.BoundedArray(usize, 256).init(0);
     var i: usize = 0;
     while (i < inp.len) : (i += 1) {
-        var start = i;
-        var end = std.mem.indexOfScalar(u8, inp[i..], ' ') orelse unreachable;
+        const start = i;
+        const end = std.mem.indexOfScalar(u8, inp[i..], ' ') orelse unreachable;
         i += end + 1;
         while (i < inp.len) : (i += 1) {
-            var n = try aoc.chompUint(usize, inp, &i);
+            const n = try aoc.chompUint(usize, inp, &i);
             try nums.append(n);
             if (inp[i] == '\n') {
                 break;
             }
         }
-        var r1 = try solve(inp[start .. start + end], nums.slice(), 1);
+        const r1 = try solve(inp[start .. start + end], nums.slice(), 1);
         p1 += r1;
-        var r2 = try solve(inp[start .. start + end], nums.slice(), 5);
+        const r2 = try solve(inp[start .. start + end], nums.slice(), 5);
         p2 += r2;
         try nums.resize(0);
     }
@@ -40,16 +40,16 @@ fn solve(inp: []const u8, nums: []const usize, mul: usize) anyerror!usize {
         }
         try mat.append('.');
     }
-    var match = mat.slice();
+    const match = mat.slice();
     var state_count: [256]usize = std.mem.zeroes([256]usize);
     var next_state_count: [256]usize = std.mem.zeroes([256]usize);
     state_count[0] = 1;
 
-    var inpLen = inp.len * mul + (mul - 1);
+    const inpLen = inp.len * mul + (mul - 1);
     for (0..inpLen) |i| {
-        var ch = inpChar(inp, i);
+        const ch = inpChar(inp, i);
         for (0..256) |state| {
-            var count = state_count[state];
+            const count = state_count[state];
             if (count == 0) {
                 continue;
             }
@@ -76,7 +76,7 @@ fn inpChar(inp: []const u8, i: usize) u8 {
 }
 
 fn day(inp: []const u8, bench: bool) anyerror!void {
-    var p = try parts(inp);
+    const p = try parts(inp);
     if (!bench) {
         aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }

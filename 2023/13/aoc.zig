@@ -25,19 +25,19 @@ fn parts(inp: []const u8) anyerror![2]usize {
 }
 
 fn reflect(inp: []const u8, wrong: usize) usize {
-    var w = std.mem.indexOfScalar(u8, inp, '\n') orelse unreachable;
-    var h = (1 + inp.len) / (w + 1);
+    const w = std.mem.indexOfScalar(u8, inp, '\n') orelse unreachable;
+    const h = (1 + inp.len) / (w + 1);
     for (0..w - 1) |r| {
         var cw: usize = 0;
         for (0..w) |o| {
             if (r < o) {
                 continue;
             }
-            var xl = r - o;
-            var xr = r + o + 1;
+            const xl = r - o;
+            const xr = r + o + 1;
             if (xr < w) {
                 for (0..h) |y| {
-                    var yi = (w + 1) * y;
+                    const yi = (w + 1) * y;
                     if (inp[yi + xl] != inp[yi + xr]) {
                         cw += 1;
                     }
@@ -54,10 +54,10 @@ fn reflect(inp: []const u8, wrong: usize) usize {
             if (r < o) {
                 continue;
             }
-            var yu = r - o;
-            var yd = r + o + 1;
-            var yui = (w + 1) * yu;
-            var ydi = (w + 1) * yd;
+            const yu = r - o;
+            const yd = r + o + 1;
+            const yui = (w + 1) * yu;
+            const ydi = (w + 1) * yd;
             if (yd < h) {
                 for (0..w) |x| {
                     if (inp[yui + x] != inp[ydi + x]) {
@@ -74,7 +74,7 @@ fn reflect(inp: []const u8, wrong: usize) usize {
 }
 
 fn day(inp: []const u8, bench: bool) anyerror!void {
-    var p = try parts(inp);
+    const p = try parts(inp);
     if (!bench) {
         aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }

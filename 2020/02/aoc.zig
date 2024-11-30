@@ -61,8 +61,8 @@ fn part2(inp: anytype) usize {
 }
 
 fn day02(inp: []const u8, bench: bool) anyerror!void {
-    var p1 = part1(inp);
-    var p2 = part2(inp);
+    const p1 = part1(inp);
+    const p2 = part2(inp);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

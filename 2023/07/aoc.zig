@@ -25,7 +25,7 @@ fn parts(inp: []const u8) anyerror![2]u32 {
     var hands = try std.BoundedArray(Hand, 1000).init(0);
     var i: usize = 0;
     while (i < inp.len) : (i += 1) {
-        var h = inp[i .. i + 5];
+        const h = inp[i .. i + 5];
         var s1: u32 = 0;
         var s2: u32 = 0;
         var c = std.mem.zeroes([256]u4);
@@ -55,7 +55,7 @@ fn parts(inp: []const u8) anyerror![2]u32 {
         }
         i += 6;
         const bid = try aoc.chompUint(u32, inp, &i);
-        var h1: u4 = switch (lc) {
+        const h1: u4 = switch (lc) {
             1 => FiveOfAKind,
             2 => switch (mc) {
                 4 => FourOfAKind,
@@ -69,7 +69,7 @@ fn parts(inp: []const u8) anyerror![2]u32 {
             5 => HighCard,
             else => unreachable,
         };
-        var h2 = switch (c['J']) {
+        const h2 = switch (c['J']) {
             1 => switch (mc) {
                 4 => FiveOfAKind,
                 3 => FourOfAKind,
@@ -98,17 +98,17 @@ fn parts(inp: []const u8) anyerror![2]u32 {
             .bid = bid,
         });
     }
-    var h = hands.slice();
+    const h = hands.slice();
     std.sort.block(Hand, h, {}, cmpByScore1);
     var p1: u32 = 0;
     for (0..hands.len) |j| {
-        var k: u32 = @intCast(j);
+        const k: u32 = @intCast(j);
         p1 += (k + 1) * h[j].bid;
     }
     std.sort.block(Hand, h, {}, cmpByScore2);
     var p2: u32 = 0;
     for (0..hands.len) |j| {
-        var k: u32 = @intCast(j);
+        const k: u32 = @intCast(j);
         p2 += (k + 1) * h[j].bid;
     }
     return [2]u32{ p1, p2 };
@@ -156,12 +156,12 @@ fn gcd(pa: u64, pb: u64) u64 {
     var a = pa;
     var b = pb;
     if (a > b) {
-        var t = a;
+        const t = a;
         a = b;
         b = t;
     }
     while (a != 0) {
-        var na = b % a;
+        const na = b % a;
         b = a;
         a = na;
     }
@@ -169,7 +169,7 @@ fn gcd(pa: u64, pb: u64) u64 {
 }
 
 fn day(inp: []const u8, bench: bool) anyerror!void {
-    var p = try parts(inp);
+    const p = try parts(inp);
     if (!bench) {
         aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }

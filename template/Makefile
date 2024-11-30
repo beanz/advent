@@ -82,8 +82,9 @@ TIMES=$(addsuffix -time,${ALL})
 
 EXTRA=aoc-gccgo out.perf-folded perf.data perf.data.old
 FG_HOME=$(HOME)/git/github/brendangregg/FlameGraph
+INPUTS=$(wildcard ../../input/$(YEAR)/$(DAY)/*.txt)
 
-all: input.txt ${ALL}
+all: $(notdir $(INPUTS)) ${ALL}
 
 clean:
 	-rm -f ${CLEAN} $(notdir $(CURDIR)).test ${EXTRA} *.err *.log *.chk

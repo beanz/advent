@@ -20,13 +20,13 @@ fn solve(inp: []const u8, w: usize, h: usize, x: isize, y: isize, d: Dir) !usize
     var todo = try std.BoundedArray(Beam, 128).init(0);
     try todo.append(Beam{ .x = x, .y = y, .d = d });
     while (todo.len > 0) {
-        var cur = todo.pop();
+        const cur = todo.pop();
         if (cur.x < 0 or cur.x >= w or cur.y < 0 or cur.y >= h) {
             continue;
         }
-        var iy: usize = @intCast(cur.y);
-        var ix: usize = @intCast(cur.x);
-        var i: usize = (w + 1) * iy + ix;
+        const iy: usize = @intCast(cur.y);
+        const ix: usize = @intCast(cur.x);
+        const i: usize = (w + 1) * iy + ix;
         if (seen[i] & @intFromEnum(cur.d) != 0) {
             continue;
         }
@@ -79,8 +79,8 @@ fn solve(inp: []const u8, w: usize, h: usize, x: isize, y: isize, d: Dir) !usize
 }
 
 fn parts(inp: []const u8) anyerror![2]usize {
-    var w = std.mem.indexOfScalar(u8, inp, '\n') orelse unreachable;
-    var h = inp.len / (w + 1);
+    const w = std.mem.indexOfScalar(u8, inp, '\n') orelse unreachable;
+    const h = inp.len / (w + 1);
     var p2: usize = 0;
     for (0..w) |x| {
         var s = try solve(inp, w, h, @intCast(x), 0, Dir.DOWN);
@@ -106,7 +106,7 @@ fn parts(inp: []const u8) anyerror![2]usize {
 }
 
 fn day(inp: []const u8, bench: bool) anyerror!void {
-    var p = try parts(inp);
+    const p = try parts(inp);
     if (!bench) {
         aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }

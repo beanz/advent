@@ -16,7 +16,7 @@ fn parts(inp: []const u8) anyerror![2]u64 {
         switch (inp[i]) {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' => {
                 num = true;
-                var d = @as(u64, inp[i] - '0');
+                const d = @as(u64, inp[i] - '0');
                 n = n * 10 + d;
                 t = t * 10 + d;
             },
@@ -41,7 +41,7 @@ fn parts(inp: []const u8) anyerror![2]u64 {
         switch (inp[i]) {
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' => {
                 num = true;
-                var d = @as(u64, inp[i] - '0');
+                const d = @as(u64, inp[i] - '0');
                 n = n * 10 + d;
                 r = r * 10 + d;
             },
@@ -60,7 +60,7 @@ fn parts(inp: []const u8) anyerror![2]u64 {
 
     var p1: u64 = 1;
     for (0..ts.len) |j| {
-        var c = race(ts.get(j), rs.get(j));
+        const c = race(ts.get(j), rs.get(j));
         if (c > 0) {
             p1 *= c;
         }
@@ -69,16 +69,16 @@ fn parts(inp: []const u8) anyerror![2]u64 {
 }
 
 fn race(t: u64, r: u64) u64 {
-    var ft: f64 = @floatFromInt(t);
-    var fr: f64 = @floatFromInt(r);
-    var d = @sqrt(ft * ft - 4.0 * (fr + 1.0));
-    var l: u64 = @intFromFloat(@ceil((ft - d) / 2));
-    var h: u64 = @intFromFloat(@floor((ft + d) / 2));
+    const ft: f64 = @floatFromInt(t);
+    const fr: f64 = @floatFromInt(r);
+    const d = @sqrt(ft * ft - 4.0 * (fr + 1.0));
+    const l: u64 = @intFromFloat(@ceil((ft - d) / 2));
+    const h: u64 = @intFromFloat(@floor((ft + d) / 2));
     return h - l + 1;
 }
 
 fn day04(inp: []const u8, bench: bool) anyerror!void {
-    var p = try parts(inp);
+    const p = try parts(inp);
     if (!bench) {
         aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }

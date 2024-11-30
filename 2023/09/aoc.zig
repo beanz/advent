@@ -30,13 +30,13 @@ fn parts(inp: []const u8) anyerror![2]isize {
     while (i < inp.len) : (i += 1) {
         var l = try std.BoundedArray(isize, 21).init(0);
         while (true) : (i += 1) {
-            var n = try aoc.chompInt(isize, inp, &i);
+            const n = try aoc.chompInt(isize, inp, &i);
             try l.append(n);
             if (inp[i] == '\n') {
                 break;
             }
         }
-        var s = solve(pascal[l.len][0 .. l.len + 1], l.slice());
+        const s = solve(pascal[l.len][0 .. l.len + 1], l.slice());
         p1 += s[0];
         p2 += s[1];
     }
@@ -48,7 +48,7 @@ fn solve(p: []const isize, nums: []isize) [2]isize {
     var s1: isize = 0;
     var s2: isize = 0;
     for (0..nums.len) |i| {
-        var tm = p[i + 1] * m;
+        const tm = p[i + 1] * m;
         s1 += tm * nums[nums.len - 1 - i];
         s2 += tm * nums[i];
         m *= -1;
@@ -62,7 +62,7 @@ test "solve" {
 }
 
 fn day(inp: []const u8, bench: bool) anyerror!void {
-    var p = try parts(inp);
+    const p = try parts(inp);
     if (!bench) {
         aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }

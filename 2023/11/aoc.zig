@@ -3,16 +3,16 @@ const aoc = @import("aoc-lib.zig");
 const isDigit = std.ascii.isDigit;
 
 test "examples" {
-    var t1 = try parts(aoc.test1file);
+    const t1 = try parts(aoc.test1file);
     try aoc.assertEq([2]usize{ 374, 82000210 }, t1);
-    var p = try parts(aoc.inputfile);
+    const p = try parts(aoc.inputfile);
     try aoc.assertEq([2]usize{ 9918828, 692506533832 }, p);
 }
 
 fn parts(inp: []const u8) anyerror![2]usize {
-    var mul: usize = 1000000;
-    var w: usize = std.mem.indexOfScalar(u8, inp, '\n') orelse unreachable;
-    var h = inp.len / (w + 1);
+    const mul: usize = 1000000;
+    const w: usize = std.mem.indexOfScalar(u8, inp, '\n') orelse unreachable;
+    const h = inp.len / (w + 1);
     var cx = std.mem.zeroes([140]u8);
     var cy = std.mem.zeroes([140]u8);
     var gc: usize = 0;
@@ -43,10 +43,10 @@ fn parts(inp: []const u8) anyerror![2]usize {
             }
         }
     }
-    var dx = dist(gc, xmin, xmax, cx, mul);
-    var dy = dist(gc, ymin, ymax, cy, mul);
-    var p1: usize = dx[0] + dy[0];
-    var p2: usize = dx[1] + dy[1];
+    const dx = dist(gc, xmin, xmax, cx, mul);
+    const dy = dist(gc, ymin, ymax, cy, mul);
+    const p1: usize = dx[0] + dy[0];
+    const p2: usize = dx[1] + dy[1];
     return [2]usize{ p1, p2 };
 }
 
@@ -73,7 +73,7 @@ fn dist(gc: usize, min: usize, max: usize, v: [140]u8, mul: usize) [2]usize {
 }
 
 fn day(inp: []const u8, bench: bool) anyerror!void {
-    var p = try parts(inp);
+    const p = try parts(inp);
     if (!bench) {
         aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }

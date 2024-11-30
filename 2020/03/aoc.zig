@@ -49,8 +49,8 @@ fn part2(map: [][]const u8) usize {
 fn day03(inp: []const u8, bench: bool) anyerror!void {
     const map = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(map);
-    var p1 = part1(map);
-    var p2 = part2(map);
+    const p1 = part1(map);
+    const p2 = part2(map);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

@@ -22,7 +22,7 @@ fn parts(inp: []const u8) anyerror![2]usize {
         var n: isize = @intCast(inp[i] - '0');
         i += 1;
         if (inp[i] != ' ') {
-            var d: isize = @intCast(inp[i] - '0');
+            const d: isize = @intCast(inp[i] - '0');
             n = 10 * n + d;
             i += 1;
         }
@@ -43,7 +43,7 @@ fn parts(inp: []const u8) anyerror![2]usize {
         y2 = ny;
         i += 7;
     }
-    return [2]usize{ (std.math.absCast(p1a) + p1p + 2) / 2, (std.math.absCast(p2a) + p2p + 2) / 2 };
+    return [2]usize{ (@abs(p1a) + p1p + 2) / 2, (@abs(p2a) + p2p + 2) / 2 };
 }
 
 fn oxoy(ch: u8) struct { x: isize, y: isize } {
@@ -56,7 +56,7 @@ fn oxoy(ch: u8) struct { x: isize, y: isize } {
 }
 
 fn day(inp: []const u8, bench: bool) anyerror!void {
-    var p = try parts(inp);
+    const p = try parts(inp);
     if (!bench) {
         aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }

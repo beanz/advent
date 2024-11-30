@@ -15,16 +15,16 @@ const Dir = enum {
 };
 
 fn parts(inp: []const u8) anyerror![2]usize {
-    var w: usize = 1 + (std.mem.indexOfScalar(u8, inp, '\n') orelse unreachable);
-    var s = std.mem.indexOfScalar(u8, inp, 'S') orelse unreachable;
+    const w: usize = 1 + (std.mem.indexOfScalar(u8, inp, '\n') orelse unreachable);
+    const s = std.mem.indexOfScalar(u8, inp, 'S') orelse unreachable;
     var from = firstMove(inp, s, w);
 
     var p = mov(s, w, from);
     var p1: usize = 1;
     var area = shoelace(@intCast(s), @intCast(p), @intCast(w));
     while (true) {
-        var step = nextDir(inp[p], from);
-        var n = mov(p, w, step);
+        const step = nextDir(inp[p], from);
+        const n = mov(p, w, step);
         area += shoelace(@intCast(p), @intCast(n), @intCast(w));
         p = n;
         from = step;
@@ -34,11 +34,11 @@ fn parts(inp: []const u8) anyerror![2]usize {
         }
     }
     p1 /= 2;
-    return [2]usize{ p1, std.math.absCast(area) / 2 - p1 + 1 };
+    return [2]usize{ p1, @abs(area) / 2 - p1 + 1 };
 }
 
 fn nextDir(ch: u8, from: Dir) Dir {
-    var ds = dirs(ch);
+    const ds = dirs(ch);
     if (ds[0] == opposite(from)) {
         return ds[1];
     } else {
@@ -60,10 +60,10 @@ fn firstMove(inp: []const u8, s: usize, w: usize) Dir {
 }
 
 fn shoelace(a: isize, b: isize, w: isize) isize {
-    var ax = @divFloor(a, w);
-    var ay = @mod(a, w);
-    var bx = @divFloor(b, w);
-    var by = @mod(b, w);
+    const ax = @divFloor(a, w);
+    const ay = @mod(a, w);
+    const bx = @divFloor(b, w);
+    const by = @mod(b, w);
     return (ax - bx) * (ay + by);
 }
 
@@ -100,7 +100,7 @@ fn dirs(ch: u8) [2]Dir {
 }
 
 fn day(inp: []const u8, bench: bool) anyerror!void {
-    var p = try parts(inp);
+    const p = try parts(inp);
     if (!bench) {
         aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }

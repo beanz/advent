@@ -17,7 +17,7 @@ fn parts(inp: []const u8) ![2]u32 {
     var i: usize = 0;
     var seen = std.mem.zeroes([141 * 141]u32);
     while (i < inp.len) {
-        var ch = inp[i];
+        const ch = inp[i];
         if (!isDigit(ch)) {
             i += 1;
             continue;
@@ -27,7 +27,7 @@ fn parts(inp: []const u8) ![2]u32 {
         while (j < inp.len and isDigit(inp[j])) : (j += 1) {
             n = n * 10 + @as(u32, inp[j] - '0');
         }
-        var l = j - i;
+        const l = j - i;
         i = j;
         const k = symbol(inp, j - l, l, w) orelse continue;
         const sym = inp[k];
@@ -68,7 +68,7 @@ fn symbol(inp: []const u8, i: usize, l: usize, w: usize) ?usize {
 }
 
 fn day01(inp: []const u8, bench: bool) anyerror!void {
-    var p = try parts(inp);
+    const p = try parts(inp);
     if (!bench) {
         aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }

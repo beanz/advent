@@ -27,10 +27,10 @@ fn parts(inp: []const u8) ![2]u32 {
         var mg: u32 = 1;
         var mb: u32 = 1;
         i += 5;
-        var id = try chompUint(u32, inp, &i);
+        const id = try chompUint(u32, inp, &i);
         while (inp[i] != '\n') {
             i += 2;
-            var n = try chompUint(u32, inp, &i);
+            const n = try chompUint(u32, inp, &i);
             i += 1;
             switch (inp[i]) {
                 'r' => {
@@ -63,7 +63,7 @@ fn parts(inp: []const u8) ![2]u32 {
 }
 
 fn day01(inp: []const u8, bench: bool) anyerror!void {
-    var p = try parts(inp);
+    const p = try parts(inp);
     if (!bench) {
         aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }

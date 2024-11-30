@@ -25,7 +25,7 @@ test "examples" {
 }
 
 fn part1(alloc: std.mem.Allocator, in: []const i64) i64 {
-    var nums: []i64 = alloc.dupe(i64, in) catch unreachable;
+    const nums: []i64 = alloc.dupe(i64, in) catch unreachable;
     defer alloc.free(nums);
     std.mem.sort(i64, nums, {}, std.sort.asc(i64));
     var cj: i64 = 0;
@@ -44,7 +44,7 @@ fn part1(alloc: std.mem.Allocator, in: []const i64) i64 {
 }
 
 fn count(cj: i64, tj: i64, ni: usize, nums: []i64, state: *std.AutoHashMap(usize, i64)) i64 {
-    const k: usize = std.math.absCast(cj) + ni * nums.len;
+    const k: usize = @abs(cj) + ni * nums.len;
     if (state.contains(k)) {
         return state.get(k).?;
     }
@@ -54,7 +54,7 @@ fn count(cj: i64, tj: i64, ni: usize, nums: []i64, state: *std.AutoHashMap(usize
     var c: i64 = 0;
     var i: usize = 0;
     while (ni + i < nums.len and i < 3) : (i += 1) {
-        var j = nums[ni + i];
+        const j = nums[ni + i];
         if ((j - cj) <= 3) {
             c += count(j, tj, ni + i + 1, nums, state);
         }
@@ -64,7 +64,7 @@ fn count(cj: i64, tj: i64, ni: usize, nums: []i64, state: *std.AutoHashMap(usize
 }
 
 fn part2(alloc: std.mem.Allocator, in: []const i64) i64 {
-    var nums: []i64 = alloc.dupe(i64, in) catch unreachable;
+    const nums: []i64 = alloc.dupe(i64, in) catch unreachable;
     defer alloc.free(nums);
     std.mem.sort(i64, nums, {}, std.sort.asc(i64));
     var state = std.AutoHashMap(usize, i64).init(alloc);
@@ -73,10 +73,10 @@ fn part2(alloc: std.mem.Allocator, in: []const i64) i64 {
 }
 
 fn day10(inp: []const u8, bench: bool) anyerror!void {
-    var nums = try aoc.Ints(aoc.halloc, i64, inp);
+    const nums = try aoc.Ints(aoc.halloc, i64, inp);
     defer aoc.halloc.free(nums);
-    var p1 = part1(aoc.halloc, nums);
-    var p2 = part2(aoc.halloc, nums);
+    const p1 = part1(aoc.halloc, nums);
+    const p2 = part2(aoc.halloc, nums);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
