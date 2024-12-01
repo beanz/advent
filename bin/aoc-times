@@ -17,7 +17,7 @@ my $cfg = cfg();
 my $lb = shift || $cfg->{'default'} || usage();
 $lb = $cfg->{$lb} if (exists $cfg->{$lb});
 my $sorttype = shift || $cfg->{'default_sort'} || "time";
-my $year = shift || $cfg->{'year'} || 2023;
+my $year = shift || $cfg->{'year'} || 2024;
 tie my %cache, 'DB_File', path('cache.db'), O_CREAT|O_RDWR, 0644;
 my $ua = LWP::UserAgent->new;
 $ua->cookie_jar(HTTP::Cookies->new(file => path('cookies.txt')));
