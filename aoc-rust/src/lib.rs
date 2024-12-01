@@ -2,6 +2,7 @@ pub mod deque;
 pub mod elfcomp2016;
 pub mod math;
 pub mod read;
+pub mod test;
 
 use std::env;
 use std::fmt;

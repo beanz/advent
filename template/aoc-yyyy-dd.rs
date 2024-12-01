@@ -20,9 +20,6 @@ mod tests {
 
     #[test]
     fn parts_works() {
-        let inp = std::fs::read("../YYYY/DD/test1.txt").expect("read error");
-        assert_eq!(parts(&inp), (10, 20));
-        let inp = std::fs::read("../YYYY/DD/input.txt").expect("read error");
-        assert_eq!(parts(&inp), (100, 200));
+        aoc::test::auto("../YYYY/DD/", parts);
     }
 }
