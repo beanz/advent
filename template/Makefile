@@ -213,7 +213,7 @@ check: ${ALL}
 	echo -n "$(HERE): " ; \
 	for f in $^ ; do \
 	  test -f ".$$f.slow" && continue ; \
-		if [ "$<" == "$$f" ]; then echo -n "$$f "; continue ; fi; \
+	  if [ "$<" = "$$f" ]; then echo -n "$$f "; continue ; fi; \
 	  echo -n "$$f "; \
 	  ./$$f >$$TT/$$f.log 2>&1 \
 	    && diff -audBbw $$GOLD $$TT/$$f.log >$$TT/$$f.diff \
