@@ -11,55 +11,70 @@ import (
 var input []byte
 
 func Safe(nums []int) bool {
-	diffs := make([]int, 0, len(nums)-1)
+	var inc, dec bool
 	for i := 1; i < len(nums); i++ {
-		diffs = append(diffs, nums[i-1]-nums[i])
-	}
-	dec := 0
-	inc := 0
-	size := 0
-	for _, d := range diffs {
-		switch {
-		case d < 0:
-			inc++
-			if d == -1 || d == -2 || d == -3 {
-				size++
-			}
-		case d > 0:
-			dec++
-			if d == 1 || d == 2 || d == 3 {
-				size++
-			}
+		d := nums[i-1] - nums[i]
+		switch d {
+		case -1, -2, -3:
+			inc = true
+		case 1, 2, 3:
+			dec = true
+		default:
+			return false
+		}
+		if dec && inc {
+			return false
 		}
 	}
-	l := len(diffs)
-	return size == l && (dec == l || inc == l)
+	return true
+}
+
+func SafeWithSkip(nums []int, skip int) bool {
+	var inc, dec bool
+	p := nums[0]
+	for i := 1; i < len(nums); i++ {
+		if i == skip {
+			continue
+		}
+		d := p - nums[i]
+		switch d {
+		case -1, -2, -3:
+			inc = true
+		case 1, 2, 3:
+			dec = true
+		default:
+			return false
+		}
+		if dec && inc {
+			return false
+		}
+		p = nums[i]
+	}
+	return true
 }
 
 func Safe2(nums []int) bool {
-	n := make([]int, 0, len(nums)-1)
-	for i := 0; i < len(nums); i++ {
-		for j, v := range nums {
-			if i == j {
-				continue
-			}
-			n = append(n, v)
-		}
-		if Safe(n) {
+	if Safe(nums[1:]) {
+		return true
+	}
+	if Safe(nums[:len(nums)-1]) {
+		return true
+	}
+	for i := 1; i < len(nums)-1; i++ {
+		if SafeWithSkip(nums, i) {
 			return true
 		}
-		n = n[:0]
 	}
 	return false
 }
 
 func Parts(in []byte, args ...int) (int, int) {
 	p1, p2 := 0, 0
+	l := make([]int, 0, 16)
 	for i := 0; i < len(in); {
-		l := []int{}
 		for in[i] != '\n' {
 			var n int
-			i, n = ChompInt[int](in, i)
+			i, n = ChompUInt[int](in, i)
 			l = append(l, n)
 			if in[i] == '\n' {
 				break
@@ -72,6 +87,7 @@ func Parts(in []byte, args ...int) (int, int) {
 		} else if Safe2(l) {
 			p2++
 		}
+		l = l[:0]
 		i++
 	}
 	return p1, p2
