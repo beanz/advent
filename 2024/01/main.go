@@ -11,18 +11,16 @@ import (
 //go:embed input.txt
 var input []byte
 
-type Counts struct{ a, b int }
-
 func Parts(in []byte, args ...int) (int, int) {
 	a := make([]int, 0, 1024)
 	b := make([]int, 0, 1024)
 	for i := 0; i < len(in); {
 		var n int
-		i, n = ChompInt[int](in, i)
+		i, n = ChompUInt[int](in, i)
 		a = append(a, n)
 		for ; in[i] == ' '; i++ {
 		}
-		i, n = ChompInt[int](in, i)
+		i, n = ChompUInt[int](in, i)
 		b = append(b, n)
 		i++
 	}
