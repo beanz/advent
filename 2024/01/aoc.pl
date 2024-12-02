@@ -33,14 +33,14 @@ sub read_stuff {
 sub calc {
   my ($in) = @_;
   my $p1 = 0;
-  my @a = sort { $a <=> $b } @{$in->{a}};
-  my @b = sort { $a <=> $b } @{$in->{b}};
-  for my $i (0..$#a) {
-    $p1 += abs($a[$i]-$b[$i]);
+  my @a = sort {$a <=> $b} @{$in->{a}};
+  my @b = sort {$a <=> $b} @{$in->{b}};
+  for my $i (0 .. $#a) {
+    $p1 += abs($a[$i] - $b[$i]);
   }
   my $p2 = 0;
   for my $a (keys %{$in->{ac}}) {
-    $p2 += $a * $in->{ac}->{$a} * ($in->{bc}->{$a}//0);
+    $p2 += $a * $in->{ac}->{$a} * ($in->{bc}->{$a} // 0);
   }
   return [$p1, $p2];
 }
