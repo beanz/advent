@@ -81,6 +81,7 @@ our %EXPORT_TAGS = ( 'all' => [ qw(
 
                                     input_file
                                     input_path
+                                    read_slurp
                                     read_guess
                                     read_lines
                                     read_lists
@@ -500,14 +501,18 @@ sub guess_input {
   return $_;
 }
 
-sub read_guess {
+sub read_slurp {
   my $file = shift;
   $file = input_path($file);
   open my $fh, '<', $file or die "Failed to open $file: $!\n";
   local $/;
   $_ = <$fh>;
   close $fh;
-  return guess_input($_);
+  return $_;
+}
+
+sub read_guess {
+  return guess_input(read_slurp(shift));
 }
 
 sub read_lines {
