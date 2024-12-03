@@ -12,85 +12,95 @@ var input []byte
 
 func Parts(in []byte, args ...int) (int, int) {
 	p1, p2 := 0, 0
-	v := func(i int) byte {
+	i := 0
+	v := func() byte {
 		if i < len(in) {
 			return in[i]
 		}
 		return '!'
 	}
-	m := func(i int, ch byte) bool {
-		return v(i) == ch
-	}
-	n := func(i int) (int, int) {
-		ch := v(i)
+	n := func() int {
+		ch := v()
 		n := 0
 		for '0' <= ch && ch <= '9' {
 			n = 10*n + int(ch-'0')
 			i++
-			ch = v(i)
+			ch = v()
 		}
-		return i, n
+		return n
 	}
-	s := func(i int, s []byte) bool {
-		for j, ch := range s {
-			if !m(i+j, ch) {
-				return false
+	do := 1
+	for i < len(in) {
+		switch v() {
+		case 'd':
+			i++
+			if v() != 'o' {
+				continue
 			}
-		}
-		return true
-	}
-	mul := func(i int) (int, int, int, bool) {
-		if !m(i, 'm') {
-			return i + 1, 0, 0, false
-		}
-		if !m(i+1, 'u') {
-			return i + 2, 0, 0, false
-		}
-		if !m(i+2, 'l') {
-			return i + 3, 0, 0, false
-		}
-		if !m(i+3, '(') {
-			return i + 4, 0, 0, false
-		}
-		var a int
-		i, a = n(i + 4)
-		if a == 0 {
-			return i, 0, 0, false
-		}
-		if !m(i, ',') {
-			return i, 0, 0, false
-		}
-		var b int
-		i, b = n(i + 1)
-		if b == 0 {
-			return i, 0, 0, false
-		}
-		if !m(i, ')') {
-			return i, 0, 0, false
-		}
-		return i + 1, a, b, true
-	}
-	var a, b int
-	var ok bool
-	for i := 0; i < len(in); {
-		if s(i, []byte("don't()")) {
-			i += 7
-			for i < len(in) {
-				if s(i, []byte("do()")) {
-					break
+			i++
+			switch v() {
+			case '(':
+				i++
+				if v() != ')' {
+					continue
 				}
-				i, a, b, ok = mul(i)
-				if ok {
-					p1 += a * b
+				do = 1
+			case 'n':
+				i++
+				if v() != '\'' {
+					continue
 				}
+				i++
+				if v() != 't' {
+					continue
+				}
+				i++
+				if v() != '(' {
+					continue
+				}
+				i++
+				if v() != ')' {
+					continue
+				}
+				i++
+				do = 0
+			default:
+				continue
 			}
-			i += 4
-			continue
-		}
-		i, a, b, ok = mul(i)
-		if ok {
+		case 'm':
+			i++
+			if v() != 'u' {
+				continue
+			}
+			i++
+			if v() != 'l' {
+				continue
+			}
+			i++
+			if v() != '(' {
+				continue
+			}
+			i++
+			a := n()
+			if a == 0 {
+				continue
+			}
+			if v() != ',' {
+				continue
+			}
+			i++
+			b := n()
+			if b == 0 {
+				continue
+			}
+			if v() != ')' {
+				continue
+			}
+			i++
 			p1 += a * b
-			p2 += a * b
+			p2 += do * a * b
+		default:
+			i++
 		}
 	}
 	return p1, p2
