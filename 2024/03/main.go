@@ -70,25 +70,27 @@ func Parts(in []byte, args ...int) (int, int) {
 		}
 		return i + 1, a, b, true
 	}
-	do := true
+	var a, b int
+	var ok bool
 	for i := 0; i < len(in); {
-		var a, b int
-		var ok bool
-		switch {
-		case s(i, []byte("do()")):
-			do = true
-			i += 4
-		case s(i, []byte("don't()")):
-			do = false
+		if s(i, []byte("don't()")) {
 			i += 7
-		default:
-			i, a, b, ok = mul(i)
-			if ok {
-				p1 += a * b
-				if do {
-					p2 += a * b
+			for i < len(in) {
+				if s(i, []byte("do()")) {
+					break
+				}
+				i, a, b, ok = mul(i)
+				if ok {
+					p1 += a * b
 				}
 			}
+			i += 4
+			continue
+		}
+		i, a, b, ok = mul(i)
+		if ok {
+			p1 += a * b
+			p2 += a * b
 		}
 	}
 	return p1, p2

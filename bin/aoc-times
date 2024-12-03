@@ -52,12 +52,14 @@ for my $day (1..25) {
                        $e->{completion_day_level}->{$day}->{2}->{get_star_ts});
       my $ts2 = "";
       my $sort = "999999999";
+      my $t2s = "999999999";
       if (defined $t2) {
         my @t = localtime $t2;
         $ts2 = " ";
         $ts2 .= $t[3] == $day ? (strftime "%H:%M:%S", @t) : (strftime "%Y-%m-%d", @t);
         $ts2 .= " ".($t2-$t1);
         $sort = sprintf("%09d", ($t2-$t1));
+        $t2s = sprintf("%09d", $t2);
       }
       my @t = localtime $t1;
       my $ts = $t[3] == $day ? (strftime "%H:%M:%S", @t) : (strftime "%Y-%m-%d", @t);
@@ -67,6 +69,7 @@ for my $day (1..25) {
          name => $name,
          times => "$ts$ts2",
          time => sprintf("%09d", $t1),
+         time2 => $t2s,
          star2 => $sort,
         };
     }
