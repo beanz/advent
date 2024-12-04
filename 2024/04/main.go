@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	_ "embed"
 	"fmt"
 
@@ -11,43 +12,37 @@ import (
 var input []byte
 
 func Parts(in []byte, args ...int) (int, int) {
-	m := NewByteMap(in)
 	p1, p2 := 0, 0
-	for x := 0; x < m.Width(); x++ {
-		for y := 0; y < m.Height(); y++ {
-			if m.GetXY(x, y) != 'X' {
-				continue
+	iy := bytes.IndexByte(in, '\n') + 1
+	for i := 0; i < len(in); i++ {
+		if in[i] != 'X' {
+			continue
+		}
+		mas := func(o int) {
+			if !(0 <= i+o*3 && i+o*3 < len(in)) {
+				return
 			}
-			for ox := -1; ox <= 1; ox++ {
-				for oy := -1; oy <= 1; oy++ {
-					if ox == 0 && oy == 0 {
-						continue
-					}
-					if !m.Contains(m.XYToIndex(x+ox*3, y+oy*3)) {
-						continue
-					}
-					if m.GetXY(x+ox, y+oy) == 'M' && m.GetXY(x+ox*2, y+oy*2) == 'A' && m.GetXY(x+ox*3, y+oy*3) == 'S' {
-						p1++
-					}
-				}
+			if in[i+o] == 'M' && in[i+o*2] == 'A' && in[i+o*3] == 'S' {
+				p1++
 			}
 		}
+		mas(-1 + -1*iy)
+		mas(0 + -1*iy)
+		mas(1 + -1*iy)
+		mas(-1 + 0*iy)
+		mas(1 + 0*iy)
+		mas(-1 + 1*iy)
+		mas(0 + 1*iy)
+		mas(1 + 1*iy)
 	}
-	for x := 1; x < m.Width()-1; x++ {
-		for y := 1; y < m.Height()-1; y++ {
-			if m.GetXY(x, y) != 'A' {
-				continue
-			}
-			mas := func(ox, oy int) bool {
-				if !(m.GetXY(x+ox, y+oy) == 'M' && m.GetXY(x-ox, y-oy) == 'S') &&
-					!(m.GetXY(x+ox, y+oy) == 'S' && m.GetXY(x-ox, y-oy) == 'M') {
-					return false
-				}
-				return true
-			}
-			if mas(-1, -1) && mas(-1, 1) {
-				p2++
-			}
+	// sliding X offsets
+	for i, i2, i3, i4, i5 := 0, 2, 1+iy, 2*iy, 2+2*iy; i5 < len(in); i, i2, i3, i4, i5 = i+1, i2+1, i3+1, i4+1, i5+1 {
+		if in[i3] != 'A' {
+			continue
+		}
+		if (in[i] == 'M' && in[i5] == 'S' || in[i] == 'S' && in[i5] == 'M') &&
+			(in[i2] == 'M' && in[i4] == 'S' || in[i2] == 'S' && in[i4] == 'M') {
+			p2++
 		}
 	}
 	return p1, p2
