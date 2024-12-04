@@ -25,7 +25,7 @@ sub calc {
   for my $m (@s) {
     if ($m =~ m/mul\((\d+),(\d+)\)/) {
       $p1 += $1 * $2;
-      $p2 += $1 * $2 if ($do);
+      $p2 += $do * $1 * $2;
     } elsif ($m eq 'do()') {
       $do = 1;
     } else {
