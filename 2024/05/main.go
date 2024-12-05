@@ -12,12 +12,12 @@ import (
 var input []byte
 
 func Parts(in []byte, args ...int) (int, int) {
-	rules := make(map[int]struct{}, 2048)
+	rules := make([]bool, 13000)
 	i := 0
 	for i < len(in) {
 		j, a := ChompUInt[int](in, i)
 		j, b := ChompUInt[int](in, j+1)
-		rules[(a<<16)+b] = struct{}{}
+		rules[(a<<7)+b] = true
 		i = j + 1
 		if in[i] == '\n' {
 			i++
@@ -35,21 +35,20 @@ func Parts(in []byte, args ...int) (int, int) {
 				break
 			}
 		}
-		mid1 := nums[len(nums)/2]
-		var changed bool
-		slices.SortFunc(nums, func(a, b int) int {
-			if _, ok := rules[(a<<16)+b]; ok {
-				changed = true
+		sf := func(a, b int) int {
+			if rules[(a<<7)+b] {
 				return -1
 			} else {
 				return 1
 			}
-		})
-		if !changed {
-			p1 += mid1
-		} else {
-			p2 += nums[len(nums)/2]
 		}
+		if slices.IsSortedFunc(nums, sf) {
+			p1 += nums[len(nums)/2]
+			nums = nums[:0]
+			continue
+		}
+		slices.SortFunc(nums, sf)
+		p2 += nums[len(nums)/2]
 		nums = nums[:0]
 	}
 
