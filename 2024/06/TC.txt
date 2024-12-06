@@ -1,0 +1,7 @@
+test1.txt
+41
+6
+---END---
+input.txt
+5531
+2165
