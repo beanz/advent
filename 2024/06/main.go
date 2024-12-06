@@ -10,19 +10,8 @@ import (
 //go:embed input.txt
 var input []byte
 
-func dir(dx, dy int) int {
-	if dx == 0 {
-		if dy == -1 {
-			return 0
-		} else {
-			return 1
-		}
-	}
-	if dx == -1 {
-		return 2
-	}
-	return 3
-}
+var DX = []int{0, 1, 0, -1}
+var DY = []int{-1, 0, 1, 0}
 
 func Parts(in []byte, args ...int) (int, int) {
 	pos := 0
@@ -48,45 +37,51 @@ LOOP:
 		}
 		return '!'
 	}
-
 	seen := [33410]bool{}
-	c := 0
-	part1 := func(ox, oy int) bool {
+	cx, cy := sx, sy
+	dx, dy := 0, -1
+	p1 := 0
+	for 0 <= cx && cx < w && 0 <= cy && cy < h {
+		k := (cx << 8) + cy
+		if !seen[k] {
+			p1++
+		}
+		seen[k] = true
+		nx, ny := cx+dx, cy+dy
+		ch := get(nx, ny)
+		if ch == '#' {
+			dx, dy = -dy, dx
+			continue
+		}
+		cx, cy = nx, ny
+	}
+	part2 := func(ox, oy int) bool {
 		seen2 := [133643]bool{}
 		cx, cy := sx, sy
-		dx, dy := 0, -1
+		dir := 0
 		for 0 <= cx && cx < w && 0 <= cy && cy < h {
-			k := (cx << 8) + cy
-			if seen2[k<<2+dir(dx, dy)] {
+			k := ((cx<<8)+cy)<<2 + dir
+			if seen2[k] {
 				return true
 			}
-			if !seen[k] {
-				c++
-			}
-			seen[k] = true
-			seen2[k<<2+dir(dx, dy)] = true
-			nx, ny := cx+dx, cy+dy
+			seen2[k] = true
+			nx, ny := cx+DX[dir], cy+DY[dir]
 			ch := get(nx, ny)
-			if ch == '#' || (nx == ox && ny == oy) {
-				dx, dy = -dy, dx
+			if (nx == ox && ny == oy) || ch == '#' {
+				dir = (dir + 1) & 3
 				continue
 			}
 			cx, cy = nx, ny
 		}
 		return false
 	}
-	_ = part1(-1, -1)
-	p1 := c
 	p2 := 0
-	nseen := [33410]bool{}
-	p1seen := seen // the original set
-	seen = nseen
 	for oy := 0; oy < h; oy++ {
 		for ox := 0; ox < w; ox++ {
-			if !p1seen[(ox<<8)+oy] {
+			if !seen[(ox<<8)+oy] {
 				continue
 			}
-			if part1(ox, oy) {
+			if part2(ox, oy) {
 				p2++
 			}
 		}
