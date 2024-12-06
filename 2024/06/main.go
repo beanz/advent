@@ -47,9 +47,12 @@ LOOP:
 			p1++
 		}
 		seen[k] = true
-		nx, ny := cx+dx, cy+dy
-		ch := get(nx, ny)
-		if ch == '#' {
+		var nx, ny int
+		for {
+			nx, ny = cx+dx, cy+dy
+			if get(nx, ny) != '#' {
+				break
+			}
 			dx, dy = -dy, dx
 			continue
 		}
@@ -66,8 +69,7 @@ LOOP:
 			}
 			seen2[k] = true
 			nx, ny := cx+DX[dir], cy+DY[dir]
-			ch := get(nx, ny)
-			if (nx == ox && ny == oy) || ch == '#' {
+			if (nx == ox && ny == oy) || get(nx, ny) == '#' {
 				dir = (dir + 1) & 3
 				continue
 			}

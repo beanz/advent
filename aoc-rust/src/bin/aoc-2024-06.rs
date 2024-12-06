@@ -41,13 +41,17 @@ fn parts(inp: &[u8]) -> (usize, usize) {
                 p1 += 1;
             }
             seen[k] = true;
-            let (nx, ny) = (cx + DX[dir], cy + DY[dir]);
-            let ch = get(nx, ny);
-            if ch == b'#' {
-                dir = (dir + 1) & 3;
-                continue;
-            }
-            (cx, cy) = (nx, ny);
+            (cx, cy) = {
+                let (mut nx, mut ny);
+                loop {
+                    (nx, ny) = (cx + DX[dir], cy + DY[dir]);
+                    if get(nx, ny) != b'#' {
+                        break;
+                    }
+                    dir = (dir + 1) & 3;
+                }
+                (nx, ny)
+            };
         }
     };
     let mut p2 = 0;
@@ -67,8 +71,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
                 }
                 seen[k] = true;
                 let (nx, ny) = (cx + DX[dir], cy + DY[dir]);
-                let ch = get(nx, ny);
-                if ch == b'#' || (nx == ox && ny == oy) {
+                if get(nx, ny) == b'#' || (nx == ox && ny == oy) {
                     dir = (dir + 1) & 3;
                     continue;
                 }
