@@ -54,7 +54,6 @@ LOOP:
 				break
 			}
 			dx, dy = -dy, dx
-			continue
 		}
 		cx, cy = nx, ny
 	}
@@ -62,15 +61,17 @@ LOOP:
 		seen2 := [133643]bool{}
 		cx, cy := sx, sy
 		dir := 0
+		dx, dy := 0, -1
 		for 0 <= cx && cx < w && 0 <= cy && cy < h {
 			k := ((cx<<8)+cy)<<2 + dir
 			if seen2[k] {
 				return true
 			}
 			seen2[k] = true
-			nx, ny := cx+DX[dir], cy+DY[dir]
+			nx, ny := cx+dx, cy+dy
 			if (nx == ox && ny == oy) || get(nx, ny) == '#' {
 				dir = (dir + 1) & 3
+				dx, dy = -dy, dx
 				continue
 			}
 			cx, cy = nx, ny
