@@ -11,6 +11,9 @@ import (
 var input []byte
 
 func sums(nums []int, i, sub, total int, p2 bool) bool {
+	if sub > total {
+		return false
+	}
 	if i == len(nums) {
 		return sub == total
 	}

@@ -1,6 +1,9 @@
 use smallvec::SmallVec;
 
 fn is_valid(nums: &SmallVec<[usize; 16]>, i: usize, sub: usize, total: usize, p2: bool) -> bool {
+    if sub > total {
+        return false;
+    }
     if i == nums.len() {
         return sub == total;
     }
