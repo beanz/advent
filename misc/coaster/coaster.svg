@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="122.5mm"
+   height="122.5mm"
+   viewBox="0 0 122.5 122.5"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
+   sodipodi:docname="coaster.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="2.7927042"
+     inkscape:cx="231.67509"
+     inkscape:cy="231.49605"
+     inkscape:window-width="2473"
+     inkscape:window-height="1469"
+     inkscape:window-x="196"
+     inkscape:window-y="98"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer3" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Black"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-44.185547,-1.0585937)"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#000200;fill-opacity:1;stroke:#ffffff;stroke-width:0.499999;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+       id="rect12"
+       width="90"
+       height="90"
+       x="60.435547"
+       y="17.308592"
+       ry="2"
+       rx="2" />
+    <path
+       style="color:#000000;fill:#000001;stroke-linejoin:round;-inkscape-stroke:none"
+       d="m 45.935549,2.5585918 a 0.250025,0.250025 0 0 0 -0.25,0.25 V 121.80859 a 0.250025,0.250025 0 0 0 0.25,0.25 H 164.93555 a 0.250025,0.250025 0 0 0 0.25,-0.25 V 2.8085918 a 0.250025,0.250025 0 0 0 -0.25,-0.25 z m 0.25,0.5 H 164.68555 V 121.55859 H 46.185549 Z"
+       id="rect13" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Red"
+     transform="translate(-44.185547,-1.0585937)"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05556px;font-family:Inconsolata;-inkscape-font-specification:Inconsolata;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.1;stroke-linejoin:round;stroke-dasharray:none"
+       x="78.603172"
+       y="17.854729"
+       id="text2"
+       transform="translate(-12.80438,6.5846534)"><tspan
+         sodipodi:role="line"
+         id="tspan2"
+         style="font-size:9.17222px;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.1;stroke-dasharray:none"
+         x="78.603172"
+         y="17.854729">     <tspan
+   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.17222px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';stroke:none"
+   id="tspan13">   .---_</tspan></tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.17222px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.1;stroke-dasharray:none"
+         x="78.603172"
+         y="29.320004"
+         id="tspan3">       / / /\|</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.17222px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.1;stroke-dasharray:none"
+         x="78.603172"
+         y="40.785278"
+         id="tspan4">     / / | \</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.17222px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.1;stroke-dasharray:none"
+         x="78.603172"
+         y="52.250553"
+         id="tspan5">    /  /  \ \</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.17222px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.1;stroke-dasharray:none"
+         x="78.603172"
+         y="63.715828"
+         id="tspan14">   / /  / \  \</tspan><tspan
+         sodipodi:role="line"
+         style="fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.1;stroke-dasharray:none"
+         x="78.603172"
+         y="73.183243"
+         id="tspan7" /></text>
+    <path
+       style="color:#000000;fill:#ff0000;stroke-linejoin:round;-inkscape-stroke:none"
+       d="m 44.935547,1.5585937 a 0.250025,0.250025 0 0 0 -0.25,0.25 V 122.80859 a 0.250025,0.250025 0 0 0 0.25,0.25 H 165.93555 a 0.250025,0.250025 0 0 0 0.25,-0.25 V 1.8085937 a 0.250025,0.250025 0 0 0 -0.25,-0.25 z m 0.25,0.5000001 H 165.68555 V 122.55859 H 45.185547 Z"
+       id="rect11-1" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="White"
+     transform="translate(-44.185547,-1.0585937)"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.17222px;font-family:Inconsolata;-inkscape-font-specification:Inconsolata;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.1;stroke-linejoin:round;stroke-dasharray:none"
+       x="78.601967"
+       y="75.183594"
+       id="text8"
+       transform="translate(-12.80438,6.5846534)"><tspan
+         sodipodi:role="line"
+         id="tspan8"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.17222px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.1"
+         x="78.601967"
+         y="75.183594"> ,/~~~~~~~~~~~\.</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.17222px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.1"
+         x="78.601967"
+         y="86.648872"
+         id="tspan9">( .&quot;,^. -&quot;. '.~ )</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.17222px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.1"
+         x="78.601967"
+         y="98.114143"
+         id="tspan10"> '~~~~~~~~~~~~~'</tspan></text>
+    <path
+       style="color:#000000;display:inline;fill:#ffffff;stroke-linejoin:round;-inkscape-stroke:none"
+       d="m 44.435547,1.0585937 a 0.250025,0.250025 0 0 0 -0.25,0.25 V 123.30859 a 0.250025,0.250025 0 0 0 0.25,0.25 H 166.43555 a 0.250025,0.250025 0 0 0 0.25,-0.25 V 1.3085937 a 0.250025,0.250025 0 0 0 -0.25,-0.25 z m 0.25,0.5 H 166.18555 V 123.05859 H 44.685547 Z"
+       id="rect11-1-8" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Yellow"
+     transform="translate(-44.185547,-1.0585937)"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.17222px;font-family:Inconsolata;-inkscape-font-specification:Inconsolata;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0;stroke-linejoin:round;stroke-dasharray:none"
+       x="138.22267"
+       y="40.783546"
+       id="text11"
+       transform="translate(-12.80438,6.5846534)"><tspan
+         sodipodi:role="line"
+         id="tspan11"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9.17222px;font-family:Inconsolata;-inkscape-font-specification:'Inconsolata Bold';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0;stroke-dasharray:none"
+         x="138.22267"
+         y="40.783546">*</tspan></text>
+    <path
+       style="color:#000000;fill:#ffff00;stroke-linejoin:round;-inkscape-stroke:none"
+       d="m 45.435547,2.0585938 a 0.250025,0.250025 0 0 0 -0.25,0.25 V 122.30859 a 0.250025,0.250025 0 0 0 0.25,0.25 H 165.43555 a 0.250025,0.250025 0 0 0 0.25,-0.25 V 2.3085938 a 0.250025,0.250025 0 0 0 -0.25,-0.25 z m 0.25,0.5 H 165.18555 V 122.05859 H 45.685547 Z"
+       id="rect11" />
+  </g>
+</svg>
