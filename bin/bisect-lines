@@ -1,0 +1,67 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use File::Temp qw/tempfile tempdir/;
+
+my $part = shift || die "Usage: $0 <part> <prog1> <prog2> <input.txt\n";
+my $prog1 = shift || die "Usage: $0 <part> <prog1> <prog2> <input.txt\n";
+my $prog2 = shift || die "Usage: $0 <part> <prog1> <prog2> <input.txt\n";
+
+local $/ = "\n";
+my @i = <>;
+chomp(@i);
+
+my $dir = tempdir(CLEANUP => 1);
+my $diffs = diff(\@i, $part, $prog1, $prog2);
+unless (@$diffs) {
+  print "all good\n";
+}
+for (@{$diffs}) {
+  print "$_->[0]\n $_->[1]\n";
+}
+
+sub diff {
+  my ($lines, $part, $prog1, $prog2) = @_;
+  if (@$lines == 0) {
+    return [];
+  }
+  my $diff = run_diff($lines, $part, $prog1, $prog2);
+  return [] if ($diff eq 'same');
+  if (@$lines == 1) {
+    return [[$lines->[0], $diff]];
+  }
+  my $mid = int(@{$lines}/ 2);
+  my @before = @{$lines}[0 .. $mid-1];
+  my @after = @{$lines}[$mid .. @$lines - 1];
+  my @res;
+  push @res, $_ for (@{diff(\@before, $part, $prog1, $prog2)});
+  push @res, $_ for (@{diff(\@after, $part, $prog1, $prog2)});
+  return \@res;
+}
+
+sub run_diff {
+  my ($lines, $part, $prog1, $prog2) = @_;
+  my ($fh, $input) = tempfile;
+  for (@$lines) {
+    print $fh $_, "\n";
+  }
+  close $fh;
+  my $out1 = run($prog1, $input, $part);
+  my $out2 = run($prog2, $input, $part);
+  if ($out1 == $out2) {
+    return 'same';
+  } else {
+    return "$prog1 == $out1 & $prog2 == $out2";
+  }
+}
+
+sub run {
+  my ($prog, $input, $part) = @_;
+  open my $ofh, '-|', './' . $prog, $input
+    or die "failed to run $prog: $! $@\n";
+  while (<$ofh>) {
+    chomp;
+    return $1 if (/^Part $part: (.*)$/);
+  }
+  return '';
+}
