@@ -31,7 +31,7 @@ func sums(nums []int, i, sub, total int, p2 bool) bool {
 
 func Parts(in []byte, args ...int) (int, int) {
 	p1, p2 := 0, 0
-	nums := []int{}
+	nums := make([]int, 0, 16)
 	for i := 0; i < len(in); {
 		j, total := ChompUInt[int](in, i)
 		i = j + 2
