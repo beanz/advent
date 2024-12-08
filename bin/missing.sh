@@ -2,7 +2,7 @@
 
 dir=$(readlink -m ${0%/*})/..
 cd $dir
-F="aoc.pl aoc.raku cpp/aoc.cpp aoc.zig aoc.cr aoc.nim main.go TC.txt"
+F="aoc.pl aoc.raku cpp/aoc.cpp aoc.zig aoc.cr aoc.nim main.go aoc.jq aoc.exs TC.txt"
 for d in ????/?? ; do
   if [ ! -e $d/input.txt ]; then
     continue

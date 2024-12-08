@@ -67,6 +67,9 @@ pkgs.mkShell {
     rakudo
 
     go_1_23
+
+    elixir
+    elixir-ls
   ];
   shellHook = ''
     PATH=$PATH:$PWD/bin; export PATH
