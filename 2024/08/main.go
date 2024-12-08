@@ -11,7 +11,7 @@ import (
 var input []byte
 
 func Parts(in []byte, args ...int) (int, int) {
-	a := make(map[byte][]int, 64)
+	a := [80 * 4]int{}
 	var x, y, w int
 	for i := 0; i < len(in); i++ {
 		switch in[i] {
@@ -22,10 +22,10 @@ func Parts(in []byte, args ...int) (int, int) {
 			continue
 		case '.':
 		default:
-			if _, ok := a[in[i]]; !ok {
-				a[in[i]] = make([]int, 0, 4)
+			j := 4 * int(in[i]-'0')
+			for ; a[j] != 0; j++ {
 			}
-			a[in[i]] = append(a[in[i]], i)
+			a[j] = i + 1 // offset to avoid default/empty 0 value
 		}
 		x++
 	}
@@ -55,12 +55,21 @@ func Parts(in []byte, args ...int) (int, int) {
 		return true
 	}
 
-	for _, nodes := range a {
-		for i := range nodes {
-			for j := i + 1; j < len(nodes); j++ {
-				a, b := nodes[i], nodes[j]
-				ax, ay := a%(w+1), a/(w+1)
-				bx, by := b%(w+1), b/(w+1)
+	for k := 0; k < 80; k++ {
+		for i := 0; i < 4; i++ {
+			ai := a[4*k+i]
+			if ai == 0 {
+				break
+			}
+			ai--
+			ax, ay := ai%(w+1), ai/(w+1)
+			for j := i + 1; j < 4; j++ {
+				bi := a[4*k+j]
+				if bi == 0 {
+					break
+				}
+				bi--
+				bx, by := bi%(w+1), bi/(w+1)
 				p2s(ax, ay)
 				p2s(bx, by)
 				dx, dy := ax-bx, ay-by
