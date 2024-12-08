@@ -15,11 +15,11 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         i = j + 1;
         b.push(n);
     }
-    a.sort_by(|a, b| a.cmp(&b));
-    b.sort_by(|a, b| a.cmp(&b));
+    a.sort();
+    b.sort();
     let mut p1 = 0;
     for i in 0..a.len() {
-        p1 += (a[i] as i32 - b[i] as i32).abs() as usize;
+        p1 += (a[i] as i32 - b[i] as i32).unsigned_abs() as usize;
     }
     let mut p2 = 0;
     let (mut ai, mut bi) = (0, 0);

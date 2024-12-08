@@ -1,8 +1,7 @@
 fn parts(inp: &[u8]) -> (usize, usize) {
     let mut a: [Option<(i32, i32)>; 4 * 80] = [None; 4 * 80];
     let (mut x, mut y, mut w) = (0, 0, 0);
-    for i in 0..inp.len() {
-        let ch = inp[i];
+    for ch in inp {
         match ch {
             b'\n' => {
                 w = x;

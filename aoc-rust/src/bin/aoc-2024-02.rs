@@ -12,7 +12,7 @@ fn safe(nums: &SmallVec<[i32; 16]>, skip: Option<usize>) -> bool {
             nums[i]
         }
     };
-    let end = if let Some(_) = skip {
+    let end = if skip.is_some() {
         nums.len() - 2
     } else {
         nums.len() - 1

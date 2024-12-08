@@ -12,7 +12,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         let mut i = i;
         let mut n = 0;
         let mut ch = v(i);
-        while b'0' <= ch && ch <= b'9' {
+        while ch.is_ascii_digit() {
             n = 10 * n + ((ch - b'0') as usize);
             i += 1;
             ch = v(i);

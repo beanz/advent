@@ -84,9 +84,9 @@ fn parts(inp: &[u8]) -> (usize, usize) {
 }
 
 fn main() {
-    let mut inp = std::fs::read(aoc::input_file()).expect("read error");
+    let inp = std::fs::read(aoc::input_file()).expect("read error");
     aoc::benchme(|bench: bool| {
-        let (p1, p2) = parts(&mut inp);
+        let (p1, p2) = parts(&inp);
         if !bench {
             println!("Part 1: {}", p1);
             println!("Part 2: {}", p2);
