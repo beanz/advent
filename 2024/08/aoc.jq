@@ -1,7 +1,6 @@
 #!/bin/sh
 exec jq -L../../lib-jq -r --slurp --raw-input '
   include "map"; include "util";
-  def bounds($w; $h; $x;$y): (0 <= $x and $x < $w and 0 <= $y and $y < $h);
   def part1($w; $h; $pairs):
     .[0][1] as $x1
     |.[0][2] as $y1
