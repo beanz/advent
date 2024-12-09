@@ -40,31 +40,51 @@ func defrag(file []block, free []block) int {
 }
 
 func Parts(in []byte, args ...int) (int, int) {
-	file1 := make([]block, 0, 65536)
-	free1 := make([]block, 0, 65536)
 	file2 := make([]block, 0, 10240)
 	free2 := make([]block, 0, 10240)
+	blocks := make([]block, 0, 20000)
 	i := 0
 	for j, ch := range in[:len(in)-1] {
 		size := int(ch - '0')
 		var id int
 		if j%2 == 0 {
 			id = j / 2
+			blocks = append(blocks, block{size: size, id: id, idx: i})
 			file2 = append(file2, block{size: size, id: id, idx: i})
-			for k := 0; k < size; k++ {
-				file1 = append(file1, block{size: 1, id: id, idx: i})
-				i++
-			}
+			i += size
 		} else {
-			free2 = append(free2, block{size: size, id: -1, idx: i})
-			for k := 0; k < size; k++ {
-				free1 = append(free1, block{size: 1, id: -1, idx: i})
-				i++
+			if size != 0 {
+				blocks = append(blocks, block{size: size, id: -1})
+				free2 = append(free2, block{size: size, id: -1, idx: i})
 			}
+			i += size
 		}
 	}
-	//fmt.Fprintf(os.Stderr, "%d/%d %d/%d\n", len(file1), len(free1), len(file2), len(free2))
-	return defrag(file1, free1), defrag(file2, free2)
+	//fmt.Fprintf(os.Stderr, "%d %d/%d\n", len(blocks), len(file2), len(free2))
+	p1 := 0
+	j := 0
+	for len(blocks) > 0 {
+		v := blocks[0].id
+		if v == -1 {
+			k := len(blocks) - 1
+			if blocks[k].id == -1 {
+				blocks = blocks[:k]
+				continue
+			}
+			v = blocks[k].id
+			blocks[k].size--
+			if blocks[k].size == 0 {
+				blocks = blocks[:k]
+			}
+		}
+		p1 += j * v
+		blocks[0].size--
+		if blocks[0].size == 0 {
+			blocks = blocks[1:]
+		}
+		j++
+	}
+	return p1, defrag(file2, free2)
 }
 
 func main() {
