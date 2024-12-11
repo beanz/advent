@@ -1,66 +1,40 @@
-use heapless::FnvIndexMap;
+const CACHE_SIZE: usize = 131072;
 
-const SIZE: usize = 4096;
+fn blink(mem: &mut [usize], s: usize, n: usize) -> usize {
+    if n == 0 {
+        return 1;
+    }
+    let k = (s << 7) + n;
+    if k < mem.len() && mem[k] != 0 {
+        return mem[k] - 1;
+    }
+    let mut res;
+    if s == 0 {
+        res = blink(mem, 1, n - 1);
+    } else {
+        let (a, b, split) = split_uint(s);
+        if split {
+            res = blink(mem, a, n - 1);
+            res += blink(mem, b, n - 1);
+        } else {
+            res = blink(mem, 2024 * s, n - 1);
+        }
+    }
+    if k < mem.len() {
+        mem[k] = res + 1;
+    }
+    res
+}
+
 fn parts(inp: &[u8]) -> (usize, usize) {
-    let mut nums = FnvIndexMap::<usize, usize, SIZE>::new();
+    let (mut p1, mut p2) = (0, 0);
+    let mut mem: [usize; CACHE_SIZE] = [0; CACHE_SIZE];
     let mut i = 0;
     while i < inp.len() {
         let (j, n) = aoc::read::uint::<usize>(inp, i);
-        if let Some(e) = nums.get_mut(&n) {
-            *e += 1;
-        } else {
-            nums.insert(n, 1).expect("insert");
-        }
-        i = j + 1
-    }
-    //println!("{:?}", nums);
-    let mut next = FnvIndexMap::<usize, usize, SIZE>::new();
-    let mut cur = &mut nums;
-    let mut next = &mut next;
-    let (mut p1, mut p2) = (0, 0);
-    for b in 1..=75 {
-        p2 = 0;
-        for (k, v) in &mut *cur {
-            if *k == 0 {
-                p2 += *v;
-                let n = 1;
-                if let Some(e) = next.get_mut(&n) {
-                    *e += *v;
-                } else {
-                    next.insert(n, *v).expect("insert");
-                }
-                continue;
-            }
-            let (a, b, split) = split_uint(*k);
-            if split {
-                p2 += *v * 2;
-                if let Some(e) = next.get_mut(&a) {
-                    *e += *v;
-                } else {
-                    next.insert(a, *v).expect("insert");
-                }
-                if let Some(e) = next.get_mut(&b) {
-                    *e += *v;
-                } else {
-                    next.insert(b, *v).expect("insert");
-                }
-                continue;
-            }
-            p2 += *v;
-            let n = *k * 2024;
-            if let Some(e) = next.get_mut(&n) {
-                *e += *v;
-            } else {
-                next.insert(n, *v).expect("insert");
-            }
-        }
-        if b == 25 {
-            p1 = p2;
-        }
-        cur.clear();
-        (cur, next) = (next, cur);
-        //println!("{}: {:?}", p2, cur);
-        //println!("{}", p2);
+        i = j + 1;
+        p2 += blink(&mut mem, n, 75);
+        p1 += blink(&mut mem, n, 25);
     }
     (p1, p2)
 }
