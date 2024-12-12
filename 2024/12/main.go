@@ -33,13 +33,9 @@ func Parts(in []byte, args ...int) (int, int) {
 				continue
 			}
 			ch := get(x, y)
-			area := 0
-			per := 0
-			p := [4]map[rec]struct{}{}
-			for k := 0; k < 4; k++ {
-				p[k] = map[rec]struct{}{}
-			}
-			todo := []rec{{x, y}}
+			area, perimeter, sides := 0, 0, 0
+			todo := make([]rec, 1, 1024)
+			todo[0] = rec{x, y}
 			for len(todo) > 0 {
 				var cur rec
 				cur, todo = todo[0], todo[1:]
@@ -54,45 +50,16 @@ func Parts(in []byte, args ...int) (int, int) {
 						todo = append(todo, rec{nx, ny})
 						continue
 					}
-					per++
-					p[dir][cur] = struct{}{}
-				}
-			}
-			sides := 0
-			for dir, set := range p {
-				seen_per := [20480]bool{}
-				for cur := range set {
-					if seen_per[cur.x+cur.y*w] {
-						continue
-					}
-					sides++
-					todo = append(todo, rec{cur.x, cur.y})
-					for len(todo) > 0 {
-						var cur rec
-						cur, todo = todo[0], todo[1:]
-						if seen_per[cur.x+cur.y*w] {
-							continue
-						}
-						seen_per[cur.x+cur.y*w] = true
-						ndir := (dir + 1) & 3
-						nx, ny := cur.x+DX[ndir], cur.y+DY[ndir]
-						r := rec{nx, ny}
-						if _, ok := set[r]; ok {
-							todo = append(todo, r)
-						}
-						ndir = (dir + 3) & 3
-						nx, ny = cur.x+DX[ndir], cur.y+DY[ndir]
-						r = rec{nx, ny}
-						if _, ok := set[r]; ok {
-							todo = append(todo, r)
-						}
+					perimeter++
+					if get(nx-DY[dir], ny-DX[dir]) == ch ||
+						get(nx-DX[dir]-DY[dir], ny-DY[dir]-DX[dir]) != ch {
+						sides++
 					}
 				}
 			}
-
 			// fmt.Fprintf(os.Stderr, "%c %dx%d=%d %dx%d=%d\n",
-			// 	ch, area, per, area*per, area, sides, area*sides)
-			p1 += area * per
+			// 	ch, area, perimeter, area*perimeter, area, sides, area*sides)
+			p1 += area * perimeter
 			p2 += area * sides
 		}
 	}
