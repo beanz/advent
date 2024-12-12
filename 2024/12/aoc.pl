@@ -70,7 +70,7 @@ sub area_per {
         my ($x, $y) = @$cur;
         next if ($s{$x, $y});
         $s{$x, $y}++;
-        for my $o ([0, -1], [1, 0], [0, 1], [-1, 0]) {    # check two
+        for my $o ([-$oy, $ox], [$oy, -$ox]) {
           my ($nx, $ny) = ($x + $o->[X], $y + $o->[Y]);
           push @todo, [$nx, $ny] if (exists $p{$r}->{$nx, $ny});
         }
@@ -89,6 +89,7 @@ sub calc {
   for my $y (0 .. $m->width - 1) {
     for my $x (0 .. $m->height - 1) {
       next if ($s{$x, $y});
+
       #print STDERR "$x,$y: ", $m->get($x, $y), "\n";
       my $ch = $m->get($x, $y);
       my $r = area_per($m, \%s, $x, $y, $ch);
