@@ -18,7 +18,7 @@ func defrag(file []block, free []block) int {
 	s := 0
 	firstFree := []int{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	for i := len(file) - 1; i >= 0; i-- {
-		if file[i].id == -1 || file[i].size <= 0 {
+		if file[i].size <= 0 {
 			continue
 		}
 
