@@ -1,0 +1,229 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use FindBin qw($Bin);
+use lib "$Bin/../lib-perl";
+use AoC::Helpers qw/fields field_type all uniq any/;
+$, = $" = ',';
+
+my $lang = "Go";
+if (@ARGV) {
+  if ($ARGV[0] =~ /^-(.*)/) {
+    $lang = $1;
+    shift @ARGV;
+  }
+}
+
+my %subs = (
+  'Go' => {
+    'single_line_of_ints' => \&single_line_of_ints,
+    'dense_map' => \&dense_map,
+    'lines_of_n_ints' => \&lines_of_n_ints,
+    'chunks_of_n_ints' => \&chunks_of_n_ints,
+  },
+  'Rust' => {
+    'single_line_of_ints' => \&rust_single_line_of_ints,
+    'dense_map' => \&rust_dense_map,
+    'lines_of_n_ints' => \&rust_lines_of_n_ints,
+    'chunks_of_n_ints' => \&rust_chunks_of_n_ints,
+  },
+);
+
+my $subs = $subs{$lang};
+
+{
+  local $/;
+  $_ = <>;
+}
+
+sub info {
+  print STDERR "@_\n";
+}
+
+info "Would generate parsing for $lang";
+if (/\n\n/) {
+  info "has chunks\n";
+  my @l = split /\n\n/;
+  chomp(@l) for (@l);
+  my @nonint = map {my $l = $_; $l =~ s/\d+/!int!/g; $l} @l;
+  if (scalar(uniq @nonint) == 1) {
+    my $n = () = $nonint[0] =~ m/!int!/g;
+    my @sep = split /!int!/, $nonint[0];
+    info "looks like lines with $n ints with " . (join ',', map {"'$_'"} @sep);
+    $subs->{chunks_of_n_ints}->('int', \@sep);
+  }
+  @nonint = map {my $l = $_; $l =~ s/[-+]\d+/!int!/g; $l} @l;
+  if (scalar(uniq @nonint) == 1) {
+    my $n = () = $nonint[0] =~ m/!int!/g;
+    my @sep = split /!int!/, $nonint[0];
+    info "looks like lines with $n ints with " . (join ',', map {"'$_'"} @sep);
+    $subs->{chunks_of_n_ints}->('uint', \@sep);
+  }
+  exit 0;
+}
+
+my @l = split /\n/;
+if (@l == 0) {
+  die "empty?";
+}
+
+if (@l == 1) {
+  if (/^(?:(\d+)\s)*(?:(\d+))*$/) {
+    info "single line of uints";
+    $subs->{single_line_of_ints}->('uint');
+  } elsif (/^(?:([-+]\d+)\s)*(?:([-+]\d+))*$/) {
+    info "single line of ints";
+    $subs->{single_line_of_ints}->('int');
+  }
+  exit;
+}
+
+if (@l > 3) {
+  my $l = length $l[0];
+  if ($l >= 3 && all {length $_ == $l && !/\s/} @l) {
+    info "Looks like dense map";
+    $subs->{dense_map}->();
+    exit 0;
+  }
+}
+
+my @nonint = map {my $l = $_; $l =~ s/\d+/!int!/g; $l} @l;
+if (scalar(uniq @nonint) == 1) {
+  my $n = () = $nonint[0] =~ m/!int!/g;
+  my @sep = split /!int!/, $nonint[0];
+  info "looks like lines with $n ints with " . (join ',', map {"'$_'"} @sep);
+  $subs->{lines_of_n_ints}->('uint', \@sep);
+  exit;
+}
+
+print;
+
+sub single_line_of_ints {
+  my ($type) = @_;
+  if ($type eq 'uint') {
+    $type = 'ChompUInt';
+  } else {
+    $type = 'ChompInt';
+  }
+  print qq!
+\tfor i := 0; i < len(in); {
+\t\tj, n := ${type}[int](in, i)
+\t\ti = j+1
+\t\t// do something with n
+\t\tfmt.Fprintf(os.Stderr, \"%d\\n", n)\n";
+\t}
+
+\tnums = []int{}
+\tfor i:= 0; i < len(in); {
+\t\tj, n := ${type}[int](in, i)
+\t\ti = j+1
+\t\tnums = append(nums, n)
+\t}
+\t// do something with nums
+\tfmt.Fprintf(os.Stderr, \"%v\\n", nums)\n";
+!;
+}
+
+sub dense_map {
+  print qq!
+\tw := bytes.IndexByte(in, '\\n')
+\th := len(in) / (w + 1)
+\tw1 := w + 1
+\tget := func(x, y int) byte {
+\t\tif 0 <= x && x < w && 0 <= y && y < h {
+\t\t\treturn in[x+y*w1]
+\t\t}
+\t\treturn 128
+\t}
+!;
+}
+
+sub lines_of_n_ints {
+  my ($type, $sep) = @_;
+  if ($type eq 'uint') {
+    $type = 'ChompUInt';
+  } else {
+    $type = 'ChompInt';
+  }
+  my @sep = @$sep;
+  my $var = 'a';
+  my @vars;
+  my @chomps;
+  for my $i (0 .. @sep - 1) {
+    my $offset = $i == 0 ? 'i' : 'j';
+    my $ls = length $sep[$i];
+    $offset .= $ls == 0 ? '' : ' + ' . $ls;
+    push @chomps, "j, $var = ${type}[int](in, $offset)";
+    push @vars, $var;
+    $var++;
+  }
+  print "\tfor i := 0; i < len(in); {\n";
+  print "\t\tvar j, " . (join ', ', @vars) . " int\n";
+  for (@chomps) {
+    print "\t\t$_\n";
+  }
+  print "\t\ti = j + 1\n";
+  print "\n\t\t// do something with @vars\n";
+  print "\t\tfmt.Fprintf(os.Stderr, \"".(join ', ', map { '%d' } @vars)."\\n\", ".(join ', ', @vars).")\n";
+  print "\t}\n";
+}
+
+sub chunks_of_n_ints {
+  my ($type, $sep) = @_;
+  if ($type eq 'uint') {
+    $type = 'ChompUInt';
+  } else {
+    $type = 'ChompInt';
+  }
+  my @sep = @$sep;
+  my $var = 'a';
+  my @vars;
+  my @chomps;
+  for my $i (0 .. @sep - 1) {
+    my $offset = $i == 0 ? 'i' : 'j';
+    my $ls = length $sep[$i];
+    $offset .= $ls == 0 ? '' : ' + ' . $ls;
+    push @chomps, "j, $var = ${type}[int](in, $offset)";
+    push @vars, $var;
+    $var++;
+  }
+  print "\tfor i := 0; i < len(in); {\n";
+  print "\t\tvar j, " . (join ', ', @vars) . " int\n";
+  for (@chomps) {
+    print "\t\t$_\n";
+  }
+  print "\t\ti = j + 1\n";
+  print "\n\t\t// do something with @vars\n";
+  print "\t\tfmt.Fprintf(os.Stderr, \"".(join ', ', map { '%d' } @vars)."\\n\", ".(join ', ', @vars).")\n";
+  print "\t}\n";
+}
+
+sub rust_chunks_of_n_ints {
+  my ($type, $sep) = @_;
+  if ($type eq 'uint') {
+    $type = 'uint::<usize>';
+  } else {
+    $type = 'int::<isize>';
+  }
+  my @sep = @$sep;
+  my $var = 'a';
+  my @vars;
+  my @chomps;
+  for my $i (0 .. @sep - 1) {
+    my $offset = $i == 0 ? 'i' : 'j';
+    my $ls = length $sep[$i];
+    $offset .= $ls == 0 ? '' : ' + ' . $ls;
+    push @chomps, "let (j, $var) = aoc::read::${type}(inp, $offset);";
+    push @vars, $var;
+    $var++;
+  }
+  print "\tlet mut i = 0;\n";
+  print "\twhile i < inp.len() {\n";
+  for (@chomps) {
+    print "\t\t$_\n";
+  }
+  print "\t\ti = j + 1;\n";
+  print "\n\t\t// do something with @vars\n";
+  print "\t\tprintln!(\"".(join ', ', map { '{}' } @vars)."\\n\", ".(join ', ', @vars).");\n";
+  print "\t}\n";
+}

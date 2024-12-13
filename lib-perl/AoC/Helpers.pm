@@ -82,7 +82,6 @@ our %EXPORT_TAGS = (
 
       input_file
       input_path
-      field_type
       read_slurp
       read_guess
       read_2024
@@ -92,6 +91,9 @@ our %EXPORT_TAGS = (
       read_chunks
       read_chunky_records
       read_dense_map
+
+      fields
+      field_type
 
       RunTests
     )
@@ -453,11 +455,6 @@ sub rotate_lines {
 
 sub guess_struct {
   my ($a) = @_;
-
-  #my @t = fields($a->[0]);
-  #if (all {my @tt = fields($_); "@tt" eq "@t"} @{$a}[1 .. @$a - 1]) {
-  #print STDERR "unifiable: @t\n";
-  #}
 
   if (@{$a} == 0) {
     return [];
