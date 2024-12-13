@@ -12,7 +12,7 @@ $; = $" = ',';
 
 my $file = shift // "input.txt";
 
-my $reader = \&read_stuff;
+my $reader = \&read_2024;
 my $i = $reader->($file);
 my $i2 = $reader->($file);
 
@@ -22,25 +22,13 @@ use constant {
   P => 2,
 };
 
-sub read_stuff {
-  my $file = shift;
-  my $in = read_chunks($file);
-  my @a;
-  for my $i (0 .. (@$in - 1)) {
-    my $l = $in->[$i];
-    my @n = $l =~ /(\d+)/mg;
-    push @a, [[$n[0], $n[1]], [$n[2], $n[3]], [$n[4], $n[5]]];
-  }
-  return \@a;
-}
-
 sub calc {
   my ($in) = @_;
   my ($p1, $p2) = (0, 0);
   my $ADD = 10000000000000;
   for (@$in) {
-    $p1 += cost(@{$_->[0]}, @{$_->[1]}, @{$_->[2]});
-    $p2 += cost(@{$_->[0]}, @{$_->[1]}, @{$_->[2]}, $ADD);
+    $p1 += cost(@{$_->{'Button A'}}, @{$_->{'Button B'}}, @{$_->{'Prize'}});
+    $p2 += cost(@{$_->{'Button A'}}, @{$_->{'Button B'}}, @{$_->{'Prize'}}, $ADD);
   }
   return [$p1, $p2];
 }

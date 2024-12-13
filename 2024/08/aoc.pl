@@ -12,41 +12,25 @@ $; = $" = ',';
 
 my $file = shift // "input.txt";
 
-my $reader = \&read_stuff;
-
-#my $reader = \&read_guess;
+my $reader = \&read_2024;
 my $i = $reader->($file);
 my $i2 = $reader->($file);
-
-sub read_stuff {
-  my $file = shift;
-  my $in = read_lines($file);
-  my %m = (d => {}, l => []);
-  $m{w} = length($in->[0]);
-  $m{h} = @$in;
-  for my $y (0 .. (@$in - 1)) {
-    my @l = split //, $in->[$y];
-    push @{$m{l}}, \@l;
-    for my $x (0 .. $#l) {
-      my $ch = $l[$x];
-      next if ($ch eq '.');
-      push @{$m{d}->{$ch}}, [$x, $y];
-    }
-  }
-  return \%m;
-}
 
 sub calc {
   my ($in) = @_;
   my %p1;
   my %p2;
+  my %d;
+  $in->visit_xy(
+    sub {
+      my ($m, $x, $y, $ch) = @_;
+      return if ($ch eq '.');
+      push @{$d{$ch}}, [$x, $y];
+    }
+  );
 
-  sub in_bounds {
-    my ($in, $x, $y) = @_;
-    (0 <= $x && $x < $in->{w} && 0 <= $y && $y < $in->{h});
-  }
-  for my $ch (keys %{$in->{d}}) {
-    my @l = @{$in->{d}->{$ch}};
+  for my $ch (keys %d) {
+    my @l = @{$d{$ch}};
     for my $i (0 .. $#l) {
       for my $j ($i + 1 .. $#l) {
         my ($a, $b) = ($l[$i], $l[$j]);
@@ -54,12 +38,12 @@ sub calc {
         $p2{$b->[X], $b->[Y]}++;
         my ($dx, $dy) = ($a->[X] - $b->[X], $a->[Y] - $b->[Y]);
         my ($x, $y) = ($a->[X] + $dx, $a->[Y] + $dy);
-        if (in_bounds($in, $x, $y)) {
+        if ($in->in($x, $y)) {
           $p1{$x, $y}++;
           $p2{$x, $y}++;
           while (1) {
             ($x, $y) = ($x + $dx, $y + $dy);
-            if (in_bounds($in, $x, $y)) {
+            if ($in->in($x, $y)) {
               $p2{$x, $y}++;
               next;
             }
@@ -68,12 +52,12 @@ sub calc {
         }
 
         ($x, $y) = ($b->[X] - $dx, $b->[Y] - $dy);
-        if (in_bounds($in, $x, $y)) {
+        if ($in->in($x, $y)) {
           $p1{$x, $y}++;
           $p2{$x, $y}++;
           while (1) {
             ($x, $y) = ($x - $dx, $y - $dy);
-            if (in_bounds($in, $x, $y)) {
+            if ($in->in($x, $y)) {
               $p2{$x, $y}++;
               next;
             }
@@ -84,9 +68,9 @@ sub calc {
     }
   }
   if (DEBUG) {
-    for my $y (0 .. $in->{h} - 1) {
-      for my $x (0 .. $in->{w} - 1) {
-        my $ch = $in->{l}->[$y]->[$x];
+    for my $y (0 .. $in->height - 1) {
+      for my $x (0 .. $in->width - 1) {
+        my $ch = $in->get($x, $y);
         if ($p2{$x, $y}) {
           $ch = '#' if ($ch eq '.');
           if ($p1{$x, $y}) {

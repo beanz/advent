@@ -12,7 +12,7 @@ $; = $" = ',';
 
 my $file = shift // "input.txt";
 
-my $reader = \&read_dense_map;
+my $reader = \&read_2024;
 my $i = $reader->($file);
 my $i2 = $reader->($file);
 

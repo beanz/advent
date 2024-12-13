@@ -12,21 +12,9 @@ $; = $" = ',';
 
 my $file = shift // "input.txt";
 
-#my $reader = \&read_stuff;
-my $reader = \&read_guess;
+my $reader = \&read_2024;
 my $i = $reader->($file);
 my $i2 = $reader->($file);
-
-sub read_stuff {
-  my $file = shift;
-  my $in = read_lines($file);
-  my %m = (lines => $in);
-  for my $i (0 .. (@$in - 1)) {
-    my $l = $in->[$i];
-    print "$i: $l\n";
-  }
-  return \%m;
-}
 
 sub sums {
   my ($v) = @_;
@@ -63,7 +51,7 @@ sub calc {
   my $p2 = 0;
 LINE:
   for my $l (@$in) {
-    my $t = substr(shift @$l, 0, -1);
+    my $t = shift @$l;
     for (sums([@$l])) {
       if ($t == $_) {
         $p1 += $t;

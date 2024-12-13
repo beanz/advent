@@ -18,10 +18,10 @@ my $i2 = $reader->($file);
 
 sub read_stuff {
   my $file = shift;
-  my $in = read_lines($file);
+  my $in = read_2024($file);
   my %m = (a => [], b => [], ac => {}, bc => {});
   for (@$in) {
-    my ($a, $b) = split;
+    my ($a, $b) = @$_;
     push @{$m{a}}, $a;
     push @{$m{b}}, $b;
     $m{ac}->{$a}++;

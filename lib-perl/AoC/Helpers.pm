@@ -4,25 +4,24 @@ use strict;
 use warnings;
 use Exporter qw(import);
 
-use constant
-  {
-   DEBUG => $ENV{AoC_DEBUG}//0,
-   TEST => $ENV{AoC_TEST}//0,
-   VISUAL => $ENV{AoC_VISUAL}//0,
-   X => 0,
-   Y => 1,
-   Z => 2,
-   Q => 3,
-   MIN => 0,
-   MAX => 1,
-   MINX => 0,
-   MINY => 1,
-   MAXX => 2,
-   MAXY => 3,
-   NUM_E => 2.71828182846,
-   NUM_PI => 3.14159265359,
-   SQRT_2 => 1.41421356237,
-  };
+use constant {
+  DEBUG => $ENV{AoC_DEBUG} // 0,
+  TEST => $ENV{AoC_TEST} // 0,
+  VISUAL => $ENV{AoC_VISUAL} // 0,
+  X => 0,
+  Y => 1,
+  Z => 2,
+  Q => 3,
+  MIN => 0,
+  MAX => 1,
+  MINX => 0,
+  MINY => 1,
+  MAXX => 2,
+  MAXY => 3,
+  NUM_E => 2.71828182846,
+  NUM_PI => 3.14159265359,
+  SQRT_2 => 1.41421356237,
+};
 
 use Data::Dumper;
 use Storable qw/dclone/;
@@ -30,72 +29,79 @@ use List::Util qw/min max minstr maxstr sum product pairs all any uniq reduce/;
 use List::MoreUtils qw/zip pairwise minmax/;
 use POSIX qw/ceil floor round/;
 
-our %EXPORT_TAGS = ( 'all' => [ qw(
-                                    X Y Z Q
-                                    MIN MAX
-                                    MINX MINY MAXX MAXY
-                                    DEBUG VISUAL TEST
-                                    NUM_PI NUM_E SQRT_2
+our %EXPORT_TAGS = (
+  'all' => [
+    qw(
+      X Y Z Q
+      MIN MAX
+      MINX MINY MAXX MAXY
+      DEBUG VISUAL TEST
+      NUM_PI NUM_E SQRT_2
 
-                                    log10
-                                    ceil floor round
+      log10
+      ceil floor round
 
-                                    gcd lcm
+      gcd lcm
 
-                                    dclone
-                                    min max minstr maxstr sum product pairs
-                                    all any reduce uniq
-                                    zip pairwise
-                                    minmax
-                                    minmax_xy
-                                    minmax_dim
-                                    allin
-                                    neighbourbb
-                                    neighbours
-                                    allneighbours
+      dclone
+      min max minstr maxstr sum product pairs
+      all any reduce uniq
+      zip pairwise
+      minmax
+      minmax_xy
+      minmax_dim
+      allin
+      neighbourbb
+      neighbours
+      allneighbours
 
-                                    assert assertEq
-                                    assertGT assertGreaterThan
+      assert assertEq
+      assertGT assertGreaterThan
 
-                                    bold bold_on bold_off
-                                    red cyan yellow green blue magenta
-                                    clear mcursor
-                                    pretty_grid
-                                    safe_exists
-                                    safe_value
-                                    dd
-                                    visit_checker
+      bold bold_on bold_off
+      red cyan yellow green blue magenta
+      clear mcursor
+      pretty_grid
+      safe_exists
+      safe_value
+      dd
+      visit_checker
 
-                                    hk kh
-                                    eightNeighbourOffsets
-                                    fourNeighbourOffsets
-                                    offsetCompass offsetKey
-                                    manhattanDistance
-                                    offsetCW
-                                    offsetCCW
-                                    offsetOpposite
-                                    compassOffset
-                                    compassOpposite
+      hk kh
+      eightNeighbourOffsets
+      fourNeighbourOffsets
+      offsetCompass offsetKey
+      manhattanDistance
+      offsetCW
+      offsetCCW
+      offsetOpposite
+      compassOffset
+      compassOpposite
 
-                                    rotate_lines
+      rotate_lines
 
-                                    input_file
-                                    input_path
-                                    read_slurp
-                                    read_guess
-                                    read_lines
-                                    read_lists
-                                    read_listy_records
-                                    read_chunks
-                                    read_chunky_records
-                                    read_dense_map
+      input_file
+      input_path
+      field_type
+      read_slurp
+      read_guess
+      read_2024
+      read_lines
+      read_lists
+      read_listy_records
+      read_chunks
+      read_chunky_records
+      read_dense_map
 
-                                    RunTests
-) ] );
-our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
+      RunTests
+    )
+  ]
+);
+our @EXPORT_OK = (@{$EXPORT_TAGS{'all'}});
 our $VERSION = '0.01';
 
 use FindBin;
+
 sub input_path {
   my ($file) = @_;
   $file //= "input.txt";
@@ -115,12 +121,12 @@ sub RunTests {
   my ($fn) = @_;
   open my $fh, "TC.txt" || die "no test case file: $@\n";
   my $c;
-  { local $/; $c = <$fh>; }
+  {local $/; $c = <$fh>;}
   chomp $c;
   my @tc;
   for (split /\n---END---\n/, $c) {
-    my ($args, $p1, $p2) = split/\n/;
-    my @a = split/\s+/, $args;
+    my ($args, $p1, $p2) = split /\n/;
+    my @a = split /\s+/, $args;
     my $f = shift @a;
     my $res = $fn->($f, @a);
     assertEq("Test 1 [$f @a]", $res->[0], $p1);
@@ -137,24 +143,16 @@ sub kh {
 }
 
 sub eightNeighbourOffsets {
-  [
-   [ -1, -1], [ 0, -1], [ 1, -1],
-   [ -1,  0],           [ 1,  0],
-   [ -1,  1], [ 0,  1], [ 1,  1],
-  ];
+  [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1],];
 }
 
 sub fourNeighbourOffsets {
-  [
-               [ 0, -1],
-    [ -1,  0],           [ 1,  0],
-               [ 0,  1],
-  ];
+  [[0, -1], [-1, 0], [1, 0], [0, 1],];
 }
 
 sub manhattanDistance {
   my ($p1, $p2) = @_;
-  return abs($p1->[X]-$p2->[X]) + abs($p1->[Y]-$p2->[Y]);
+  return abs($p1->[X] - $p2->[X]) + abs($p1->[Y] - $p2->[Y]);
 }
 
 sub offsetCompass {
@@ -197,45 +195,45 @@ sub offsetKey {
 
 sub offsetCW {
   {
-    '0!-1' => [  1,  0 ],
-    '1!0'  => [  0,  1 ],
-    '0!1'  => [ -1,  0 ],
-   '-1!0'  => [  0, -1 ],
+    '0!-1' => [1, 0],
+    '1!0' => [0, 1],
+    '0!1' => [-1, 0],
+    '-1!0' => [0, -1],
   }->{hk(@_)} // die "Invalid offset: @_\n";
 }
 
 sub offsetCCW {
-    offsetCW(@{offsetCW(@{offsetCW(@_)})})
+  offsetCW(@{offsetCW(@{offsetCW(@_)})});
 }
 
 sub offsetOpposite {
-    [ $_[0]*-1, $_[1]*-1 ]
+  [$_[0] * -1, $_[1] * -1]
 }
 
 sub compassOffset {
   {
-    'N'  => [  0, -1],
-    'NE' => [  1, -1],
-    'E'  => [  1,  0],
-    'SE' => [  1,  1],
-    'S'  => [  0,  1],
-    'SW' => [ -1,  1],
-    'W'  => [ -1,  0],
-    'NW' => [ -1, -1],
-  }->{$_[0]}
+    'N' => [0, -1],
+    'NE' => [1, -1],
+    'E' => [1, 0],
+    'SE' => [1, 1],
+    'S' => [0, 1],
+    'SW' => [-1, 1],
+    'W' => [-1, 0],
+    'NW' => [-1, -1],
+  }->{$_[0]};
 }
 
 sub compassOpposite {
   {
-    'N'  => 'S',
+    'N' => 'S',
     'NE' => 'SW',
-    'E'  => 'W',
+    'E' => 'W',
     'SE' => 'NW',
-    'S'  => 'N',
+    'S' => 'N',
     'SW' => 'NE',
-    'W'  => 'E',
+    'W' => 'E',
     'NW' => 'SE',
-  }->{$_[0]}
+  }->{$_[0]};
 }
 
 sub assert {
@@ -255,7 +253,7 @@ sub assertGreaterThan {
   die "failed $msg: expected $act > $min\n" unless ($act > $min);
   print STDERR "$msg: $act was greater than $min\n" if (DEBUG || TEST == 2);
 }
-sub assertGT { assertGreaterThan(@_); }
+sub assertGT {assertGreaterThan(@_);}
 
 sub visit_checker {
   my %v = ();
@@ -277,7 +275,7 @@ sub minmax_xy {
 
 sub minmax_dim {
   my ($bb, @r) = @_;
-  for my $i (0..(@r-1)) {
+  for my $i (0 .. (@r - 1)) {
     my $v = shift @r;
     $bb->[$i]->[MIN] = $v
       if (!defined $bb->[$i]->[MIN] || $bb->[$i]->[MIN] > $v);
@@ -287,21 +285,21 @@ sub minmax_dim {
 }
 
 sub neighbourbb {
-  my($dim) = @_;
+  my ($dim) = @_;
   my @bb;
-  for (0..$dim-1) {
-    push @bb, [-1,1];
+  for (0 .. $dim - 1) {
+    push @bb, [-1, 1];
   }
   return \@bb;
 }
 
 sub neighbours {
-  my($dim) = @_;
+  my ($dim) = @_;
   my $bb = neighbourbb($dim);
   my @res;
   for my $rec (allin($bb)) {
     my $zeroes = 0;
-    for (0..$dim-1) {
+    for (0 .. $dim - 1) {
       if ($rec->[$_] == 0) {
         $zeroes++;
       }
@@ -318,22 +316,21 @@ sub allin {
     return [];
   }
   my @res;
-  my @a = allin($bb, $i+1);
+  my @a = allin($bb, $i + 1);
   for my $j ($bb->[$i]->[MIN] .. $bb->[$i]->[MAX]) {
     push @res, [$j, @$_] foreach (@a);
   }
   return @res;
 }
 
-
 sub allneighbours {
   my ($neighbourset, $all) = @_;
-  my $maxdim = @{$neighbourset->[0]}-1;
+  my $maxdim = @{$neighbourset->[0]} - 1;
   my %seen;
   my @res;
   for my $nb (@$neighbourset) {
     for my $c (@$all) {
-      my @nc = map { $c->[$_] + $nb->[$_] } (0..$maxdim);
+      my @nc = map {$c->[$_] + $nb->[$_]} (0 .. $maxdim);
       push @res, \@nc unless (exists $seen{"@nc"});
       $seen{"@nc"}++;
     }
@@ -346,61 +343,61 @@ sub dd {
 }
 
 sub log10 {
-  log($_[0])/log(10);
+  log($_[0]) / log(10);
 }
 
 sub red {
-  "\033[31m".$_[0]."\033[37m";
+  "\033[31m" . $_[0] . "\033[37m";
 }
 
 sub cyan {
-  "\033[36m".$_[0]."\033[37m";
+  "\033[36m" . $_[0] . "\033[37m";
 }
 
 sub yellow {
-  "\033[33m".$_[0]."\033[37m";
+  "\033[33m" . $_[0] . "\033[37m";
 }
 
 sub blue {
-  "\033[34m".$_[0]."\033[37m";
+  "\033[34m" . $_[0] . "\033[37m";
 }
 
 sub green {
-  "\033[32m".$_[0]."\033[37m";
+  "\033[32m" . $_[0] . "\033[37m";
 }
 
 sub magenta {
-  "\033[35m".$_[0]."\033[37m";
+  "\033[35m" . $_[0] . "\033[37m";
 }
 
 sub bold {
-  bold_on().$_[0].bold_off()
+  bold_on() . $_[0] . bold_off();
 }
 
 sub bold_on {
-  "\033[7m"
+  "\033[7m";
 }
 
 sub bold_off {
-  "\033[27m"
+  "\033[27m";
 }
 
 sub clear {
-  "\033[3J\033[H\033[2J"
+  "\033[3J\033[H\033[2J";
 }
 
 sub mcursor {
-  sprintf "\033".'[%d;%dH', $_[0]+1, $_[1]+1;
+  sprintf "\033" . '[%d;%dH', $_[0] + 1, $_[1] + 1;
 }
 
 sub pretty_grid {
   my ($min, $max, $sq_fn, $row_start_fn, $row_end_fn, $number) = @_;
-  $sq_fn //= sub { '!' };
-  $row_start_fn //= sub { '' };
-  $row_end_fn //= sub { '' };
+  $sq_fn //= sub {'!'};
+  $row_start_fn //= sub {''};
+  $row_end_fn //= sub {''};
   my $r = '';
-  my $NX = ($min->[X] < 0 ? 1 : 0) + int(1+log10($max->[X]));
-  my $NY = ($min->[Y] < 0 ? 1 : 0) + int(1+log10($max->[Y]));
+  my $NX = ($min->[X] < 0 ? 1 : 0) + int(1 + log10($max->[X]));
+  my $NY = ($min->[Y] < 0 ? 1 : 0) + int(1 + log10($max->[Y]));
   for my $y ($min->[Y] .. $max->[Y]) {
     $r .= $row_start_fn->($y);
     for my $x ($min->[X] .. $max->[X]) {
@@ -411,9 +408,9 @@ sub pretty_grid {
     $r .= "\n";
   }
   if ($number) {
-    for my $place (map { 10**$_ } reverse 0 .. $NX-1) {
+    for my $place (map {10**$_} reverse 0 .. $NX - 1) {
       for my $x ($min->[X] .. $max->[X]) {
-        $r .= abs($x) >= $place ? int(abs($x)/$place)%10 : ' ';
+        $r .= abs($x) >= $place ? int(abs($x) / $place) % 10 : ' ';
       }
       $r .= "\n";
     }
@@ -423,7 +420,7 @@ sub pretty_grid {
 
 sub safe_exists {
   my ($h, @k) = @_;
-  for my $i (0..@k-2) {
+  for my $i (0 .. @k - 2) {
     if (exists $h->{$k[$i]}) {
       $h = $h->{$k[$i]};
     } else {
@@ -435,7 +432,7 @@ sub safe_exists {
 
 sub safe_value {
   my ($h, @k) = @_;
-  for my $i (0..@k-2) {
+  for my $i (0 .. @k - 2) {
     if (exists $h->{$k[$i]}) {
       $h = $h->{$k[$i]};
     } else {
@@ -448,42 +445,176 @@ sub safe_value {
 sub rotate_lines {
   my ($lines) = @_;
   my @l;
-  for my $i (0..(length $lines->[0])-1) {
-    push @l, join '', map { substr $_, $i, 1 } reverse @$lines;
+  for my $i (0 .. (length $lines->[0]) - 1) {
+    push @l, join '', map {substr $_, $i, 1} reverse @$lines;
   }
   return \@l;
+}
+
+sub guess_struct {
+  my ($a) = @_;
+
+  #my @t = fields($a->[0]);
+  #if (all {my @tt = fields($_); "@tt" eq "@t"} @{$a}[1 .. @$a - 1]) {
+  #print STDERR "unifiable: @t\n";
+  #}
+
+  if (@{$a} == 0) {
+    return [];
+  }
+  if (@{$a} == 1) {
+    return $a->[0];
+  }
+  if (all {ref $_ eq 'ARRAY' && $_->[0] =~ /\D+/ && !ref $_->[0]} @$a) {
+    my @k = map {$_->[0]} @$a;
+    if (scalar(@k) == scalar(uniq @k)) {
+      my %h;
+      my @l;
+      for (@$a) {
+        my @r = @$_;
+        my $k = shift @r;
+        $h{$k} = guess_struct(\@r);
+        @l = @r;
+      }
+      my @drop;
+      for my $i (0..@l-1) {
+        push @drop, all { $_->[$i] eq $l[$i] } values %h;
+      }
+      for my $k (keys %h) {
+        my @n;
+        for my $i (0..@l-1) {
+          push @n, $h{$k}->[$i] unless ($drop[$i]);
+        }
+        $h{$k} = \@n;
+      }
+      return \%h;
+    }
+  }
+
+  if (ref $a->[0] eq 'ARRAY' && @{$a->[0]} == 1) {
+    $a->[0] = $a->[0]->[0];
+    if (any {ref $_} @{$a}[1 .. @$a - 1]) {
+      for (@{$a}[1 .. @$a - 1]) {
+        $_ = [$_] if (!ref $_);
+      }
+    }
+    return $a;
+  }
+  if (any {ref $_} @$a) {
+    for (@$a) {
+      $_ = [$_] if (!ref $_);
+    }
+  }
+  return $a;
+}
+
+sub fields {
+  my $r = ref $_[0];
+  return field_type($_[0]) unless ($r);
+  return $r unless ($r eq 'ARRAY');
+  map &field_type, @{$_[0]};
+}
+
+sub field_type {
+  local $_ = $_[0];
+  my $r = ref $_;
+  if ($r) {
+    if ($r eq 'ARRAY') {
+      return '[' . (join ',', map {field_type($_)} @$_) . ']';
+    }
+    if ($r eq 'HASH') {
+      my $k = (keys %$_)[0];
+      my $v = $r->{$k};
+      return '{' . field_type($k) . '>' . field_type($v) . '}';
+    }
+    return ref $_;
+  }
+  if ($_ eq '-' || $_ eq '+') {
+    return 'unary';
+  }
+  if (!/\D/) {
+    return 'num';
+  }
+  if (!/\S/) {
+    return 'space';
+  }
+  if (/^\d+\.\d+$/) {
+    return 'float';
+  }
+  if (/^[a-zA-Z]$/) {
+    return 'alpha';
+  }
+  if (/^[a-zA-Z]+$/) {
+    return 'alphaword';
+  }
+  if (/^[0-9a-zA-Z]+$/) {
+    return 'alphanum';
+  }
+  if (/^\s*(?:->|:|,|\.|=|\|)\s*$/) {
+    return 'separator';
+  }
+  return "unknown $_";
+}
+
+sub guess_2024 {
+  my ($in, $is_chunk) = @_;
+  local $_ = $in;
+  if (/\n\n/) {
+    my @a = map guess_2024($_, 1), split /\n\n/;
+    return guess_struct(\@a);
+  }
+  if (/\n/) {
+    my @a = split /\n/;
+    if (!$is_chunk && @a > 3) {
+      my $l = length $a[0];
+      if ($l >= 3 && all {length $_ == $l && !/\s/} @a) {
+        return DenseMap->from_lines(\@a);
+      }
+    }
+    if (any {/^\s/} @a) {
+    } else {
+      @a = map guess_2024($_), @a;
+    }
+    return guess_struct(\@a);
+  }
+  my @a = grep {$_ ne '' && field_type($_) !~ /^(?:space|separator)$/}
+    split /\s*([a-zA-Z]+[-+ ][a-zA-Z]+|[a-zA-Z]+|[-+]?[0-9]+)\b\s*/;
+  if (@a == 1) {
+    return $a[0];
+  }
+  return \@a;
 }
 
 sub guess_input {
   local $_ = $_[0];
   if (/\n\n/) {
-    my @a = map guess_input($_), split/\n\n/;
-    if (any { ref $_ } @a) {
+    my @a = map guess_input($_), split /\n\n/;
+    if (any {ref $_} @a) {
       for (@a) {
-        $_ = [$_] if (!ref$_);
+        $_ = [$_] if (!ref $_);
       }
     }
     return \@a;
   }
   if (/\n/) {
-    my @a = split/\n/;
-    if (any { /^\s/ } @a) {
+    my @a = split /\n/;
+    if (any {/^\s/} @a) {
     } else {
       @a = map guess_input($_), @a;
     }
-    if (any { ref $_ } @a) {
+    if (any {ref $_} @a) {
       for (@a) {
-        $_ = [$_] if (!ref$_);
+        $_ = [$_] if (!ref $_);
       }
     }
     return \@a;
   }
   for my $re (qr/\s*->\s*/, qr/,\s*/) {
     if (/$re/) {
-      my @a = map guess_input($_), split$re;
-      if (any { ref $_ } @a) {
+      my @a = map guess_input($_), split $re;
+      if (any {ref $_} @a) {
         for (@a) {
-          $_ = [$_] if (!ref$_);
+          $_ = [$_] if (!ref $_);
         }
       }
       return \@a;
@@ -491,9 +622,9 @@ sub guess_input {
   }
   if (/ /) {
     my @a = map guess_input($_), split;
-    if (any { ref $_ } @a) {
+    if (any {ref $_} @a) {
       for (@a) {
-        $_ = [$_] if (!ref$_);
+        $_ = [$_] if (!ref $_);
       }
     }
     return \@a;
@@ -509,6 +640,10 @@ sub read_slurp {
   $_ = <$fh>;
   close $fh;
   return $_;
+}
+
+sub read_2024 {
+  return guess_2024(read_slurp(shift));
 }
 
 sub read_guess {
@@ -533,7 +668,7 @@ sub read_lists {
   local $/ = $rs;
   my @c = <$fh>;
   chomp @c;
-  return [ map { [ split $fs, $_ ] } @c ];
+  return [map {[split $fs, $_]} @c];
 }
 
 sub read_listy_records {
@@ -542,7 +677,11 @@ sub read_listy_records {
   $rs //= "\n";
   $fs //= qr/\s+/;
   my $c = read_lists($file, $rs, $fs);
-  return [ map { { zip @$fn, @$_ } } @$c ];
+  return [
+    map {
+      {zip @$fn, @$_}
+    } @$c
+  ];
 }
 
 sub read_chunks {
@@ -563,7 +702,13 @@ sub read_chunky_records {
   $fs //= qr/\s+/;
   $kvs //= qr/:/;
   my $c = read_chunks($file, $rs);
-  return [ map { { map { split $kvs, $_ } split $fs, $_ } } @$c ];
+  return [
+    map {
+      {
+        map {split $kvs, $_} split $fs, $_
+      }
+    } @$c
+  ];
 }
 
 sub gcd {
@@ -583,16 +728,16 @@ sub lcm {
 }
 
 {
+
   package DenseMap;
-  use constant
-    {
-     HEIGHT => 0,
-     WIDTH => 1,
-     MAP => 2,
-     STRFN => 3,
-     X => 0,
-     Y => 1,
-    };
+  use constant {
+    HEIGHT => 0,
+    WIDTH => 1,
+    MAP => 2,
+    STRFN => 3,
+    X => 0,
+    Y => 1,
+  };
 
   sub _new {
     my ($pkg, $ref) = @_;
@@ -601,31 +746,34 @@ sub lcm {
 
   sub clone {
     my ($self) = @_;
-    (ref $self)->_new([
-                       $self->[HEIGHT],
-                       $self->[WIDTH],
-                       [@{$self->[MAP]}],
-                       $self->[STRFN]]);
+    (ref $self)
+      ->_new(
+      [$self->[HEIGHT], $self->[WIDTH], [@{$self->[MAP]}], $self->[STRFN]]);
   }
 
   sub empty_clone {
     my ($self) = @_;
-    (ref $self)->_new([
-                       $self->[HEIGHT],
-                       $self->[WIDTH],
-                       [],
-                       $self->[STRFN]]);
+    (ref $self)->_new([$self->[HEIGHT], $self->[WIDTH], [], $self->[STRFN]]);
+  }
+
+  sub from_lines {
+    my ($pkg, $l, $readfn, $strfn) = @_;
+    $readfn //= sub {$_[0]};
+    $strfn //= sub {$_[0]};
+    $pkg->_new(
+      [
+        (scalar @$l),
+        (length $l->[0]),
+        [map {$readfn->($_)} split //, join '', @$l], $strfn
+      ]
+    );
   }
 
   sub from_file {
     my ($pkg, $file, $readfn, $strfn) = @_;
-    $readfn //= sub { $_[0] };
-    $strfn //= sub { $_[0] };
-    my $l = AoC::Helpers::read_lines($file);
-    $pkg->_new([(scalar @$l),
-                (length $l->[0]),
-                [map { $readfn->($_) } split //, join '', @$l],
-                $strfn]);
+    $readfn //= sub {$_[0]};
+    $strfn //= sub {$_[0]};
+    $pkg->from_lines(AoC::Helpers::read_lines($file), $readfn, $strfn);
   }
 
   sub swap {
@@ -635,11 +783,11 @@ sub lcm {
   }
 
   sub len {
-    $_[0]->[WIDTH] * $_[0]->[HEIGHT]
+    $_[0]->[WIDTH] * $_[0]->[HEIGHT];
   }
 
   sub last_index {
-    $_[0]->len - 1
+    $_[0]->len - 1;
   }
 
   sub height {
@@ -650,17 +798,22 @@ sub lcm {
     $_[0]->[WIDTH];
   }
 
+  sub in {
+    my ($self, $x, $y) = @_;
+    (0 <= $x && $x < $self->[WIDTH] && 0 <= $y && $y < $self->[HEIGHT]);
+  }
+
   sub index {
     my ($self, $x, $y) = @_;
     if ($x < 0 || $x >= $self->[WIDTH] || $y < 0 || $y >= $self->[HEIGHT]) {
       return undef;
     }
-    return $self->[WIDTH]*$y + $x;
+    return $self->[WIDTH] * $y + $x;
   }
 
   sub xy {
     my ($self, $i) = @_;
-    [$i % $self->[WIDTH], int($i/$self->[WIDTH])];
+    [$i % $self->[WIDTH], int($i / $self->[WIDTH])];
   }
 
   sub get {
@@ -698,18 +851,28 @@ sub lcm {
 
   sub visit_xy {
     my ($self, $fn) = @_;
-    for my $y (0..$self->[HEIGHT]-1) {
-      for my $x (0..$self->[WIDTH]-1) {
-        $fn->($self, $x, $y, $self->[MAP]->[$self->[WIDTH]*$y + $x]);
+    for my $y (0 .. $self->[HEIGHT] - 1) {
+      for my $x (0 .. $self->[WIDTH] - 1) {
+        $fn->($self, $x, $y, $self->[MAP]->[$self->[WIDTH] * $y + $x]);
       }
     }
   }
 
   sub visit {
     my ($self, $fn) = @_;
-    for my $i (0..($self->[WIDTH]*$self->[HEIGHT])-1) {
-      $fn->($self, $i, $self->[MAP]->[$i])
+    for my $i (0 .. ($self->[WIDTH] * $self->[HEIGHT]) - 1) {
+      $fn->($self, $i, $self->[MAP]->[$i]);
     }
+  }
+
+  sub find_one {
+    my ($self, $ch) = @_;
+    for my $y (0 .. $self->[HEIGHT] - 1) {
+      for my $x (0 .. $self->[WIDTH] - 1) {
+        return [$x, $y] if ($self->[MAP]->[$self->[WIDTH] * $y + $x] eq $ch);
+      }
+    }
+    return;
   }
 
   sub neighbours4 {
@@ -717,16 +880,16 @@ sub lcm {
     my $xy = $self->xy($p);
     my @n;
     if ($xy->[X] > 0) {
-      push @n, $p-1;
+      push @n, $p - 1;
     }
-    if ($xy->[X] < $self->[WIDTH]-1) {
-      push @n, $p+1;
+    if ($xy->[X] < $self->[WIDTH] - 1) {
+      push @n, $p + 1;
     }
     if ($xy->[Y] > 0) {
-      push @n, $p-$self->[WIDTH];
+      push @n, $p - $self->[WIDTH];
     }
-    if ($xy->[Y] < $self->[HEIGHT]-1) {
-      push @n, $p+$self->[WIDTH];
+    if ($xy->[Y] < $self->[HEIGHT] - 1) {
+      push @n, $p + $self->[WIDTH];
     }
     return wantarray ? @n : \@n;
   }
@@ -735,12 +898,16 @@ sub lcm {
     my ($self, $p) = @_;
     my $xy = $self->xy($p);
     my @n;
-    for my $o ([-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]) {
+    for my $o ([-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0],
+      [1, 1])
+    {
       my $ox = $xy->[X] + $o->[X];
       my $oy = $xy->[Y] + $o->[Y];
-      push @n, $ox+$oy*$self->[WIDTH]
-        if (0 <= $ox && $ox < $self->[WIDTH] &&
-            0 <= $oy && $oy < $self->[HEIGHT]);
+      push @n, $ox + $oy * $self->[WIDTH]
+        if (0 <= $ox
+        && $ox < $self->[WIDTH]
+        && 0 <= $oy
+        && $oy < $self->[HEIGHT]);
     }
     return wantarray ? @n : \@n;
   }
@@ -748,9 +915,9 @@ sub lcm {
   sub pretty {
     my ($self) = @_;
     my $s = "";
-    for my $y (0..$self->[HEIGHT]-1) {
-      for my $x (0..$self->[WIDTH]-1) {
-        $s .= $self->[STRFN]->($self->get($x,$y));
+    for my $y (0 .. $self->[HEIGHT] - 1) {
+      for my $x (0 .. $self->[WIDTH] - 1) {
+        $s .= $self->[STRFN]->($self->get($x, $y));
       }
       $s .= "\n";
     }

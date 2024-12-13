@@ -12,15 +12,9 @@ $; = $" = ',';
 
 my $file = shift // "input.txt";
 
-my $reader = \&read_stuff;
+my $reader = \&read_2024;
 my $i = $reader->($file);
 my $i2 = $reader->($file);
-
-sub read_stuff {
-  my $file = shift;
-  my $in = read_lines($file);
-  return [split //, $in->[0]];
-}
 
 use constant {
   SIZE => 0,
@@ -86,7 +80,7 @@ sub calc {
   my ($in) = @_;
   my $p1 = 0;
   my $id = 0;
-  my @l = @$in;
+  my @l = split//,$in;
   my @n;
   my @n1;
   my @n2;

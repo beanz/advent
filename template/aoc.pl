@@ -13,7 +13,7 @@ $; = $" = ',';
 my $file = shift // "input.txt";
 
 #my $reader = \&read_stuff;
-my $reader = \&read_guess;
+my $reader = \&read_2024;
 my $i = $reader->($file);
 my $i2 = $reader->($file);
 
