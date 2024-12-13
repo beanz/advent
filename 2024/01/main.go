@@ -12,41 +12,39 @@ import (
 var input []byte
 
 func Parts(in []byte, args ...int) (int, int) {
-	a := make([]int, 0, 1024)
-	b := make([]int, 0, 1024)
+	as := make([]int, 0, 1024)
+	bs := make([]int, 0, 1024)
 	for i := 0; i < len(in); {
-		var n int
-		i, n = ChompUInt[int](in, i)
-		a = append(a, n)
-		for ; in[i] == ' '; i++ {
-		}
-		i, n = ChompUInt[int](in, i)
-		b = append(b, n)
-		i++
+		var j, a, b int
+		j, a = ChompUInt[int](in, i)
+		j, b = ChompUInt[int](in, j+3)
+		i = j + 1
+		as = append(as, a)
+		bs = append(bs, b)
 	}
-	sort.Ints(a)
-	sort.Ints(b)
+	sort.Ints(as)
+	sort.Ints(bs)
 	p1 := 0
-	for i := 0; i < len(a); i++ {
-		p1 += Abs(a[i] - b[i])
+	for i := 0; i < len(as); i++ {
+		p1 += Abs(as[i] - bs[i])
 	}
 	p2 := 0
-	for ai, bi := 0, 0; ai < len(a) && bi < len(b); {
-		if a[ai] < b[bi] {
+	for ai, bi := 0, 0; ai < len(as) && bi < len(bs); {
+		if as[ai] < bs[bi] {
 			ai++
 			continue
 		}
-		if a[ai] > b[bi] {
+		if as[ai] > bs[bi] {
 			bi++
 			continue
 		}
 		ac := 0
-		v := a[ai]
-		for ; ai < len(a) && a[ai] == v; ai++ {
+		v := as[ai]
+		for ; ai < len(as) && as[ai] == v; ai++ {
 			ac++
 		}
 		bc := 0
-		for ; bi < len(b) && b[bi] == v; bi++ {
+		for ; bi < len(bs) && bs[bi] == v; bi++ {
 			bc++
 		}
 		p2 += v * ac * bc
