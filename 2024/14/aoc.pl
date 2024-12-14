@@ -55,6 +55,7 @@ sub calc {
       $p[$i]->[PY] %= $h;
       $s{$p[$i]->[PX], $p[$i]->[PY]}++;
     }
+    pp(\@p, $w, $h, $d) if DEBUG;
     if ($d == 100) {
       $p1 = score(\@p, $qw, $qh);
       if ($p2 > 0) {
@@ -67,8 +68,6 @@ sub calc {
         last;
       }
     }
-    next unless DEBUG;
-    pp(\@p, $w, $h, $d);
   }
   return [$p1, $p2];
 }
