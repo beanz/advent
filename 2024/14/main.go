@@ -30,40 +30,34 @@ func Parts(in []byte, args ...int) (int, int) {
 		w, h = 11, 7
 	}
 	qw, qh := w/2, h/2
-	p1, p2 := 0, 0
+	q := [4]int{0, 0, 0, 0}
+	d := 100
+	for _, r := range rs {
+		x, y := Mod(r.x+r.vx*d, w), Mod(r.y+r.vy*d, h)
+		qi := 0
+		if x > qw {
+			qi += 1
+		}
+		if y > qh {
+			qi += 2
+		}
+		if x != qw && y != qh {
+			q[qi]++
+		}
+	}
+	p1, p2 := q[0]*q[1]*q[2]*q[3], 0
+LOOP:
 	for d := 1; d < 10000; d++ {
-		found := true
-		q := [4]int{0, 0, 0, 0}
 		seen := [12000]bool{}
 		for _, r := range rs {
 			x, y := Mod(r.x+r.vx*d, w), Mod(r.y+r.vy*d, h)
-			qi := 0
-			if x > qw {
-				qi += 1
-			}
-			if y > qh {
-				qi += 2
-			}
-			if x != qw && y != qh {
-				q[qi]++
-			}
 			if seen[x+y*w] {
-				found = false
+				continue LOOP
 			}
 			seen[x+y*w] = true
 		}
-		if d == 100 {
-			p1 = q[0] * q[1] * q[2] * q[3]
-			if p2 != 0 {
-				break
-			}
-		}
-		if found && p2 == 0 {
-			p2 = d
-			if p1 != 0 {
-				break
-			}
-		}
+		p2 = d
+		break
 	}
 	return p1, p2
 }

@@ -25,47 +25,36 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         (101, 103)
     };
     let (qw, qh) = (w / 2, h / 2);
-    let (mut p1, mut p2) = (0, 0);
-    for d in 1..=10000 {
-        let mut found = true;
-        let mut q: [usize; 4] = [0; 4];
+    let mut q: [usize; 4] = [0; 4];
+    let d = 100;
+    for r in &robots {
+        let x = (r.x + r.vx * d).rem_euclid(w);
+        let y = (r.y + r.vy * d).rem_euclid(h);
+        let mut qi = 0;
+        if x > qw {
+            qi += 1;
+        }
+        if y > qh {
+            qi += 2;
+        }
+        if x != qw && y != qh {
+            q[qi] += 1;
+        }
+    }
+    let p1 = q[0] * q[1] * q[2] * q[3];
+    let mut p2 = 0;
+    'outer: for d in 1..=10000 {
         let mut seen = [false; 12000];
         for r in &robots {
-            let mut x = (r.x + r.vx * d) % w;
-            if x < 0 {
-                x += w;
-            }
-            let mut y = (r.y + r.vy * d) % h;
-            if y < 0 {
-                y += h;
-            }
-            let mut qi = 0;
-            if x > qw {
-                qi += 1;
-            }
-            if y > qh {
-                qi += 2;
-            }
-            if x != qw && y != qh {
-                q[qi] += 1;
-            }
+            let x = (r.x + r.vx * d).rem_euclid(w);
+            let y = (r.y + r.vy * d).rem_euclid(h);
             if seen[(x + y * w) as usize] {
-                found = false;
+                continue 'outer;
             }
             seen[(x + y * w) as usize] = true;
         }
-        if d == 100 {
-            p1 = q[0] * q[1] * q[2] * q[3];
-            if p2 != 0 {
-                break;
-            }
-        }
-        if found && p2 == 0 {
-            p2 = d as usize;
-            if p1 != 0 {
-                break;
-            }
-        }
+        p2 = d as usize;
+        break;
     }
     (p1, p2)
 }
