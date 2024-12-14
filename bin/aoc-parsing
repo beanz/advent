@@ -207,6 +207,36 @@ sub chunks_of_n_ints {
   print "\t}\n";
 }
 
+sub rust_lines_of_n_ints {
+  my ($type, $sep) = @_;
+  if ($type eq 'uint') {
+    $type = 'uint::<usize>';
+  } else {
+    $type = 'int::<isize>';
+  }
+  my @sep = @$sep;
+  my $var = 'a';
+  my @vars;
+  my @chomps;
+  for my $i (0 .. @sep - 1) {
+    my $offset = $i == 0 ? 'i' : 'j';
+    my $ls = length $sep[$i];
+    $offset .= $ls == 0 ? '' : ' + ' . $ls;
+    push @chomps, "let (j, $var) = aoc::read::${type}(inp, $offset);";
+    push @vars, $var;
+    $var++;
+  }
+  print "\tlet mut i = 0;\n";
+  print "\twhile i < inp.len() {\n";
+  for (@chomps) {
+    print "\t\t$_\n";
+  }
+  print "\t\ti = j + 1;\n";
+  print "\n\t\t// do something with @vars\n";
+  print "\t\tprintln!(\"".(join ', ', map { '{}' } @vars)."\\n\", ".(join ', ', @vars).");\n";
+  print "\t}\n";
+}
+
 sub rust_chunks_of_n_ints {
   my ($type, $sep) = @_;
   if ($type eq 'uint') {

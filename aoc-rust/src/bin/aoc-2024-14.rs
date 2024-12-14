@@ -1,0 +1,92 @@
+use smallvec::SmallVec;
+
+#[derive(Debug)]
+struct Robot {
+    x: i32,
+    y: i32,
+    vx: i32,
+    vy: i32,
+}
+
+fn parts(inp: &[u8]) -> (usize, usize) {
+    let mut i = 0;
+    let mut robots = SmallVec::<[Robot; 512]>::new();
+    while i < inp.len() {
+        let (j, x) = aoc::read::int::<i32>(inp, i + 2);
+        let (j, y) = aoc::read::int::<i32>(inp, j + 1);
+        let (j, vx) = aoc::read::int::<i32>(inp, j + 3);
+        let (j, vy) = aoc::read::int::<i32>(inp, j + 1);
+        i = j + 1;
+        robots.push(Robot { x, y, vx, vy });
+    }
+    let (w, h) = if robots.len() <= 12 {
+        (11, 7)
+    } else {
+        (101, 103)
+    };
+    let (qw, qh) = (w / 2, h / 2);
+    let (mut p1, mut p2) = (0, 0);
+    for d in 1..=10000 {
+        let mut found = true;
+        let mut q: [usize; 4] = [0; 4];
+        let mut seen = [false; 12000];
+        for r in &robots {
+            let mut x = (r.x + r.vx * d) % w;
+            if x < 0 {
+                x += w;
+            }
+            let mut y = (r.y + r.vy * d) % h;
+            if y < 0 {
+                y += h;
+            }
+            let mut qi = 0;
+            if x > qw {
+                qi += 1;
+            }
+            if y > qh {
+                qi += 2;
+            }
+            if x != qw && y != qh {
+                q[qi] += 1;
+            }
+            if seen[(x + y * w) as usize] {
+                found = false;
+            }
+            seen[(x + y * w) as usize] = true;
+        }
+        if d == 100 {
+            p1 = q[0] * q[1] * q[2] * q[3];
+            if p2 != 0 {
+                break;
+            }
+        }
+        if found && p2 == 0 {
+            p2 = d as usize;
+            if p1 != 0 {
+                break;
+            }
+        }
+    }
+    (p1, p2)
+}
+
+fn main() {
+    let inp = std::fs::read(aoc::input_file()).expect("read error");
+    aoc::benchme(|bench: bool| {
+        let (p1, p2) = parts(&inp);
+        if !bench {
+            println!("Part 1: {}", p1);
+            println!("Part 2: {}", p2);
+        }
+    })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parts_works() {
+        aoc::test::auto("../2024/14/", parts);
+    }
+}
