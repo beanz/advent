@@ -95,6 +95,15 @@ if (scalar(uniq @nonint) == 1) {
   $subs->{lines_of_n_ints}->('uint', \@sep);
   exit;
 }
+@nonint = map {my $l = $_; $l =~ s/[-+]?\d+/!int!/g; $l} @l;
+if (scalar(uniq @nonint) == 1) {
+  my $n = () = $nonint[0] =~ m/!int!/g;
+  my @sep = split /!int!/, $nonint[0];
+  info "looks like lines with $n ints with " . (join ',', map {"'$_'"} @sep);
+  $subs->{lines_of_n_ints}->('int', \@sep);
+  exit;
+}
+
 
 print;
 
