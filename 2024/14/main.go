@@ -22,6 +22,9 @@ func Parts(in []byte, args ...int) (int, int) {
 		j, y = ChompInt[int](in, j+1)
 		j, vx = ChompInt[int](in, j+3)
 		j, vy = ChompInt[int](in, j+1)
+		if in[j] == ',' {
+			j += 2
+		}
 		i = j + 1
 		rs = append(rs, robot{x, y, vx, vy})
 	}
