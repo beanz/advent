@@ -50,6 +50,9 @@ func robot(m []byte, moves []byte, p2 bool) int {
 		m[x+y*(w+1)] = ch
 	}
 
+	boxes := make([]box, 0, 1024)
+	check := make([][2]int, 0, 128)
+	ncheck := make([][2]int, 0, 128)
 	for _, m := range moves {
 		if m == '\n' {
 			continue
@@ -65,10 +68,9 @@ func robot(m []byte, moves []byte, p2 bool) int {
 			continue
 		}
 		move := true
-		boxes := []box{}
 		if p2 && dx == 0 {
-			check := [][2]int{{rx, ry}}
-			ncheck := [][2]int{}
+			check = append(check, [2]int{rx, ry})
+			ncheck = ncheck[:0]
 			for len(check) > 0 {
 				for _, c := range check {
 					cx, cy := c[0], c[1]+dy
@@ -106,6 +108,7 @@ func robot(m []byte, moves []byte, p2 bool) int {
 			}
 		}
 		if !move {
+			boxes = boxes[:0]
 			continue
 		}
 		for _, b := range boxes {
@@ -114,6 +117,7 @@ func robot(m []byte, moves []byte, p2 bool) int {
 		for _, b := range boxes {
 			set(b.x+dx, b.y+dy, b.ch)
 		}
+		boxes = boxes[:0]
 		rx, ry = nx, ny
 	}
 	return score(m, w, h)
