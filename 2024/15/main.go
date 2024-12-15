@@ -14,7 +14,7 @@ var input []byte
 
 func Parts(in []byte, args ...int) (int, int) {
 	m1, moves, _ := bytes.Cut(in, []byte{'\n', '\n'})
-	m2 := make([]byte, 0, 65536)
+	m2 := make([]byte, 0, 6000)
 	for _, ch := range m1 {
 		switch ch {
 		case '\n':
