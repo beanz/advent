@@ -13,3 +13,7 @@ test3.txt
 input.txt
 1511865
 1519991
+---END---
+flip.txt
+1502827
+1498454
