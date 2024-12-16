@@ -64,18 +64,22 @@ func Parts(in []byte, args ...int) (int, int) {
 		work[0] = append(work[0], Rec{x: tx, y: ty, dir: d, cost: 0})
 	}
 	seen = [80000]bool{}
-	td := [80000]int{}
+	p2set := [80000]bool{}
+	p2 := 0
 	for wi := 0; wi < QUEUE; wi++ {
 		for len(work[wi]) > 0 {
 			cur := work[wi][0]
 			work[wi] = work[wi][1:]
 			k := cur.K()
-
-			if cur.cost+sd[k]-1 > p1 { // this is wrong when sd[k] == -1 but isn't a problem
+			cost := cur.cost + sd[k] - 1
+			if cost > p1 {
 				continue
 			}
-			if td[k] == 0 {
-				td[k] = 1 + cur.cost
+			if cost == p1 {
+				if !p2set[k&^3] {
+					p2++
+					p2set[k&^3] = true
+				}
 			}
 			if seen[k] {
 				continue
@@ -87,24 +91,6 @@ func Parts(in []byte, args ...int) (int, int) {
 			}
 			push(cur.x, cur.y, cur.cost+1000, (cur.dir+1)&3)
 			push(cur.x, cur.y, cur.cost+1000, (cur.dir+3)&3)
-		}
-	}
-	p2 := 0
-	for y := 1; y < h-1; y++ {
-		for x := 1; x < w-1; x++ {
-			k := (uint32(x)*141 + uint32(y)) << 2
-			for d := byte(0); d < 4; d++ {
-				kd := k + uint32(d)
-				sd := sd[kd] - 1
-				td := td[kd] - 1
-				if sd == -1 || td == -1 {
-					continue
-				}
-				if sd+td == p1 {
-					p2++
-					break
-				}
-			}
 		}
 	}
 	return p1, p2
