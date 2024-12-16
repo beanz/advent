@@ -89,23 +89,20 @@ func Parts(in []byte, args ...int) (int, int) {
 			push(cur.x, cur.y, cur.cost+1000, (cur.dir+3)&3)
 		}
 	}
-	seats := [80000]bool{}
 	p2 := 0
-	for y := 0; y < h; y++ {
-		for x := 0; x < w; x++ {
+	for y := 1; y < h-1; y++ {
+		for x := 1; x < w-1; x++ {
+			k := (uint32(x)*141 + uint32(y)) << 2
 			for d := byte(0); d < 4; d++ {
-				k := (uint32(x)*141+uint32(y))<<2 + uint32(d)
-				sd := sd[k] - 1
-				td := td[k] - 1
+				kd := k + uint32(d)
+				sd := sd[kd] - 1
+				td := td[kd] - 1
 				if sd == -1 || td == -1 {
 					continue
 				}
 				if sd+td == p1 {
-					k &^= 3
-					if !seats[k] {
-						p2++
-					}
-					seats[k] = true
+					p2++
+					break
 				}
 			}
 		}
