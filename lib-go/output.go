@@ -7,6 +7,23 @@ import (
 	"strings"
 )
 
+func DB(argv ...interface{}) {
+	if !DEBUG() {
+		return
+	}
+	LG(argv...)
+}
+
+func LG(argv ...interface{}) {
+	var sb strings.Builder
+	sb.WriteString("%v")
+	for i := 1; i < len(argv); i++ {
+		sb.WriteString(" %v")
+	}
+	sb.WriteByte('\n')
+	fmt.Fprintf(os.Stderr, sb.String(), argv...)
+}
+
 func VISUAL() bool {
 	return os.Getenv("AoC_VISUAL") != ""
 }
