@@ -1,0 +1,11 @@
+test1.txt
+7036
+45
+---END---
+test2.txt
+11048
+64
+---END---
+input.txt
+104516
+545
