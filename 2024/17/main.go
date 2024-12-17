@@ -52,6 +52,35 @@ func comp(exp []byte, got []byte, i int) bool {
 }
 
 func run(prog []byte, a int, out []byte) []byte {
+	if len(prog) != 31 {
+		return runSlow(prog, a, out)
+	}
+	x := int(prog[6] - '0')
+	var y int
+	if prog[12] == '1' {
+		y = int(prog[14] - '0')
+	} else {
+		y = int(prog[18] - '0')
+	}
+	out = out[:0]
+	var b, c int
+	for a > 0 {
+		b = a & 7
+		b ^= x
+		c = a >> b
+		b ^= y
+		b ^= c
+		a >>= 3
+		if len(out) == 0 {
+			out = append(out, byte(b&7+'0'))
+		} else {
+			out = append(out, ',', byte(b&7+'0'))
+		}
+	}
+	return out
+}
+
+func runSlow(prog []byte, a int, out []byte) []byte {
 	out = out[:0]
 	var b, c int
 	ip := 0
