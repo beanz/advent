@@ -12,16 +12,12 @@ var input []byte
 
 func Parts(in []byte, args ...int) (string, int) {
 	i, a := ChompUInt[int](in, 12)
-	i += 39
-	expect := in[i : len(in)-1]
-	prog := make([]int, 0, 30)
-	for ; i < len(in); i += 2 {
-		prog = append(prog, int(in[i]-'0'))
-	}
+	prog := in[i+39 : len(in)-1]
 	out1 := [32]byte{}
 	p1 := run(prog, a, out1[:0])
 	out := [32]byte{}
 	p2 := 0
+	l := (len(prog) + 1) / 2
 	todo := [][2]int{{1, 0}}
 	for len(todo) > 0 {
 		cur := todo[0]
@@ -29,8 +25,8 @@ func Parts(in []byte, args ...int) (string, int) {
 		for c := 0; c < 8; c++ {
 			v := c + 8*cur[1]
 			got := run(prog, v, out[:0])
-			if comp(expect, got, cur[0]) {
-				if cur[0] == len(prog) {
+			if comp(prog, got, cur[0]) {
+				if cur[0] == l {
 					p2 = v
 					todo = todo[:0]
 					break
@@ -55,17 +51,17 @@ func comp(exp []byte, got []byte, i int) bool {
 	return true
 }
 
-func run(prog []int, a int, out []byte) []byte {
+func run(prog []byte, a int, out []byte) []byte {
 	out = out[:0]
 	var b, c int
 	ip := 0
-	for ip < len(prog)-1 {
-		op := prog[ip]
-		literal := prog[ip+1]
+	for ip < len(prog)-2 {
+		op := prog[ip] - '0'
+		literal := int(prog[ip+2] - '0')
 		var combo int
 		switch literal {
 		case 0, 1, 2, 3:
-			combo = literal
+			combo = int(literal)
 		case 4:
 			combo = a
 		case 5:
@@ -82,7 +78,7 @@ func run(prog []int, a int, out []byte) []byte {
 			b = combo & 7
 		case 3:
 			if a != 0 {
-				ip = literal
+				ip = literal * 2
 				continue
 			}
 		case 4:
@@ -98,7 +94,7 @@ func run(prog []int, a int, out []byte) []byte {
 		default:
 			c = a >> combo
 		}
-		ip += 2
+		ip += 4
 	}
 	return out
 }

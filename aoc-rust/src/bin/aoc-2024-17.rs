@@ -14,13 +14,14 @@ fn parts(inp: &[u8]) -> ([u8; 30], usize) {
     out.clear();
     let mut p2 = 0;
     let mut todo = aoc::deque::Deque::<(usize, usize), 512>::default();
+    let l = (1 + prog.len()) / 2;
     todo.push((1, 0));
     'outer: while let Some((i, a)) = todo.pop() {
         for c in 0..8 {
             let v = c + 8 * a;
             run(prog, v, &mut out);
             if comp(prog, &out, i) {
-                if (i - 1) * 2 + 1 == prog.len() {
+                if i == l {
                     p2 = v;
                     break 'outer;
                 }
@@ -67,7 +68,7 @@ fn run(prog: &[u8], a: usize, out: &mut SmallVec<[u8; SIZE]>) {
             2 => b = combo & 7,
             3 => {
                 if a != 0 {
-                    ip = lit; // dodgy
+                    ip = lit * 2;
                     continue;
                 }
             }
