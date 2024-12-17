@@ -18,10 +18,9 @@ func Parts(in []byte, args ...int) (string, int) {
 	for ; i < len(in); i += 2 {
 		prog = append(prog, int(in[i]-'0'))
 	}
-	out1 := [30]byte{}
+	out1 := [32]byte{}
 	p1 := run(prog, a, out1[:0])
-	out := [30]byte{}
-	a = 0
+	out := [32]byte{}
 	p2 := 0
 	todo := [][2]int{{1, 0}}
 	for len(todo) > 0 {
@@ -32,24 +31,23 @@ func Parts(in []byte, args ...int) (string, int) {
 			got := run(prog, v, out[:0])
 			if comp(expect, got, cur[0]) {
 				if cur[0] == len(prog) {
-					p2 = c + 8*cur[1]
+					p2 = v
 					todo = todo[:0]
 					break
 				}
-				todo = append(todo, [2]int{cur[0] + 1, c + 8*cur[1]})
+				todo = append(todo, [2]int{cur[0] + 1, v})
 			}
 		}
-		a++
 	}
 	return string(p1), p2
 }
 
 func comp(exp []byte, got []byte, i int) bool {
-	if len(got) < (i-1)*2+1 {
+	if len(got) < i*2-1 {
 		return false
 	}
 	for j := i; j > 0; j -= 1 {
-		k := (j-1)*2 + 1
+		k := j*2 - 1
 		if exp[len(exp)-k] != got[len(got)-k] {
 			return false
 		}
