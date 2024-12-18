@@ -40,9 +40,12 @@ func defrag(file []block, free []block) int {
 }
 
 func Parts(in []byte, args ...int) (int, int) {
-	file2 := make([]block, 0, 10240)
-	free2 := make([]block, 0, 10240)
-	blocks := make([]block, 0, 20000)
+	file2_back := [10240]block{}
+	file2 := file2_back[:0]
+	free2_back := [10240]block{}
+	free2 := free2_back[:0]
+	block_back := [20000]block{}
+	blocks := block_back[:0]
 	i := 0
 	for j, ch := range in[:len(in)-1] {
 		size := int(ch - '0')
