@@ -62,6 +62,11 @@ where
         self.len -= 1;
         Some(r)
     }
+    pub fn clear(&mut self) {
+        self.len = 0;
+        self.head = 0;
+        self.tail = 0;
+    }
 }
 
 #[cfg(test)]
