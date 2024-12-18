@@ -27,7 +27,14 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             }
         }
 
-        if nums.windows(2).all(|w| rules[(w[0] << 7) + w[1]]) {
+        let mut valid = true;
+        for i in 0..nums.len() - 1 {
+            if !rules[(nums[i] << 7) + nums[i + 1]] {
+                valid = false;
+                break;
+            }
+        }
+        if valid {
             p1 += nums[nums.len() / 2];
             nums.clear();
             continue;
