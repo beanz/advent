@@ -19,35 +19,37 @@ my $i2 = $reader->($file);
 sub read_stuff {
   my $file = shift;
   my $in = read_guess($file);
-  dd([$in], [qw/in/]);
   my %m;
   for my $i (0 .. @$in - 1) {
     $m{$in->[$i]->[0], $in->[$i]->[1]} = $i;
   }
   if (@$in < 100) {
-    return [\%m, [6, 6], 12];
+    return [\%m, [6, 6], 12, $in];
   }
-  return [\%m, [70, 70], 1024];
+  return [\%m, [70, 70], 1024, $in];
 }
 
-use constant {ST => 2,};
+use constant {ST => 2};
 
 sub calc {
   my ($in) = @_;
-  dd([$in], [qw/in/]);
-  my ($m, $end, $corrupt) = @$in;
-  print STDERR "@$end $corrupt\n";
+  my ($m, $end, $corrupt, $lines) = @$in;
   my ($w, $h) = ($end->[X] + 1, $end->[Y] + 1);
   my $p1 = search($m, $end, $w, $h, $corrupt);
-  for my $i ($corrupt+1...10000000) {
-    print STDERR "$i\r                   ";
-    my $s = search($m, $end, $w, $h, $i);
-    unless (defined $s) {
-      print STDERR "\n\n";
-      return [$p1, $i];
+  my $hi = @$lines;
+  my $lo = $corrupt + 1;
+  while (1) {
+    my $mid = int(($lo + $hi) / 2);
+    if (defined search($m, $end, $w, $h, $mid)) {
+      $lo = $mid + 1;
+    } else {
+      $hi = $mid;
+    }
+    if ($lo == $hi) {
+      return [$p1, "@{$lines->[$lo-1]}"];
     }
   }
-  return [$p1, 0];
+  return [$p1, "?,?"];
 }
 
 sub search {
@@ -80,7 +82,6 @@ sub pp {
   for my $s (@$p) {
     $p{$s->[X], $s->[Y]} = 1;
   }
-  dd([\%p]);
   for my $y (0 .. $h - 1) {
     for my $x (0 .. $w - 1) {
       if ($p{$x, $y}) {
