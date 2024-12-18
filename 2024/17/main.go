@@ -18,7 +18,8 @@ func Parts(in []byte, args ...int) (string, int) {
 	out := [32]byte{}
 	p2 := 0
 	l := (len(prog) + 1) / 2
-	todo := [][2]int{{1, 0}}
+	todo := make([][2]int, 0, 1024)
+	todo = append(todo, [2]int{1, 0})
 	for len(todo) > 0 {
 		cur := todo[0]
 		todo = todo[1:]
@@ -131,7 +132,7 @@ func runSlow(prog []byte, a int, out []byte) []byte {
 func main() {
 	p1, p2 := Parts(InputBytes(input))
 	if !benchmark {
-		fmt.Printf("Part 1: %s\n", string(p1))
+		fmt.Printf("Part 1: %s\n", p1)
 		fmt.Printf("Part 2: %d\n", p2)
 	}
 }
