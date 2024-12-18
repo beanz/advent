@@ -27,10 +27,12 @@ func Parts(in []byte, args ...int) (int, int) {
 		}
 		return '.'
 	}
+	todo_back := [1024]rec{}
 	score := func(x, y int, z byte) int {
 		sc := 0
-		todo := []rec{{x, y, z}}
-		seen := make([]bool, len(in))
+		todo := todo_back[:0]
+		todo = append(todo, rec{x, y, z})
+		seen := [2048]bool{}
 		for len(todo) > 0 {
 			x, y, z := todo[0].x, todo[0].y, todo[0].z
 			todo = todo[1:]
