@@ -10,7 +10,7 @@ NIM=nim
 ifneq (,$(wildcard main.go))
 ALL += aoc-go
 CHECK += aoc-go
-CLEAN += aoc-go gocpu.out cover.out
+CLEAN += aoc-go gocpu.out cover.out gomem.out
 TEST += test-go
 HYPERFINE += aoc-go
 endif
@@ -157,7 +157,7 @@ aoc-gccgo: main.go
 	mv main $@
 
 gocpu.out: main.go
-	go test $$(grep -q Bench *_test.go && echo "-run=XXX -benchmem -benchtime=5s -bench .") -cpuprofile=$@
+	go test $$(grep -q Bench *_test.go && echo "-run=XXX -benchmem -benchtime=5s -bench .") -cpuprofile=$@ -memprofile=gomem.out
 
 go-prof: gocpu.out
 	go tool pprof -http=":9999" $<
