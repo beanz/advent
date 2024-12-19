@@ -1,7 +1,6 @@
-use heapless::FnvIndexMap;
 use smallvec::SmallVec;
 
-const MEM_SIZE: usize = 32768;
+const WAYS_SIZE: usize = 64;
 
 fn parts(inp: &[u8]) -> (usize, usize) {
     let mut patterns = SmallVec::<[&[u8]; 512]>::new();
@@ -23,11 +22,11 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         }
     }
     let (mut p1, mut p2) = (0, 0);
-    let mut mem = FnvIndexMap::<&[u8], usize, MEM_SIZE>::new();
+    let mut ways: [usize; WAYS_SIZE] = [0; WAYS_SIZE];
     while i < inp.len() {
         if inp[i] == b'\n' {
             let towel = &inp[j..i];
-            let m = matches(&patterns, towel, &mut mem);
+            let m = matches(&patterns, towel, &mut ways);
             if m != 0 {
                 p1 += 1;
                 p2 += m;
@@ -42,36 +41,29 @@ fn parts(inp: &[u8]) -> (usize, usize) {
 fn matches<'a>(
     patterns: &SmallVec<[&[u8]; 512]>,
     towel: &'a [u8],
-    mem: &mut FnvIndexMap<&'a [u8], usize, MEM_SIZE>,
+    ways: &mut [usize; WAYS_SIZE],
 ) -> usize {
-    if towel.len() == 0 {
-        return 1;
-    }
-    if let Some(v) = mem.get(towel) {
-        return *v;
-    }
-    let mut c = 0;
-    for pattern in patterns {
-        if towel.len() < pattern.len() {
+    let tl = towel.len();
+    ways.fill(0);
+    ways[0] = 1;
+    for i in 0..tl {
+        if ways[i] == 0 {
             continue;
         }
-        let mut m = true;
-        for i in 0..pattern.len() {
-            if pattern[i] != towel[i] {
-                m = false;
-                break;
+        'pattern: for pattern in patterns {
+            let l = pattern.len();
+            if towel[i..].len() < l {
+                continue;
             }
-        }
-        if m {
-            if towel.len() == pattern.len() {
-                c += 1
-            } else {
-                c += matches(patterns, &towel[pattern.len()..], mem);
+            for j in 0..pattern.len() {
+                if pattern[j] != towel[i + j] {
+                    continue 'pattern;
+                }
             }
+            ways[i + l] += ways[i]
         }
     }
-    mem.insert(towel, c).expect("overflow");
-    c
+    return ways[tl];
 }
 
 fn main() {

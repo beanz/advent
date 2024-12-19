@@ -1,9 +1,9 @@
 package main
 
 import (
+	"bytes"
 	_ "embed"
 	"fmt"
-	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -12,18 +12,18 @@ import (
 var input []byte
 
 func Parts(in []byte, args ...int) (int, int) {
-	pat := []string{}
+	pat := make([][]byte, 0, 512)
 	i := 0
 	j := 0
 PL:
 	for {
 		switch in[i] {
 		case ',':
-			pat = append(pat, string(in[j:i]))
+			pat = append(pat, in[j:i])
 			i += 2
 			j = i
 		case '\n':
-			pat = append(pat, string(in[j:i]))
+			pat = append(pat, in[j:i])
 			i += 2
 			j = i
 			break PL
@@ -32,13 +32,12 @@ PL:
 		}
 	}
 	p1, p2 := 0, 0
-	mem := make(map[string]int, 20000)
-	mem[""] = 1
+	ways := [61]int{}
 	for i < len(in) {
 		if in[i] == '\n' {
-			towel := string(in[j:i])
+			towel := in[j:i]
 			j = i + 1
-			if m := matches(pat, towel, mem); m != 0 {
+			if m := matches(pat, towel, ways); m != 0 {
 				p1++
 				p2 += m
 			}
@@ -48,19 +47,23 @@ PL:
 	return p1, p2
 }
 
-func matches(patterns []string, towel string, mem map[string]int) int {
-	if v, ok := mem[towel]; ok {
-		return v
+func matches(patterns [][]byte, towel []byte, ways [61]int) int {
+	for i := 0; i < len(towel); i++ {
+		ways[i+1] = 0
 	}
-	c := 0
-	// terminated by mem[""] = 1 entry so no condition needed here
-	for _, pattern := range patterns {
-		if after, found := strings.CutPrefix(towel, pattern); found {
-			c += matches(patterns, after, mem)
+	ways[0] = 1
+	for i := 0; i < len(towel); i++ {
+		if ways[i] == 0 {
+			continue
+		}
+		for _, pattern := range patterns {
+			l := len(pattern)
+			if len(towel[i:]) >= l && bytes.Equal(towel[i:i+l], pattern) {
+				ways[i+l] += ways[i]
+			}
 		}
 	}
-	mem[towel] = c
-	return c
+	return ways[len(towel)]
 }
 
 func main() {
