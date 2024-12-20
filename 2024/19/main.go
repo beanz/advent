@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	_ "embed"
 	"fmt"
 
@@ -11,33 +10,57 @@ import (
 //go:embed input.txt
 var input []byte
 
+var patterns = [16777216]bool{}
+
 func Parts(in []byte, args ...int) (int, int) {
-	pat := make([][]byte, 0, 512)
 	i := 0
-	j := 0
+	pat := 0
 PL:
 	for {
 		switch in[i] {
 		case ',':
-			pat = append(pat, in[j:i])
+			patterns[pat] = true
+			pat = 0
 			i += 2
-			j = i
 		case '\n':
-			pat = append(pat, in[j:i])
+			patterns[pat] = true
 			i += 2
-			j = i
 			break PL
 		default:
+			pat = (pat << 3) + col(in[i])
 			i++
 		}
 	}
-	p1, p2 := 0, 0
 	ways := [61]int{}
+	matches := func(towel []byte) int {
+		for i := 0; i < len(towel); i++ {
+			ways[i+1] = 0
+		}
+		ways[0] = 1
+		for i := 0; i < len(towel); i++ {
+			if ways[i] == 0 {
+				continue
+			}
+			t := 0
+			for j := 0; j < 8; j++ {
+				if i+j >= len(towel) {
+					continue
+				}
+				t = t<<3 + col(towel[i+j])
+				if patterns[t] {
+					ways[i+j+1] += ways[i]
+				}
+			}
+		}
+		return ways[len(towel)]
+	}
+	p1, p2 := 0, 0
+	j := i
 	for i < len(in) {
 		if in[i] == '\n' {
 			towel := in[j:i]
 			j = i + 1
-			if m := matches(pat, towel, ways); m != 0 {
+			if m := matches(towel); m != 0 {
 				p1++
 				p2 += m
 			}
@@ -47,24 +70,29 @@ PL:
 	return p1, p2
 }
 
-func matches(patterns [][]byte, towel []byte, ways [61]int) int {
-	for i := 0; i < len(towel); i++ {
-		ways[i+1] = 0
+func col(ch byte) int {
+	switch ch {
+	case 'b':
+		return B
+	case 'g':
+		return G
+	case 'r':
+		return R
+	case 'u':
+		return U
+	case 'w':
+		return W
 	}
-	ways[0] = 1
-	for i := 0; i < len(towel); i++ {
-		if ways[i] == 0 {
-			continue
-		}
-		for _, pattern := range patterns {
-			l := len(pattern)
-			if len(towel[i:]) >= l && bytes.Equal(towel[i:i+l], pattern) {
-				ways[i+l] += ways[i]
-			}
-		}
-	}
-	return ways[len(towel)]
+	panic("invalid color?")
 }
+
+const (
+	B = iota + 1
+	G
+	R
+	U
+	W
+)
 
 func main() {
 	p1, p2 := Parts(InputBytes(input))
