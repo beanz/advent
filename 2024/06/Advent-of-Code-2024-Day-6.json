@@ -6,7 +6,7 @@
         "type": "procedures_defnoreturn",
         "id": "1*|-]H,YveG~Kww@C{-M",
         "x": 10,
-        "y": 4484,
+        "y": 4508,
         "collapsed": true,
         "extraState": {
           "params": [
@@ -242,7 +242,7 @@
         "type": "procedures_defnoreturn",
         "id": "(1u*-~57?g{p{$Iix,lj",
         "x": 10,
-        "y": 4396,
+        "y": 4420,
         "collapsed": true,
         "fields": {
           "NAME": "set_inputs"
@@ -423,7 +423,7 @@
                                                         "type": "math_number",
                                                         "id": "j=,Au@4K}8Og};lSi_qC",
                                                         "fields": {
-                                                          "NUM": 2
+                                                          "NUM": 20
                                                         }
                                                       }
                                                     }
@@ -949,8 +949,8 @@
                                                                                       },
                                                                                       "next": {
                                                                                         "block": {
-                                                                                          "type": "rotate_model_xyz",
-                                                                                          "id": "]|R^c)9[+2Li/.g.PTQ:",
+                                                                                          "type": "rotate_to",
+                                                                                          "id": "r`|sHxJPH{+,~e%Lb276",
                                                                                           "fields": {
                                                                                             "MODEL": {
                                                                                               "id": "*LsHhFlE$98MUx/f`lev"
@@ -960,16 +960,16 @@
                                                                                             "X": {
                                                                                               "shadow": {
                                                                                                 "type": "math_number",
-                                                                                                "id": "*PR^[5wm}%1wXUHlRtMg",
+                                                                                                "id": "=T~qx:aw%LvEC4~ZgL,F",
                                                                                                 "fields": {
-                                                                                                  "NUM": 180
+                                                                                                  "NUM": 90
                                                                                                 }
                                                                                               }
                                                                                             },
                                                                                             "Y": {
                                                                                               "shadow": {
                                                                                                 "type": "math_number",
-                                                                                                "id": "mU*}q=R3!KFIY]DJL#tB",
+                                                                                                "id": "|1nA#HU_usqmr+/q(e(C",
                                                                                                 "fields": {
                                                                                                   "NUM": 0
                                                                                                 }
@@ -978,7 +978,7 @@
                                                                                             "Z": {
                                                                                               "shadow": {
                                                                                                 "type": "math_number",
-                                                                                                "id": "(v[uAIngF`uJ$mdv]~AF",
+                                                                                                "id": "?f=pHsO7L4,L=As7i6aJ",
                                                                                                 "fields": {
                                                                                                   "NUM": 0
                                                                                                 }
@@ -1203,7 +1203,7 @@
         "type": "procedures_defnoreturn",
         "id": "vUs9U}K/3Oq.@rR)E[}L",
         "x": 10,
-        "y": 3057,
+        "y": 3084,
         "fields": {
           "NAME": "init"
         },
@@ -2036,7 +2036,7 @@
         "type": "procedures_defreturn",
         "id": "i@awuE(th%m`,]+Eo1,f",
         "x": 10,
-        "y": 4308,
+        "y": 4332,
         "collapsed": true,
         "extraState": {
           "params": [
@@ -2197,7 +2197,7 @@
         "type": "procedures_defreturn",
         "id": "TO=.!:i{/p0QSZiQEes*",
         "x": 10,
-        "y": 4572,
+        "y": 4596,
         "collapsed": true,
         "extraState": {
           "params": [
@@ -2293,7 +2293,7 @@
         "type": "procedures_defreturn",
         "id": "]:LIN%!}X*kxdTOnPPpg",
         "x": 10,
-        "y": 4660,
+        "y": 4684,
         "collapsed": true,
         "extraState": {
           "params": [
@@ -2519,7 +2519,7 @@
         "type": "procedures_defnoreturn",
         "id": "xuj3JACx3%d`|Viu_+Kb",
         "x": 10,
-        "y": 1843,
+        "y": 1828,
         "fields": {
           "NAME": "move"
         },
@@ -3295,13 +3295,25 @@
                                 },
                                 "ELSE": {
                                   "block": {
-                                    "type": "add_physics",
-                                    "id": "LoFD[r6X|G(4cEb6!aau",
+                                    "type": "play_animation",
+                                    "id": "Vy=AR~!qR|knncQbUZLN",
                                     "fields": {
-                                      "MODEL_VAR": {
+                                      "ANIMATION_NAME": "No",
+                                      "MODEL": {
                                         "id": "oR!+j[aQ6N/FvXTKhUj$"
-                                      },
-                                      "PHYSICS_TYPE": "DYNAMIC"
+                                      }
+                                    },
+                                    "next": {
+                                      "block": {
+                                        "type": "add_physics",
+                                        "id": "LoFD[r6X|G(4cEb6!aau",
+                                        "fields": {
+                                          "MODEL_VAR": {
+                                            "id": "oR!+j[aQ6N/FvXTKhUj$"
+                                          },
+                                          "PHYSICS_TYPE": "DYNAMIC"
+                                        }
+                                      }
                                     }
                                   }
                                 }
@@ -3342,7 +3354,7 @@
         "type": "when_key_event",
         "id": "F#@CC@H)M]afIIBBs|Ip",
         "x": 10,
-        "y": 1674,
+        "y": 1660,
         "extraState": "<mutation xmlns=\"http://www.w3.org/1999/xhtml\" inline=\"false\"></mutation>",
         "fields": {
           "KEY": "m",
@@ -3364,7 +3376,7 @@
         "type": "procedures_defreturn",
         "id": "s?:aa`rbI@Lrct%j?lb^",
         "x": 10,
-        "y": 4220,
+        "y": 4244,
         "collapsed": true,
         "extraState": {
           "params": [
@@ -3553,7 +3565,7 @@
         "type": "procedures_defreturn",
         "id": "sl5%OalJ$`mp%-F-2h]7",
         "x": 10,
-        "y": 4132,
+        "y": 4156,
         "collapsed": true,
         "extraState": {
           "params": [
