@@ -135,6 +135,8 @@ sub single_line_of_ints {
 
 sub dense_map {
   print qq!
+\tvar DX = [4]int{0, 1, 0, -1};
+\tvar DY = [4]int{-1, 0, 1, 0};
 \tw := bytes.IndexByte(in, '\\n')
 \th := len(in) / (w + 1)
 \tw1 := w + 1
@@ -146,6 +148,29 @@ sub dense_map {
 \t}
 !;
 }
+
+sub rust_dense_map {
+  print qq!
+    const DX: [i32; 4] = [0, 1, 0, -1];
+    const DY: [i32; 4] = [-1, 0, 1, 0];
+    let w = inp.iter().position(|&ch| ch == b'\\n').expect("no EOL");
+    let h = inp.len() / (w + 1);
+    let w1 = w+1;
+    let w = w as i32;
+    let h = h as i32;
+    let in_bound = |x,y| -> bool {
+        0 <= x && x < w && 0 <= y && y < h
+    };
+    let get = |x, y| -> u8 {
+        if in_bound(x,y) {
+            inp[(x as usize) + (y as usize) * w1]
+        } else {
+            128
+        }
+    };
+!;
+}
+
 
 sub lines_of_n_ints {
   my ($type, $sep) = @_;
