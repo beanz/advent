@@ -44,9 +44,9 @@ PL:
 			t := 0
 			for j := 0; j < 8; j++ {
 				if i+j >= len(towel) {
-					continue
+					break
 				}
-				t = t<<3 + col(towel[i+j])
+				t = (t << 3) + col(towel[i+j])
 				if patterns[t] {
 					ways[i+j+1] += ways[i]
 				}

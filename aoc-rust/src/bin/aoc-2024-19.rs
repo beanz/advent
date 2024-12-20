@@ -1,32 +1,56 @@
-use smallvec::SmallVec;
+use heapless::FnvIndexSet;
 
 const WAYS_SIZE: usize = 64;
 
 fn parts(inp: &[u8]) -> (usize, usize) {
-    let mut patterns = SmallVec::<[&[u8]; 512]>::new();
-    let (mut i, mut j) = (0, 0);
+    let mut patterns = FnvIndexSet::<usize, 2048>::new();
+    let (mut i, mut pat) = (0, 0);
     loop {
         match inp[i] {
             b',' => {
-                patterns.push(&inp[j..i]);
+                patterns.insert(pat).expect("overflow");
+                pat = 0;
                 i += 2;
-                j = i;
             }
             b'\n' => {
-                patterns.push(&inp[j..i]);
+                patterns.insert(pat).expect("overflow");
                 i += 2;
-                j = i;
                 break;
             }
-            _ => i += 1,
+            _ => {
+                pat = (pat << 3) + col(inp[i]);
+                i += 1;
+            }
         }
     }
+    let matches = |towel: &[u8], ways: &mut [usize; WAYS_SIZE]| -> usize {
+        let tl = towel.len();
+        ways.fill(0);
+        ways[0] = 1;
+        for i in 0..tl {
+            if ways[i] == 0 {
+                continue;
+            }
+            let mut t = 0;
+            for j in 0..8 {
+                if i + j >= towel.len() {
+                    break;
+                }
+                t = (t << 3) + col(towel[i + j]);
+                if patterns.contains(&t) {
+                    ways[i + j + 1] += ways[i];
+                }
+            }
+        }
+        return ways[tl];
+    };
     let (mut p1, mut p2) = (0, 0);
     let mut ways: [usize; WAYS_SIZE] = [0; WAYS_SIZE];
+    let mut j = i;
     while i < inp.len() {
         if inp[i] == b'\n' {
             let towel = &inp[j..i];
-            let m = matches(&patterns, towel, &mut ways);
+            let m = matches(towel, &mut ways);
             if m != 0 {
                 p1 += 1;
                 p2 += m;
@@ -38,32 +62,15 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     (p1, p2)
 }
 
-fn matches<'a>(
-    patterns: &SmallVec<[&[u8]; 512]>,
-    towel: &'a [u8],
-    ways: &mut [usize; WAYS_SIZE],
-) -> usize {
-    let tl = towel.len();
-    ways.fill(0);
-    ways[0] = 1;
-    for i in 0..tl {
-        if ways[i] == 0 {
-            continue;
-        }
-        'pattern: for pattern in patterns {
-            let l = pattern.len();
-            if towel[i..].len() < l {
-                continue;
-            }
-            for j in 0..pattern.len() {
-                if pattern[j] != towel[i + j] {
-                    continue 'pattern;
-                }
-            }
-            ways[i + l] += ways[i]
-        }
+fn col(ch: u8) -> usize {
+    match ch {
+        b'b' => 1,
+        b'g' => 2,
+        b'r' => 3,
+        b'u' => 4,
+        b'w' => 5,
+        _ => unreachable!("invalid towel colour"),
     }
-    return ways[tl];
 }
 
 fn main() {
