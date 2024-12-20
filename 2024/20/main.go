@@ -27,24 +27,19 @@ func Parts(in []byte, args ...int) (int, int) {
 		return '#'
 	}
 	sx, sy := s%w1, s/w1
-	todo_back := [40000]rec{}
-	todo := todo_back[:0]
-	todo = append(todo, rec{sx, sy, 0})
+	cx, cy, st := sx, sy, 0
 	seen := [20000]int{}
-	for len(todo) > 0 {
-		var cur rec
-		cur, todo = todo[0], todo[1:]
-		k := cur.x + cur.y*w
-		if seen[k] != 0 {
-			continue
-		}
-		seen[k] = 1 + cur.st
+LOOP:
+	for {
+		seen[cx+cy*w] = 1 + st
 		for dir := 0; dir < 4; dir++ {
-			nx, ny := cur.x+DX[dir], cur.y+DY[dir]
-			if get(nx, ny) != '#' {
-				todo = append(todo, rec{nx, ny, cur.st + 1})
+			nx, ny := cx+DX[dir], cy+DY[dir]
+			if seen[nx+ny*w] == 0 && get(nx, ny) != '#' {
+				cx, cy, st = nx, ny, st+1
+				continue LOOP
 			}
 		}
+		break
 	}
 	solve := func(cheat_neighbours []rec) int {
 		res := 0
