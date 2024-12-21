@@ -118,6 +118,28 @@ sub calc {
   return [$p1, $p2];
 }
 
+if ($ENV{GEN_GO}) {
+  my @a;
+  my @b;
+  for my $n (0..999) {
+    my $s = sprintf "%03dA", $n;
+    push @a, len($s, 0, 2); push @b, len($s, 0, 25);
+  }
+  print "  depth2 = []int{\n";
+  while (@a) {
+    my @c = splice @a, 0, 10;
+    print "  ".join(", ", @c).",\n";
+  }
+  print "}\n";
+  print "  depth25 = []int{\n";
+  while (@b) {
+    my @c = splice @b, 0, 5;
+    print "  ".join(", ", @c).",\n";
+  }
+  print "}\n";
+  exit;
+}
+
 RunTests(sub {my $f = shift; calc($reader->($f), @_)}) if (TEST);
 
 my $res = calc($i);
