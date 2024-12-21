@@ -27,6 +27,12 @@ my %subs = (
     'lines_of_n_ints' => \&rust_lines_of_n_ints,
     'chunks_of_n_ints' => \&rust_chunks_of_n_ints,
   },
+  'Zig' => {
+    'single_line_of_ints' => \&zig_single_line_of_ints,
+    'dense_map' => \&zig_dense_map,
+    'lines_of_n_ints' => \&zig_lines_of_n_ints,
+    'chunks_of_n_ints' => \&zig_chunks_of_n_ints,
+  },
 );
 
 my $subs = $subs{$lang};
@@ -291,3 +297,32 @@ sub rust_chunks_of_n_ints {
   print "\t\tprintln!(\"".(join ', ', map { '{}' } @vars)."\\n\", ".(join ', ', @vars).");\n";
   print "\t}\n";
 }
+
+sub zig_lines_of_n_ints {
+  my ($type, $sep) = @_;
+  if ($type eq 'uint') {
+    $type = 'Uint(usize';
+  } else {
+    $type = 'Int(isize';
+  }
+  my @sep = @$sep;
+  my $var = 'a';
+  my @vars;
+  my @chomps;
+  for my $i (0 .. @sep - 1) {
+    my $ls = length $sep[$i];
+    my $offset = $ls == 0 ? '' : "i += $ls;\n\t\t";
+    push @chomps, "${offset}const $var = try aoc.chomp${type}, inp, &i);";
+    push @vars, $var;
+    $var++;
+  }
+  print "\tvar i :usize = 0;\n";
+  print "\twhile (i < inp.len) : (i += 1) {\n";
+  for (@chomps) {
+    print "\t\t$_\n";
+  }
+  print "\n\t\t// do something with @vars\n";
+  print "\t\taoc.print(\"".(join ', ', map { '{}' } @vars)."\\n\", .{ ".(join ', ', @vars)." });\n";
+  print "\t}\n";
+}
+
