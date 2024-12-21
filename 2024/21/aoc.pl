@@ -92,7 +92,6 @@ sub len {
     if ($d == $max) {
       $l += length $p->[0];
     } else {
-      my @r;
       my $min;
       for my $ss (@$p) {
         my $sl = len($ss, $d + 1, $max);
