@@ -1,3 +1,5 @@
+use heapless::binary_heap::{BinaryHeap, Min};
+
 const DX: [i32; 4] = [0, 1, 0, -1];
 const DY: [i32; 4] = [-1, 0, 1, 0];
 
@@ -6,17 +8,18 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let h = inp.len() / (w + 1);
     let (sx, sy) = (1, (h - 2) as i32);
     let (tx, ty) = ((w - 2) as i32, 1);
-    let mut todo = Queue::new();
+    let mut todo: BinaryHeap<_, Min, 2048> = BinaryHeap::new();
     let mut seen = [false; 80000];
     let mut sd: [Option<usize>; 80000] = [None; 80000];
     let mut p1: Option<usize> = None;
-    todo.insert(Rec {
+    todo.push(Rec {
         x: sx,
         y: sy,
         dir: 1,
         cost: 0,
-    });
-    while let Some(cur) = todo.next() {
+    })
+    .expect("overflow");
+    while let Some(cur) = todo.pop() {
         let k = cur.key();
         if sd[k].is_none() {
             sd[k] = Some(cur.cost);
@@ -36,39 +39,43 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         seen[k] = true;
         let (nx, ny) = (cur.x + DX[cur.dir], cur.y + DY[cur.dir]);
         if inp[(nx as usize) + (ny as usize) * (w + 1)] != b'#' {
-            todo.insert(Rec {
+            todo.push(Rec {
                 x: nx,
                 y: ny,
                 cost: cur.cost + 1,
                 dir: cur.dir,
-            });
+            })
+            .expect("overflow");
         }
-        todo.insert(Rec {
+        todo.push(Rec {
             x: cur.x,
             y: cur.y,
             cost: cur.cost + 1000,
             dir: (cur.dir + 1) & 3,
-        });
-        todo.insert(Rec {
+        })
+        .expect("overflow");
+        todo.push(Rec {
             x: cur.x,
             y: cur.y,
             cost: cur.cost + 1000,
             dir: (cur.dir + 3) & 3,
-        });
+        })
+        .expect("overflow");
     }
     for d in 0..4 {
-        todo.insert(Rec {
+        todo.push(Rec {
             x: tx,
             y: ty,
             cost: 0,
             dir: d,
-        });
+        })
+        .expect("overflow");
     }
     let p1 = p1.unwrap();
     let mut seen = [false; 80000];
     let mut p2set: [bool; 80000] = [false; 80000];
     let mut p2 = 0;
-    while let Some(cur) = todo.next() {
+    while let Some(cur) = todo.pop() {
         let k = cur.key();
         let cost = cur.cost + sd[k].unwrap_or(0);
         if cost > p1 {
@@ -86,50 +93,33 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         seen[k] = true;
         let (nx, ny) = (cur.x - DX[cur.dir], cur.y - DY[cur.dir]);
         if inp[(nx as usize) + (ny as usize) * (w + 1)] != b'#' {
-            todo.insert(Rec {
+            todo.push(Rec {
                 x: nx,
                 y: ny,
                 cost: cur.cost + 1,
                 dir: cur.dir,
-            });
+            })
+            .expect("overflow");
         }
-        todo.insert(Rec {
+        todo.push(Rec {
             x: cur.x,
             y: cur.y,
             cost: cur.cost + 1000,
             dir: (cur.dir + 1) & 3,
-        });
-        todo.insert(Rec {
+        })
+        .expect("overflow");
+        todo.push(Rec {
             x: cur.x,
             y: cur.y,
             cost: cur.cost + 1000,
             dir: (cur.dir + 3) & 3,
-        });
+        })
+        .expect("overflow");
     }
     (p1, p2)
 }
 
-use priority_queue::PriorityQueue;
-use std::cmp::Reverse;
-
-struct Queue {
-    pq: PriorityQueue<Rec, Reverse<Rec>>,
-}
-impl Queue {
-    fn new() -> Queue {
-        Queue {
-            pq: PriorityQueue::new(),
-        }
-    }
-    fn next(&mut self) -> Option<Rec> {
-        self.pq.pop().map(|(b, _)| b)
-    }
-    fn insert(&mut self, b: Rec) {
-        self.pq.push(b.clone(), Reverse(b));
-    }
-}
-
-#[derive(PartialEq, Hash, Clone)]
+#[derive(PartialEq, Hash, Clone, Debug)]
 struct Rec {
     x: i32,
     y: i32,

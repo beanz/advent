@@ -1,19 +1,19 @@
-use smallvec::SmallVec;
+use heapless::Vec;
 
 fn parts(inp: &[u8]) -> (usize, usize) {
-    let mut a = SmallVec::<[u32; 1024]>::new();
-    let mut b = SmallVec::<[u32; 1024]>::new();
+    let mut a = Vec::<u32, 1024>::new();
+    let mut b = Vec::<u32, 1024>::new();
     let mut i = 0;
     while i < inp.len() {
         let (j, n) = aoc::read::uint::<u32>(inp, i);
         i = j;
-        a.push(n);
+        a.push(n).expect("overflow");
         while inp[i] == b' ' {
             i += 1;
         }
         let (j, n) = aoc::read::uint::<u32>(inp, i);
         i = j + 1;
-        b.push(n);
+        b.push(n).expect("overflow");
     }
     a.sort();
     b.sort();
