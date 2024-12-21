@@ -126,7 +126,7 @@ aoc-rust/target/release/aoc-%: aoc-rust/src/bin/aoc-%.rs
 	(cd $(dir $@) && perl -c aoc.pl && touch $(notdir $@)) || exit 1
 
 %/aoc-go: %/main.go %/input.txt
-	cd $(dir $@) && go build -o aoc-go main.go
+	cd $(dir $@) && go build -o aoc-go
 
 %/aoc-cpp: %/cpp/aoc.cpp %/cpp/input.h
 	$(CPP) -I$(dir $@)../../lib-cpp -o $@ $<
@@ -225,7 +225,10 @@ aoc-rust/target/release/%.ns: aoc-rust/target/release/%
 	( cd $* && AoC_BENCH=1 ./$(notdir $<) | tee /dev/stderr ) >$@
 
 %/aoc-go.ns: %/aoc-go
-	(cd $* && go test -run=XXX -benchmem -benchtime=5s -bench=BenchmarkMain . ) | \
+	(cd $* && \
+	  BENCHTIME=5s ; \
+	  if [ -f .aoc-go.benchtime ]; then BENCHTIME=$$(cat .aoc-go.benchtime); fi;\
+		go test -run=XXX -benchmem -benchtime=$$BENCHTIME -bench=BenchmarkMain . ) | \
 	  tee /dev/stderr | grep "BenchmarkMain-" > $@
 
 %/aoc.pl.log: %/aoc.pl
