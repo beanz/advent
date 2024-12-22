@@ -21,12 +21,12 @@ fn parts(inp: &[u8]) -> (usize, (usize, usize)) {
         n += 1;
     }
     let mut dq = aoc::deque::Deque::<(i32, i32, usize), 128>::default();
-    let p1 = search(&m, ex as i32, ey as i32, corrupt, &mut dq);
+    let p1 = search(&m, ex as i32, ey, corrupt, &mut dq);
     let mut hi = n;
     let mut lo = corrupt + 1;
     loop {
         let mid = (lo + hi) / 2;
-        if let Some(_) = search(&m, ex as i32, ey as i32, mid, &mut dq) {
+        if search(&m, ex as i32, ey, mid, &mut dq).is_some() {
             lo = mid + 1;
         } else {
             hi = mid
@@ -37,8 +37,8 @@ fn parts(inp: &[u8]) -> (usize, (usize, usize)) {
     }
     let mut c = 1;
     let (mut p2s, mut p2e) = (0, 0);
-    for s in 0..inp.len() {
-        if inp[s] == b'\n' {
+    for (s, ch) in inp.iter().enumerate() {
+        if *ch == b'\n' {
             c += 1;
             if lo == c {
                 p2s = s + 1;

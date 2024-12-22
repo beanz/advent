@@ -55,7 +55,7 @@ fn run(prog: &[u8], a: usize, out: &mut SmallVec<[u8; SIZE]>) {
         let op = prog[ip] - b'0';
         let lit = (prog[ip + 2] - b'0') as usize;
         let combo = match lit {
-            0 | 1 | 2 | 3 => lit as usize,
+            0..=3 => lit,
             4 => a,
             5 => b,
             6 => c,
@@ -74,7 +74,7 @@ fn run(prog: &[u8], a: usize, out: &mut SmallVec<[u8; SIZE]>) {
             }
             4 => b ^= c,
             5 => {
-                if out.len() == 0 {
+                if out.is_empty() {
                     out.push((combo & 7) as u8 + b'0')
                 } else {
                     out.push(b',');

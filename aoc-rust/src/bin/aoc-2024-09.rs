@@ -18,8 +18,8 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let mut file = SmallVec::<[File; 16384]>::new();
     let mut free = SmallVec::<[Free; 16384]>::new();
     let mut i = 0;
-    for j in 0..inp.len() - 1 {
-        let size = inp[j] - b'0';
+    for (j, ch) in inp.iter().enumerate().take(inp.len() - 1) {
+        let size = ch - b'0';
         if j % 2 == 0 {
             blocks.push(Block {
                 size,
@@ -65,7 +65,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let mut i = file.len() - 1;
     loop {
         let size = file[i].size as usize;
-        if size <= 0 {
+        if size == 0 {
             i -= 1;
             continue;
         }

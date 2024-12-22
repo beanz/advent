@@ -19,7 +19,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
 
 fn move_len(path: &[u8], max: usize) -> usize {
     let mut cache = FnvIndexMap::<(&[u8], usize), usize, 512>::new();
-    return move_len_aux(path, 0, max, &mut cache);
+    move_len_aux(path, 0, max, &mut cache)
 }
 
 fn move_len_aux<'a>(

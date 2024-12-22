@@ -22,7 +22,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             let price = n % 10;
             let diff = (price as i8 - prev) & 0x1f;
             prev = price as i8;
-            k = (((k as usize) << 5) + diff as usize) & 0xfffff;
+            k = ((k << 5) + diff as usize) & 0xfffff;
             if j < 4 || seen.contains_key(&k) {
                 continue;
             }
@@ -36,9 +36,9 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         p1 += n
     }
     let mut mx = 0;
-    for (_, v) in p2 {
-        if v as usize > mx {
-            mx = v as usize;
+    for v in p2.values() {
+        if *v as usize > mx {
+            mx = *v as usize;
         }
     }
     (p1, mx)

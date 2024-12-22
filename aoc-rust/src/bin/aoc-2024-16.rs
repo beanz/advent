@@ -28,10 +28,8 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             if cur.cost > p1 {
                 continue;
             }
-        } else {
-            if cur.x == tx && cur.y == ty {
-                p1 = Some(cur.cost);
-            }
+        } else if cur.x == tx && cur.y == ty {
+            p1 = Some(cur.cost);
         }
         if seen[k] {
             continue;
@@ -81,11 +79,9 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         if cost > p1 {
             continue;
         }
-        if cost == p1 {
-            if !p2set[(k | 3) ^ 3] {
-                p2 += 1;
-                p2set[(k | 3) ^ 3] = true;
-            }
+        if cost == p1 && !p2set[(k | 3) ^ 3] {
+            p2 += 1;
+            p2set[(k | 3) ^ 3] = true;
         }
         if seen[k] {
             continue;

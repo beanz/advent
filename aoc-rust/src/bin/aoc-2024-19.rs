@@ -42,7 +42,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
                 }
             }
         }
-        return ways[tl];
+        ways[tl]
     };
     let (mut p1, mut p2) = (0, 0);
     let mut ways: [usize; WAYS_SIZE] = [0; WAYS_SIZE];

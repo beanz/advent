@@ -144,6 +144,7 @@ fn robot(map: &mut [u8], w: usize, start: (usize, usize), moves: &[u8], part2: b
     score(map, w as usize, h as usize)
 }
 
+#[allow(dead_code)]
 fn pp(map: &[u8], rx: usize, ry: usize, w: usize, h: usize) {
     for y in 0..h {
         for x in 0..w - 1 {

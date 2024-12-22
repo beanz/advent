@@ -27,7 +27,7 @@ where
 
         Map {
             w: w.try_into().unwrap(),
-            w1: (w + 1).into(),
+            w1: w + 1,
             h: h.try_into().unwrap(),
             inp,
         }
