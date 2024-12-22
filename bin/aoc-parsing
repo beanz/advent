@@ -97,8 +97,9 @@ my @nonint = map {my $l = $_; $l =~ s/\d+/!int!/g; $l} @l;
 if (scalar(uniq @nonint) == 1) {
   my $n = () = $nonint[0] =~ m/!int!/g;
   my @sep = split /!int!/, $nonint[0];
-  info "looks like lines with $n ints with " . (join ',', map {"'$_'"} @sep);
-  $subs->{lines_of_n_ints}->('uint', \@sep);
+  info "looks like lines with $n uints with " . (join ',', map {"'$_'"} @sep);
+  my $t = @sep ? 'lines_of_n_ints' : 'single_line_of_ints';
+  $subs->{$t}->('uint', \@sep);
   exit;
 }
 @nonint = map {my $l = $_; $l =~ s/[-+]?\d+/!int!/g; $l} @l;
@@ -106,10 +107,10 @@ if (scalar(uniq @nonint) == 1) {
   my $n = () = $nonint[0] =~ m/!int!/g;
   my @sep = split /!int!/, $nonint[0];
   info "looks like lines with $n ints with " . (join ',', map {"'$_'"} @sep);
-  $subs->{lines_of_n_ints}->('int', \@sep);
+  my $t = @sep ? 'lines_of_n_ints' : 'single_line_of_ints';
+  $subs->{$t}->('int', \@sep);
   exit;
 }
-
 
 print;
 
@@ -138,6 +139,38 @@ sub single_line_of_ints {
 \tfmt.Fprintf(os.Stderr, \"%v\\n", nums)\n";
 !;
 }
+
+sub rust_single_line_of_ints {
+  my ($type) = @_;
+  my $chomp;
+  if ($type eq 'uint') {
+    $chomp = 'uint::<usize>';
+    $type = 'usize';
+  } else {
+    $chomp = 'int::<isize>';
+    $type = 'isize';
+  }
+  print qq@
+\tlet mut i = 0;
+\twhile i < inp.len() {
+\t\tlet (j, n) = aoc::read::${chomp}(inp, i);
+\t\ti = j + 1;
+\t\t// do something with n
+\t\tprintln!("{}\\n", n);
+\t}
+
+\tuse heapless::Vec;
+
+\tlet nums = Vec::<$type; 1024>::new();
+\tlet mut i = 0;
+\twhile i < inp.len() {
+\t\tlet (j, n) = aoc::read::${chomp}(inp, i);
+\t\ti = j+1
+\t\tnums.push(n).expect("overflow");
+\t}
+@;
+}
+
 
 sub dense_map {
   print qq!

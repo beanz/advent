@@ -27,11 +27,11 @@ Day 18 | 207µs / 16.0 B | 122µs / None | -
 Day 19 | 1.4ms / None | 1.91ms / None | -
 Day 20 | 20ms / None | 25.8ms / None | -
 Day 21 | 60ns / None | 29ns / None | -
-Day 22 | **🔴 47.1ms** / None | **🔴 99.2ms** / None | -
+Day 22 | **🔴 47.1ms** / None | **🔴 105ms** / None | -
 Day 23 | - | - | -
 Day 24 | - | - | -
 Day 25 | - | - | -
-*Total* | *180ms / 3.3 MB* | *213ms / None* | *79.2µs*
+*Total* | *180ms / 3.3 MB* | *218ms / None* | *79.2µs*
 
 ![Graph for year 2024](y2024.svg)
 
@@ -471,11 +471,11 @@ Day 18 | 8.08ms / 56.4 KB | 292ms / 63.8 MB | 11.8µs / None | 19.9ms / None | *
 Day 19 | 1.11ms / 546 KB | 40ns / None | 37.7µs / None | 45.9ms / None | 6.22µs / None | 32.4ms / 14.0 MB | 10.5ms / 2.0 MB | 51.6ms / **🔴 43.1 MB** | 143µs / None | 1.91ms / None
 Day 20 | **🔴 1.25s** / 126 MB | 84.1µs / 76.4 KB | 15ms / None | 207µs / None | 5.42ms / None | 128µs / 90.9 KB | 20.3ms / 2.0 MB | 24.4ms / None | 3.12ms / None | 25.8ms / None
 Day 21 | 29.2µs / 16.9 KB | 32.8ms / 4.4 MB | 3.03µs / None | 141µs / None | 5.2µs / None | 234µs / 121 KB | 1.11µs / 8.0 B | 204µs / 270 KB | 13.1ms / None | 29ns / None
-Day 22 | 416ms / **🔴 234 MB** | 10.6ms / 194 KB | 57.1ms / None | 13.9ms / None | 2.92µs / None | 35.2ms / 15.1 MB | 11.4ms / 2.3 MB | 317µs / None | 1.31ms / 7.5 KB | **🔴 99.2ms** / None
+Day 22 | 416ms / **🔴 234 MB** | 10.6ms / 194 KB | 57.1ms / None | 13.9ms / None | 2.92µs / None | 35.2ms / 15.1 MB | 11.4ms / 2.3 MB | 317µs / None | 1.31ms / 7.5 KB | **🔴 105ms** / None
 Day 23 | 9.21µs / 1.2 KB | 4.37µs / 21.1 KB | 28.5µs / None | 65.2ms / None | 9.51µs / None | **🔴 180ms** / None | **🔴 689ms** / **🔴 165 MB** | 47.8ms / None | **🔴 291ms** / None | -
 Day 24 | 7.72ms / 10.0 MB | 4.37ms / 3.8 MB | 81.3ms / None | 49.2ms / None | 4.25ms / None | 45.7ms / None | 9.38µs / 576 B | **🔴 81.6ms** / 19.2 MB | - | -
 Day 25 | 243ns / 32.0 B | 8.19ms / 7.3 KB | 43.1ms / None | 1.93ms / None | 12.2µs / None | 36.3ms / None | 28.3ms / 19.4 KB | 1.41µs / None | 7ms / None | -
-*Total* | *4.14s / 994 MB* | *13.9s / 1.7 GB* | *1.27s / 55.5 MB* | *514ms / 97.9 MB* | *286ms / 95.6 MB* | *801ms / 108 MB* | *846ms / 321 MB* | *386ms / 98.6 MB* | *654ms / 9.3 MB* | *213ms / None*
+*Total* | *4.14s / 994 MB* | *13.9s / 1.7 GB* | *1.27s / 55.5 MB* | *514ms / 97.9 MB* | *286ms / 95.6 MB* | *801ms / 108 MB* | *846ms / 321 MB* | *386ms / 98.6 MB* | *654ms / 9.3 MB* | *218ms / None*
 
 
 ## Zig
