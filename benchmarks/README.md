@@ -6,10 +6,10 @@ The following are the benchmarks for the Go implementations of solutions for eac
 ## 2024
  &nbsp;  | Golang | Rust | Zig
  ---:  | ---:  | ---:  | ---: 
-Day 01 | 47.2µs / None | 18.5µs / None | **🔴 31.6µs**
-Day 02 | 47.5µs / None | 43µs / None | **🔴 23.6µs**
-Day 03 | 29.1µs / None | 8.86µs / None | **🔴 24µs**
-Day 04 | 272µs / None | 454µs / None | -
+Day 01 | 47.2µs / None | 18.5µs / None | 31.6µs
+Day 02 | 47.5µs / None | 43µs / None | 23.6µs
+Day 03 | 29.1µs / None | 8.86µs / None | 24µs
+Day 04 | 272µs / None | 454µs / None | **🔴 152µs**
 Day 05 | 30.5µs / None | 17.2µs / None | -
 Day 06 | **🔴 71.7ms** / None | **🔴 54.5ms** / None | -
 Day 07 | 16.8ms / None | 17ms / None | -
@@ -31,7 +31,7 @@ Day 22 | **🔴 47.1ms** / None | **🔴 103ms** / None | -
 Day 23 | - | - | -
 Day 24 | - | - | -
 Day 25 | - | - | -
-*Total* | *180ms / 3.3 MB* | *217ms / None* | *79.2µs*
+*Total* | *180ms / 3.3 MB* | *217ms / None* | *231µs*
 
 ![Graph for year 2024](y2024.svg)
 
@@ -481,10 +481,10 @@ Day 25 | 243ns / 32.0 B | 8.19ms / 7.3 KB | 43.1ms / None | 1.93ms / None | 12.2
 ## Zig
  &nbsp;  | 2020 | 2021 | 2023 | 2024
  ---:  | ---:  | ---:  | ---:  | ---: 
-Day 01 | 382µs | 5.65µs | 77µs | **🔴 31.6µs**
-Day 02 | 60µs | 720ns | 2.49µs | **🔴 23.6µs**
-Day 03 | 12.9µs | 50.3µs | 20.2µs | **🔴 24µs**
-Day 04 | 1.94ms | 53µs | 96µs | -
+Day 01 | 382µs | 5.65µs | 77µs | 31.6µs
+Day 02 | 60µs | 720ns | 2.49µs | 23.6µs
+Day 03 | 12.9µs | 50.3µs | 20.2µs | 24µs
+Day 04 | 1.94ms | 53µs | 96µs | **🔴 152µs**
 Day 05 | 188µs | 724µs | 2.16ms | -
 Day 06 | 7.73ms | 873ns | 97ns | -
 Day 07 | 511µs | 26.4µs | 118µs | -
@@ -506,5 +506,5 @@ Day 22 | 111ms | - | - | -
 Day 23 | **🔴 4.59s** | - | - | -
 Day 24 | 77.3ms | - | - | -
 Day 25 | 34.1ms | - | - | -
-*Total* | *5.43s* | *21.2ms* | *79.4ms* | *79.2µs*
+*Total* | *5.43s* | *21.2ms* | *79.4ms* | *231µs*
 
