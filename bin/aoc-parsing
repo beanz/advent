@@ -171,6 +171,32 @@ sub rust_single_line_of_ints {
 @;
 }
 
+sub zig_single_line_of_ints {
+  my ($type) = @_;
+  my $chomp;
+  if ($type eq 'uint') {
+    $chomp = 'Uint(usize';
+    $type = 'usize';
+  } else {
+    $chomp = 'Int(isize';
+    $type = 'isize';
+  }
+  print qq!
+\tvar i: usize = 0;
+\twhile (i < inp.len) : (i += 1) {
+\t\tconst n = try aoc.chomp${chomp}, inp, i);
+\t\t// do something with n
+\t\taoc.print("{}\\n", .{n});
+\t}
+
+\tlet nums = try std.BoundedArray($type, 1024>.init(0);
+\tvar i: usize = 0;
+\twhile (i < inp.len) : (i += 1) {
+\t\tconst n = try aoc.chomp${chomp}, inp, i);
+\t\ttry nums.append(n);
+\t}
+!;
+}
 
 sub dense_map {
   print qq!
