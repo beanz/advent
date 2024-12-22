@@ -1,5 +1,9 @@
 test1.txt
 37327623
+24
+---END---
+test2.txt
+37990510
 23
 ---END---
 input.txt
