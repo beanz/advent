@@ -15,14 +15,16 @@ type P struct {
 }
 
 func Parts(in []byte, args ...int) (int, int) {
-	prices := make([]P, 2000)
 	p1 := 0
 	p2 := [1048576]int{}
+	mx := 0
 	for i := 0; i < len(in); {
 		var n int
 		i, n = ChompUInt[int](in, i)
 		i++
 		prevPrice := n % 10
+		k := 0
+		seen := [1048576]bool{}
 		for j := 0; j < 2000; j++ {
 			n ^= n << 6
 			n &= 0xffffff
@@ -31,25 +33,19 @@ func Parts(in []byte, args ...int) (int, int) {
 			n ^= n << 11
 			n &= 0xffffff
 			price := n % 10
-			prices[j] = P{price, (price - prevPrice) & 0x1f}
+			diff := (price - prevPrice) & 0x1f
 			prevPrice = price
-		}
-		p1 += n
-		seen := [1048576]bool{}
-		for j := 0; j < len(prices)-4; j++ {
-			k := ((((prices[j].diff<<5)+prices[j+1].diff)<<5)+prices[j+2].diff)<<5 + prices[j+3].diff
-			if seen[k] {
+			k = ((k << 5) + diff) & 0xfffff
+			if j < 4 || seen[k] {
 				continue
 			}
 			seen[k] = true
-			p2[k] += prices[j+3].price
+			p2[k] += price
+			if p2[k] > mx {
+				mx = p2[k]
+			}
 		}
-	}
-	mx := 0
-	for _, v := range p2 {
-		if v > mx {
-			mx = v
-		}
+		p1 += n
 	}
 	return p1, mx
 }
