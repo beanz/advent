@@ -18,7 +18,7 @@ Day 09 | 462µs / None | 552µs / None | 314µs
 Day 10 | 114µs / None | 39µs / None | 1.22ms
 Day 11 | 1.38ms / None | 1.06ms / None | 995µs
 Day 12 | 591µs / None | 451µs / None | 13.7ms
-Day 13 | 7µs / None | 5.64µs / None | -
+Day 13 | 7µs / None | 5.64µs / None | 4.78µs
 Day 14 | 5.62ms / None | 3.8ms / None | -
 Day 15 | 660µs / None | 1.81ms / None | -
 Day 16 | 13.9ms / 3.3 MB | 5.61ms / None | -
@@ -493,7 +493,7 @@ Day 09 | 163µs | 118µs | 17.9µs | 314µs
 Day 10 | 29.1µs | 26.1µs | 84.6µs | 1.22ms
 Day 11 | 17.2ms | 70.4µs | 10.4µs | 995µs
 Day 12 | 1.57ms | 148µs | **🔴 17.1ms** | 13.7ms
-Day 13 | 9.22µs | 259µs | 74.2µs | -
+Day 13 | 9.22µs | 259µs | 74.2µs | 4.78µs
 Day 14 | - | 64.6µs | - | -
 Day 15 | 542ms | **🔴 10.6ms** | 59.7µs | -
 Day 16 | 1.23ms | 310µs | **🔴 48.7ms** | -
