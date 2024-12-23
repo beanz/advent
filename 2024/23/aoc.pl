@@ -50,7 +50,7 @@ sub calc {
   for my $cc (@$c) {
     @c = @$cc if (@$cc > @c);
   }
-  my $p2 = join',', uniq sort {$a cmp $b} @c;
+  my $p2 = join ',', uniq sort {$a cmp $b} @c;
   return [$p1, $p2];
 }
 
@@ -58,9 +58,8 @@ sub bk {
   my ($r, $p, $x, $g, $c) = @_;
   if (@$p == 0 && @$x == 0) {
     push @$c, $r;
-    return
+    return;
   }
-  my @c;
   while (@$p) {
     my $n = shift @$p;
     my @r = @$r;

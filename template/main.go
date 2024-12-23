@@ -17,8 +17,8 @@ func Parts(in []byte, args ...int) (int, int) {
 func main() {
 	p1, p2 := Parts(InputBytes(input))
 	if !benchmark {
-		fmt.Printf("Part 1: %d\n", p1)
-		fmt.Printf("Part 2: %d\n", p2)
+		fmt.Printf("Part 1: %v\n", p1)
+		fmt.Printf("Part 2: %v\n", p2)
 	}
 }
 
