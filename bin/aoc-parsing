@@ -189,7 +189,7 @@ sub zig_single_line_of_ints {
 \t\taoc.print("{}\\n", .{n});
 \t}
 
-\tvar nums = try std.BoundedArray($type, 1024>.init(0);
+\tvar nums = try std.BoundedArray($type, 1024).init(0);
 \tvar i: usize = 0;
 \twhile (i < inp.len) : (i += 1) {
 \t\tconst n = try aoc.chomp${chomp}, inp, i);
