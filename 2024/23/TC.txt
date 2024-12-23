@@ -1,0 +1,7 @@
+test1.txt
+7
+co,de,ka,ta
+---END---
+input.txt
+1156
+bx,cx,dr,dx,is,jg,km,kt,li,lt,nh,uf,um
