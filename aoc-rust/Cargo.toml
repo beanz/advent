@@ -28,6 +28,7 @@ smallvec = { version = "1.11.2", features = ["drain_filter"] }
 heapless = "0.7.16"
 zerocopy = "0.7.31"
 arr_macro = "0.2.1"
+hash32 = "0.2.1"
 
 [dev-dependencies]
 criterion = "0.5"
