@@ -1,0 +1,7 @@
+test1.txt
+4
+test
+---END---
+input.txt
+60714423975686
+cgh,frt,pmd,sps,tst,z05,z11,z23
