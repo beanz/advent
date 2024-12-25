@@ -33,7 +33,7 @@ fn parts(inp: []const u8) anyerror![2]usize {
     const h: isize = if (robots.len <= 12) 7 else 103;
     const qw = @divFloor(w, 2);
     const qh = @divFloor(h, 2);
-    var q: [4]usize = .{0} ** 4;
+    var q: @Vector(4, usize) = @splat(0);
     {
         const d: isize = 100;
         for (robots) |robot| {
@@ -51,7 +51,7 @@ fn parts(inp: []const u8) anyerror![2]usize {
             }
         }
     }
-    const p1 = q[0] * q[1] * q[2] * q[3];
+    const p1 = @reduce(.Mul, q);
     var p2: usize = 0;
     LOOP: for (1..10000) |d| {
         var seen: [12000]bool = .{false} ** 12000;
