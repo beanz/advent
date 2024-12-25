@@ -30,7 +30,7 @@ Day 21 | 60ns / None | 28ns / None | -
 Day 22 | 47.1ms / None | **🔴 103ms** / None | -
 Day 23 | **🔴 63.3ms** / **🔴 48.9 MB** | 543µs / None | -
 Day 24 | 279µs / 115 KB | 78.4µs / None | -
-Day 25 | 279µs / None | 199µs / None | -
+Day 25 | 279µs / None | 199µs / None | 329µs
 *Total* | *244ms / 52.3 MB* | *217ms / None* | *237ms*
 
 ![Graph for year 2024](y2024.svg)
@@ -505,6 +505,6 @@ Day 21 | 3.31ms | 203µs | - | -
 Day 22 | 111ms | - | - | -
 Day 23 | **🔴 4.59s** | - | - | -
 Day 24 | 77.3ms | - | - | -
-Day 25 | 34.1ms | - | - | -
+Day 25 | 34.1ms | - | - | 329µs
 *Total* | *5.43s* | *21.2ms* | *72.1ms* | *237ms*
 
