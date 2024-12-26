@@ -170,18 +170,20 @@ go-cover: main.go main_test.go
 	rm cover.out
 
 cr-cpu.svg: aoc-cr-rel
-	perf record -F 99 --call-graph dwarf ./$<
+	AoC_BENCH=1 perf record -F 99 --call-graph dwarf ./$<
 	perf script | $(FG_HOME)/stackcollapse-perf.pl >out.perf-folded
 	$(FG_HOME)/flamegraph.pl out.perf-folded >$@
+	perf report -g fractal -F+period,srcline
 	-rm -f out.perf-folded perf.data perf.data.old
 
 cr-prof: cr-cpu.svg
 	google-chrome $<
 
 zig-cpu.svg: aoc-zig
-	perf record -F 99 --call-graph dwarf ./$<
+	AoC_BENCH=1 perf record -F 99 --call-graph dwarf ./$<
 	perf script | $(FG_HOME)/stackcollapse-perf.pl >out.perf-folded
 	$(FG_HOME)/flamegraph.pl out.perf-folded >$@
+	perf report -g fractal -F+period,srcline
 	-rm -f out.perf-folded perf.data perf.data.old
 
 zig-prof: zig-cpu.svg
