@@ -42,10 +42,10 @@ func Parts(in []byte, args ...int) (int, string) {
 			hi = mid
 		}
 		if lo == hi {
-			return p1, fmt.Sprintf("%d,%d", drops[lo-1][0], drops[lo-1][1])
+			break
 		}
 	}
-	return p1, "?,?"
+	return p1, fmt.Sprintf("%d,%d", drops[lo-1][0], drops[lo-1][1])
 }
 
 var DX = []int{0, 1, 0, -1}

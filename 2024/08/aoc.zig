@@ -32,7 +32,6 @@ fn parts(inp: []const u8) anyerror![2]usize {
     }
     const w: isize = @intCast(u);
     const h: isize = @intCast(inp.len / (u + 1));
-    aoc.print("{} x {}\n", .{ w, h });
     const p1 = struct {
         var an1: [4096]bool = .{false} ** 4096;
         var c1: usize = 0;
