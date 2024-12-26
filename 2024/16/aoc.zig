@@ -22,9 +22,9 @@ fn parts(inp: []const u8) anyerror![2]usize {
     const end = w * 2 - 3;
     var costs: [COST_SIZE]?usize = .{null} ** COST_SIZE;
     var back: [WORK_SIZE]Rec = undefined;
-    var work = Deque(Rec).init(back[0..]);
+    var work = aoc.Deque(Rec).init(back[0..]);
     var back2: [WORK_SIZE]Rec = undefined;
-    var next_work = Deque(Rec).init(back2[0..]);
+    var next_work = aoc.Deque(Rec).init(back2[0..]);
     try work.push(Rec{ .pos = start, .dir = 1, .cost = 0 });
     var best: ?usize = null;
     while (true) {
@@ -128,48 +128,4 @@ fn day(inp: []const u8, bench: bool) anyerror!void {
 
 pub fn main() anyerror!void {
     try aoc.benchme(aoc.input(), day);
-}
-
-pub fn Deque(comptime T: type) type {
-    return struct {
-        buf: []T,
-        head: usize,
-        tail: usize,
-        length: usize,
-
-        const Self = @This();
-
-        pub fn init(buf: []T) Self {
-            return Self{ .buf = buf, .head = 0, .tail = 0, .length = 0 };
-        }
-        pub fn len(self: Self) usize {
-            return self.length;
-        }
-        pub fn is_empty(self: Self) bool {
-            return self.length == 0;
-        }
-        pub fn push(self: *Self, v: T) anyerror!void {
-            if (self.length == self.buf.len) {
-                return error.OverFlow;
-            }
-            self.buf[self.tail] = v;
-            self.tail += 1;
-            if (self.tail == self.buf.len) {
-                self.tail = 0;
-            }
-            self.length += 1;
-        }
-        pub fn pop(self: *Self) ?T {
-            if (self.length == 0) {
-                return null;
-            }
-            const r = self.buf[self.head];
-            self.head += 1;
-            if (self.head == self.buf.len) {
-                self.head = 0;
-            }
-            self.length -= 1;
-            return r;
-        }
-    };
 }
