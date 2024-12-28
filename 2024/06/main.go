@@ -38,8 +38,10 @@ LOOP:
 		return '!'
 	}
 	seen := [33410]bool{}
+	corners := [133643]int{}
 	cx, cy := sx, sy
-	dx, dy := 0, -1
+	dir := 0
+	prevk := ((cx<<8)+cy)<<2 + dir
 	p1 := 0
 	for 0 <= cx && cx < w && 0 <= cy && cy < h {
 		k := (cx << 8) + cy
@@ -48,12 +50,18 @@ LOOP:
 		}
 		seen[k] = true
 		var nx, ny int
+		pdir := dir
 		for {
-			nx, ny = cx+dx, cy+dy
+			nx, ny = cx+DX[dir], cy+DY[dir]
 			if get(nx, ny) != '#' {
 				break
 			}
-			dx, dy = -dy, dx
+			dir = (dir + 1) & 3
+		}
+		if dir != pdir {
+			nk := (((nx-DX[dir])<<8)+ny-DY[dir])<<2 + dir
+			corners[prevk] = nk + 1
+			prevk = nk
 		}
 		cx, cy = nx, ny
 	}
@@ -61,20 +69,25 @@ LOOP:
 		seen2 := [133643]bool{}
 		cx, cy := sx, sy
 		dir := 0
-		dx, dy := 0, -1
 		for 0 <= cx && cx < w && 0 <= cy && cy < h {
 			k := ((cx<<8)+cy)<<2 + dir
 			if seen2[k] {
 				return true
 			}
 			seen2[k] = true
-			nx, ny := cx+dx, cy+dy
-			if (nx == ox && ny == oy) || get(nx, ny) == '#' {
-				dir = (dir + 1) & 3
-				dx, dy = -dy, dx
-				continue
+			nx, ny, ndir := cx, cy, dir
+			jump := corners[k]
+			if jump != 0 && cx != ox && cy != oy {
+				jump--
+				nx, ny, ndir = jump>>10, (jump>>2)&0xff, jump&3
+			} else {
+				nx, ny = nx+DX[ndir], ny+DY[ndir]
+				if (nx == ox && ny == oy) || get(nx, ny) == '#' {
+					ndir = (ndir + 1) & 3
+					nx, ny = cx, cy
+				}
 			}
-			cx, cy = nx, ny
+			cx, cy, dir = nx, ny, ndir
 		}
 		return false
 	}

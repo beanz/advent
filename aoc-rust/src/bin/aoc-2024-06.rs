@@ -31,17 +31,20 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         }
     };
     let mut seen = [false; 33410];
+    let mut corners: [usize; 133643] = [0; 133643];
     let mut p1 = 0;
     {
         let (mut cx, mut cy) = (sx, sy);
         let mut dir = 0;
+        let mut prev_key = (((cx << 8) + cy) << 2) as usize + dir;
         while in_bound(cx, cy) {
             let k = ((cx << 8) + cy) as usize;
             if !seen[k] {
                 p1 += 1;
             }
             seen[k] = true;
-            (cx, cy) = {
+            let pdir = dir;
+            let (nx, ny) = {
                 let (mut nx, mut ny);
                 loop {
                     (nx, ny) = (cx + DX[dir], cy + DY[dir]);
@@ -52,6 +55,12 @@ fn parts(inp: &[u8]) -> (usize, usize) {
                 }
                 (nx, ny)
             };
+            if dir != pdir {
+                let nk = ((((nx - DX[dir]) << 8) + ny - DY[dir]) << 2) as usize + dir;
+                corners[prev_key] = nk + 1;
+                prev_key = nk;
+            }
+            (cx, cy) = (nx, ny);
         }
     };
     let mut p2 = 0;
@@ -70,12 +79,18 @@ fn parts(inp: &[u8]) -> (usize, usize) {
                     break;
                 }
                 seen[k] = true;
-                let (nx, ny) = (cx + DX[dir], cy + DY[dir]);
-                if get(nx, ny) == b'#' || (nx == ox && ny == oy) {
-                    dir = (dir + 1) & 3;
-                    continue;
+                let (mut nx, mut ny, mut ndir) = (cx + DX[dir], cy + DY[dir], dir);
+                let mut jump = corners[k];
+                if jump != 0 && cx != ox && cy != oy {
+                    jump -= 1;
+                    (nx, ny, ndir) = ((jump >> 10) as i32, ((jump >> 2) & 0xff) as i32, jump & 3);
+                } else {
+                    if get(nx, ny) == b'#' || (nx == ox && ny == oy) {
+                        ndir = (ndir + 1) & 3;
+                        (nx, ny) = (cx, cy);
+                    }
                 }
-                (cx, cy) = (nx, ny);
+                (cx, cy, dir) = (nx, ny, ndir);
             }
         }
     }

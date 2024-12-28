@@ -1,10 +1,12 @@
 const std = @import("std");
 const aoc = @import("aoc-lib.zig");
-const isDigit = std.ascii.isDigit;
 
 test "testcases" {
     try aoc.TestCases(usize, parts);
 }
+
+const DX: [4]i32 = .{ 0, 1, 0, -1 };
+const DY: [4]i32 = .{ -1, 0, 1, 0 };
 
 fn parts(inp: []const u8) anyerror![2]usize {
     var w1: usize = 0;
@@ -25,10 +27,11 @@ fn parts(inp: []const u8) anyerror![2]usize {
         }
     }
     var seen: [33410]bool = .{false} ** 33410;
+    var corners: [133643]?usize = .{null} ** 133643;
     var cx = sx;
     var cy = sy;
-    var dx: i32 = 0;
-    var dy: i32 = -1;
+    var dir: u2 = 0;
+    var prev_key: usize = @intCast((((cx << 8) + cy) << 2) + dir);
     var p1: usize = 0;
     var path = try std.BoundedArray([2]i32, 6144).init(0);
     LOOP: while (0 <= cx and cx < w and 0 <= cy and cy < h) {
@@ -40,37 +43,40 @@ fn parts(inp: []const u8) anyerror![2]usize {
         seen[k] = true;
         var nx: i32 = undefined;
         var ny: i32 = undefined;
+        var ndir = dir;
         while (true) {
-            nx = cx + dx;
-            ny = cy + dy;
+            nx = cx + DX[ndir];
+            ny = cy + DY[ndir];
             if (!(0 <= nx and nx < w and 0 <= ny and ny < h)) {
                 break :LOOP;
             }
             if (inp[@as(usize, @abs(nx)) + @as(usize, @abs(ny)) * w1] != '#') {
                 break;
             }
-            const tmp = dx;
-            dx = -dy;
-            dy = tmp;
+            ndir +%= 1;
+        }
+        if (dir != ndir) {
+            const nk: usize = @intCast(((((nx - DX[ndir]) << 8) + (ny - DY[ndir])) << 2) + dir);
+            corners[prev_key] = nk;
+            prev_key = nk;
         }
         cx = nx;
         cy = ny;
+        dir = ndir;
     }
     var p2: usize = 0;
     for (path.slice()) |p| {
-        if (part2(inp, w1, w, h, sx, sy, p[0], p[1])) {
+        if (part2(inp, w1, w, h, sx, sy, p[0], p[1], corners)) {
             p2 += 1;
         }
     }
     return [2]usize{ p1, p2 };
 }
 
-fn part2(inp: []const u8, w1: usize, w: i32, h: i32, sx: i32, sy: i32, ox: i32, oy: i32) bool {
-    var seen: [1336343]bool = .{false} ** 1336343;
+fn part2(inp: []const u8, w1: usize, w: i32, h: i32, sx: i32, sy: i32, ox: i32, oy: i32, corners: [133643]?usize) bool {
+    var seen: [133643]bool = .{false} ** 133643;
     var cx = sx;
     var cy = sy;
-    var dx: i32 = 0;
-    var dy: i32 = -1;
     var dir: u2 = 0;
     while (true) {
         const k: usize = @intCast((((cx << 8) + cy) << 2) + dir);
@@ -78,20 +84,27 @@ fn part2(inp: []const u8, w1: usize, w: i32, h: i32, sx: i32, sy: i32, ox: i32, 
             return true;
         }
         seen[k] = true;
-        const nx = cx + dx;
-        const ny = cy + dy;
-        if (!(0 <= nx and nx < w and 0 <= ny and ny < h)) {
-            return false;
-        }
-        if ((nx == ox and ny == oy) or (inp[@as(usize, @abs(nx)) + @as(usize, @abs(ny)) * w1] == '#')) {
-            const tmp = dx;
-            dir +%= 1;
-            dx = -dy;
-            dy = tmp;
-            continue;
+        var nx = cx + DX[dir];
+        var ny = cy + DY[dir];
+        var ndir = dir;
+        const jump = corners[k];
+        if (jump != null and cx != ox and cy != oy) {
+            nx = @intCast(jump.? >> 10);
+            ny = @intCast((jump.? >> 2) & 0xff);
+            ndir = @intCast(jump.? & 3);
+        } else {
+            if (!(0 <= nx and nx < w and 0 <= ny and ny < h)) {
+                return false;
+            }
+            if ((nx == ox and ny == oy) or (inp[@as(usize, @abs(nx)) + @as(usize, @abs(ny)) * w1] == '#')) {
+                ndir +%= 1;
+                nx = cx;
+                ny = cy;
+            }
         }
         cx = nx;
         cy = ny;
+        dir = ndir;
     }
 }
 
