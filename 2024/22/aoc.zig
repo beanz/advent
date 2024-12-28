@@ -8,7 +8,8 @@ test "testcases" {
 
 fn parts(inp: []const u8) anyerror![2]usize {
     var p1: usize = 0;
-    var p2: [1048576]usize = .{0} ** 1048576;
+    var p2 = std.AutoHashMap(usize, usize).init(aoc.halloc);
+    defer p2.deinit();
     var m: usize = 0;
     var i: usize = 0;
     while (i < inp.len) : (i += 1) {
@@ -23,7 +24,7 @@ fn parts(inp: []const u8) anyerror![2]usize {
             n &= 0xffffff;
             n ^= n << 11;
             n &= 0xffffff;
-            const price = n % 10;
+            var price = n % 10;
             const ip: i8 = @intCast(price);
             const diff: usize = @intCast((ip - prev) & 0x1f);
             prev = ip;
@@ -32,9 +33,14 @@ fn parts(inp: []const u8) anyerror![2]usize {
                 continue;
             }
             seen[k] = true;
-            p2[k] += price;
-            if (m < p2[k]) {
-                m = p2[k];
+            if (p2.getPtr(k)) |e| {
+                e.* += price;
+                price = e.*;
+            } else {
+                try p2.put(k, price);
+            }
+            if (m < price) {
+                m = price;
             }
         }
         p1 += n;
