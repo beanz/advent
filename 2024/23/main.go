@@ -4,7 +4,6 @@ import (
 	_ "embed"
 	"fmt"
 	"sort"
-	"strings"
 
 	. "github.com/beanz/advent/lib-go"
 )
@@ -33,9 +32,6 @@ func Parts(in []byte, args ...int) (int, string) {
 	hasT := func(a int) bool {
 		return a/26 == 't'-'a'
 	}
-	N := func(a int) string {
-		return string([]byte{byte(a/26) + 'a', byte(a%26) + 'a'})
-	}
 	p1 := 0
 	for i := 0; i < len(nodes); i++ {
 		a := nodes[i]
@@ -51,48 +47,50 @@ func Parts(in []byte, args ...int) (int, string) {
 			}
 		}
 	}
-	c := [][]int{}
-	bronKerbosch(nil, nodes, nil, g[:], &c)
-	p2 := ""
-	for _, clique := range c {
-		n := []string{}
-		for _, e := range clique {
-			n = append(n, N(e))
-		}
-		sort.Strings(n)
-		r := strings.Join(n, ",")
-		if len(r) > len(p2) {
-			p2 = r
+	sort.Ints(nodes)
+	best := make([]int, 0, 32)
+	{
+		set := make([]int, 0, 32)
+		dedup := [676]bool{}
+		for i := 0; i < len(nodes); i++ {
+			a := nodes[i]
+			if dedup[a] {
+				continue
+			}
+			dedup[a] = true
+			set = append(set, a)
+			for j := 0; j < len(nodes); j++ {
+				if i == j {
+					continue
+				}
+				b := nodes[j]
+				if !g[a*26*26+b] {
+					continue
+				}
+				l := 0
+				for _, c := range set {
+					if g[b*26*26+c] {
+						l++
+					}
+				}
+				if l == len(set) {
+					dedup[b] = true
+					set = append(set, b)
+				}
+			}
+			if len(set) > len(best) {
+				best, set = set, best
+			}
+			set = set[:0]
 		}
 	}
 
-	return p1, p2
-}
-
-func bronKerbosch(r []int, p []int, x []int, g []bool, c *[][]int) {
-	if len(p) == 0 && len(x) == 0 {
-		*c = append(*c, r)
-		return
+	p2 := make([]byte, 0, 38)
+	p2 = append(p2, byte(best[0]/26+'a'), byte(best[0]%26+'a'))
+	for i := 1; i < len(best); i++ {
+		p2 = append(p2, ',', byte(best[i]/26+'a'), byte(best[i]%26+'a'))
 	}
-	for len(p) > 0 {
-		n := p[0]
-		p = p[1:]
-		nr := append([]int{n}, r...)
-		var np []int
-		for _, nn := range p {
-			if g[n*26*26+nn] {
-				np = append(np, nn)
-			}
-		}
-		var nx []int
-		for _, nn := range x {
-			if g[n*26*26+nn] {
-				nx = append(nx, nn)
-			}
-		}
-		bronKerbosch(nr, np, nx, g, c)
-		x = append(x, n)
-	}
+	return p1, string(p2)
 }
 
 func main() {
