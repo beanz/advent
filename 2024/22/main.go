@@ -10,10 +10,6 @@ import (
 //go:embed input.txt
 var input []byte
 
-type P struct {
-	price, diff int
-}
-
 func Parts(in []byte, args ...int) (int, int) {
 	p1 := 0
 	p2 := [1048576]int{}
