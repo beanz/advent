@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"container/heap"
 	_ "embed"
 	"fmt"
 
@@ -15,7 +14,7 @@ var input []byte
 var DX = [4]int{0, 1, 0, -1}
 var DY = [4]int{-1, 0, 1, 0}
 
-const QUEUE = 262144
+const QUEUE = 32768
 
 func Parts(in []byte, args ...int) (int, int) {
 	w := bytes.IndexByte(in, '\n')
@@ -23,17 +22,19 @@ func Parts(in []byte, args ...int) (int, int) {
 	w1 := w + 1
 	sx, sy := 1, h-2
 	tx, ty := w-2, 1
-	pq := make(PQ, 0, 2000)
-	pq = append(pq, &Rec{x: sx, y: sy, dir: 1, cost: 0})
-	push := func(x, y, cost int, dir byte) {
-		heap.Push(&pq, &Rec{x, y, cost, dir})
-	}
-	heap.Init(&pq)
+	back := [QUEUE]Rec{}
+	work := NewDeque(back[0:])
+	back2 := [QUEUE]Rec{}
+	work2 := NewDeque(back2[0:])
+	work.Push(Rec{x: sx, y: sy, dir: 1, cost: 0})
 	seen := [80000]bool{}
 	sd := [80000]int{}
 	p1 := 0
-	for pq.Len() > 0 {
-		cur := heap.Pop(&pq).(*Rec)
+	for work.Len() > 0 || work2.Len() > 0 {
+		if work.Len() == 0 {
+			work, work2 = work2, work
+		}
+		cur := work.Pop()
 		k := cur.K()
 		if sd[k] == 0 {
 			sd[k] = 1 + cur.cost
@@ -53,20 +54,23 @@ func Parts(in []byte, args ...int) (int, int) {
 		seen[k] = true
 		nx, ny := cur.x+DX[cur.dir], cur.y+DY[cur.dir]
 		if in[nx+ny*w1] != '#' {
-			push(nx, ny, cur.cost+1, cur.dir)
+			work.Push(Rec{nx, ny, cur.cost + 1, cur.dir})
 		}
-		push(cur.x, cur.y, cur.cost+1000, (cur.dir+1)&3)
-		push(cur.x, cur.y, cur.cost+1000, (cur.dir+3)&3)
+		work2.Push(Rec{cur.x, cur.y, cur.cost + 1000, (cur.dir + 1) & 3})
+		work2.Push(Rec{cur.x, cur.y, cur.cost + 1000, (cur.dir + 3) & 3})
 	}
-	pq = pq[:0]
+
 	for d := byte(0); d < 4; d++ {
-		push(tx, ty, 0, d)
+		work.Push(Rec{tx, ty, 0, d})
 	}
 	seen = [80000]bool{}
 	p2set := [80000]bool{}
 	p2 := 0
-	for pq.Len() > 0 {
-		cur := heap.Pop(&pq).(*Rec)
+	for work.Len() > 0 || work2.Len() > 0 {
+		if work.Len() == 0 {
+			work, work2 = work2, work
+		}
+		cur := work.Pop()
 		k := cur.K()
 		cost := cur.cost + sd[k] - 1
 		if cost > p1 {
@@ -84,10 +88,10 @@ func Parts(in []byte, args ...int) (int, int) {
 		seen[k] = true
 		nx, ny := cur.x-DX[cur.dir], cur.y-DY[cur.dir]
 		if in[nx+ny*w1] != '#' {
-			push(nx, ny, cur.cost+1, cur.dir)
+			work.Push(Rec{nx, ny, cur.cost + 1, cur.dir})
 		}
-		push(cur.x, cur.y, cur.cost+1000, (cur.dir+1)&3)
-		push(cur.x, cur.y, cur.cost+1000, (cur.dir+3)&3)
+		work2.Push(Rec{cur.x, cur.y, cur.cost + 1000, (cur.dir + 1) & 3})
+		work2.Push(Rec{cur.x, cur.y, cur.cost + 1000, (cur.dir + 3) & 3})
 	}
 	return p1, p2
 }
