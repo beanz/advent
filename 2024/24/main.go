@@ -28,8 +28,8 @@ const (
 )
 
 func Parts(in []byte, args ...int) (int, string) {
-	gates := map[int]Rec{}
-	rev := map[int]int{}
+	gates := make(map[int]Rec, 320)
+	rev := make(map[int]int, 256)
 	bitCount := 0
 	k := func(s []byte) int {
 		return (((int(s[0]) << 8) + int(s[1])) << 8) + int(s[2])
@@ -37,6 +37,7 @@ func Parts(in []byte, args ...int) (int, string) {
 	lk := func(g Rec) int {
 		return (((g.a << 24) + g.b) << 2) + int(g.op)
 	}
+	intPtr := func(i int) *int { return &i }
 	for i := 0; i < len(in); {
 		if in[i] == '\n' {
 			i++
@@ -44,9 +45,7 @@ func Parts(in []byte, args ...int) (int, string) {
 		}
 		if in[i+3] == ':' {
 			v := int(in[i+5] - '0')
-			gates[k(in[i:i+3])] = Rec{
-				val: &([]int{v}[0]),
-			}
+			gates[k(in[i:i+3])] = Rec{val: intPtr(v)}
 			i += 7
 			continue
 		}
