@@ -13,20 +13,20 @@ var input []byte
 
 func Parts(in []byte, args ...int) (int, string) {
 	g := [456976]bool{}
-	dedup := map[int]struct{}{}
-	nodes := []int{}
+	dedup := [676]bool{}
+	nodes := make([]int, 0, 1024)
 	for i := 0; i < len(in); i += 6 {
 		a := int(in[i]-'a')*26 + int(in[i+1]-'a')
 		b := int(in[i+3]-'a')*26 + int(in[i+4]-'a')
 		g[a*26*26+b] = true
 		g[b*26*26+a] = true
-		if _, ok := dedup[a]; !ok {
+		if !dedup[a] {
 			nodes = append(nodes, a)
-			dedup[a] = struct{}{}
+			dedup[a] = true
 		}
-		if _, ok := dedup[b]; !ok {
+		if !dedup[b] {
 			nodes = append(nodes, b)
-			dedup[b] = struct{}{}
+			dedup[b] = true
 		}
 	}
 	hasT := func(a int) bool {
