@@ -142,18 +142,20 @@ fn cmp(_: void, a: [3]u8, b: [3]u8) bool {
 }
 
 fn value(gates: *std.AutoHashMap([3]u8, Gate), k: [3]u8) u1 {
-    if (gates.get(k)) |g| {
+    if (gates.getPtr(k)) |g| {
         if (g.val) |v| {
             return v;
         }
         const va = value(gates, g.a);
         const vb = value(gates, g.b);
-        return switch (g.op) {
+        const v = switch (g.op) {
             Op.Or => va | vb,
             Op.And => va & vb,
             Op.Xor => va ^ vb,
             else => unreachable,
         };
+        g.val = v;
+        return v;
     }
     unreachable;
 }
