@@ -13,18 +13,15 @@ fn parts(inp: []const u8) anyerror![2]usize {
     var m: usize = 0;
     var i: usize = 0;
     while (i < inp.len) : (i += 1) {
-        var n = try aoc.chompUint(usize, inp, &i);
+        var n = try aoc.chompUint(u24, inp, &i);
         var prev: i8 = @intCast(n % 10);
         var k: usize = 0;
         var seen: [1048576]bool = .{false} ** 1048576;
         for (0..2000) |j| {
             n ^= n << 6;
-            n &= 0xffffff;
             n ^= n >> 5;
-            n &= 0xffffff;
             n ^= n << 11;
-            n &= 0xffffff;
-            var price = n % 10;
+            var price: usize = @intCast(n % 10);
             const ip: i8 = @intCast(price);
             const diff: usize = @intCast((ip - prev) & 0x1f);
             prev = ip;
