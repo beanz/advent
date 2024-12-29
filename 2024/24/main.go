@@ -15,8 +15,9 @@ var input []byte
 type (
 	Op  int
 	Rec struct {
-		a, b string
+		a, b int
 		op   Op
+		val  *int
 	}
 )
 
@@ -27,144 +28,145 @@ const (
 )
 
 func Parts(in []byte, args ...int) (int, string) {
-	x := [45]bool{}
-	y := [45]bool{}
-	gates := map[string]Rec{}
-	rev := map[string]string{}
+	gates := map[int]Rec{}
+	rev := map[int]int{}
 	bitCount := 0
+	k := func(s []byte) int {
+		return (((int(s[0]) << 8) + int(s[1])) << 8) + int(s[2])
+	}
+	lk := func(g Rec) int {
+		return (((g.a << 24) + g.b) << 2) + int(g.op)
+	}
 	for i := 0; i < len(in); {
 		if in[i] == '\n' {
 			i++
 			continue
 		}
 		if in[i+3] == ':' {
-			n := 10*int(in[i+1]-'0') + int(in[i+2]-'0')
-			v := in[i+5] == '1'
-			if in[i] == 'x' {
-				x[n] = v
-			} else {
-				y[n] = v
+			v := int(in[i+5] - '0')
+			gates[k(in[i:i+3])] = Rec{
+				val: &([]int{v}[0]),
 			}
 			i += 7
 			continue
 		}
-		var k string
+		var kk int
 		switch in[i+4] {
 		case 'X': // XOR
-			k = string(in[i+15 : i+18])
-			gates[k] = Rec{
-				a:  string(in[i : i+3]),
-				b:  string(in[i+8 : i+11]),
+			kk = k(in[i+15 : i+18])
+			gates[kk] = Rec{
+				a:  k(in[i : i+3]),
+				b:  k(in[i+8 : i+11]),
 				op: XOR,
 			}
-			rev[string(in[i:i+11])] = k
 			i += 19
 		case 'A': // AND
-			k = string(in[i+15 : i+18])
-			gates[k] = Rec{
-				a:  string(in[i : i+3]),
-				b:  string(in[i+8 : i+11]),
+			kk = k(in[i+15 : i+18])
+			gates[kk] = Rec{
+				a:  k(in[i : i+3]),
+				b:  k(in[i+8 : i+11]),
 				op: AND,
 			}
-			rev[string(in[i:i+11])] = k
 			i += 19
 		default: // OR
-			k = string(in[i+14 : i+17])
-			gates[k] = Rec{
-				a:  string(in[i : i+3]),
-				b:  string(in[i+7 : i+10]),
+			kk = k(in[i+14 : i+17])
+			gates[kk] = Rec{
+				a:  k(in[i : i+3]),
+				b:  k(in[i+7 : i+10]),
 				op: OR,
 			}
-			rev[string(in[i:i+10])] = k
 			i += 18
 		}
-		if k[0] == 'z' {
+		rev[lk(gates[kk])] = kk
+		if byte((kk>>16)&0xff) == 'z' {
 			n := 10*int(in[i-3]-'0') + int(in[i-2]-'0')
 			if bitCount < n {
 				bitCount = n
 			}
 		}
 	}
-	var value func(s string) bool
-	value = func(s string) bool {
-		if g, ok := gates[s]; ok {
+	name := func(a int) string {
+		return string([]byte{byte(a >> 16), byte((a >> 8) & 0xff), byte(a & 0xff)})
+	}
+	var value func(s int) int
+	value = func(s int) int {
+		g := gates[s]
+		if g.val == nil {
 			va := value(g.a)
 			vb := value(g.b)
+			var v int
 			switch g.op {
 			case OR:
-				return va || vb
+				v = va | vb
 			case AND:
-				return va && vb
+				v = va & vb
 			case XOR:
-				return va != vb
+				v = va ^ vb
 			}
+			g.val = &v
 		}
-		n := 10*int(s[1]-'0') + int(s[2]-'0')
-		if s[0] == 'x' {
-			return x[n]
-		}
-		return y[n]
+		return *g.val
+	}
+	kn := func(ch byte, n int) int {
+		return k([]byte{ch, '0' + byte(n/10), '0' + byte(n%10)})
 	}
 	p1 := 0
 	for z := bitCount; z >= 0; z-- {
 		p1 <<= 1
-		if value(fmt.Sprintf("z%02d", z)) {
-			p1++
-		}
+		p1 += value(kn('z', z))
 	}
 	if bitCount < 20 {
 		return p1, "test"
 	}
-	gateFor := func(k string) string {
-		if v, ok := rev[k]; ok {
+	gateFor := func(a, b int, op Op) int {
+		g := Rec{a: a, b: b, op: op}
+		if v, ok := rev[lk(g)]; ok {
 			return v
 		}
-		f := k[0:3]
-		m := k[3 : len(k)-3]
-		l := k[len(k)-3:]
-		return rev[l+m+f]
+		g = Rec{a: b, b: a, op: op}
+		return rev[lk(g)]
 	}
 	bad := []string{}
-	var carry string
+	var carry int
 	for z := 0; z <= bitCount-2; z++ {
-		x := fmt.Sprintf("x%02d", z)
-		y := fmt.Sprintf("y%02d", z)
+		x := kn('x', z)
+		y := kn('y', z)
 
-		xor := gateFor(x + " XOR " + y) // add
-		and := gateFor(x + " AND " + y) // carry
+		xor := gateFor(x, y, XOR) // add
+		and := gateFor(x, y, AND) // carry
 
-		if carry == "" {
+		if carry == 0 {
 			carry = and
 			continue
 		}
 
-		carryAnd := gateFor(carry + " AND " + xor)
-		if carryAnd == "" {
+		carryAnd := gateFor(carry, xor, AND)
+		if carryAnd == 0 {
 			xor, and = and, xor
-			bad = append(bad, xor, and)
-			carryAnd = gateFor(carry + " AND " + xor)
+			bad = append(bad, name(xor), name(and))
+			carryAnd = gateFor(carry, xor, AND)
 		}
 
-		carryXor := gateFor(carry + " XOR " + xor)
-		if len(xor) > 0 && xor[0] == 'z' {
+		carryXor := gateFor(carry, xor, XOR)
+		if byte((xor>>16)&0xff) == 'z' {
 			xor, carryXor = carryXor, xor
-			bad = append(bad, xor, carryXor)
+			bad = append(bad, name(xor), name(carryXor))
 		}
 
-		if len(and) > 0 && and[0] == 'z' {
+		if byte((and>>16)&0xff) == 'z' {
 			and, carryXor = carryXor, and
-			bad = append(bad, and, carryXor)
+			bad = append(bad, name(and), name(carryXor))
 		}
 
-		if len(carryAnd) > 0 && carryAnd[0] == 'z' {
+		if byte((carryAnd>>16)&0xff) == 'z' {
 			carryAnd, carryXor = carryXor, carryAnd
-			bad = append(bad, carryAnd, carryXor)
+			bad = append(bad, name(carryAnd), name(carryXor))
 		}
 
-		newCarry := gateFor(carryAnd + " OR " + and)
-		if newCarry[0] == 'z' {
+		newCarry := gateFor(carryAnd, and, OR)
+		if byte((newCarry>>16)&0xff) == 'z' {
 			newCarry, carryXor = carryXor, newCarry
-			bad = append(bad, newCarry, carryXor)
+			bad = append(bad, name(newCarry), name(carryXor))
 		}
 		carry = newCarry
 	}
