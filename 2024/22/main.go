@@ -13,6 +13,8 @@ var input []byte
 func Parts(in []byte, args ...int) (int, int) {
 	p1 := 0
 	p2 := [1048576]int{}
+	seen_back := [1048576]byte{}
+	seen := NewReuseableSeen(seen_back[:])
 	mx := 0
 	for i := 0; i < len(in); {
 		var n int
@@ -20,7 +22,6 @@ func Parts(in []byte, args ...int) (int, int) {
 		i++
 		prevPrice := n % 10
 		k := 0
-		seen := [1048576]bool{}
 		for j := 0; j < 2000; j++ {
 			n ^= n << 6
 			n &= 0xffffff
@@ -32,16 +33,17 @@ func Parts(in []byte, args ...int) (int, int) {
 			diff := (price - prevPrice) & 0x1f
 			prevPrice = price
 			k = ((k << 5) + diff) & 0xfffff
-			if j < 4 || seen[k] {
+			if j < 4 || seen.HaveSeen(k) {
 				continue
 			}
-			seen[k] = true
+			_ = seen.HaveSeen(k)
 			p2[k] += price
 			if p2[k] > mx {
 				mx = p2[k]
 			}
 		}
 		p1 += n
+		seen.Reset()
 	}
 	return p1, mx
 }
