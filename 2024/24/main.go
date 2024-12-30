@@ -26,9 +26,11 @@ const (
 	AND
 )
 
-func Parts(in []byte, args ...int) (int, [31]byte) {
-	gates := make(map[int]*Rec, 320)
-	rev := make(map[int]int, 256)
+func Parts(in []byte, args ...int) (int, string) {
+	gb := [16384]*Rec{}
+	gates := NewFnvHash64[int](gb[0:], 0x3fff)
+	rb := [131072]*int{}
+	rev := NewFnvHash64[int](rb[0:], 0x1ffff)
 	bitCount := 0
 	k := func(s []byte) int {
 		return (((int(s[0]) << 8) + int(s[1])) << 8) + int(s[2])
@@ -44,15 +46,16 @@ func Parts(in []byte, args ...int) (int, [31]byte) {
 		}
 		if in[i+3] == ':' {
 			v := int(in[i+5] - '0')
-			gates[k(in[i:i+3])] = &Rec{val: intPtr(v)}
+			gates.Put(k(in[i:i+3]), &Rec{val: intPtr(v)})
 			i += 7
 			continue
 		}
 		var kk int
+		var g *Rec
 		switch in[i+4] {
 		case 'X': // XOR
 			kk = k(in[i+15 : i+18])
-			gates[kk] = &Rec{
+			g = &Rec{
 				a:  k(in[i : i+3]),
 				b:  k(in[i+8 : i+11]),
 				op: XOR,
@@ -60,7 +63,7 @@ func Parts(in []byte, args ...int) (int, [31]byte) {
 			i += 19
 		case 'A': // AND
 			kk = k(in[i+15 : i+18])
-			gates[kk] = &Rec{
+			g = &Rec{
 				a:  k(in[i : i+3]),
 				b:  k(in[i+8 : i+11]),
 				op: AND,
@@ -68,14 +71,15 @@ func Parts(in []byte, args ...int) (int, [31]byte) {
 			i += 19
 		default: // OR
 			kk = k(in[i+14 : i+17])
-			gates[kk] = &Rec{
+			g = &Rec{
 				a:  k(in[i : i+3]),
 				b:  k(in[i+7 : i+10]),
 				op: OR,
 			}
 			i += 18
 		}
-		rev[lk(gates[kk])] = kk
+		gates.Put(kk, g)
+		rev.Put(lk(g), intPtr(kk))
 		if byte((kk>>16)&0xff) == 'z' {
 			n := 10*int(in[i-3]-'0') + int(in[i-2]-'0')
 			if bitCount < n {
@@ -85,7 +89,7 @@ func Parts(in []byte, args ...int) (int, [31]byte) {
 	}
 	var value func(s int) int
 	value = func(s int) int {
-		g := gates[s]
+		g, _ := gates.Get(s)
 		if g.val == nil {
 			va := value(g.a)
 			vb := value(g.b)
@@ -111,15 +115,18 @@ func Parts(in []byte, args ...int) (int, [31]byte) {
 		p1 += value(kn('z', z))
 	}
 	if bitCount < 20 {
-		return p1, [31]byte{'t', 'e', 's', 't'}
+		return p1, "test"
 	}
 	gateFor := func(a, b int, op Op) int {
 		g := &Rec{a: a, b: b, op: op}
-		if v, ok := rev[lk(g)]; ok {
-			return v
+		if v, ok := rev.Get(lk(g)); ok {
+			return *v
 		}
 		g = &Rec{a: b, b: a, op: op}
-		return rev[lk(g)]
+		if v, ok := rev.Get(lk(g)); ok {
+			return *v
+		}
+		return 0
 	}
 	bad := make([]int, 0, 8)
 	var carry int
@@ -177,14 +184,14 @@ func Parts(in []byte, args ...int) (int, [31]byte) {
 		p2[j+2] = byte((bad[i] >> 8) & 0xff)
 		p2[j+3] = byte(bad[i] & 0xff)
 	}
-	return p1, p2
+	return p1, string(p2[:])
 }
 
 func main() {
 	p1, p2 := Parts(InputBytes(input))
 	if !benchmark {
 		fmt.Printf("Part 1: %v\n", p1)
-		fmt.Printf("Part 2: %v\n", string(p2[:]))
+		fmt.Printf("Part 2: %v\n", p2)
 	}
 }
 
