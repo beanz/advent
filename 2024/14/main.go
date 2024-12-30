@@ -49,15 +49,16 @@ func Parts(in []byte, args ...int) (int, int) {
 		}
 	}
 	p1, p2 := q[0]*q[1]*q[2]*q[3], 0
+	seen_back := [12000]uint16{}
+	seen := NewReuseableSeen(seen_back[:])
 LOOP:
 	for d := 1; d < 10000; d++ {
-		seen := [12000]bool{}
+		seen.Reset()
 		for _, r := range rs {
 			x, y := Mod(r.x+r.vx*d, w), Mod(r.y+r.vy*d, h)
-			if seen[x+y*w] {
+			if seen.HaveSeen(x + y*w) {
 				continue LOOP
 			}
-			seen[x+y*w] = true
 		}
 		p2 = d
 		break
