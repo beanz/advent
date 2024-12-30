@@ -27,17 +27,36 @@ func Parts(in []byte, args ...int) (int, int) {
 		return '#'
 	}
 	sx, sy := s%w1, s/w1
-	cx, cy, st := sx, sy, 0
+	cx, cy := sx, sy
+	dx, dy := 0, -1
+	for d := 0; d < 4; d++ {
+		if get(sx+dx, sy+dy) != '#' {
+			break
+		}
+		dx, dy = -dy, dx
+	}
 	seen := [20000]int{}
+	n := 0
 LOOP:
 	for {
-		seen[cx+cy*w] = 1 + st
-		for dir := 0; dir < 4; dir++ {
-			nx, ny := cx+DX[dir], cy+DY[dir]
-			if seen[nx+ny*w] == 0 && get(nx, ny) != '#' {
-				cx, cy, st = nx, ny, st+1
-				continue LOOP
-			}
+		n++
+		seen[cx+cy*w] = n
+		nx, ny := cx+dx, cy+dy
+		if get(nx, ny) != '#' {
+			cx, cy = nx, ny
+			continue LOOP
+		}
+		dx, dy = -dy, dx
+		nx, ny = cx+dx, cy+dy
+		if get(nx, ny) != '#' {
+			cx, cy = nx, ny
+			continue LOOP
+		}
+		dx, dy = -dx, -dy
+		nx, ny = cx+dx, cy+dy
+		if get(nx, ny) != '#' {
+			cx, cy = nx, ny
+			continue LOOP
 		}
 		break
 	}
