@@ -459,10 +459,16 @@ pub fn TestCases(comptime T: type, comptime call: fn (in: []const u8) anyerror![
         defer talloc.free(inp);
         const p1s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
         var i: usize = 0;
-        const p1 = try chompUint(T, p1s, &i);
+        const p1 = try switch (T) {
+            isize, i64, i32, i16, i8 => chompInt(T, p1s, &i),
+            else => chompUint(T, p1s, &i),
+        };
         const p2s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
         i = 0;
-        const p2 = try chompUint(T, p2s, &i);
+        const p2 = try switch (T) {
+            isize, i64, i32, i16, i8 => chompInt(T, p2s, &i),
+            else => chompUint(T, p2s, &i),
+        };
         const p = try call(inp);
         try assertEq([2]T{ p1, p2 }, p);
         if (try is.readUntilDelimiterOrEof(&buf, '\n')) |_| {
@@ -489,6 +495,11 @@ pub fn Deque(comptime T: type) type {
         }
         pub fn is_empty(self: Self) bool {
             return self.length == 0;
+        }
+        pub fn clear(self: *Self) void {
+            self.head = 0;
+            self.tail = 0;
+            self.length = 0;
         }
         pub fn push(self: *Self, v: T) anyerror!void {
             if (self.length == self.buf.len) {
