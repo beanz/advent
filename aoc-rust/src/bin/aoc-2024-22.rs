@@ -4,14 +4,15 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let mut p1 = 0;
     let mut p2 = FnvIndexMap::<usize, u16, 65536>::new();
     let mut i = 0;
-    let mut seen = FnvIndexMap::<usize, bool, 2048>::new();
+    let mut seen: [u16; 1048576] = [0; 1048576];
+    let mut seen_val: u16 = 0;
     while i < inp.len() {
         let mut n;
         (i, n) = aoc::read::uint::<usize>(inp, i);
         i += 1;
         let mut prev = (n % 10) as i8;
         let mut k = 0;
-        seen.clear();
+        seen_val += 1;
         for j in 0..2000 {
             n ^= n << 6;
             n &= 0xffffff;
@@ -23,10 +24,10 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             let diff = (price as i8 - prev) & 0x1f;
             prev = price as i8;
             k = ((k << 5) + diff as usize) & 0xfffff;
-            if j < 4 || seen.contains_key(&k) {
+            if j < 4 || seen[k] == seen_val {
                 continue;
             }
-            seen.insert(k, true).expect("overflow");
+            seen[k] = seen_val;
             p2.insert(
                 k,
                 price as u16 + if let Some(v) = p2.get(&k) { *v } else { 0 },
