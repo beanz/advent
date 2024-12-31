@@ -16,27 +16,32 @@ func Parts(in []byte, args ...int) (int, int) {
 	seen_back := [1048576]byte{}
 	seen := NewReuseableSeen(seen_back[:])
 	mx := 0
-	for i := 0; i < len(in); {
-		var n int
-		i, n = ChompUInt[int](in, i)
-		i++
+	for n := range IterUInts[int](in) {
 		prevPrice := n % 10
 		k := 0
-		for j := 0; j < 2000; j++ {
+		next := func() int {
 			n ^= n << 6
 			n &= 0xffffff
 			n ^= n >> 5
 			n &= 0xffffff
 			n ^= n << 11
 			n &= 0xffffff
-			price := n % 10
+			return n % 10
+		}
+		for j := 0; j < 4; j++ {
+			price := next()
 			diff := (price - prevPrice) & 0x1f
 			prevPrice = price
 			k = ((k << 5) + diff) & 0xfffff
-			if j < 4 || seen.HaveSeen(k) {
+		}
+		for j := 4; j < 2000; j++ {
+			price := next()
+			diff := (price - prevPrice) & 0x1f
+			prevPrice = price
+			k = ((k << 5) + diff) & 0xfffff
+			if seen.HaveSeen(k) {
 				continue
 			}
-			_ = seen.HaveSeen(k)
 			p2[k] += price
 			if p2[k] > mx {
 				mx = p2[k]

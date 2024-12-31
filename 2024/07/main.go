@@ -38,15 +38,10 @@ func Parts(in []byte, args ...int) (int, int) {
 	for i := 0; i < len(in); {
 		j, total := ChompUInt[int](in, i)
 		i = j + 2
-		for in[i] != '\n' {
-			var n int
-			i, n = ChompUInt[int](in, i)
+		VisitUints(in, '\n', &i, func(n int) {
 			nums = append(nums, n)
-			i++
-			if in[i-1] == '\n' {
-				break
-			}
-		}
+		})
+		i++
 		if sums(nums, 1, nums[0], total, false) {
 			p1 += total
 			p2 += total

@@ -54,9 +54,7 @@ const CACHE_SIZE = 131072
 func Parts(in []byte, args ...int) (int, int) {
 	p1, p2 := 0, 0
 	mem := [CACHE_SIZE]int{}
-	for i := 0; i < len(in); {
-		j, s := ChompUInt[int](in, i)
-		i = j + 1
+	for s := range IterUInts[int](in) {
 		p1 += blink(mem[:], s, 25)
 		p2 += blink(mem[:], s, 75)
 	}

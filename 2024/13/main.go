@@ -32,19 +32,10 @@ func Cost(ax, ay, bx, by, px, py, add int) int {
 
 func Parts(in []byte, args ...int) (int, int) {
 	p1, p2 := 0, 0
-	for i := 0; i < len(in); i++ {
-		var j, ax, ay, bx, by, px, py int
-		j, ax = ChompUInt[int](in, i+12)
-		j, ay = ChompUInt[int](in, j+4)
-		j, bx = ChompUInt[int](in, j+13)
-		j, by = ChompUInt[int](in, j+4)
-		j, px = ChompUInt[int](in, j+10)
-		j, py = ChompUInt[int](in, j+4)
-		i = j + 1
-		p1 += Cost(ax, ay, bx, by, px, py, 0)
-		p2 += Cost(ax, ay, bx, by, px, py, 10000000000000)
-	}
-
+	VisitNUints(in, []int{12, 4, 13, 4, 10, 4, 2}, func(n ...int) {
+		p1 += Cost(n[0], n[1], n[2], n[3], n[4], n[5], 0)
+		p2 += Cost(n[0], n[1], n[2], n[3], n[4], n[5], 10000000000000)
+	})
 	return p1, p2
 }
 

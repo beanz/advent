@@ -21,15 +21,11 @@ func Parts(in []byte, args ...int) (int, string) {
 	drops := make([][2]int, 0, 4096)
 	m := [8192]int{}
 	n := 0
-	for i := 0; i < len(in); {
-		var j, x, y int
-		j, x = ChompUInt[int](in, i)
-		j, y = ChompUInt[int](in, j+1)
-		i = j + 1
-		drops = append(drops, [2]int{x, y})
-		m[x+y*w] = n + 1
+	VisitNUints(in, []int{0, 1, 1}, func(a ...int) {
+		drops = append(drops, [2]int{a[0], a[1]})
+		m[a[0]+a[1]*w] = n + 1
 		n++
-	}
+	})
 	todo := [16384]rec{}
 	p1 := search(m[:], ex, ey, corrupt, todo[:0])
 	hi := n

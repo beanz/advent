@@ -77,7 +77,7 @@ func VisitInts[T AoCSigned](in []byte, until byte, i *int, fn func(n T)) {
 			return
 		case '0' <= in[*i] && in[*i] <= '9':
 			num = true
-			n = n*10 + T(in[*i]-'0')
+			n = n*10 + T(in[*i]&0xf)
 		case in[*i] == '-':
 			negative = true
 		default:
@@ -108,7 +108,7 @@ func VisitUints[T AoCInt](in []byte, until byte, i *int, fn func(n T)) {
 			return
 		case '0' <= in[*i] && in[*i] <= '9':
 			num = true
-			n = n*10 + T(in[*i]-'0')
+			n = n*10 + T(in[*i]&0xf)
 		default:
 			if num {
 				fn(n)
@@ -185,5 +185,29 @@ LOOP:
 			k = *i
 		}
 		*i++
+	}
+}
+
+func VisitNInts[T AoCSigned](in []byte, offsets []int, fn func(args ...T)) {
+	a := make([]T, len(offsets)-1)
+	for i := 0; i < len(in); {
+		for j := 0; j < len(offsets)-1; j++ {
+			o := offsets[j]
+			i, a[j] = ChompInt[T](in, i+o)
+		}
+		fn(a...)
+		i += offsets[len(offsets)-1]
+	}
+}
+
+func VisitNUints[T AoCInt](in []byte, offsets []int, fn func(args ...T)) {
+	a := make([]T, len(offsets)-1)
+	for i := 0; i < len(in); {
+		for j := 0; j < len(offsets)-1; j++ {
+			o := offsets[j]
+			i, a[j] = ChompUInt[T](in, i+o)
+		}
+		fn(a...)
+		i += offsets[len(offsets)-1]
 	}
 }
