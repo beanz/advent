@@ -11,7 +11,8 @@ import (
 var input []byte
 
 func Parts(in []byte, args ...int) (int, int) {
-	a := [80 * 4]int{}
+	a := [80 * 5]int{}
+	lol := NewListOfLists(a[:], 80)
 	var x, y, w int
 	for i := 0; i < len(in); i++ {
 		switch in[i] {
@@ -22,10 +23,7 @@ func Parts(in []byte, args ...int) (int, int) {
 			continue
 		case '.':
 		default:
-			j := 4 * int(in[i]-'0')
-			for ; a[j] != 0; j++ {
-			}
-			a[j] = i + 1 // offset to avoid default/empty 0 value
+			lol.Push(int(in[i]-'0'), i)
 		}
 		x++
 	}
@@ -56,19 +54,12 @@ func Parts(in []byte, args ...int) (int, int) {
 	}
 
 	for k := 0; k < 80; k++ {
-		for i := 0; i < 4; i++ {
-			ai := a[4*k+i]
-			if ai == 0 {
-				break
-			}
-			ai--
+		l := lol.Len(k)
+		for i := 0; i < l; i++ {
+			ai := lol.Get(k, i)
 			ax, ay := ai%(w+1), ai/(w+1)
-			for j := i + 1; j < 4; j++ {
-				bi := a[4*k+j]
-				if bi == 0 {
-					break
-				}
-				bi--
+			for j := i + 1; j < l; j++ {
+				bi := lol.Get(k, j)
 				bx, by := bi%(w+1), bi/(w+1)
 				p2s(ax, ay)
 				p2s(bx, by)
