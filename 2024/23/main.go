@@ -12,14 +12,14 @@ import (
 var input []byte
 
 func Parts(in []byte, args ...int) (int, string) {
-	g := [456976]bool{}
-	dedup := [676]bool{}
+	g := [1048576]bool{}
+	dedup := [1024]bool{}
 	nodes := make([]int, 0, 1024)
 	for i := 0; i < len(in); i += 6 {
-		a := int(in[i]-'a')*26 + int(in[i+1]-'a')
-		b := int(in[i+3]-'a')*26 + int(in[i+4]-'a')
-		g[a*26*26+b] = true
-		g[b*26*26+a] = true
+		a := (int(in[i]-'a') << 5) + int(in[i+1]-'a')
+		b := (int(in[i+3]-'a') << 5) + int(in[i+4]-'a')
+		g[(a<<10)+b] = true
+		g[(b<<10)+a] = true
 		if !dedup[a] {
 			nodes = append(nodes, a)
 			dedup[a] = true
@@ -30,16 +30,18 @@ func Parts(in []byte, args ...int) (int, string) {
 		}
 	}
 	hasT := func(a int) bool {
-		return a/26 == 't'-'a'
+		return (a >> 5) == 't'-'a'
 	}
 	p1 := 0
 	for i := 0; i < len(nodes); i++ {
 		a := nodes[i]
+		ai := a << 10
 		for j := i + 1; j < len(nodes); j++ {
 			b := nodes[j]
+			bi := b << 10
 			for k := j + 1; k < len(nodes); k++ {
 				c := nodes[k]
-				if g[a*26*26+b] && g[a*26*26+c] && g[b*26*26+c] {
+				if g[ai+b] && g[ai+c] && g[bi+c] {
 					if hasT(a) || hasT(b) || hasT(c) {
 						p1++
 					}
@@ -51,7 +53,7 @@ func Parts(in []byte, args ...int) (int, string) {
 	best := make([]int, 0, 32)
 	{
 		set := make([]int, 0, 32)
-		dedup := [676]bool{}
+		dedup := [1024]bool{}
 		for i := 0; i < len(nodes); i++ {
 			a := nodes[i]
 			if dedup[a] {
@@ -64,12 +66,12 @@ func Parts(in []byte, args ...int) (int, string) {
 					continue
 				}
 				b := nodes[j]
-				if !g[a*26*26+b] {
+				if !g[(a<<10)+b] {
 					continue
 				}
 				l := 0
 				for _, c := range set {
-					if g[b*26*26+c] {
+					if g[(b<<10)+c] {
 						l++
 					}
 				}
@@ -86,9 +88,9 @@ func Parts(in []byte, args ...int) (int, string) {
 	}
 
 	p2 := make([]byte, 0, 38)
-	p2 = append(p2, byte(best[0]/26+'a'), byte(best[0]%26+'a'))
+	p2 = append(p2, byte((best[0]>>5)+'a'), byte((best[0]&0x1f)+'a'))
 	for i := 1; i < len(best); i++ {
-		p2 = append(p2, ',', byte(best[i]/26+'a'), byte(best[i]%26+'a'))
+		p2 = append(p2, ',', byte((best[i]>>5)+'a'), byte((best[i]&0x1f)+'a'))
 	}
 	return p1, string(p2)
 }
