@@ -64,21 +64,22 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         }
     };
     let mut p2 = 0;
+    let mut seen2: [u16; 133643] = [0; 133643];
+    let mut seen2_val: u16 = 1;
     for oy in 0..h {
         for ox in 0..w {
             if !seen[((ox << 8) + oy) as usize] {
                 continue;
             }
-            let mut seen = [false; 133643];
             let (mut cx, mut cy) = (sx, sy);
             let mut dir = 0;
             while in_bound(cx, cy) {
                 let k = (((cx << 8) + cy) << 2) as usize + dir;
-                if seen[k] {
+                if seen2[k] == seen2_val {
                     p2 += 1;
                     break;
                 }
-                seen[k] = true;
+                seen2[k] = seen2_val;
                 let (mut nx, mut ny, mut ndir) = (cx + DX[dir], cy + DY[dir], dir);
                 let mut jump = corners[k];
                 if jump != 0 && cx != ox && cy != oy {
@@ -92,6 +93,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
                 }
                 (cx, cy, dir) = (nx, ny, ndir);
             }
+            seen2_val += 1;
         }
     }
 

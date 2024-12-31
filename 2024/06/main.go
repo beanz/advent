@@ -65,16 +65,17 @@ LOOP:
 		}
 		cx, cy = nx, ny
 	}
+	seen_back := [133643]uint16{}
+	seen2 := NewReuseableSeen(seen_back[:])
 	part2 := func(ox, oy int) bool {
-		seen2 := [133643]bool{}
+		seen2.Reset()
 		cx, cy := sx, sy
 		dir := 0
 		for 0 <= cx && cx < w && 0 <= cy && cy < h {
 			k := ((cx<<8)+cy)<<2 + dir
-			if seen2[k] {
+			if seen2.HaveSeen(k) {
 				return true
 			}
-			seen2[k] = true
 			nx, ny, ndir := cx, cy, dir
 			jump := corners[k]
 			if jump != 0 && cx != ox && cy != oy {
@@ -92,11 +93,13 @@ LOOP:
 		return false
 	}
 	p2 := 0
+	cc := 0
 	for oy := 0; oy < h; oy++ {
 		for ox := 0; ox < w; ox++ {
 			if !seen[(ox<<8)+oy] {
 				continue
 			}
+			cc++
 			if part2(ox, oy) {
 				p2++
 			}

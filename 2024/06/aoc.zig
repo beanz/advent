@@ -64,26 +64,28 @@ fn parts(inp: []const u8) anyerror![2]usize {
         cy = ny;
         dir = ndir;
     }
+    var seen2: [133643]u16 = .{0} ** 133643;
     var p2: usize = 0;
+    var seen2_val: u16 = 1;
     for (path.slice()) |p| {
-        if (part2(inp, w1, w, h, sx, sy, p[0], p[1], corners)) {
+        if (part2(inp, w1, w, h, sx, sy, p[0], p[1], corners, &seen2, seen2_val)) {
             p2 += 1;
         }
+        seen2_val += 1;
     }
     return [2]usize{ p1, p2 };
 }
 
-fn part2(inp: []const u8, w1: usize, w: i32, h: i32, sx: i32, sy: i32, ox: i32, oy: i32, corners: [133643]?usize) bool {
-    var seen: [133643]bool = .{false} ** 133643;
+fn part2(inp: []const u8, w1: usize, w: i32, h: i32, sx: i32, sy: i32, ox: i32, oy: i32, corners: [133643]?usize, seen: *[133643]u16, seen_val: u16) bool {
     var cx = sx;
     var cy = sy;
     var dir: u2 = 0;
     while (true) {
         const k: usize = @intCast((((cx << 8) + cy) << 2) + dir);
-        if (seen[k]) {
+        if (seen[k] == seen_val) {
             return true;
         }
-        seen[k] = true;
+        seen[k] = seen_val;
         var nx = cx + DX[dir];
         var ny = cy + DY[dir];
         var ndir = dir;
