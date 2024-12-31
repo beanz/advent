@@ -10,26 +10,26 @@ import (
 //go:embed input.txt
 var input []byte
 
-func sums(nums []int, i, sub, total int, p2 bool) bool {
-	if sub > total {
-		return false
+func sums(nums []int, i, total int, p2 bool) bool {
+	if i == 0 {
+		return nums[i] == total
 	}
-	if i == len(nums) {
-		return sub == total
-	}
-	if sums(nums, i+1, sub+nums[i], total, p2) {
+	if total > nums[i] && sums(nums, i-1, total-nums[i], p2) {
 		return true
 	}
-	if sums(nums, i+1, sub*nums[i], total, p2) {
+	if total%nums[i] == 0 && sums(nums, i-1, total/nums[i], p2) {
 		return true
 	}
 	if !p2 {
 		return false
 	}
-	for t := nums[i]; t > 0; sub, t = sub*10, t/10 {
+	m := 1000
+	if nums[i] < 10 {
+		m = 10
+	} else if nums[i] < 100 {
+		m = 100
 	}
-	sub += nums[i]
-	return sums(nums, i+1, sub, total, p2)
+	return total%m == nums[i] && sums(nums, i-1, total/m, p2)
 }
 
 func Parts(in []byte, args ...int) (int, int) {
@@ -42,13 +42,13 @@ func Parts(in []byte, args ...int) (int, int) {
 			nums = append(nums, n)
 		})
 		i++
-		if sums(nums, 1, nums[0], total, false) {
+		if sums(nums, len(nums)-1, total, false) {
 			p1 += total
 			p2 += total
 			nums = nums[:0]
 			continue
 		}
-		if sums(nums, 1, nums[0], total, true) {
+		if sums(nums, len(nums)-1, total, true) {
 			p2 += total
 		}
 		nums = nums[:0]

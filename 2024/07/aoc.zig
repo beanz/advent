@@ -23,12 +23,12 @@ fn parts(inp: []const u8) anyerror![2]usize {
             }
         }
         const nums = l.slice();
-        if (sums(nums, 1, nums[0], total, false)) {
+        if (sums(nums, nums.len - 1, total, false)) {
             p1 += total;
             p2 += total;
             continue;
         }
-        if (sums(nums, 1, nums[0], total, true)) {
+        if (sums(nums, nums.len - 1, total, true)) {
             p2 += total;
         }
     }
@@ -36,26 +36,21 @@ fn parts(inp: []const u8) anyerror![2]usize {
     return [2]usize{ p1, p2 };
 }
 
-fn sums(nums: []usize, i: usize, sub: usize, total: usize, p2: bool) bool {
-    if (sub > total) {
-        return false;
+fn sums(nums: []usize, i: usize, total: usize, p2: bool) bool {
+    if (i == 0) {
+        return nums[i] == total;
     }
-    if (i == nums.len) {
-        return sub == total;
-    }
-    if (sums(nums, i + 1, sub + nums[i], total, p2)) {
+    if (total > nums[i] and sums(nums, i - 1, total - nums[i], p2)) {
         return true;
     }
-    if (sums(nums, i + 1, sub * nums[i], total, p2)) {
+    if (total % nums[i] == 0 and sums(nums, i - 1, total / nums[i], p2)) {
         return true;
     }
     if (!p2) {
         return false;
     }
-    if (sums(nums, i + 1, concat(sub, nums[i]), total, p2)) {
-        return true;
-    }
-    return false;
+    const m: usize = if (nums[i] < 10) 10 else (if (nums[i] < 100) 100 else 1000);
+    return total % m == nums[i] and sums(nums, i - 1, total / m, p2);
 }
 
 fn concat(a: usize, b: usize) usize {

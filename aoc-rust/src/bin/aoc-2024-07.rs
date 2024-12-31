@@ -1,29 +1,27 @@
 use smallvec::SmallVec;
 
-fn is_valid(nums: &SmallVec<[usize; 16]>, i: usize, sub: usize, total: usize, p2: bool) -> bool {
-    if sub > total {
-        return false;
+fn is_valid(nums: &SmallVec<[usize; 16]>, i: usize, total: usize, p2: bool) -> bool {
+    if i == 0 {
+        return nums[i] == total;
     }
-    if i == nums.len() {
-        return sub == total;
-    }
-    if is_valid(nums, i + 1, sub + nums[i], total, p2) {
+
+    if total > nums[i] && is_valid(nums, i - 1, total - nums[i], p2) {
         return true;
     }
-    if is_valid(nums, i + 1, sub * nums[i], total, p2) {
+    if total % nums[i] == 0 && is_valid(nums, i - 1, total / nums[i], p2) {
         return true;
     }
     if !p2 {
         return false;
     }
-    let mut sub = sub;
-    let mut t = nums[i];
-    while t > 0 {
-        sub *= 10;
-        t /= 10;
-    }
-    sub += nums[i];
-    is_valid(nums, i + 1, sub, total, p2)
+    let m = if nums[i] < 10 {
+        10
+    } else if nums[i] < 100 {
+        100
+    } else {
+        1000
+    };
+    total % m == nums[i] && is_valid(nums, i - 1, total / m, p2)
 }
 
 fn parts(inp: &[u8]) -> (usize, usize) {
@@ -42,13 +40,13 @@ fn parts(inp: &[u8]) -> (usize, usize) {
                 break;
             }
         }
-        if is_valid(&nums, 1, nums[0], total, false) {
+        if is_valid(&nums, nums.len() - 1, total, false) {
             p1 += total;
             p2 += total;
             nums.clear();
             continue;
         }
-        if is_valid(&nums, 1, nums[0], total, true) {
+        if is_valid(&nums, nums.len() - 1, total, true) {
             p2 += total;
         }
         nums.clear();
