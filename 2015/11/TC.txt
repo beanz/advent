@@ -1,0 +1,15 @@
+test1.txt
+abcdffaa
+abcdffbb
+---END---
+test2.txt
+ghjaabcc
+ghjbbcdd
+---END---
+input-amf.txt
+hxbxxyzz
+hxcaabcc
+---END---
+input.txt
+vzbxxyzz
+vzcaabcc
