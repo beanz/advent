@@ -1,10 +1,12 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	. "github.com/beanz/advent/lib-go"
+	"github.com/beanz/advent/lib-go/tester"
 )
 
 type TestCase struct {
@@ -19,7 +21,7 @@ func TestCalc(t *testing.T) {
 		{ReadFileLines("input.txt")[0], 346386, 9958218},
 	}
 	for i, tc := range tests {
-		p1, p2 := calc(tc.in)
+		p1, p2 := Parts([]byte(tc.in))
 		n := tc.in
 		if i == 2 {
 			n = "<input.txt"
@@ -30,6 +32,10 @@ func TestCalc(t *testing.T) {
 			break
 		}
 	}
+}
+
+func TestParts(t *testing.T) {
+	tester.RunWithArgs(t, Parts)
 }
 
 func BenchmarkMain(b *testing.B) {

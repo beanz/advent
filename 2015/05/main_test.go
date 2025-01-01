@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 
-	. "github.com/beanz/advent/lib-go"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/beanz/advent/lib-go/tester"
 )
 
 type TestCaseNice struct {
@@ -40,10 +41,7 @@ func TestNice2(t *testing.T) {
 }
 
 func TestParts(t *testing.T) {
-	in := ReadFileLines("input.txt")
-	p1, p2 := calc(in)
-	assert.Equal(t, 258, p1)
-	assert.Equal(t, 53, p2)
+	tester.RunWithArgs(t, Parts)
 }
 
 func BenchmarkMain(b *testing.B) {

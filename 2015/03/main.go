@@ -10,43 +10,36 @@ import (
 //go:embed input.txt
 var input []byte
 
-func calc(in []string) (int, int) {
-	p1 := make(map[Point]bool, 2700)
-	p2 := make(map[Point]bool, 2700)
-	p1p := Point{0, 0}
-	p2p := []Point{Point{0, 0}, Point{0, 0}}
-	p1[p1p] = true
-	p2[p2p[0]] = true
-	for i, ch := range in[0] {
+func Parts(in []byte, args ...int) (int, int) {
+	p1 := make(map[Point]struct{}, 2700)
+	p2 := make(map[Point]struct{}, 2700)
+	p1p := Point{X: 0, Y: 0}
+	p2p := []Point{{X: 0, Y: 0}, {X: 0, Y: 0}}
+	p1[p1p] = struct{}{}
+	p2[p2p[0]] = struct{}{}
+	for i, ch := range in {
 		switch ch {
 		case '^':
 			p1p.Y--
-			p1[p1p] = true
 			p2p[i%2].Y--
-			p2[p2p[i%2]] = true
 		case '>':
 			p1p.X++
-			p1[p1p] = true
 			p2p[i%2].X++
-			p2[p2p[i%2]] = true
 		case 'v':
 			p1p.Y++
-			p1[p1p] = true
 			p2p[i%2].Y++
-			p2[p2p[i%2]] = true
 		case '<':
 			p1p.X--
-			p1[p1p] = true
 			p2p[i%2].X--
-			p2[p2p[i%2]] = true
 		}
+		p1[p1p] = struct{}{}
+		p2[p2p[i%2]] = struct{}{}
 	}
 	return len(p1), len(p2)
 }
 
 func main() {
-	s := InputLines(input)
-	p1, p2 := calc(s)
+	p1, p2 := Parts(InputBytes(input))
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
 		fmt.Printf("Part 2: %d\n", p2)

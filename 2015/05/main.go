@@ -46,24 +46,27 @@ func nice(s string) (bool, bool) {
 	return vc >= 3 && hasDouble && !badPair, dupPair && sepRepeat
 }
 
-func calc(in []string) (int, int) {
+func Parts(in []byte, args ...int) (int, int) {
 	c1 := 0
 	c2 := 0
-	for _, s := range in {
-		p1, p2 := nice(s)
-		if p1 {
-			c1++
-		}
-		if p2 {
-			c2++
+	j := 0
+	for i, ch := range in {
+		if ch == '\n' {
+			p1, p2 := nice(string(in[j:i]))
+			if p1 {
+				c1++
+			}
+			if p2 {
+				c2++
+			}
+			j = i
 		}
 	}
 	return c1, c2
 }
 
 func main() {
-	in := InputLines(input)
-	p1, p2 := calc(in)
+	p1, p2 := Parts(InputBytes(input))
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
 		fmt.Printf("Part 2: %d\n", p2)

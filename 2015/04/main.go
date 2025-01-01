@@ -11,9 +11,12 @@ import (
 //go:embed input.txt
 var input []byte
 
-func calc(secret string) (int, int) {
+func Parts(in []byte, args ...int) (int, int) {
 	var p1 int
-	n := NewNumStr(secret)
+	if in[len(in)-1] == '\n' {
+		in = in[:len(in)-1]
+	}
+	n := NewNumStrFromBytes(in)
 	for i := 1; ; i++ {
 		n.Inc()
 		cs := md5.Sum(n.Bytes())
@@ -29,8 +32,7 @@ func calc(secret string) (int, int) {
 }
 
 func main() {
-	s := InputLines(input)
-	p1, p2 := calc(s[0])
+	p1, p2 := Parts(InputBytes(input))
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
 		fmt.Printf("Part 2: %d\n", p2)
