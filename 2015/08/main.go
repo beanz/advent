@@ -10,65 +10,40 @@ import (
 //go:embed input.txt
 var input []byte
 
-func Count1(s string) int {
-	cc := 0
-	for i := 0; i < len(s); i++ {
-		ch := s[i]
-		if ch == '\\' {
-			switch s[i+1] {
-			case '\\', '"':
-				i++
-				cc++
-			case 'x':
+func Parts(in []byte, args ...int) (int, int) {
+	p1 := 0
+	p2 := 0
+	for i := 0; i < len(in); {
+		switch in[i] {
+		case '"':
+			p1 += 1
+			p2 += 1
+			i++
+		case '\\':
+			i++
+			if in[i] == 'x' {
+				p1 += 3
+				p2++
 				i += 3
-				cc++
-			default:
-				panic(fmt.Sprintf("Invalid escape %c", s[i+1]))
+			} else {
+				p1++
+				p2 += 2
+				i++
 			}
-		} else {
-			cc++
-		}
-	}
-	return len(s) - cc + 2
-}
-
-func Part1(in []string) int {
-	c := 0
-	for _, l := range in {
-		c += Count1(l)
-	}
-	return c
-}
-
-func Count2(s string) int {
-	qc := 0
-	for i := 0; i < len(s); i++ {
-		switch s[i] {
-		case '\\', '"':
-			qc += 2
+		case '\n':
+			p2 += 2
+			i++
 		default:
-			qc++
+			i++
 		}
 	}
-	return 2 + qc - len(s)
-}
-
-func Part2(in []string) int {
-	c := 0
-	for _, l := range in {
-		c += Count2(l)
-	}
-	return c
+	return p1, p2
 }
 
 func main() {
-	in := InputLines(input)
-	p1 := Part1(in)
+	p1, p2 := Parts(InputBytes(input))
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
-	}
-	p2 := Part2(in)
-	if !benchmark {
 		fmt.Printf("Part 2: %d\n", p2)
 	}
 }
