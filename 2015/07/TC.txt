@@ -1,0 +1,7 @@
+input-amf.txt
+3176
+14710
+---END---
+input.txt
+956
+40149
