@@ -10,44 +10,37 @@ import (
 //go:embed input.txt
 var input []byte
 
-func sw(s string, fn func(int, int, string)) {
-	ints := Ints(s)
-	sw := "toggle"
-	if s[1] == 'u' {
-		if s[6] == 'n' {
-			sw = "on"
-		} else {
-			sw = "off"
-		}
-	}
-	for x := ints[0]; x <= ints[2]; x++ {
-		for y := ints[1]; y <= ints[3]; y++ {
-			fn(x, y, sw)
-		}
-	}
-}
-
 func calc(in []string) (int, int) {
 	var l1 [1000 * 1000]bool
 	var l2 [1000 * 1000]int
 	for _, inst := range in {
-		sw(inst, func(x, y int, s string) {
-			i := x + 1000*y
-			switch s {
-			case "off":
+		ints := Ints(inst)
+		var fn func(int)
+		switch inst[6] {
+		case 'f':
+			fn = func(i int) {
 				l1[i] = false
 				l2[i]--
 				if l2[i] < 0 {
 					l2[i] = 0
 				}
-			case "on":
+			}
+		case 'n':
+			fn = func(i int) {
 				l1[i] = true
 				l2[i]++
-			default: // toggle
+			}
+		default:
+			fn = func(i int) {
 				l1[i] = !l1[i]
 				l2[i] += 2
 			}
-		})
+		}
+		for x := ints[0]; x <= ints[2]; x++ {
+			for y := ints[1]; y <= ints[3]; y++ {
+				fn(x + 1000*y)
+			}
+		}
 	}
 	c1 := 0
 	c2 := 0
