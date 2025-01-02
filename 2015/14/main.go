@@ -89,9 +89,9 @@ func Part2(in []string, endTime int) int {
 func main() {
 	file := InputFile()
 	in := InputLines(input)
-	endTime := 1000
-	if file == "input.txt" {
-		endTime = 2503
+	endTime := 2503
+	if file == "test1.txt" {
+		endTime = 1000
 	}
 	p1 := Part1(in, endTime)
 	if !benchmark {

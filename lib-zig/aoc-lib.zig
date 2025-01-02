@@ -43,8 +43,10 @@ pub fn input() []const u8 {
     var args = Args();
     _ = args.skip();
     var res: []const u8 = inputfile;
-    if (args.next()) |_| {
-        res = test1file;
+    if (args.next()) |filename| {
+        const inp = std.fs.cwd().readFileAlloc(halloc, filename, std.math.maxInt(usize)) catch unreachable;
+        //defer halloc.free(inp);
+        res = inp;
     }
     return res;
 }
@@ -153,7 +155,7 @@ pub fn chompUint(comptime T: type, inp: anytype, i: *usize) anyerror!T {
 
 pub fn chompInt(comptime T: type, inp: anytype, i: *usize) anyerror!T {
     var n: T = 0;
-    var m: T = 1;
+    var neg: bool = false;
     std.debug.assert(i.* < inp.len and (('0' <= inp[i.*] and inp[i.*] <= '9') or (inp[i.*] == '-')));
     while (i.* < inp.len) : (i.* += 1) {
         if ('0' <= inp[i.*] and inp[i.*] <= '9') {
@@ -161,12 +163,15 @@ pub fn chompInt(comptime T: type, inp: anytype, i: *usize) anyerror!T {
             continue;
         }
         if (inp[i.*] == '-') {
-            m = -1;
+            neg = true;
             continue;
         }
         break;
     }
-    return m * n;
+    if (neg) {
+        return -n;
+    }
+    return n;
 }
 
 pub fn max(comptime T: type, a: T, b: T) T {
@@ -523,6 +528,133 @@ pub fn Deque(comptime T: type) type {
             }
             self.length -= 1;
             return r;
+        }
+    };
+}
+
+pub inline fn swap(comptime T: type, a: *T, b: *T) void {
+    const tmp = a.*;
+    a.* = b.*;
+    b.* = tmp;
+}
+
+pub fn permute(comptime T: type, items: []T) PermIter(T) {
+    return PermIter(T){
+        .items = items[0..],
+        .len = items.len,
+        .state = [_]u4{0} ** 32,
+        .index = 0,
+        .first = true,
+    };
+}
+
+pub fn PermIter(comptime T: type) type {
+    return struct {
+        items: []T,
+        len: usize,
+        state: [32]u4,
+        index: u4,
+        first: bool,
+
+        const Self = @This();
+
+        pub fn next(self: *Self) ?[]T {
+            if (self.first) {
+                self.first = false;
+                return self.items;
+            }
+            while (self.index < self.len) {
+                if (self.state[self.index] < self.index) {
+                    if (self.index & 0x1 == 0) {
+                        swap(T, &self.items[0], &self.items[self.index]);
+                    } else {
+                        swap(T, &self.items[self.state[self.index]], &self.items[self.index]);
+                    }
+                    self.state[self.index] += 1;
+                    self.index = 0;
+                    return self.items;
+                } else {
+                    self.state[self.index] = 0;
+                    self.index += 1;
+                }
+            }
+            return null;
+        }
+    };
+}
+
+pub fn uintIter(comptime T: type, inp: []const u8) UintIter(T) {
+    return UintIter(T){
+        .inp = inp[0..],
+        .i = 0,
+    };
+}
+
+pub fn UintIter(comptime T: type) type {
+    return struct {
+        inp: []const u8,
+        i: usize,
+
+        const Self = @This();
+
+        pub fn next(self: *Self) ?T {
+            var n: T = 0;
+            var num = false;
+            while (self.i < self.inp.len) {
+                const ch = self.inp[self.i];
+                self.i += 1;
+                if ('0' <= ch and ch <= '9') {
+                    num = true;
+                    n = n * 10 + @as(T, ch - '0');
+                } else if (num) {
+                    return n;
+                }
+            }
+            if (num) {
+                return n;
+            }
+            return null;
+        }
+    };
+}
+
+pub fn intIter(comptime T: type, inp: []const u8) IntIter(T) {
+    return IntIter(T){
+        .inp = inp[0..],
+        .i = 0,
+    };
+}
+
+pub fn IntIter(comptime T: type) type {
+    return struct {
+        inp: []const u8,
+        i: usize,
+
+        const Self = @This();
+
+        pub fn next(self: *Self) ?T {
+            var n: T = 0;
+            var m: T = 1;
+            var num = false;
+            while (self.i < self.inp.len) {
+                const ch = self.inp[self.i];
+                self.i += 1;
+                if (ch == '-') {
+                    m = -1;
+                    num = true;
+                } else if ('0' <= ch and ch <= '9') {
+                    num = true;
+                    n = n * 10 + @as(T, ch - '0');
+                } else if (num) {
+                    return n * m;
+                } else {
+                    m = 1;
+                }
+            }
+            if (num) {
+                return n * m;
+            }
+            return null;
         }
     };
 }
