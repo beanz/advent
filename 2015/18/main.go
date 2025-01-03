@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"fmt"
+
 	. "github.com/beanz/advent/lib-go"
 )
 
@@ -133,7 +134,7 @@ func main() {
 	file := InputFile()
 	s := InputLines(input)
 	rounds := 100
-	if file != "input.txt" {
+	if file == "test1.txt" {
 		rounds = 4
 	}
 	l := NewLife(s)

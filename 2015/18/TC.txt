@@ -1,0 +1,7 @@
+test1.txt
+4
+17
+---END---
+input.txt
+821
+886
