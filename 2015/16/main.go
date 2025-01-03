@@ -108,7 +108,7 @@ func main() {
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
 	}
-	p2 := sues.Part1()
+	p2 := sues.Part2()
 	if !benchmark {
 		fmt.Printf("Part 2: %d\n", p2)
 	}

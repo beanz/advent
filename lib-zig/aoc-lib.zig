@@ -174,6 +174,15 @@ pub fn chompInt(comptime T: type, inp: anytype, i: *usize) anyerror!T {
     return n;
 }
 
+pub fn chompId(inp: []const u8, i: *usize, prime: u8) anyerror!u8 {
+    var id: u8 = 0;
+    std.debug.assert(i.* < inp.len and (('0' <= inp[i.*] and inp[i.*] <= '9') or ('a' <= inp[i.*] and inp[i.*] <= 'z') or ('A' <= inp[i.*] and inp[i.*] <= 'Z')));
+    while (i.* < inp.len and (('0' <= inp[i.*] and inp[i.*] <= '9') or ('a' <= inp[i.*] and inp[i.*] <= 'z') or ('A' <= inp[i.*] and inp[i.*] <= 'Z'))) : (i.* += 1) {
+        id = (id *% prime) ^ inp[i.*];
+    }
+    return id;
+}
+
 pub fn max(comptime T: type, a: T, b: T) T {
     if (a > b) {
         return a;
