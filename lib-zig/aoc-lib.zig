@@ -667,3 +667,48 @@ pub fn IntIter(comptime T: type) type {
         }
     };
 }
+
+pub fn chompUints(comptime T: type, inp: anytype, b: anytype) anyerror!void {
+    var n: T = 0;
+    var num = false;
+    for (inp) |ch| {
+        if ('0' <= ch and ch <= '9') {
+            num = true;
+            n = n * 10 + @as(T, ch - '0');
+        } else if (num) {
+            try b.append(n);
+            n = 0;
+            num = false;
+        }
+    }
+    if (num) {
+        try b.append(n);
+    }
+    return;
+}
+
+pub fn chompInts(comptime T: type, b: anytype, inp: anytype) anyerror!void {
+    var n: T = 0;
+    var m: T = 1;
+    var num = false;
+    for (inp) |ch| {
+        if (ch == '-') {
+            m = -1;
+            num = true;
+        } else if ('0' <= ch and ch <= '9') {
+            num = true;
+            n = n * 10 + @as(T, ch - '0');
+        } else if (num) {
+            try b.append(n * m);
+            n = 0;
+            m = 1;
+            num = false;
+        } else {
+            m = 1;
+        }
+    }
+    if (num) {
+        try b.append(n * m);
+    }
+    return;
+}

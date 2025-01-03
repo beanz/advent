@@ -38,7 +38,7 @@ func main() {
 	file := InputFile()
 	in := InputInts(input)
 	target := 150
-	if file != "input.txt" {
+	if file == "test1.txt" {
 		target = 25
 	}
 	p1, p2 := calc(in, target)
