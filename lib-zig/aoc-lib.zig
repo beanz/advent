@@ -156,7 +156,7 @@ pub fn chompUint(comptime T: type, inp: anytype, i: *usize) anyerror!T {
 pub fn chompInt(comptime T: type, inp: anytype, i: *usize) anyerror!T {
     var n: T = 0;
     var neg: bool = false;
-    std.debug.assert(i.* < inp.len and (('0' <= inp[i.*] and inp[i.*] <= '9') or (inp[i.*] == '-')));
+    std.debug.assert(i.* < inp.len and (('0' <= inp[i.*] and inp[i.*] <= '9') or (inp[i.*] == '-') or (inp[i.*] == '+')));
     while (i.* < inp.len) : (i.* += 1) {
         if ('0' <= inp[i.*] and inp[i.*] <= '9') {
             n = n * 10 + @as(T, inp[i.*] - '0');
@@ -164,6 +164,9 @@ pub fn chompInt(comptime T: type, inp: anytype, i: *usize) anyerror!T {
         }
         if (inp[i.*] == '-') {
             neg = true;
+            continue;
+        }
+        if (inp[i.*] == '+') {
             continue;
         }
         break;
