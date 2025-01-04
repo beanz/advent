@@ -1,0 +1,7 @@
+input.txt
+231
+147
+---END---
+input-amf.txt
+246
+124
