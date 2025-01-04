@@ -1,0 +1,11 @@
+test1.txt
+1985
+5DB3
+---END---
+input-amf.txt
+69642
+8CB23
+---END---
+input.txt
+52981
+74CD2
