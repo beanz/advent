@@ -1,0 +1,7 @@
+input-amf.txt
+118
+143153
+---END---
+input.txt
+116
+23903
