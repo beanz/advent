@@ -1,16 +1,12 @@
 const std = @import("std");
 const aoc = @import("aoc-lib.zig");
-const isDigit = std.ascii.isDigit;
 
 test "testcases" {
     try aoc.TestCases(usize, parts);
 }
 
 fn parts(inp: []const u8) anyerror![2]usize {
-    var p1 = inp.len;
-    var p2 = 2;
-    TODO;
-    return [2]usize{ p1, p2 };
+    return [2]usize{ inp.len, 999 };
 }
 
 fn day(inp: []const u8, bench: bool) anyerror!void {

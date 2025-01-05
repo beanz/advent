@@ -1,5 +1,6 @@
 const std = @import("std");
 const Args = std.process.args;
+const Md5 = std.crypto.hash.Md5;
 
 // mem
 pub const halloc = std.heap.page_allocator;
@@ -715,3 +716,40 @@ pub fn chompInts(comptime T: type, b: anytype, inp: anytype) anyerror!void {
     }
     return;
 }
+
+pub const NumStr = struct {
+    b: *[40]u8,
+    l: usize,
+    pl: usize,
+    c: usize,
+
+    pub fn init(alloc: std.mem.Allocator, b: *[40]u8, pl: usize) anyerror!*NumStr {
+        var n = try alloc.create(NumStr);
+        n.b = b;
+        n.l = pl + 1;
+        n.pl = pl;
+        n.c = 0;
+        n.b[pl] = '0';
+        return n;
+    }
+    pub fn count(self: *NumStr) usize {
+        return self.c;
+    }
+    pub fn inc(self: *NumStr) void {
+        self.c += 1;
+        var i = self.l - 1;
+        while (i >= self.pl) : (i -= 1) {
+            self.b[i] += 1;
+            if (self.b[i] <= '9') {
+                return;
+            }
+            self.b[i] = '0';
+        }
+        self.b[self.pl] = '1';
+        self.b[self.l] = '0';
+        self.l += 1;
+    }
+    pub fn bytes(self: *NumStr) []u8 {
+        return self.b[0..self.l];
+    }
+};
