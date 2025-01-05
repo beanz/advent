@@ -753,3 +753,37 @@ pub const NumStr = struct {
         return self.b[0..self.l];
     }
 };
+
+pub fn inv_mod(comptime T: type, a: T, m: T) T {
+    const y: T = @mod(a, m);
+    var x: T = @as(T, 1);
+
+    while (x < m) {
+        defer x += 1;
+        if (@rem((y * x), m) == 1)
+            return x;
+    }
+    return 0;
+}
+
+pub fn crt(comptime T: type, a: []T, m: []T) T {
+    const n = a.len;
+    var M: T = 1;
+    var x: T = 0;
+    var i: usize = undefined;
+    {
+        i = 0;
+        while (i < n) : (i += 1) {
+            M *= m[i];
+        }
+    }
+    {
+        i = 0;
+        while (i < n) : (i += 1) {
+            const Mi = @divTrunc(M, m[i]);
+            const z = inv_mod(T, Mi, m[i]);
+            x = @mod((x + a[i] * Mi * z), M);
+        }
+    }
+    return x;
+}
