@@ -1,0 +1,11 @@
+test1.txt
+11
+0
+---END---
+input2.txt
+15
+39
+---END---
+input.txt
+31
+55
