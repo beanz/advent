@@ -1,0 +1,7 @@
+input-amf.txt
+90
+135
+---END---
+input.txt
+96
+141
