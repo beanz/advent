@@ -1,0 +1,11 @@
+test1.txt
+easter
+advent
+---END---
+input-amf.txt
+qqqluigu
+lsoypmia
+---END---
+input.txt
+ursvoerv
+vomaypnn
