@@ -1,0 +1,7 @@
+input-amf.txt
+RDDRLDRURD
+448
+---END---
+input.txt
+RLDUDRDDRR
+590

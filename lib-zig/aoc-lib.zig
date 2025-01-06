@@ -542,6 +542,18 @@ pub fn Deque(comptime T: type) type {
             self.length -= 1;
             return r;
         }
+        pub fn shift(self: *Self) ?T {
+            if (self.length == 0) {
+                return null;
+            }
+            if (self.tail == 0) {
+                self.tail = self.buf.len - 1;
+            } else {
+                self.tail -= 1;
+            }
+            self.length -= 1;
+            return self.buf[self.tail];
+        }
     };
 }
 
