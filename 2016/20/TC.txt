@@ -1,0 +1,7 @@
+input-amf.txt
+19449262
+119
+---END---
+input.txt
+32259706
+113
