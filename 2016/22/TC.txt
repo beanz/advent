@@ -1,0 +1,11 @@
+input2.txt
+1003
+192
+---END---
+input-amf.txt
+985
+179
+---END---
+input.txt
+888
+236
