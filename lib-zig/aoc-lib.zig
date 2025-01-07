@@ -73,6 +73,13 @@ pub fn assertStrEq(exp: []const u8, act: []const u8) anyerror!void {
     }
     try assert(std.mem.eql(u8, exp, act));
 }
+pub fn assertStrEqTrimmed(exp: []const u8, act: []const u8) anyerror!void {
+    var k = act.len - 1;
+    while (act[k] == ' ') {
+        k -= 1;
+    }
+    return assertStrEq(exp, act[0 .. k + 1]);
+}
 
 pub fn DEBUG() i32 {
     const debuglevel = @import("std").process.getEnvVarOwned(halloc, "AoC_DEBUG") catch return 0;
@@ -475,20 +482,91 @@ pub fn TestCases(comptime T: type, comptime call: fn (in: []const u8) anyerror![
         const filename = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
         const inp = try std.fs.cwd().readFileAlloc(talloc, filename, std.math.maxInt(usize));
         defer talloc.free(inp);
-        const p1s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
-        var i: usize = 0;
-        const p1 = try switch (T) {
-            isize, i64, i32, i16, i8 => chompInt(T, p1s, &i),
-            else => chompUint(T, p1s, &i),
-        };
-        const p2s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
-        i = 0;
-        const p2 = try switch (T) {
-            isize, i64, i32, i16, i8 => chompInt(T, p2s, &i),
-            else => chompUint(T, p2s, &i),
-        };
         const p = try call(inp);
-        try assertEq([2]T{ p1, p2 }, p);
+        switch (T) {
+            isize, i64, i32, i16, i8 => {
+                const p1s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+                var i: usize = 0;
+                const p1 = try chompInt(T, p1s, &i);
+                try assertEq(p1, p[0]);
+                const p2s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+                i = 0;
+                const p2 = try chompInt(T, p2s, &i);
+                try assertEq(p2, p[1]);
+            },
+            usize, u64, u32, u16, u8 => {
+                const p1s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+                var i: usize = 0;
+                const p1 = try chompUint(T, p1s, &i);
+                try assertEq(p1, p[0]);
+                const p2s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+                i = 0;
+                const p2 = try chompUint(T, p2s, &i);
+                try assertEq(p2, p[1]);
+            },
+            else => {
+                const p1s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+                try assertStrEqTrimmed(p1s, &p[0]);
+                const p2s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+                try assertStrEqTrimmed(p2s, &p[1]);
+            },
+        }
+        if (try is.readUntilDelimiterOrEof(&buf, '\n')) |_| {
+            continue;
+        }
+        break;
+    }
+}
+
+pub fn TestCasesRes(comptime T: type, comptime call: fn (in: []const u8) anyerror!T) anyerror!void {
+    var file = try std.fs.cwd().openFile("TC.txt", .{});
+    defer file.close();
+    var br = std.io.bufferedReader(file.reader());
+    var is = br.reader();
+    var buf: [1024]u8 = undefined;
+    while (true) {
+        const filename = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+        const inp = try std.fs.cwd().readFileAlloc(talloc, filename, std.math.maxInt(usize));
+        defer talloc.free(inp);
+        const p = try call(inp);
+        const P1T = @TypeOf(@field(p, "p1"));
+        switch (P1T) {
+            isize, i64, i32, i16, i8 => {
+                const p1s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+                var i: usize = 0;
+                const p1 = try chompInt(P1T, p1s, &i);
+                try assertEq(p1, p.p1);
+            },
+            usize, u64, u32, u16, u8 => {
+                const p1s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+                var i: usize = 0;
+                const p1 = try chompUint(P1T, p1s, &i);
+                try assertEq(p1, p.p1);
+            },
+            else => {
+                const p1s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+                try assertStrEqTrimmed(p1s, &p.p1);
+            },
+        }
+        const P2T = @TypeOf(@field(p, "p2"));
+        switch (P2T) {
+            isize, i64, i32, i16, i8 => {
+                const p2s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+                var i: usize = 0;
+                const p2 = try chompInt(P2T, p2s, &i);
+                try assertEq(p2, p.p2);
+            },
+            usize, u64, u32, u16, u8 => {
+                const p2s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+                var i: usize = 0;
+                const p2 = try chompUint(P2T, p2s, &i);
+                try assertEq(p2, p.p2);
+            },
+            else => {
+                const p2s = (try is.readUntilDelimiterOrEof(&buf, '\n')).?;
+                try assertStrEqTrimmed(p2s, &p.p2);
+            },
+        }
         if (try is.readUntilDelimiterOrEof(&buf, '\n')) |_| {
             continue;
         }

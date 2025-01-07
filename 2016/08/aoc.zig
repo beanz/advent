@@ -2,7 +2,7 @@ const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
 test "testcases" {
-    try aoc.TestCases(usize, parts);
+    try aoc.TestCasesRes(Res, parts);
 }
 
 const Res = struct {

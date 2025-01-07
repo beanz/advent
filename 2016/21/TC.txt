@@ -1,0 +1,11 @@
+test.txt
+fbdecgha
+efghdabc
+---END---
+input-amf.txt
+gfdhebac
+dhaegfbc
+---END---
+input.txt
+gcedfahb
+hegbdcfa

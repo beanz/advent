@@ -2,7 +2,7 @@ const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
 test "testcases" {
-    try aoc.TestCases(usize, parts);
+    try aoc.TestCases([8]u8, parts);
 }
 
 fn parts(inp: []const u8) anyerror![2][8]u8 {

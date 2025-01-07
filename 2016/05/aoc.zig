@@ -3,7 +3,7 @@ const aoc = @import("aoc-lib.zig");
 const Md5 = std.crypto.hash.Md5;
 
 test "testcases" {
-    try aoc.TestCases(usize, parts);
+    try aoc.TestCases([8]u8, parts);
 }
 
 const CHR: *const [16]u8 = "0123456789abcdef";

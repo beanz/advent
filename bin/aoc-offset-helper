@@ -1,7 +1,25 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-print $_, " "x9 for (0..7);
+print " "x9 for (0..7);
 print "\n";
 print "0123456789" x 8;
 print "\n";
+my %p;
+while (<>) {
+  chomp;
+  s/-\d+/I/g;
+  s/\d+/U/g;
+  s/\b[a-z]\b/L/g;
+  $p{$_}++;
+}
+for my $p (sort keys %p) {
+  my $c = $p;
+  my $n = 0;
+  $c =~ s/./($n++)%10/eg;
+  print "$c\n";
+  my $l = length $p;
+  print "$p ($l $p{$p}) ";
+  print join ", ", map { length } split/[IUL]/,$p;
+  print "\n";
+}

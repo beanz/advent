@@ -3,7 +3,7 @@ const aoc = @import("aoc-lib.zig");
 const Md5 = std.crypto.hash.Md5;
 
 test "testcases" {
-    try aoc.TestCases(usize, parts);
+    try aoc.TestCasesRes(Res, parts);
 }
 
 const WORK_SIZE = 256;
