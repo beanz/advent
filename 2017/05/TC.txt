@@ -1,0 +1,11 @@
+test.txt
+5
+10
+---END---
+input-amf.txt
+326618
+21841249
+---END---
+input.txt
+355965
+26948068
