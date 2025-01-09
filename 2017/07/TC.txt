@@ -1,0 +1,11 @@
+test.txt
+tknk
+60
+---END---
+input-amf.txt
+ahnofa
+802
+---END---
+input.txt
+eqgvf
+757

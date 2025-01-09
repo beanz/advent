@@ -877,3 +877,43 @@ pub fn crt(comptime T: type, a: []T, m: []T) T {
     }
     return x;
 }
+
+pub fn ListOfLists(comptime T: type) type {
+    return struct {
+        buf: []T,
+        l: usize,
+        sl: usize,
+
+        const Self = @This();
+
+        pub fn init(buf: []T, l: usize) Self {
+            return Self{ .buf = buf, .l = l, .sl = buf.len / l };
+        }
+        pub fn sublen(self: Self, i: usize) usize {
+            return @as(usize, @intCast(self.buf[i * self.sl]));
+        }
+        pub fn get(self: Self, i: usize, j: usize) anyerror!T {
+            const o = i * self.sl;
+            const ll = self.buf[o];
+            if (j < @as(usize, @intCast(ll))) {
+                return self.buf[@as(usize, @intCast(o + j + 1))];
+            }
+            return error.OverFlow;
+        }
+        pub fn put(self: Self, i: usize, e: T) anyerror!void {
+            const j = self.buf[i * self.sl] + 1;
+            const ju = @as(usize, @intCast(j));
+            if (j >= self.sl) {
+                return error.OverFlow;
+            }
+            self.buf[i * self.sl] = j;
+            self.buf[i * self.sl + ju] = e;
+        }
+        pub fn items(self: Self, i: usize) []const T {
+            const j = self.buf[i * self.sl] + 1;
+            const ju = @as(usize, @intCast(j));
+            const ii = i * self.sl;
+            return self.buf[ii + 1 .. ii + ju];
+        }
+    };
+}
