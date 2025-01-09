@@ -1,0 +1,7 @@
+input-amf.txt
+212
+96de9657665675b51cd03f0b3528ba26
+---END---
+input.txt
+23715
+541dc3180fd4b72881e39cf925a50253
