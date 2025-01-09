@@ -194,6 +194,74 @@ pub fn chompId(inp: []const u8, i: *usize, prime: u8) anyerror!u8 {
     return id;
 }
 
+inline fn wordChars(w: []const u8) [127]u8 {
+    var c: [127]u8 = .{0} ** 127;
+    var n: u8 = 1;
+    for (w) |ch| {
+        c[@as(usize, @intCast(ch))] = n;
+        n += 1;
+    }
+    return c;
+}
+
+const WordDef = struct {
+    chars: [127]u8,
+    mul: usize,
+};
+
+pub const AlphaLowerWord = WordDef{
+    .chars = wordChars("abcdefghijklmnopqrstuvwxyz"),
+    .mul = 27,
+};
+
+pub const AlphaUpperWord = WordDef{
+    .chars = wordChars("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
+    .mul = 27,
+};
+
+pub const AlphaWord = WordDef{
+    .chars = wordChars("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"),
+    .mul = 53,
+};
+
+pub const AlphaNumLowerWord = WordDef{
+    .chars = wordChars("0123456789abcdefghijklmnopqrstuvwxyz"),
+    .mul = 37,
+};
+
+pub const AlphaNumUpperWord = WordDef{
+    .chars = wordChars("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
+    .mul = 37,
+};
+
+pub const AlphaNumWord = WordDef{
+    .chars = wordChars("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"),
+    .mul = 63,
+};
+
+pub fn unchompWord(comptime T: type, comptime wordDef: WordDef, id: T, res: []u8) void {
+    var kk = id;
+    var l: usize = 0;
+    while (kk != 0) : (kk /= wordDef.mul) {
+        res[l] = @as(u8, @intCast((kk % wordDef.mul) + 'a' - 1));
+        l += 1;
+    }
+    std.mem.reverse(u8, res[0..l]);
+}
+
+pub fn chompWord(comptime T: type, comptime worddef: WordDef, inp: []const u8, i: *usize) anyerror!T {
+    var id: T = 0;
+    std.debug.assert(i.* < inp.len and worddef.chars[inp[i.*]] != 0);
+    while (i.* < inp.len) : (i.* += 1) {
+        const n = worddef.chars[inp[i.*]];
+        if (n == 0) {
+            break;
+        }
+        id = (id * worddef.mul) + n;
+    }
+    return id;
+}
+
 pub fn max(comptime T: type, a: T, b: T) T {
     if (a > b) {
         return a;

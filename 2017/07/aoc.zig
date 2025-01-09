@@ -21,11 +21,7 @@ fn parts(inp: []const u8) anyerror!Res {
     var id: usize = 0;
     var i: usize = 0;
     while (i < inp.len) : (i += 1) {
-        var j = i;
-        var lw: usize = 0;
-        while ('a' <= inp[i] and inp[i] <= 'z') : (i += 1) {
-            lw = lw * 27 + @as(usize, @intCast(1 + inp[i] - 'a'));
-        }
+        const lw = try aoc.chompWord(usize, aoc.AlphaLowerWord, inp, &i);
         var wid = id;
         if (words.get(lw)) |x| {
             wid = x;
@@ -43,11 +39,7 @@ fn parts(inp: []const u8) anyerror!Res {
         }
         i += 4;
         while (i < inp.len) {
-            j = i;
-            var cw: usize = 0;
-            while ('a' <= inp[i] and inp[i] <= 'z') : (i += 1) {
-                cw = cw * 27 + @as(usize, @intCast(1 + inp[i] - 'a'));
-            }
+            const cw = try aoc.chompWord(usize, aoc.AlphaLowerWord, inp, &i);
             var cid = id;
             if (words.get(cw)) |x| {
                 cid = x;
@@ -75,13 +67,7 @@ fn parts(inp: []const u8) anyerror!Res {
         .p1 = .{32} ** 8,
         .p2 = @as(usize, @intCast(-try balance(p1, weight, children))),
     };
-    var kk = word[p1];
-    var l: usize = 0;
-    while (kk != 0) : (kk /= 27) {
-        res.p1[l] = @as(u8, @intCast((kk % 27) + 'a' - 1));
-        l += 1;
-    }
-    std.mem.reverse(u8, res.p1[0..l]);
+    aoc.unchompWord(usize, aoc.AlphaLowerWord, word[p1], &res.p1);
     return res;
 }
 
