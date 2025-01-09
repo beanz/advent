@@ -1,0 +1,11 @@
+test.txt
+1
+10
+---END---
+input-amf.txt
+5075
+7310
+---END---
+input.txt
+3745
+4644
