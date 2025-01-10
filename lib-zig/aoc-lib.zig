@@ -983,5 +983,8 @@ pub fn ListOfLists(comptime T: type) type {
             const ii = i * self.sl;
             return self.buf[ii + 1 .. ii + ju];
         }
+        pub fn clear(self: Self, i: usize) void {
+            self.buf[i * self.sl] = 0;
+        }
     };
 }
