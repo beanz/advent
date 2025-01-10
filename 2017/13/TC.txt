@@ -1,0 +1,11 @@
+test.txt
+24
+10
+---END---
+input-amf.txt
+1640
+3960702
+---END---
+input.txt
+1928
+3830344
