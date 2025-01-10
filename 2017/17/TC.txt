@@ -1,0 +1,7 @@
+input-amf.txt
+808
+47465686
+---END---
+input.txt
+204
+28954211
