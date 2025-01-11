@@ -1,0 +1,7 @@
+input-amf.txt
+119
+471
+---END---
+input.txt
+91
+567
