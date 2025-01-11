@@ -1,0 +1,11 @@
+test.txt
+ABCDEF
+38
+---END---
+input-amf.txt
+QPRYCIOLU
+16162
+---END---
+input.txt
+XYFDJNRCQA
+17450
