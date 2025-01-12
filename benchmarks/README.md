@@ -250,7 +250,7 @@ Day 17 | 240ms / 48.5 KB | 229ms / 16.1 KB | **🔴 203ms**
 Day 18 | 7.76ms / 7.0 MB | 10µs / None | 6.73µs
 Day 19 | 214µs / 44.8 KB | 37.7µs / None | 20.6µs
 Day 20 | 335ms / **🔴 206 MB** | 15ms / None | 69.2ms
-Day 21 | 66ms / 37.7 MB | 3.03µs / None | -
+Day 21 | 66ms / 37.7 MB | 3.02µs / None | 4.5µs
 Day 22 | 58.6ms / 526 KB | 57.1ms / None | -
 Day 23 | 1.54ms / 4.6 KB | 28.5µs / None | -
 Day 24 | 119ms / 59.9 MB | 81.3ms / None | -
@@ -470,7 +470,7 @@ Day 17 | 43.5ms / 84.1 MB | 28.9ms / 35.4 MB | 229ms / 16.1 KB | 799µs / None |
 Day 18 | 8.08ms / 56.4 KB | 292ms / 63.8 MB | 10µs / None | 19.9ms / None | **🔴 134ms** / **🔴 94.4 MB** | 145µs / None | 23.7ms / 15.5 MB | 86.8µs / None | 2.98µs / None | 124µs / None
 Day 19 | 1.11ms / 546 KB | 40ns / None | 37.7µs / None | 45.9ms / None | 6.22µs / None | 32.4ms / 14.0 MB | 10.5ms / 2.0 MB | 51.6ms / **🔴 43.1 MB** | 143µs / None | 1.81ms / None
 Day 20 | **🔴 1.25s** / 126 MB | 84.1µs / 76.4 KB | 15ms / None | 207µs / None | 5.42ms / None | 128µs / 90.9 KB | 20.3ms / 2.0 MB | 24.4ms / None | 3.12ms / None | **🔴 25.8ms** / None
-Day 21 | 29.2µs / 16.9 KB | 32.8ms / 4.4 MB | 3.03µs / None | 141µs / None | 5.2µs / None | 234µs / 121 KB | 1.11µs / 8.0 B | 204µs / 270 KB | 13.1ms / None | 28ns / None
+Day 21 | 29.2µs / 16.9 KB | 32.8ms / 4.4 MB | 3.02µs / None | 141µs / None | 5.2µs / None | 234µs / 121 KB | 1.11µs / 8.0 B | 204µs / 270 KB | 13.1ms / None | 28ns / None
 Day 22 | 204ms / **🔴 234 MB** | 10.6ms / 194 KB | 57.1ms / None | 13.9ms / None | 2.92µs / None | 35.2ms / 15.1 MB | 11.4ms / 2.3 MB | 317µs / None | 1.31ms / 7.5 KB | **🔴 48.1ms** / None
 Day 23 | 9.21µs / 1.2 KB | 4.37µs / 21.1 KB | 28.5µs / None | 65.2ms / None | 9.51µs / None | **🔴 180ms** / None | **🔴 689ms** / **🔴 165 MB** | 47.8ms / None | **🔴 291ms** / None | 543µs / None
 Day 24 | 7.72ms / 10.0 MB | 4.37ms / 3.8 MB | 81.3ms / None | 49.2ms / None | 4.25ms / None | 45.7ms / None | 9.38µs / 576 B | **🔴 81.6ms** / 19.2 MB | - | 78.4µs / None
@@ -501,7 +501,7 @@ Day 17 | 2.13ms | 20.7ms | **🔴 203ms** | 5.02ms | 1.45ms | - | 74.4µs
 Day 18 | 14.6ms | 732µs | 6.73µs | 7.18ms | **🔴 6.08ms** | 3.77µs | 176µs
 Day 19 | 2.33ms | 27ns | 20.6µs | 12.6ms | - | 3.53ms | 2.05ms
 Day 20 | **🔴 3.06s** | 25.2µs | 69.2ms | 11.6ms | - | - | **🔴 20.3ms**
-Day 21 | 3.7µs | 861ns | - | 3.31ms | 203µs | - | 16.2µs
+Day 21 | 3.7µs | 861ns | 4.5µs | 3.31ms | 203µs | - | 16.2µs
 Day 22 | 7.9ms | 437µs | - | 111ms | - | - | **🔴 35ms**
 Day 23 | 6.75µs | 59ns | - | **🔴 4.59s** | - | - | 476µs
 Day 24 | **🔴 1.39s** | 762µs | - | 77.3ms | - | - | 92.6µs

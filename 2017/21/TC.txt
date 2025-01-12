@@ -1,0 +1,7 @@
+input-amf.txt
+120
+2204099
+---END---
+input.txt
+125
+1782917
