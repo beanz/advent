@@ -161,19 +161,21 @@ sub desc {
   if (keys %w < 10) {
     $res .= $pre . "words: " . (join ',', keys %w) . "\n";
   }
-  $res .= $pre.'  lengths '.(min keys %wl).' - '.(max keys %wl)."\n";
+  $res .= $pre . '  lengths ' . (min keys %wl) . ' - ' . (max keys %wl) . "\n";
   %w = ();
   %wl = ();
   for ($c =~ m/[a-zA-Z]+/mg) {
     $w{$_}++;
     $wl{length $_}++;
   }
-  $res .= $pre . (scalar keys %w) . " unique words (alpha)\n";
-  if (keys %w < 10) {
-    $res .= $pre . "words: " . (join ',', keys %w) . "\n";
+  if (keys %w) {
+    $res .= $pre . (scalar keys %w) . " unique words (alpha)\n";
+    if (keys %w < 10) {
+      $res .= $pre . "words: " . (join ',', keys %w) . "\n";
+    }
+    $res .=
+      $pre . '  lengths ' . (min keys %wl) . ' - ' . (max keys %wl) . "\n";
   }
-  $res .= $pre.'  lengths '.(min keys %wl).' - '.(max keys %wl)."\n";
-
   return $res;
 }
 
