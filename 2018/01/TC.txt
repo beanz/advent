@@ -1,0 +1,11 @@
+test.txt
+3
+2
+---END---
+input-amf.txt
+490
+70357
+---END---
+input.txt
+505
+72330
