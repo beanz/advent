@@ -1,0 +1,11 @@
+test.txt
+5587
+2511944
+---END---
+input-amf.txt
+5352
+2511475
+---END---
+input.txt
+5240
+2512144
