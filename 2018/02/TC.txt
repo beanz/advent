@@ -1,0 +1,15 @@
+test1.txt
+12
+abcde
+---END---
+test2.txt
+0
+fgij
+---END---
+input-amf.txt
+5434
+agimdjvlhedpsyoqfzuknpjwt
+---END---
+input.txt
+9633
+lujnogabetpmsydyfcovzixaw
