@@ -5,70 +5,59 @@ test "testcases" {
     try aoc.TestCases(usize, parts);
 }
 
-const PARSER_TEMPLATE =
-    \\In state `state:C`:
-    \\  If the current value is 0:
-    \\    - Write the value `v0:C`.
-    \\    - Move one slot to the `m0:W`.
-    \\    - Continue with state `n0:C`.
-    \\  If the current value is 1:
-    \\    - Write the value `v1:C`.
-    \\    - Move one slot to the `m1:W`.
-    \\    - Continue with state `n1:C`.
-;
-
-fn ParseStruct(comptime template: []const u8) type {
-    var s = try std.BoundedArray(std.builtin.Type.StructField, 16).init(0);
-    var o = try std.BoundedArray(usize, 16).init(0);
-    var i: usize = 0;
-    var j = i;
-    while (i < template.len) : (i += 1) {
-        if (template[i] != '`') {
-            continue;
-        }
-        try o.append(i - j);
-        i += 1;
-        const ns = i;
-        while (template[i] != ':') : (i += 1) {}
-        const name = template[ns..i];
-        i += 1;
-        const t = template[i];
-        i += 1;
-        if (template[i] != '`') {
-            @compileError("missing closing backtick in struct template");
-        }
-        i += 1;
-        j = i;
-        const U = switch (t) {
-            'C' => u8,
-            'W' => []u8,
-            else => @compileError("invalid field type"),
-        };
-        try s.append(std.builtin.Type.StructField{
-            .name = name ++ "",
-            .default_value = null,
-            .is_comptime = false,
-            .alignment = @alignOf(U),
-            .type = U,
-        });
-    }
-    try o.append(i - j);
-    return @Type(.{
-        .Struct = .{
-            .layout = std.builtin.Type.ContainerLayout.auto,
-            .fields = s.slice(),
-            .decls = &[_]std.builtin.Type.Declaration{},
-            .is_tuple = false,
-        },
-    });
-}
-
-const Rec = ParseStruct(PARSER_TEMPLATE);
+const Rec = struct {
+    state: u8,
+    v: [2]bool,
+    m: [2]bool,
+    n: [2]u8,
+};
 
 fn parts(inp: []const u8) anyerror![2]usize {
-    const r = Rec{};
-    aoc.print("{any}\n", r);
-    return [2]usize{ inp.len, 0 };
+    const start = inp[15] - 'A';
+    var i: usize = 54;
+    const steps = try aoc.chompUint(usize, inp, &i);
+    var s = try std.BoundedArray(Rec, 8).init(0);
+    i += 9;
+    while (i < inp.len) : (i += 1) {
+        const state = inp[i + 9] - 'A';
+        i += 12;
+        const v0 = inp[i + 51] == '1';
+        const m0 = inp[i + 81] == 'r';
+        if (m0) {
+            i += 1;
+        }
+        const n0 = inp[i + 113] - 'A';
+        i += 116;
+        const v1 = inp[i + 51] == '1';
+        const m1 = inp[i + 81] == 'r';
+        if (m1) {
+            i += 1;
+        }
+        const n1 = inp[i + 113] - 'A';
+        i += 116;
+        try s.append(Rec{
+            .state = state,
+            .m = .{ m0, m1 },
+            .v = .{ v0, v1 },
+            .n = .{ n0, n1 },
+        });
+    }
+    const states = s.slice();
+    var tape: [20000]bool = .{false} ** 20000;
+    var cur: usize = 8000;
+    var state = start;
+    for (0..steps) |_| {
+        const v = @as(usize, @intFromBool(tape[cur]));
+        tape[cur] = states[state].v[v];
+        cur -= 1;
+        cur += 2 * @as(usize, @intFromBool(states[state].m[v]));
+        state = states[state].n[v];
+    }
+    var p1: usize = 0;
+    for (tape) |v| {
+        p1 += @as(usize, @intFromBool(v));
+    }
+    return [2]usize{ p1, 0 };
 }
 
 fn day(inp: []const u8, bench: bool) anyerror!void {
