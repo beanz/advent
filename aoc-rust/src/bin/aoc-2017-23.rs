@@ -15,7 +15,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
                 p2 += 1;
                 break;
             }
-            d += 6;
+            d += 2;
         }
         b += 17;
     }

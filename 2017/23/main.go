@@ -117,11 +117,36 @@ func (g *Game) Part1() int {
 	return g.count
 }
 
+func (g *Game) Part2() int {
+	g.prog[0](g)
+	n := g.regs['b']
+	p2 := 0
+	b := n*100 + 100000
+	c := b + 17000
+	for ; b <= c; b += 17 {
+		if b&1 == 0 {
+			p2++
+			continue
+		}
+		for d := 3; d*d < b; d += 2 {
+			if b%d == 0 {
+				p2++
+				break
+			}
+		}
+	}
+	return p2
+}
+
 func main() {
 	lines := aoc.InputLines(input)
 	p1 := NewGame(lines).Part1()
 	if !benchmark {
 		fmt.Printf("Part 1: %d\n", p1)
+	}
+	p2 := NewGame(lines).Part2()
+	if !benchmark {
+		fmt.Printf("Part 2: %d\n", p2)
 	}
 }
 
