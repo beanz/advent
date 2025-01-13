@@ -1,0 +1,11 @@
+test.txt
+17
+16
+---END---
+input-amf.txt
+2342
+43302
+---END---
+input.txt
+6047
+46320
