@@ -5,25 +5,22 @@ test "testcases" {
     try aoc.TestCases(usize, parts);
 }
 
-const VAL: usize = 0;
-const CW: usize = 1;
-const CCW: usize = 2;
+const CW: usize = 0;
+const CCW: usize = 1;
 
 fn parts(inp: []const u8) anyerror![2]usize {
     var i: usize = 0;
     const players = try aoc.chompUint(u32, inp, &i);
     i += 31;
     const score = try aoc.chompUint(u32, inp, &i);
-    var s: [80000][3]u32 = .{[3]u32{ 0, 0, 0 }} ** 80000;
+    var s = try aoc.halloc.alloc([2]u32, 8000000);
     const p1 = play(s[0..], players, score);
-    var s2 = try aoc.halloc.alloc([3]u32, 8000000);
-    const p2 = play(s2[0..], players, score * 100);
+    const p2 = play(s[0..], players, score * 100);
     return [2]usize{ p1, p2 };
 }
 
-fn play(s: [][3]u32, players: usize, score: usize) usize {
+fn play(s: [][2]u32, players: usize, score: usize) usize {
     var scores: [512]u32 = .{0} ** 512;
-    s[0][VAL] = 0;
     s[0][CW] = 0;
     s[0][CCW] = 0;
     var cur: usize = 0;
@@ -34,7 +31,7 @@ fn play(s: [][3]u32, players: usize, score: usize) usize {
             for (0..7) |_| {
                 cur = s[cur][CCW];
             }
-            scores[p] += s[cur][VAL];
+            scores[p] += @as(u32, @intCast(cur));
             const ccw = s[cur][CCW];
             const cw = s[cur][CW];
             cur = cw;
@@ -44,7 +41,6 @@ fn play(s: [][3]u32, players: usize, score: usize) usize {
             const ccw = s[cur][CW];
             const cw = s[s[cur][CW]][CW];
             const mu = @as(u32, @intCast(m));
-            s[m][VAL] = mu;
             s[m][CW] = cw;
             s[m][CCW] = ccw;
             s[cw][CCW] = mu;
