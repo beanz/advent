@@ -1,0 +1,11 @@
+test.txt
+240
+4455
+---END---
+input-amf.txt
+143415
+49944
+---END---
+input.txt
+71748
+106850
