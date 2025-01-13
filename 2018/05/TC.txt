@@ -1,0 +1,11 @@
+test.txt
+10
+4
+---END---
+input-amf.txt
+11754
+4098
+---END---
+input.txt
+11264
+4552
