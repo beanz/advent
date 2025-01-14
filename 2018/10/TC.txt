@@ -1,0 +1,11 @@
+input2.txt
+GGLZLHCE
+10144
+---END---
+input-amf.txt
+RGRKHKNA
+10117
+---END---
+input.txt
+RECLRNZE
+10007
