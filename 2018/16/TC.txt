@@ -1,0 +1,7 @@
+input-amf.txt
+509
+496
+---END---
+input.txt
+544
+600

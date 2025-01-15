@@ -1,0 +1,7 @@
+input-amf.txt
+190777
+47388
+---END---
+input.txt
+220480
+53576
