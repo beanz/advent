@@ -38,54 +38,22 @@ fn parts(inp: []const u8) anyerror![2]usize {
         }
     }
     const prog = s.slice();
-    var reg: [NUM_REG]Int = .{0} ** NUM_REG;
-    {
-        var ip: usize = 0;
-        while (ip < prog.len) {
-            const inst = prog[ip];
-            reg[rip] = @intCast(ip);
-            if (inst.do(&reg, rip)) |newIP| {
-                ip = @intCast(newIP);
-            }
-            ip += 1;
-            if (ip == 2) {
-                break;
-            }
-        }
-    }
-    var p1: usize = 0;
-    {
-        const m = reg[4];
-        var n: u32 = 1;
-        while (n <= m) : (n += 1) {
-            p1 += n * @intFromBool(@rem(m, n) == 0);
-        }
-    }
-    reg = .{0} ** NUM_REG;
-    reg[0] = 1;
-    {
-        var ip: usize = 0;
-        while (ip < prog.len) {
-            const inst = prog[ip];
-            reg[rip] = @intCast(ip);
-            if (inst.do(&reg, rip)) |newIP| {
-                ip = @intCast(newIP);
-            }
-            ip += 1;
-            if (ip == 2) {
-                break;
-            }
-        }
-    }
-    var p2: usize = 0;
-    {
-        const m = reg[4];
-        var n: u32 = 1;
-        while (n <= m) : (n += 1) {
-            p2 += n * @intFromBool(@rem(m, n) == 0);
-        }
-    }
+    //aoc.print("{any}\n", .{prog[21]});
+    //aoc.print("{any}\n", .{prog[23]});
+    const t1 = 4 * 19 * 11 + prog[21].b * 22 + prog[23].b;
+    const p1 = sumfact(Int, t1);
+    const t2 = t1 + (27 * 28 + 29) * 30 * 14 * 32;
+    const p2 = sumfact(Int, t2);
     return [2]usize{ p1, p2 };
+}
+
+inline fn sumfact(comptime T: type, n: T) T {
+    var s: T = 0;
+    var m: T = 1;
+    while (m <= n) : (m += 1) {
+        s += m * @intFromBool(@rem(n, m) == 0);
+    }
+    return s;
 }
 
 const Op = enum(u4) {
