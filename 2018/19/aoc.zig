@@ -50,8 +50,11 @@ fn parts(inp: []const u8) anyerror![2]usize {
 inline fn sumfact(comptime T: type, n: T) T {
     var s: T = 0;
     var m: T = 1;
-    while (m <= n) : (m += 1) {
-        s += m * @intFromBool(@rem(n, m) == 0);
+    const isq = std.math.sqrt(n);
+    while (m <= isq) : (m += 1) {
+        if (@rem(n, m) == 0) {
+            s += m + @divExact(n, m);
+        }
     }
     return s;
 }
