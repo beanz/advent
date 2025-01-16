@@ -1,8 +1,8 @@
 package main
 
 import (
-	_ "embed"
 	"container/heap"
+	_ "embed"
 	"fmt"
 
 	. "github.com/beanz/advent/lib-go"
@@ -192,7 +192,7 @@ func (g *Game) Part2() int {
 	heap.Init(&pq)
 	for pq.Len() > 0 {
 		cur := heap.Pop(&pq).(*Search)
-		fmt.Printf("%d\r", pq.Len())
+		//fmt.Printf("%d\r", pq.Len())
 		//fmt.Printf("At %s, terrain %s with %s\n", cur.pt.p, input.risk(cur.pt.p), cur.pt.tool)
 		//fmt.Printf("  allowed tools %v\n", input.allowedTools(cur.pt.p))
 		//fmt.Printf("%v\n", cur)
