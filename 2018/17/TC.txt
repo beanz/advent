@@ -1,0 +1,15 @@
+test.txt
+57
+29
+---END---
+test2.txt
+56
+29
+---END---
+input-amf.txt
+31471
+24169
+---END---
+input.txt
+36790
+30765
