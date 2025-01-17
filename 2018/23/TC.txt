@@ -1,0 +1,15 @@
+test1.txt
+7
+1
+---END---
+test2.txt
+6
+36
+---END---
+input-amf.txt
+889
+160646364
+---END---
+input.txt
+442
+100985898
