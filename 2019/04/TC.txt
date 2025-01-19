@@ -1,0 +1,7 @@
+input-amf.txt
+921
+603
+---END---
+input.txt
+931
+609
