@@ -40,6 +40,9 @@ sub inst_str {
   my $raw = $p->{in}->[$p->{ip}];
   my $op = $raw % 100;
   my $arity = arity($op);
+  unless (defined $arity) {
+    return (sprintf('%5d %d // probably reg/data', $raw, $op), 0);
+  }
   my (@args) = map {$p->{in}->[$p->{ip} + $_]} (1 .. $arity);
   my (@mode) = map {mode($raw, $_ - 1)} (1 .. $arity);
   my @args_str;
@@ -85,12 +88,12 @@ sub inst_str {
     $arg_str = $args_str[1];
     $raw = '21';
   } elsif ($raw == 1101 || $raw == 21101) {
-    $extra = " ".join ",", $raw, @args;
+    $extra = " " . join ",", $raw, @args;
     $op_str = 'seti';
     $arg_str = 'imm(' . ($args[0] + $args[1]) . ') ' . $args_str[2];
     $raw = '30';
   } elsif ($raw == 1102 || $raw == 21102) {
-    $extra = " ".join ",", $raw, @args;
+    $extra = " " . join ",", $raw, @args;
     $op_str = 'seti';
     $arg_str = 'imm(' . ($args[0] * $args[1]) . ') ' . $args_str[2];
     $raw = '30';
@@ -179,7 +182,8 @@ sub skip {
         print $p->{label}->{$addr}, ":\n";
       }
       my $len = $p->{in}->[$addr];
-      my $s = join "", map {chr($p->{in}->[$addr + $_]+($len+$_-1))} 1 .. $len;
+      my $s = join "",
+        map {chr($p->{in}->[$addr + $_] + ($len + $_ - 1))} 1 .. $len;
       $s =~ s/([^ -~])/sprintf '\x%02x', ord($1)/ge;
       printf "%5d: len=%d %s\n", $addr, $len, $s;
       $addr += $len + 1;
@@ -265,9 +269,9 @@ sub read_file {
     s!(\d+)\*(\d+)!$1*$2!eg;
     s!(\d+)\+(\d+)!$1+$2!eg;
     if (/^DATA (\d+) (A?\d+)(?: (\S+)(?: (\S+))?)?\s*$/) {
-      my ($start, $end, $label, $type) = ($1, $2, $3//'_', $4//"simple");
+      my ($start, $end, $label, $type) = ($1, $2, $3 // '_', $4 // "simple");
       if ($end =~ s/^A//) {
-        $end = $end+1;
+        $end = $end + 1;
       } else {
         $end += $start;
       }
