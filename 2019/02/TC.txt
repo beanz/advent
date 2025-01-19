@@ -1,0 +1,7 @@
+input-amf.txt
+3224742
+7960
+---END---
+input.txt
+3409710
+7912
