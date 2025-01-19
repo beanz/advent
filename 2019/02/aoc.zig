@@ -20,12 +20,18 @@ fn parts(inp: []const u8) anyerror![2]usize {
     var p2: ?usize = null;
     var n: Int = 0;
     while (n < 100) : (n += 1) {
-        var v: Int = 0;
-        while (v < 100) : (v += 1) {
-            const r = run(prog[0..], n, v);
-            if (r == 19690720) {
-                p2 = @intCast(n * 100 + v);
-            }
+        const r = run(prog[0..], n, 0);
+        if (r > 19690720) {
+            break;
+        }
+    }
+    n -= 1;
+    var v: Int = 0;
+    while (v < 100) : (v += 1) {
+        const r = run(prog[0..], n, v);
+        if (r == 19690720) {
+            p2 = @intCast(n * 100 + v);
+            break;
         }
     }
     return [2]usize{ @intCast(p1), p2.? };
