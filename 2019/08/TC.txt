@@ -1,0 +1,7 @@
+input-amf.txt
+1572
+KYHFE
+---END---
+input.txt
+1441
+RUZBP
