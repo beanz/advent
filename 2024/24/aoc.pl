@@ -135,7 +135,7 @@ sub calc {
         push @{$bad{$g0->[A]}}, $z . '.XOR.A should not be AND';
         next;
       }
-      print STDERR "0? $z: @$g0 => @$ga @$gb\n";
+      #print STDERR "0? $z: @$g0 => @$ga @$gb\n";
       next;
     }
     my $gora = $m{$gor->[A]};
@@ -164,7 +164,7 @@ sub calc {
         }
         my $ga = $m{$a};
         my $gb = $m{$b};
-        print STDERR "3? $k: $a $g $b => @$ga @$gb\n";
+        #print STDERR "3? $k: $a $g $b => @$ga @$gb\n";
         if ("@$ga" eq "$x,XOR,$y" || "@$ga" eq "$y,XOR,$x") {
           push @{$bad{$b}}, $b . ' XOR should have OR child!'
             unless ($gb->[OP] eq 'OR');
@@ -212,7 +212,6 @@ sub calc {
     }
   }
   my @p2 = sort keys %bad;
-  dd([\%bad], [qw/bad/]);
   return [$p1, join ',', @p2];
 }
 
