@@ -71,6 +71,8 @@ pkgs.mkShell {
 
     elixir
     elixir-ls
+
+    crystal
   ];
   shellHook = ''
     PATH=$PATH:$PWD/bin; export PATH
