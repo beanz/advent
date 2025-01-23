@@ -194,6 +194,15 @@ pub fn chompId(inp: []const u8, i: *usize, prime: u8) anyerror!u8 {
     return id;
 }
 
+pub fn chompIdentifier(T: type, inp: []const u8, i: *usize, prime: T, mask: T) anyerror!T {
+    var id: T = 0;
+    std.debug.assert(i.* < inp.len and (('0' <= inp[i.*] and inp[i.*] <= '9') or ('a' <= inp[i.*] and inp[i.*] <= 'z') or ('A' <= inp[i.*] and inp[i.*] <= 'Z')));
+    while (i.* < inp.len and (('0' <= inp[i.*] and inp[i.*] <= '9') or ('a' <= inp[i.*] and inp[i.*] <= 'z') or ('A' <= inp[i.*] and inp[i.*] <= 'Z'))) : (i.* += 1) {
+        id = ((id *% prime) ^ @as(T, @intCast(inp[i.*]))) & mask;
+    }
+    return id;
+}
+
 inline fn wordChars(w: []const u8) [127]u8 {
     var c: [127]u8 = .{0} ** 127;
     var n: u8 = 1;
