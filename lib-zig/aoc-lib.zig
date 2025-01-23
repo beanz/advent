@@ -276,6 +276,10 @@ pub fn min(comptime T: type, a: T, b: T) T {
     return b;
 }
 
+pub fn lcm(a: anytype, b: anytype) @TypeOf(a, b) {
+    return a * b / std.math.gcd(a, b);
+}
+
 pub fn splitToOwnedSlice(alloc: std.mem.Allocator, inp: []const u8, sep: []const u8) ![][]const u8 {
     var bits = std.ArrayList([]const u8).init(alloc);
     var it = std.mem.split(u8, inp, sep);
