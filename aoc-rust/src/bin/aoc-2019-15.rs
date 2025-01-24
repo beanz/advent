@@ -23,13 +23,13 @@ fn parts(inp: &[u8]) -> (usize, usize) {
 
     let (sx, sy) = (prog[START_X_ADDR] as usize, prog[START_Y_ADDR] as usize);
     let (ox, oy) = (prog[OXY_X_ADDR] as usize, prog[OXY_Y_ADDR] as usize);
-    let (w, h) = (prog[WIDTH_ADDR] as usize, prog[HEIGHT_ADDR] as usize);
+    let w = prog[WIDTH_ADDR] as usize;
     //eprintln!("{}x{}", w, h);
     //eprintln!("start: {},{}", sx, sy);
     //eprintln!("end: {},{}", ox, oy);
 
     let mut visited = [false; 1640];
-    let mut todo = Deque::<_, 2048>::new();
+    let mut todo = Deque::<_, 16>::new();
     todo.push_back((sx, sy, 0usize)).expect("todo list full");
     let mut p1 = 0;
     while let Some((x, y, st)) = todo.pop_front() {
@@ -42,16 +42,16 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             p1 = st;
             break;
         }
-        if !visited[vi - w] && !is_wall(&prog, x, y - 1) {
+        if !is_wall(&prog, x, y - 1) && !visited[vi - w * 2] {
             todo.push_back((x, y - 2, st + 2)).expect("todo list full");
         }
-        if !visited[vi + w] && !is_wall(&prog, x, y + 1) {
+        if !is_wall(&prog, x, y + 1) && !visited[vi + w * 2] {
             todo.push_back((x, y + 2, st + 2)).expect("todo list full");
         }
-        if !visited[vi - 1] && !is_wall(&prog, x - 1, y) {
+        if !is_wall(&prog, x - 1, y) && !visited[vi - 2] {
             todo.push_back((x - 2, y, st + 2)).expect("todo list full");
         }
-        if !visited[vi + 1] && !is_wall(&prog, x + 1, y) {
+        if !is_wall(&prog, x + 1, y) && !visited[vi + 2] {
             todo.push_back((x + 2, y, st + 2)).expect("todo list full");
         }
     }
@@ -69,16 +69,16 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         if st > p2 {
             p2 = st;
         }
-        if !visited[vi - w] && !is_wall(&prog, x, y - 1) {
+        if !is_wall(&prog, x, y - 1) && !visited[vi - w * 2] {
             todo.push_back((x, y - 2, st + 2)).expect("todo list full");
         }
-        if !visited[vi + w] && !is_wall(&prog, x, y + 1) {
+        if !is_wall(&prog, x, y + 1) && !visited[vi + w * 2] {
             todo.push_back((x, y + 2, st + 2)).expect("todo list full");
         }
-        if !visited[vi - 1] && !is_wall(&prog, x - 1, y) {
+        if !is_wall(&prog, x - 1, y) && !visited[vi - 2] {
             todo.push_back((x - 2, y, st + 2)).expect("todo list full");
         }
-        if !visited[vi + 1] && !is_wall(&prog, x + 1, y) {
+        if !is_wall(&prog, x + 1, y) && !visited[vi + 2] {
             todo.push_back((x + 2, y, st + 2)).expect("todo list full");
         }
     }
@@ -90,8 +90,8 @@ fn is_wall(prog: &[isize; PROG_CAP], x: usize, y: usize) -> bool {
     if x == 0 || y == 0 || x == prog[WIDTH_ADDR] as usize || y == prog[HEIGHT_ADDR] as usize {
         return true;
     }
-    let mx = x % 2;
-    let my = y % 2;
+    let mx = x & 1;
+    let my = y & 1;
     if mx == 0 && my == 0 {
         return true;
     }
@@ -120,9 +120,6 @@ mod tests {
 
     #[test]
     fn parts_works() {
-        let inp = std::fs::read("../2019/15/input.txt").expect("read error");
-        assert_eq!(parts(&inp), (308, 328));
-        let inp = std::fs::read("../2019/15/input-amf.txt").expect("read error");
-        assert_eq!(parts(&inp), (252, 350));
+        aoc::test::auto("../2019/15/", parts);
     }
 }
