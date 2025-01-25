@@ -1,0 +1,15 @@
+input2.txt
+114
+10671712
+---END---
+input3.txt
+131
+15231022
+---END---
+input-amf.txt
+121
+15090773
+---END---
+input.txt
+211
+8071006
