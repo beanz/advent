@@ -1,0 +1,11 @@
+input2.txt
+3048
+1732
+---END---
+input-amf.txt
+6162
+1556
+---END---
+input.txt
+4406
+1964
