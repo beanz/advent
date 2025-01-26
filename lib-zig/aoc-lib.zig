@@ -944,6 +944,44 @@ pub fn inv_mod(comptime T: type, a: T, m: T) T {
     return 0;
 }
 
+pub fn mod_inv(comptime T: type, a: T, m: T) ?T {
+    var av = a;
+    var mv: T = m;
+    var x0: T = 0;
+    var x1: T = 1;
+
+    if (m == 1) return 1;
+
+    while (av > 1) {
+        const t: T = mv;
+        const q: T = @divFloor(av, mv);
+        mv = @rem(av, mv);
+        av = t;
+
+        const temp: T = x1;
+        x1 = x0;
+        x0 = temp - q * x0;
+    }
+
+    x1 = @rem(x1 + m, m);
+    if (av != 1) return null;
+    return x1;
+}
+
+pub fn mod_exp(comptime T: type, ia: T, ib: T, m: T) T {
+    var a = @rem(ia, m);
+    var b = ib;
+    var c: T = @as(T, 1);
+    while (b != 0) {
+        if (b & 1 == 1) {
+            c = @rem(c * a, m);
+        }
+        a = @rem(a * a, m);
+        b >>= 1;
+    }
+    return c;
+}
+
 pub fn crt(comptime T: type, a: []T, m: []T) T {
     const n = a.len;
     var M: T = 1;
