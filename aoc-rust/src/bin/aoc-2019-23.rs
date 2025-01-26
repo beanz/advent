@@ -94,16 +94,16 @@ fn parts(inp: &[u8]) -> (isize, isize) {
         let mut dst = [(0, 0); DATA_SLOTS];
         let dst_len = read_var(&prog, addr + 16) as usize;
         let dst_addr = read_var(&prog, addr + 20) as usize;
-        //eprintln!(
-        //    "{}: {} {:?} {} {:?} {:?} {}",
-        //    i, slot_div, buf, buf_len, op, dst, dst_len,
-        //);
         for j in 0..dst_len {
             dst[j] = (
                 prog[dst_addr + j * 2] as usize,
                 prog[dst_addr + j * 2 + 1] as usize,
             );
         }
+        //eprintln!(
+        //    "{}: {} {} {:?} {:?} {} {:?}",
+        //    i, slot_div, buf_len, buf, op, dst_len, dst,
+        //);
         nics.push(Nic {
             ready: true,
             slot_div,

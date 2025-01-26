@@ -1,0 +1,7 @@
+input-amf.txt
+24922
+19478
+---END---
+input.txt
+26464
+19544
