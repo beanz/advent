@@ -116,7 +116,7 @@ const Game = struct {
         var self = try alloc.create(Game);
         self.alloc = alloc;
         self.debug = true;
-        var l = in[0].len;
+        const l = in[0].len;
         self.init = try alloc.alloc(u8, l);
         var i: usize = 0;
         while (i < l) : (i += 1) {
@@ -137,22 +137,22 @@ const Game = struct {
         var last = cur;
         var i: usize = 1;
         while (i < g.init.len) : (i += 1) {
-            var v = g.init[i];
-            var n = Cup.init(g.alloc, v);
+            const v = g.init[i];
+            const n = Cup.init(g.alloc, v);
             map[v] = n;
             last.insertAfter(n);
             last = n;
         }
         i = 10;
         while (i <= max) : (i += 1) {
-            var n = Cup.init(g.alloc, i);
+            const n = Cup.init(g.alloc, i);
             map[i] = n;
             last.insertAfter(n);
             last = n;
         }
         var move: usize = 1;
         while (move <= moves) : (move += 1) {
-            var pick = cur.pick();
+            const pick = cur.pick();
             var dst = cur.val;
             while (true) {
                 dst -= 1;
@@ -179,7 +179,7 @@ const Game = struct {
     }
 
     pub fn part2(g: *Game, moves: usize, max: usize) usize {
-        var c1 = g.play(moves, max);
+        const c1 = g.play(moves, max);
         return c1.cw.val * c1.cw.cw.val;
     }
 };
@@ -232,8 +232,8 @@ fn day23(inp: []const u8, bench: bool) anyerror!void {
     defer aoc.halloc.free(lines);
     var g = try Game.init(aoc.halloc, lines);
     defer g.deinit();
-    var p1 = g.part1(100);
-    var p2 = g.part2(10000000, 1000000);
+    const p1 = g.part1(100);
+    const p2 = g.part2(10000000, 1000000);
     if (!bench) {
         aoc.print("Part 1: {s}\nPart 2: {}\n", .{ p1, p2 });
     }

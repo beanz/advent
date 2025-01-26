@@ -20,7 +20,7 @@ const Tile = struct {
         var ls = std.ArrayList([]u8).init(alloc);
         defer ls.deinit();
         while (lit.next()) |line| {
-            var x = try alloc.dupe(u8, line);
+            const x = try alloc.dupe(u8, line);
             try ls.append(x);
         }
         s.lines = try ls.toOwnedSlice();
@@ -135,7 +135,7 @@ const Water = struct {
         s.edges = std.AutoHashMap(usize, std.ArrayList(usize)).init(alloc);
         s.starter = 0;
         for (in) |chunk| {
-            var tile = try Tile.init(alloc, chunk);
+            const tile = try Tile.init(alloc, chunk);
             try s.tiles.put(tile.num, tile);
             for ([_]u10{ tile.top, tile.right, tile.bottom, tile.left }) |e| {
                 const ce = CanonicalEdge(e);
@@ -174,7 +174,7 @@ const Water = struct {
         var p: usize = 1;
         var it = s.tiles.iterator();
         while (it.next()) |kv| {
-            var tile = kv.value_ptr.*;
+            const tile = kv.value_ptr.*;
             var c: usize = 0;
             for ([_]u10{ tile.top, tile.right, tile.bottom, tile.left }) |e| {
                 if (s.EdgeTileCount(e) > 1) {
@@ -198,9 +198,9 @@ const Water = struct {
     }
 
     pub fn FindRightTile(s: *Water, n: usize) usize {
-        var t = s.tiles.get(n) orelse unreachable;
-        var edge = t.right;
-        var matching = s.EdgeTiles(edge);
+        const t = s.tiles.get(n) orelse unreachable;
+        const edge = t.right;
+        const matching = s.EdgeTiles(edge);
         var match: usize = 0;
         for (matching) |tn| {
             if (tn != t.num) {
@@ -234,9 +234,9 @@ const Water = struct {
     }
 
     pub fn FindBottomTile(s: *Water, n: usize) usize {
-        var t = s.tiles.get(n) orelse unreachable;
-        var edge = t.bottom;
-        var matching = s.EdgeTiles(edge);
+        const t = s.tiles.get(n) orelse unreachable;
+        const edge = t.bottom;
+        const matching = s.EdgeTiles(edge);
         var match: usize = 0;
         for (matching) |tn| {
             if (tn != t.num) {
@@ -279,7 +279,7 @@ const Water = struct {
         var r: isize = 0;
         while (q > 1) {
             q >>= 2;
-            var t = z - r - q;
+            const t = z - r - q;
             r >>= 1;
             if (t >= 0) {
                 z = t;
@@ -320,8 +320,8 @@ const Water = struct {
             }
             layout[i] = tn;
         }
-        var tl = t.width - 2;
-        var nl = s.width * tl;
+        const tl = t.width - 2;
+        const nl = s.width * tl;
         var res = s.alloc.alloc([]u8, nl) catch unreachable;
         var irow: usize = 0;
         while (irow < s.width) : (irow += 1) {
@@ -330,7 +330,7 @@ const Water = struct {
                 res[irow * tl + trow] = s.alloc.alloc(u8, nl) catch unreachable;
                 var icol: usize = 0;
                 while (icol < s.width) : (icol += 1) {
-                    var tt = s.tiles.get(layout[irow * s.width + icol]) orelse unreachable;
+                    const tt = s.tiles.get(layout[irow * s.width + icol]) orelse unreachable;
                     var tcol: usize = 0;
                     while (tcol < t.width - 2) : (tcol += 1) {
                         res[irow * tl + trow][icol * tl + tcol] = tt.lines[trow + 1][tcol + 1];
@@ -359,7 +359,7 @@ const Water = struct {
         defer s.alloc.free(monster);
         const mh = monster.len;
         const mw = monster[0].len;
-        var monsterSize: usize = aoc.countCharsInLines(monster, '#');
+        const monsterSize: usize = aoc.countCharsInLines(monster, '#');
         const ih = image.len;
         const iw = image[0].len;
         if (s.debug) {
@@ -397,7 +397,7 @@ const Water = struct {
             if (i == 3) {
                 aoc.reverseLines(image);
             } else {
-                var old = image;
+                const old = image;
                 defer {
                     for (old, 0..) |_, j| {
                         s.alloc.free(old[j]);
@@ -407,7 +407,7 @@ const Water = struct {
                 image = aoc.rotateLinesNonSymmetric(s.alloc, image);
             }
         }
-        var c: usize = aoc.countCharsInLines(image, '#');
+        const c: usize = aoc.countCharsInLines(image, '#');
         return c - mchars;
     }
 };
@@ -446,8 +446,8 @@ fn day20(inp: []const u8, bench: bool) anyerror!void {
     defer aoc.halloc.free(chunks);
     var w = try Water.init(aoc.halloc, chunks);
     defer w.deinit();
-    var p1 = w.Part1();
-    var p2 = try w.Part2();
+    const p1 = w.Part1();
+    const p2 = try w.Part2();
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

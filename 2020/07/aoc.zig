@@ -48,9 +48,9 @@ fn part1(palloc: std.mem.Allocator, inp: anytype) !usize {
             const b1 = bit.next().?;
             const b2 = bit.next().?;
             var innerBag = alloc.alloc(u8, b1.len + b2.len + 1) catch unreachable;
-            std.mem.copy(u8, innerBag[0..], b1);
+            std.mem.copyForwards(u8, innerBag[0..], b1);
             innerBag[b1.len] = ' ';
-            std.mem.copy(u8, innerBag[b1.len + 1 ..], b2);
+            std.mem.copyForwards(u8, innerBag[b1.len + 1 ..], b2);
             const kv = map.getOrPutValue(innerBag, std.ArrayList([]const u8).init(alloc)) catch unreachable;
             kv.value_ptr.append(bag) catch unreachable;
         }
@@ -94,9 +94,9 @@ fn part2(palloc: std.mem.Allocator, inp: anytype) !usize {
             const b1 = bit.next().?;
             const b2 = bit.next().?;
             var innerBag = try alloc.alloc(u8, b1.len + b2.len + 1);
-            std.mem.copy(u8, innerBag[0..], b1);
+            std.mem.copyForwards(u8, innerBag[0..], b1);
             innerBag[b1.len] = ' ';
-            std.mem.copy(u8, innerBag[b1.len + 1 ..], b2);
+            std.mem.copyForwards(u8, innerBag[b1.len + 1 ..], b2);
             const kv = try map.getOrPutValue(bag, std.ArrayList(*BS).init(alloc));
             var bs = try alloc.create(BS);
             bs.bag = innerBag;
@@ -108,10 +108,10 @@ fn part2(palloc: std.mem.Allocator, inp: anytype) !usize {
 }
 
 fn day07(inp: []const u8, bench: bool) anyerror!void {
-    var spec = try aoc.readLines(aoc.halloc, inp);
+    const spec = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(spec);
-    var p1 = try part1(aoc.halloc, spec);
-    var p2 = try part2(aoc.halloc, spec);
+    const p1 = try part1(aoc.halloc, spec);
+    const p2 = try part2(aoc.halloc, spec);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

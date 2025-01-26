@@ -3,7 +3,7 @@ const aoc = @import("aoc-lib.zig");
 
 fn loopSize(t: u64) u64 {
     var p: u64 = 1;
-    var s: u64 = 7;
+    const s: u64 = 7;
     var l: u64 = 0;
     while (p != t) {
         p *= s;
@@ -57,7 +57,7 @@ test "part1" {
 fn day25(inp: []const u8, bench: bool) anyerror!void {
     const lines = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(lines);
-    var p1 = part1(lines);
+    const p1 = part1(lines);
     if (!bench) {
         aoc.print("Part 1: {!}\n", .{p1});
     }

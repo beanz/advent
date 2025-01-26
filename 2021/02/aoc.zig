@@ -11,20 +11,20 @@ fn parts(inp: []const u8) [2]u64 {
     while (i < inp.len) {
         switch (inp[i]) {
             'f' => {
-                var u = inp[i + 8] - '0';
+                const u = inp[i + 8] - '0';
                 x1 += u;
                 x2 += u;
                 y2 += a * u;
                 i += 10;
             },
             'd' => {
-                var u = inp[i + 5] - '0';
+                const u = inp[i + 5] - '0';
                 y1 += u;
                 a += u;
                 i += 7;
             },
             'u' => {
-                var u = inp[i + 3] - '0';
+                const u = inp[i + 3] - '0';
                 y1 -= u;
                 a -= u;
                 i += 5;
@@ -38,17 +38,17 @@ fn parts(inp: []const u8) [2]u64 {
 }
 
 test "examples" {
-    var t = parts(aoc.test1file);
+    const t = parts(aoc.test1file);
     try aoc.assertEq(@as(u64, 150), t[0]);
     try aoc.assertEq(@as(u64, 900), t[1]);
 
-    var ti = parts(aoc.inputfile);
+    const ti = parts(aoc.inputfile);
     try aoc.assertEq(@as(u64, 1714950), ti[0]);
     try aoc.assertEq(@as(u64, 1281977850), ti[1]);
 }
 
 fn day02(inp: []const u8, bench: bool) anyerror!void {
-    var p = parts(inp);
+    const p = parts(inp);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }

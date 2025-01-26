@@ -60,10 +60,10 @@ fn part2(alloc: std.mem.Allocator, inp: anytype) usize {
 }
 
 fn day06(inp: []const u8, bench: bool) anyerror!void {
-    var dec = try aoc.readChunks(aoc.halloc, inp);
+    const dec = try aoc.readChunks(aoc.halloc, inp);
     defer aoc.halloc.free(dec);
-    var p1 = part1(aoc.halloc, dec);
-    var p2 = part2(aoc.halloc, dec);
+    const p1 = part1(aoc.halloc, dec);
+    const p2 = part2(aoc.halloc, dec);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

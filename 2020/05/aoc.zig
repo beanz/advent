@@ -2,11 +2,11 @@ const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
 test "examples" {
-    var t1 = try aoc.readLines(aoc.talloc, aoc.test1file);
+    const t1 = try aoc.readLines(aoc.talloc, aoc.test1file);
     defer aoc.talloc.free(t1);
     try aoc.assertEq(@as(usize, 820), part1(t1));
     try aoc.assertEq(@as(usize, 0), part2(aoc.talloc, t1));
-    var ti = try aoc.readLines(aoc.talloc, aoc.inputfile);
+    const ti = try aoc.readLines(aoc.talloc, aoc.inputfile);
     defer aoc.talloc.free(ti);
     try aoc.assertEq(@as(usize, 947), part1(ti));
     try aoc.assertEq(@as(usize, 636), part2(aoc.talloc, ti));
@@ -57,10 +57,10 @@ fn part2(alloc: std.mem.Allocator, inp: anytype) usize {
 }
 
 fn day05(inp: []const u8, bench: bool) anyerror!void {
-    var plan = try aoc.readLines(aoc.halloc, inp);
+    const plan = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(plan);
-    var p1 = part1(plan);
-    var p2 = part2(aoc.halloc, plan);
+    const p1 = part1(plan);
+    const p2 = part2(aoc.halloc, plan);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

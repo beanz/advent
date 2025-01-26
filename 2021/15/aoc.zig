@@ -2,8 +2,8 @@ const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
 fn get(bm: *aoc.ByteMap, x: usize, y: usize) usize {
-    var mw = bm.width();
-    var mh = bm.height();
+    const mw = bm.width();
+    const mh = bm.height();
     var v = bm.getXY(x % mw, y % mh) - '0';
     v += @as(u8, @intCast(x / mw));
     v += @as(u8, @intCast(y / mh));
@@ -12,8 +12,8 @@ fn get(bm: *aoc.ByteMap, x: usize, y: usize) usize {
 }
 
 fn add(bm: *aoc.ByteMap, q: []std.ArrayList([2]usize), dist: []usize, x: usize, y: usize, d: usize, w: usize) !void {
-    var nd = d + get(bm, x, y);
-    var di = x + y * w;
+    const nd = d + get(bm, x, y);
+    const di = x + y * w;
     if (dist[di] <= nd) {
         return;
     }
@@ -31,11 +31,11 @@ pub fn solve(alloc: std.mem.Allocator, bm: *aoc.ByteMap, dim: usize) !usize {
     var h = bm.height();
     w *= dim;
     h *= dim;
-    var size = w * h;
+    const size = w * h;
     var dist = try alloc.alloc(usize, size);
     defer alloc.free(dist);
     @memset(dist[0..], aoc.maxInt(usize));
-    var qsize = (w + h) * 9;
+    const qsize = (w + h) * 9;
     var q = try alloc.alloc(std.ArrayList([2]usize), qsize);
     var i: usize = 0;
     while (i < qsize) : (i += 1) {
@@ -54,11 +54,11 @@ pub fn solve(alloc: std.mem.Allocator, bm: *aoc.ByteMap, dim: usize) !usize {
     while (qi < q.len) : (qi += 1) {
         var j: usize = 0;
         while (j < q[qi].items.len) : (j += 1) {
-            var xy: [2]usize = q[qi].items[j];
-            var x = xy[0];
-            var y = xy[1];
-            var vi = x + y * w;
-            var d = dist[vi];
+            const xy: [2]usize = q[qi].items[j];
+            const x = xy[0];
+            const y = xy[1];
+            const vi = x + y * w;
+            const d = dist[vi];
             if (x == w - 1 and y == h - 1) {
                 return d;
             }
@@ -81,9 +81,9 @@ pub fn solve(alloc: std.mem.Allocator, bm: *aoc.ByteMap, dim: usize) !usize {
 }
 
 test "parts" {
-    var t1 = try parts(aoc.talloc, aoc.test1file);
+    const t1 = try parts(aoc.talloc, aoc.test1file);
     try aoc.assertEq(@as(usize, 40), t1[0]);
-    var r = try parts(aoc.talloc, aoc.inputfile);
+    const r = try parts(aoc.talloc, aoc.inputfile);
     try aoc.assertEq(@as(usize, 595), r[0]);
     try aoc.assertEq(@as(usize, 315), t1[1]);
     try aoc.assertEq(@as(usize, 2914), r[1]);
@@ -92,7 +92,7 @@ test "parts" {
 var buf: [16 * 1024 * 1024]u8 = undefined;
 fn day15(inp: []const u8, bench: bool) anyerror!void {
     var alloc = std.heap.FixedBufferAllocator.init(&buf);
-    var p = try parts(alloc.allocator(), inp);
+    const p = try parts(alloc.allocator(), inp);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }

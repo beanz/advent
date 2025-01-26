@@ -2,7 +2,7 @@ const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
 fn fuel1(a: usize, b: usize) usize {
-    return aoc.absCast(@as(isize, @intCast(a)) - @as(isize, @intCast(b)));
+    return @abs(@as(isize, @intCast(a)) - @as(isize, @intCast(b)));
 }
 
 test "fuel1" {
@@ -32,16 +32,16 @@ fn part1(inp: []usize) usize {
 }
 
 test "part1" {
-    var crabs = try aoc.Ints(aoc.talloc, usize, aoc.test1file);
+    const crabs = try aoc.Ints(aoc.talloc, usize, aoc.test1file);
     defer aoc.talloc.free(crabs);
     try aoc.assertEq(@as(usize, 37), part1(crabs));
-    var crabs2 = try aoc.Ints(aoc.talloc, usize, aoc.inputfile);
+    const crabs2 = try aoc.Ints(aoc.talloc, usize, aoc.inputfile);
     defer aoc.talloc.free(crabs2);
     try aoc.assertEq(@as(usize, 336701), part1(crabs2));
 }
 
 fn fuel2(a: usize, b: usize) usize {
-    var f = fuel1(a, b);
+    const f = fuel1(a, b);
     return f * (f + 1) / 2;
 }
 
@@ -61,7 +61,7 @@ fn part2(inp: []usize) usize {
     }
     mean /= inp.len;
     var min = fuelsum2(mean, inp);
-    var c = fuelsum2(mean + 1, inp);
+    const c = fuelsum2(mean + 1, inp);
     if (min > c) {
         min = c;
     }
@@ -69,19 +69,19 @@ fn part2(inp: []usize) usize {
 }
 
 test "part2" {
-    var crabs = try aoc.Ints(aoc.talloc, usize, aoc.test1file);
+    const crabs = try aoc.Ints(aoc.talloc, usize, aoc.test1file);
     defer aoc.talloc.free(crabs);
     try aoc.assertEq(@as(usize, 168), part2(crabs));
-    var crabs2 = try aoc.Ints(aoc.talloc, usize, aoc.inputfile);
+    const crabs2 = try aoc.Ints(aoc.talloc, usize, aoc.inputfile);
     defer aoc.talloc.free(crabs2);
     try aoc.assertEq(@as(usize, 95167302), part2(crabs2));
 }
 
 fn day07(inp: []const u8, bench: bool) anyerror!void {
-    var crabs = try aoc.Ints(aoc.halloc, usize, inp);
+    const crabs = try aoc.Ints(aoc.halloc, usize, inp);
     defer aoc.halloc.free(crabs);
-    var p1 = part1(crabs);
-    var p2 = part2(crabs);
+    const p1 = part1(crabs);
+    const p2 = part2(crabs);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

@@ -93,7 +93,7 @@ const Menu = struct {
         while (m.possible.count() > 0) {
             var it = m.possible.iterator();
             while (it.next()) |possentry| {
-                var ing = possentry.key_ptr.*;
+                const ing = possentry.key_ptr.*;
                 var allergens = possentry.value_ptr.*;
                 if (allergens.count() == 1) {
                     var allit = allergens.iterator();
@@ -110,7 +110,7 @@ const Menu = struct {
                 }
             }
         }
-        var res = resList.items;
+        const res = resList.items;
         std.mem.sort(Result, res, {}, resultLessThan);
         if (resLength == 0) {
             return "";
@@ -118,7 +118,7 @@ const Menu = struct {
         var rs = m.alloc.alloc(u8, resLength) catch unreachable;
         var i: usize = 0;
         for (res) |r| {
-            std.mem.copy(u8, rs[i..], r.ing);
+            std.mem.copyForwards(u8, rs[i..], r.ing);
             i += r.ing.len;
             rs[i] = ',';
             i += 1;
@@ -136,16 +136,16 @@ test "examples" {
     var mt = Menu.init(aoc.talloc, test1) catch unreachable;
     defer mt.deinit();
     try aoc.assertEq(@as(usize, 5), mt.Part1());
-    var rt = "mxmxvkd,sqjhc,fvjkl";
-    var resTest = mt.Part2();
+    const rt = "mxmxvkd,sqjhc,fvjkl";
+    const resTest = mt.Part2();
     defer aoc.talloc.free(resTest);
     try aoc.assert(std.mem.eql(u8, rt, resTest));
 
     var m = Menu.init(aoc.talloc, inp) catch unreachable;
     defer m.deinit();
     try aoc.assertEq(@as(usize, 2874), m.Part1());
-    var r = "gfvrr,ndkkq,jxcxh,bthjz,sgzr,mbkbn,pkkg,mjbtz";
-    var res = m.Part2();
+    const r = "gfvrr,ndkkq,jxcxh,bthjz,sgzr,mbkbn,pkkg,mjbtz";
+    const res = m.Part2();
     defer aoc.talloc.free(res);
     try aoc.assert(std.mem.eql(u8, r, res));
 }
@@ -155,8 +155,8 @@ fn day21(inp: []const u8, bench: bool) anyerror!void {
     defer aoc.halloc.free(lines);
     var m = try Menu.init(aoc.halloc, lines);
     defer m.deinit();
-    var p1 = m.Part1();
-    var p2 = m.Part2();
+    const p1 = m.Part1();
+    const p2 = m.Part2();
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {s}\n", .{ p1, p2 });
     }

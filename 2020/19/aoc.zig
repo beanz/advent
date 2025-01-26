@@ -182,8 +182,8 @@ fn day19(inp: []const u8, bench: bool) anyerror!void {
     const chunks = try aoc.readChunks(aoc.halloc, inp);
     defer aoc.halloc.free(chunks);
     var m = try Matcher.init(aoc.halloc, chunks);
-    var p1 = m.Part1();
-    var p2 = m.Part2();
+    const p1 = m.Part1();
+    const p2 = m.Part2();
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

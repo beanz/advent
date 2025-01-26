@@ -12,8 +12,8 @@ fn indexOf(h: []const u8, n: u8, o: usize) ?usize {
 }
 
 fn flood(l: []u8, p: usize, w: usize, h: usize) anyerror!usize {
-    var x: usize = p % w;
-    var y: usize = p / w;
+    const x: usize = p % w;
+    const y: usize = p / w;
     if (l[p] >= '9') {
         return 0;
     }
@@ -42,10 +42,10 @@ fn pp(l: []u8, w: usize, h: usize) !void {
 }
 
 fn lava(alloc: std.mem.Allocator, in: []const u8) ![2]usize {
-    var l: []u8 = alloc.dupe(u8, in) catch unreachable;
+    const l: []u8 = alloc.dupe(u8, in) catch unreachable;
     defer alloc.free(l);
-    var w = indexOf(l, '\n', 0).? + 1;
-    var h = in.len / w;
+    const w = indexOf(l, '\n', 0).? + 1;
+    const h = in.len / w;
     var r = [2]usize{ 0, 0 };
     var ch: u8 = '0';
     var sizes = std.ArrayList(usize).init(alloc);
@@ -58,7 +58,7 @@ fn lava(alloc: std.mem.Allocator, in: []const u8) ![2]usize {
                 continue;
             }
             r[0] += 1 + ch - '0';
-            var size: usize = try flood(l, p, w, h);
+            const size: usize = try flood(l, p, w, h);
             //print("{},{} s={}\n", .{ p % w, p / w, size }) catch unreachable;
             try sizes.append(size);
         }
@@ -71,16 +71,16 @@ fn lava(alloc: std.mem.Allocator, in: []const u8) ![2]usize {
 }
 
 test "examples" {
-    var test1 = try lava(aoc.talloc, aoc.test1file);
+    const test1 = try lava(aoc.talloc, aoc.test1file);
     try aoc.assertEq(@as(usize, 15), test1[0]);
-    var real = try lava(aoc.talloc, aoc.inputfile);
+    const real = try lava(aoc.talloc, aoc.inputfile);
     try aoc.assertEq(@as(usize, 456), real[0]);
     try aoc.assertEq(@as(usize, 1134), test1[1]);
     try aoc.assertEq(@as(usize, 1047744), real[1]);
 }
 
 fn day09(inp: []const u8, bench: bool) anyerror!void {
-    var p = try lava(aoc.halloc, inp);
+    const p = try lava(aoc.halloc, inp);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }

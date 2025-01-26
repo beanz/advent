@@ -75,8 +75,8 @@ test "examples" {
 fn day15(inp: []const u8, bench: bool) anyerror!void {
     const ints = try aoc.Ints(aoc.halloc, usize, inp);
     defer aoc.halloc.free(ints);
-    var p1 = part1(aoc.halloc, ints);
-    var p2 = part2(aoc.halloc, ints);
+    const p1 = part1(aoc.halloc, ints);
+    const p2 = part2(aoc.halloc, ints);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

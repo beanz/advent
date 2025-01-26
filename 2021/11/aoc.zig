@@ -6,7 +6,7 @@ fn parts(alloc: std.mem.Allocator, in: []const u8, p1Days: usize) ![2]usize {
     defer alloc.free(oct);
     var w: usize = 0;
     while (in[w] != '\n') : (w += 1) {}
-    var h = in.len / (w + 1);
+    const h = in.len / (w + 1);
     var r = [2]usize{ 0, 0 };
     var c: usize = 0;
     var day: usize = 1;
@@ -44,8 +44,8 @@ fn parts(alloc: std.mem.Allocator, in: []const u8, p1Days: usize) ![2]usize {
 }
 
 fn flash(oct: []u8, i: usize, w: usize, h: usize) void {
-    var x = @as(isize, @intCast(i % (w + 1)));
-    var y = @as(isize, @intCast(i / (w + 1)));
+    const x = @as(isize, @intCast(i % (w + 1)));
+    const y = @as(isize, @intCast(i / (w + 1)));
     //aoc.print("flash {},{}\n{s}\n", .{ x, y, oct }) catch unreachable;
     oct[i] = '~';
     for ([3]isize{ x - 1, x, x + 1 }) |nx| {
@@ -56,7 +56,7 @@ fn flash(oct: []u8, i: usize, w: usize, h: usize) void {
             if (nx < 0 or ny < 0 or nx >= w or ny >= h) {
                 continue;
             }
-            var ni = @as(usize, @intCast(nx)) + @as(usize, @intCast(ny)) * (w + 1);
+            const ni = @as(usize, @intCast(nx)) + @as(usize, @intCast(ny)) * (w + 1);
             if (oct[ni] == '~') {
                 continue;
             }
@@ -69,9 +69,9 @@ fn flash(oct: []u8, i: usize, w: usize, h: usize) void {
 }
 
 test "examples" {
-    var test0 = try parts(aoc.talloc, aoc.test0file, 1);
-    var test1 = try parts(aoc.talloc, aoc.test1file, 100);
-    var real = try parts(aoc.talloc, aoc.inputfile, 100);
+    const test0 = try parts(aoc.talloc, aoc.test0file, 1);
+    const test1 = try parts(aoc.talloc, aoc.test1file, 100);
+    const real = try parts(aoc.talloc, aoc.inputfile, 100);
     try aoc.assertEq(@as(usize, 9), test0[0]);
     try aoc.assertEq(@as(usize, 1656), test1[0]);
     try aoc.assertEq(@as(usize, 1652), real[0]);
@@ -81,7 +81,7 @@ test "examples" {
 }
 
 fn day11(inp: []const u8, bench: bool) anyerror!void {
-    var p = try parts(aoc.halloc, inp, 100);
+    const p = try parts(aoc.halloc, inp, 100);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }

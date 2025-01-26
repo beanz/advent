@@ -19,14 +19,14 @@ const Paper = struct {
         paper.next = 0;
         var chunks = std.mem.split(u8, inp, "\n\n");
         var b = try std.BoundedArray(u11, 2048).init(0);
-        var ints = try aoc.BoundedInts(u11, &b, chunks.next().?);
+        const ints = try aoc.BoundedInts(u11, &b, chunks.next().?);
         var points = std.AutoHashMap([2]u11, bool).init(alloc);
         var i: usize = 0;
         while (i < ints.len) : (i += 2) {
             try points.put([2]u11{ ints[i], ints[i + 1] }, true);
         }
         var folds = std.ArrayList(*Fold).init(alloc);
-        var foldsChunk = chunks.next().?;
+        const foldsChunk = chunks.next().?;
         var n: u11 = 0;
         var axis: u1 = 0;
         i = 0;
@@ -65,7 +65,7 @@ const Paper = struct {
         self.alloc.destroy(self);
     }
     pub fn nextFold(self: *Paper) !usize {
-        var fold = self.folds[self.next];
+        const fold = self.folds[self.next];
         var it = self.points.keyIterator();
         while (it.next()) |k| {
             var np: [2]u11 = k.*;
@@ -124,8 +124,8 @@ test "part2" {
 
 fn day13(inp: []const u8, bench: bool) anyerror!void {
     var paper = try Paper.init(aoc.halloc, inp);
-    var p1 = try paper.part1();
-    var p2 = try paper.part2();
+    const p1 = try paper.part1();
+    const p2 = try paper.part2();
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2:\n{s}\n", .{ p1, p2 });
     }

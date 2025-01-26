@@ -7,7 +7,7 @@ fn syntax(in: []const u8) ![2]usize {
     var stack = try std.BoundedArray(u8, 100).init(0);
     var i: usize = 0;
     while (i < in.len) : (i += 1) {
-        var ch = in[i];
+        const ch = in[i];
         switch (ch) {
             '(', '[', '{', '<' => {
                 var rch = ch + 2;
@@ -25,7 +25,7 @@ fn syntax(in: []const u8) ![2]usize {
                 try p2.append(s);
             },
             else => {
-                var exp = stack.pop();
+                const exp = stack.pop();
                 if (exp != ch) {
                     r[0] += score1(ch);
                     while (in[i] != '\n') : (i += 1) {}
@@ -34,7 +34,7 @@ fn syntax(in: []const u8) ![2]usize {
             },
         }
     }
-    var scores = p2.slice();
+    const scores = p2.slice();
     std.mem.sort(usize, scores, {}, std.sort.asc(usize));
     r[1] = scores[scores.len / 2];
     return r;
@@ -61,8 +61,8 @@ fn score2(ch: u8) usize {
 }
 
 test "examples" {
-    var test1 = try syntax(aoc.test1file);
-    var real = try syntax(aoc.inputfile);
+    const test1 = try syntax(aoc.test1file);
+    const real = try syntax(aoc.inputfile);
     try aoc.assertEq(@as(usize, 26397), test1[0]);
     try aoc.assertEq(@as(usize, 390993), real[0]);
     try aoc.assertEq(@as(usize, 288957), test1[1]);
@@ -70,7 +70,7 @@ test "examples" {
 }
 
 fn day10(inp: []const u8, bench: bool) anyerror!void {
-    var p = try syntax(inp);
+    const p = try syntax(inp);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }

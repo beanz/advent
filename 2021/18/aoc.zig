@@ -18,7 +18,7 @@ const SFNum = struct {
         var depth: u8 = 0;
         var i: usize = 0;
         while (i < inp.len) : (i += 1) {
-            var ch = inp[i];
+            const ch = inp[i];
             switch (ch) {
                 '[' => {
                     depth += 1;
@@ -47,7 +47,7 @@ const SFNum = struct {
     pub fn deinit(self: *SFNum) void {
         var it = self.nums.first;
         while (it) |node| {
-            var next = node.next;
+            const next = node.next;
             self.alloc.destroy(node.data);
             self.alloc.destroy(node);
             it = next;
@@ -78,8 +78,8 @@ const SFNum = struct {
                 continue;
             }
             //aoc.print("spliting [{}@{}]\n", .{ node.data.n, node.data.depth });
-            var down = node.data.n / 2;
-            var up = node.data.n - down;
+            const down = node.data.n / 2;
+            const up = node.data.n - down;
             node.data.n = down;
             node.data.depth += 1;
             var digit = try self.alloc.create(SFDigit);
@@ -98,7 +98,7 @@ const SFNum = struct {
             if (node.data.depth < 5) {
                 continue;
             }
-            var second = node.next orelse continue;
+            const second = node.next orelse continue;
             if (second.data.depth != node.data.depth) {
                 continue;
             }
@@ -153,7 +153,7 @@ const SFNum = struct {
                 first = second;
                 second = second.next.?;
             }
-            var mag = 3 * first.data.n + 2 * second.data.n;
+            const mag = 3 * first.data.n + 2 * second.data.n;
             //aoc.print("found {} and {} => {}\n", .{ first.data.n, second.data.n, mag });
             first.data.n = mag;
             first.data.depth -= 1;
@@ -170,7 +170,7 @@ test "magnitude" {
         data: []const u8,
         mag: usize,
     };
-    var tests = [_]TestCase{
+    const tests = [_]TestCase{
         TestCase{ .data = "[9,1]", .mag = 29 },
         TestCase{ .data = "[1,9]", .mag = 21 },
         TestCase{ .data = "[[9,1],[1,9]]", .mag = 129 },
@@ -195,7 +195,7 @@ test "explode" {
         data: []const u8,
         mag: usize,
     };
-    var tests = [_]TestCase{
+    const tests = [_]TestCase{
         TestCase{ .data = "[[[[[9,8],1],2],3],4]", .mag = 548 },
         TestCase{ .data = "[7,[6,[5,[4,[3,2]]]]]", .mag = 285 },
         TestCase{ .data = "[[6,[5,[4,[3,2]]]],1]", .mag = 402 },
@@ -217,7 +217,7 @@ test "split" {
         data: []const u8,
         mag: usize,
     };
-    var tests = [_]TestCase{
+    const tests = [_]TestCase{
         TestCase{ .data = "[[[[0,7],4],[15,[0,13]]],[1,1]]", .mag = 1438 },
         TestCase{ .data = "[[[[0,7],4],[[7,8],[0,13]]],[1,1]]", .mag = 1894 },
     };
@@ -235,7 +235,7 @@ test "add" {
         sf2: []const u8,
         mag: usize,
     };
-    var tests = [_]TestCase{
+    const tests = [_]TestCase{
         TestCase{
             .sf1 = "[[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]]",
             .sf2 = "[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]",
@@ -272,13 +272,13 @@ test "parts" {
         file: []const u8,
         res: [2]usize,
     };
-    var tests = [_]TestCase{
+    const tests = [_]TestCase{
         TestCase{ .file = aoc.test0file, .res = [2]usize{ 3488, 3805 } },
         TestCase{ .file = aoc.test1file, .res = [2]usize{ 4140, 3993 } },
         TestCase{ .file = aoc.inputfile, .res = [2]usize{ 3987, 4500 } },
     };
     for (tests) |tc| {
-        var res = try parts(aoc.talloc, tc.file);
+        const res = try parts(aoc.talloc, tc.file);
         try aoc.assertEq(tc.res, res);
     }
 }
@@ -306,7 +306,7 @@ fn parts(alloc: std.mem.Allocator, inp: []const u8) ![2]usize {
         defer o.deinit();
         try sf.add(o);
     }
-    var p1 = sf.magnitude();
+    const p1 = sf.magnitude();
     var p2: usize = 0;
     i = 0;
     while (i < sfs.items.len) : (i += 1) {
@@ -337,7 +337,7 @@ fn parts(alloc: std.mem.Allocator, inp: []const u8) ![2]usize {
 var buf: [20 * 1024 * 1024]u8 = undefined;
 fn day(inp: []const u8, bench: bool) anyerror!void {
     var alloc = std.heap.FixedBufferAllocator.init(&buf);
-    var p = try parts(alloc.allocator(), inp);
+    const p = try parts(alloc.allocator(), inp);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }

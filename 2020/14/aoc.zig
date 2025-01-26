@@ -113,8 +113,8 @@ test "examples" {
 fn day14(inp: []const u8, bench: bool) anyerror!void {
     const lines = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(lines);
-    var p1 = part1(aoc.halloc, lines);
-    var p2 = part2(aoc.halloc, lines);
+    const p1 = part1(aoc.halloc, lines);
+    const p2 = part2(aoc.halloc, lines);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

@@ -20,8 +20,8 @@ pub fn RPN(alloc: std.mem.Allocator, exp: []Token) usize {
             },
             .operator => |*op| {
                 const l: usize = stack.items.len;
-                var first = stack.items[l - 1];
-                var second = stack.items[l - 2];
+                const first = stack.items[l - 1];
+                const second = stack.items[l - 2];
                 _ = stack.orderedRemove(l - 1);
                 if (op.* == .plus) {
                     stack.items[l - 2] = first + second;
@@ -108,7 +108,7 @@ pub fn ShuntingYard(alloc: std.mem.Allocator, s: []const u8, isPart2: bool) anye
 }
 
 pub fn Calc(alloc: std.mem.Allocator, s: []const u8, isPart2: bool) anyerror!usize {
-    var sy = try ShuntingYard(alloc, s, isPart2);
+    const sy = try ShuntingYard(alloc, s, isPart2);
     defer alloc.free(sy);
     return RPN(alloc, sy);
 }
@@ -149,10 +149,10 @@ test "RPN" {
 }
 
 test "ShuntingYard" {
-    var sy = ShuntingYard(aoc.talloc, "2 + 3", false);
+    const sy = try ShuntingYard(aoc.talloc, "2 + 3", false);
     defer aoc.talloc.free(sy);
     try aoc.assertEq(@as(usize, 3), sy.len);
-    var sy2 = ShuntingYard(aoc.talloc, "2 + 3", false);
+    const sy2 = try ShuntingYard(aoc.talloc, "2 + 3", false);
     defer aoc.talloc.free(sy2);
     try aoc.assertEq(@as(usize, 5), RPN(aoc.talloc, sy2));
 }
@@ -198,8 +198,8 @@ test "examples" {
 fn day18(inp: []const u8, bench: bool) anyerror!void {
     const lines = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(lines);
-    var p1 = try part1(aoc.halloc, lines);
-    var p2 = try part2(aoc.halloc, lines);
+    const p1 = try part1(aoc.halloc, lines);
+    const p2 = try part2(aoc.halloc, lines);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

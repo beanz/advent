@@ -38,16 +38,16 @@ test "examples" {
     try aoc.assertEq(@as(usize, 10), parts(aoc.test1file, 5, 5)[0]);
     try aoc.assertEq(@as(usize, 11), parts(aoc.test1file, 9, 9)[0]);
     try aoc.assertEq(@as(usize, 26), parts(aoc.test1file, 18, 18)[0]);
-    var p = parts(aoc.test1file, 80, 256);
+    const p = parts(aoc.test1file, 80, 256);
     try aoc.assertEq(@as(usize, 5934), p[0]);
     try aoc.assertEq(@as(usize, 26984457539), p[1]);
-    var pi = parts(aoc.inputfile, 80, 256);
+    const pi = parts(aoc.inputfile, 80, 256);
     try aoc.assertEq(@as(usize, 365131), pi[0]);
     try aoc.assertEq(@as(usize, 1650309278600), pi[1]);
 }
 
 fn day06(inp: []const u8, bench: bool) anyerror!void {
-    var p = parts(inp, 80, 256);
+    const p = parts(inp, 80, 256);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }

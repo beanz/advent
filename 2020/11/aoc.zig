@@ -45,8 +45,8 @@ const Map = struct {
     alloc: std.mem.Allocator,
 
     pub fn fromInput(alloc: std.mem.Allocator, inp: [][]const u8) !*Map {
-        var h = inp.len;
-        var w = inp[0].len;
+        const h = inp.len;
+        const w = inp[0].len;
         var map = try alloc.alloc(SeatState, h * w);
         var new = try alloc.alloc(SeatState, h * w);
         var m = try alloc.create(Map);
@@ -77,7 +77,7 @@ const Map = struct {
     }
 
     pub fn SetSeat(self: *Map, x: isize, y: isize, state: SeatState) void {
-        self.new[std.math.absCast(y) * self.w + std.math.absCast(x)] = state;
+        self.new[@abs(y) * self.w + @abs(x)] = state;
     }
 
     pub fn Swap(self: *Map) void {
@@ -90,7 +90,7 @@ const Map = struct {
         if (x < 0 or x > self.w - 1 or y < 0 or y > self.h - 1) {
             return .none_outside;
         }
-        return self.map[std.math.absCast(y) * self.w + std.math.absCast(x)];
+        return self.map[@abs(y) * self.w + @abs(x)];
     }
 
     pub fn Next(self: *Map, x: isize, y: isize, group: usize, sight: bool) SeatState {
@@ -101,7 +101,7 @@ const Map = struct {
             while (true) {
                 ox += o[0];
                 oy += o[1];
-                var ns = self.Seat(ox, oy);
+                const ns = self.Seat(ox, oy);
                 if (ns == .occupied) {
                     oc += 1;
                 }
@@ -147,11 +147,11 @@ const Map = struct {
         while (x < self.w) : (x += 1) {
             var y: isize = 0;
             while (y < self.h) : (y += 1) {
-                var cur = self.Seat(x, y);
+                const cur = self.Seat(x, y);
                 if (cur == .none) {
                     continue;
                 }
-                var new = self.Next(x, y, group, sight);
+                const new = self.Next(x, y, group, sight);
                 self.SetSeat(x, y, new);
                 if (cur != new) {
                     self.changes += 1;
@@ -167,7 +167,7 @@ const Map = struct {
 
     pub fn Run(self: *Map, group: usize, sight: bool) usize {
         while (true) {
-            var oc = self.RunOnce(group, sight);
+            const oc = self.RunOnce(group, sight);
             if (self.changes == 0) {
                 return oc;
             }
@@ -191,8 +191,8 @@ fn part2(alloc: std.mem.Allocator, in: [][]const u8) usize {
 fn day11(inp: []const u8, bench: bool) anyerror!void {
     const lines = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(lines);
-    var p1 = part1(aoc.halloc, lines);
-    var p2 = part2(aoc.halloc, lines);
+    const p1 = part1(aoc.halloc, lines);
+    const p2 = part2(aoc.halloc, lines);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

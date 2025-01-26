@@ -31,7 +31,7 @@ const Game = struct {
         return g;
     }
     fn roll(self: *Game) usize {
-        var r = 1 + (self.d % 100);
+        const r = 1 + (self.d % 100);
         self.d += 1;
         return r;
     }
@@ -67,14 +67,14 @@ const Game = struct {
         }
         var its: i8 = 40;
         while (its >= 0) : (its -= 1) {
-            var ts = @as(usize, @intCast(its));
+            const ts = @as(usize, @intCast(its));
             var is1: isize = 20;
             while (is1 >= 0) : (is1 -= 1) {
-                var s1 = @as(usize, @intCast(is1));
+                const s1 = @as(usize, @intCast(is1));
                 if (s1 > ts) {
                     continue;
                 }
-                var s2 = ts - s1;
+                const s2 = ts - s1;
                 if (s2 > 20) {
                     continue;
                 }
@@ -82,20 +82,20 @@ const Game = struct {
                 while (p1 <= 10) : (p1 += 1) {
                     var p2: usize = 1;
                     while (p2 <= 10) : (p2 += 1) {
-                        var i = (((s1 * 21) + s2) * 11 + p1) * 11 + p2;
+                        const i = (((s1 * 21) + s2) * 11 + p1) * 11 + p2;
                         var r: usize = 3;
                         while (r <= 9) : (r += 1) {
-                            var w = rollWays[r - 3];
+                            const w = rollWays[r - 3];
                             var np1 = p1 + r;
                             if (np1 > 10) {
                                 np1 -= 10;
                             }
-                            var ns1 = s1 + np1;
+                            const ns1 = s1 + np1;
                             if (ns1 >= 21) {
                                 games[i] += w;
                                 wins[i] += w;
                             } else {
-                                var ii = ((((s2 * 21) + ns1) * 11 + p2) * 11) + np1;
+                                const ii = ((((s2 * 21) + ns1) * 11 + p2) * 11) + np1;
                                 games[i] += w * games[ii];
                                 wins[i] += w * (games[ii] - wins[ii]);
                             }
@@ -104,9 +104,9 @@ const Game = struct {
                 }
             }
         }
-        var ri = self.start[0] * 11 + self.start[1];
-        var w1 = wins[ri];
-        var w2 = games[ri] - wins[ri];
+        const ri = self.start[0] * 11 + self.start[1];
+        const w1 = wins[ri];
+        const w2 = games[ri] - wins[ri];
         if (w1 > w2) {
             return w1;
         }
@@ -130,8 +130,8 @@ test "examples" {
 fn day(inp: []const u8, bench: bool) anyerror!void {
     var g = try Game.fromInput(aoc.halloc, inp);
     defer aoc.halloc.destroy(g);
-    var p1 = g.part1();
-    var p2 = g.part2();
+    const p1 = g.part1();
+    const p2 = g.part2();
     if (!bench) {
         aoc.print("Part1: {}\nPart2: {}\n", .{ p1, p2 });
     }

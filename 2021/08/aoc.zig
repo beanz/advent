@@ -11,8 +11,8 @@ const Signal = struct {
         var sig = try alloc.create(Signal);
         sig.alloc = alloc;
         var patternOutput = std.mem.split(u8, line, " | ");
-        var patterns = patternOutput.next().?;
-        var output = patternOutput.next().?;
+        const patterns = patternOutput.next().?;
+        const output = patternOutput.next().?;
         sig.patterns = try aoc.splitToOwnedSlice(alloc, patterns, " ");
         sig.output = try aoc.splitToOwnedSlice(alloc, output, " ");
         sig.initMap();
@@ -159,10 +159,10 @@ const Signals = struct {
         var self = try alloc.create(Signals);
         self.alloc = alloc;
         var sigs = std.ArrayList(*Signal).init(alloc);
-        var lines = try aoc.splitToOwnedSlice(alloc, inp, "\n");
+        const lines = try aoc.splitToOwnedSlice(alloc, inp, "\n");
         defer alloc.free(lines);
         for (lines) |l| {
-            var sig = try Signal.init(alloc, l);
+            const sig = try Signal.init(alloc, l);
             try sigs.append(sig);
         }
         self.signals = try sigs.toOwnedSlice();
@@ -190,20 +190,20 @@ const Signals = struct {
 test "examples" {
     var t = try Signals.init(aoc.talloc, aoc.test1file);
     defer t.deinit();
-    var p = try t.parts();
+    const p = try t.parts();
     try aoc.assertEq(@as(u64, 26), p[0]);
     try aoc.assertEq(@as(u64, 61229), p[1]);
 
     var ti = try Signals.init(aoc.talloc, aoc.inputfile);
     defer ti.deinit();
-    var pi = try ti.parts();
+    const pi = try ti.parts();
     try aoc.assertEq(@as(u64, 504), pi[0]);
     try aoc.assertEq(@as(u64, 1073431), pi[1]);
 }
 
 fn day08(inp: []const u8, bench: bool) anyerror!void {
     var s = try Signals.init(aoc.halloc, inp);
-    var p = try s.parts();
+    const p = try s.parts();
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }

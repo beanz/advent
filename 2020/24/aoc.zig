@@ -13,8 +13,8 @@ pub fn R(ht: usize) i8 {
 }
 
 pub fn HexTileNeighbours(ht: usize) [6]usize {
-    var q = Q(ht);
-    var r = R(ht);
+    const q = Q(ht);
+    const r = R(ht);
     return [_]usize{
         HexTile(q + 1, r + 0),
         HexTile(q + 0, r - 1),
@@ -64,10 +64,10 @@ pub fn HexTileFromString(m: []const u8) usize {
 }
 
 test "hex tile" {
-    var ht = HexTileFromString("sesenwnenenewseeswwswswwnenewsewsw");
+    const ht = HexTileFromString("sesenwnenenewseeswwswswwnenewsewsw");
     try aoc.assertEq(@as(i8, -3), Q(ht));
     try aoc.assertEq(@as(i8, -2), R(ht));
-    var n = HexTileNeighbours(ht);
+    const n = HexTileNeighbours(ht);
     try aoc.assertEq(@as(i8, -2), Q(n[0]));
     try aoc.assertEq(@as(i8, -2), R(n[0]));
 
@@ -138,7 +138,7 @@ const HexLife = struct {
         s.debug = false;
         s.init = std.AutoHashMap(usize, State).init(alloc);
         for (in) |line| {
-            var ht = HexTileFromString(line);
+            const ht = HexTileFromString(line);
             if (s.init.contains(ht)) {
                 _ = s.init.remove(ht);
             } else {
@@ -164,7 +164,7 @@ const HexLife = struct {
         defer cur_bb.deinit();
         var it = s.init.iterator();
         while (it.next()) |e| {
-            var ht = e.key_ptr.*;
+            const ht = e.key_ptr.*;
             cur.put(ht, .black) catch unreachable;
             cur_bb.Update(Q(ht), R(ht));
         }
@@ -181,14 +181,14 @@ const HexLife = struct {
                 var r = cur_bb.rmin - 1;
                 while (r <= cur_bb.rmax + 1) : (r += 1) {
                     var nc: usize = 0;
-                    var ht = HexTile(q, r);
+                    const ht = HexTile(q, r);
                     for (HexTileNeighbours(ht)) |n| {
-                        var nst = cur.get(n) orelse .white;
+                        const nst = cur.get(n) orelse .white;
                         if (nst == .black) {
                             nc += 1;
                         }
                     }
-                    var st = cur.get(ht) orelse .white;
+                    const st = cur.get(ht) orelse .white;
                     if ((st == .black and !(nc == 0 or nc > 2)) or
                         (st == .white and nc == 2))
                     {
@@ -201,11 +201,11 @@ const HexLife = struct {
             if (s.debug) {
                 std.debug.print("Day {}: {} ({})\n", .{ day, bc, next.count() });
             }
-            var tmp = cur;
+            const tmp = cur;
             cur = next;
             next = tmp;
             next.clearAndFree();
-            var tmp_bb = cur_bb;
+            const tmp_bb = cur_bb;
             cur_bb = next_bb;
             next_bb = tmp_bb;
             next_bb.reset();
@@ -257,8 +257,8 @@ fn day24(inp: []const u8, bench: bool) anyerror!void {
     defer aoc.halloc.free(lines);
     var g = try HexLife.init(aoc.halloc, lines);
     defer g.deinit();
-    var p1 = g.part1();
-    var p2 = g.part2(100);
+    const p1 = g.part1();
+    const p2 = g.part2(100);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

@@ -4,7 +4,7 @@ const aoc = @import("aoc-lib.zig");
 pub fn parts(alloc: std.mem.Allocator, inp: []const u8) ![2]usize {
     var i: usize = 0;
     while (inp[i] != '\n') : (i += 1) {}
-    var init = inp[0..i];
+    const init = inp[0..i];
     i += 2;
     var middleFor = [_]u5{0} ** 676;
     while (i < inp.len) : (i += 8) {
@@ -14,7 +14,7 @@ pub fn parts(alloc: std.mem.Allocator, inp: []const u8) ![2]usize {
     defer pc.deinit();
     i = 0;
     while (i < init.len - 1) : (i += 1) {
-        var pair = [2]u5{ @as(u5, @intCast(init[i] - 'A')), @as(u5, @intCast(init[i + 1] - 'A')) };
+        const pair = [2]u5{ @as(u5, @intCast(init[i] - 'A')), @as(u5, @intCast(init[i + 1] - 'A')) };
         try pc.put(pair, (pc.get(pair) orelse 0) + 1);
     }
     var npc = std.AutoHashMap([2]u5, usize).init(alloc);
@@ -24,9 +24,9 @@ pub fn parts(alloc: std.mem.Allocator, inp: []const u8) ![2]usize {
     while (day <= 40) : (day += 1) {
         var pit = pc.iterator();
         while (pit.next()) |e| {
-            var a = e.key_ptr.*[0];
-            var b = e.key_ptr.*[1];
-            var m = middleFor[@as(usize, a) * 26 + b];
+            const a = e.key_ptr.*[0];
+            const b = e.key_ptr.*[1];
+            const m = middleFor[@as(usize, a) * 26 + b];
             try npc.put([2]u5{ a, m }, (npc.get([2]u5{ a, m }) orelse 0) + e.value_ptr.*);
             try npc.put([2]u5{ m, b }, (npc.get([2]u5{ m, b }) orelse 0) + e.value_ptr.*);
         }
@@ -61,16 +61,16 @@ fn mostMinusLeast(pairCounts: std.AutoHashMap([2]u5, usize), init: []const u8) u
 }
 
 test "parts" {
-    var t1 = try parts(aoc.talloc, aoc.test1file);
+    const t1 = try parts(aoc.talloc, aoc.test1file);
     try aoc.assertEq(@as(usize, 1588), t1[0]);
-    var r = try parts(aoc.talloc, aoc.inputfile);
+    const r = try parts(aoc.talloc, aoc.inputfile);
     try aoc.assertEq(@as(usize, 2891), r[0]);
     try aoc.assertEq(@as(usize, 2188189693529), t1[1]);
     try aoc.assertEq(@as(usize, 4607749009683), r[1]);
 }
 
 fn day14(inp: []const u8, bench: bool) anyerror!void {
-    var p = try parts(aoc.halloc, inp);
+    const p = try parts(aoc.halloc, inp);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
     }

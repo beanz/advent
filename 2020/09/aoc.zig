@@ -61,10 +61,10 @@ fn part2(nums: []const i64, p1: i64) i64 {
 }
 
 fn day09(inp: []const u8, bench: bool) anyerror!void {
-    var nums = try aoc.Ints(aoc.halloc, i64, inp);
+    const nums = try aoc.Ints(aoc.halloc, i64, inp);
     defer aoc.halloc.free(nums);
-    var p1 = part1(nums, 25);
-    var p2 = part2(nums, p1);
+    const p1 = part1(nums, 25);
+    const p2 = part2(nums, p1);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

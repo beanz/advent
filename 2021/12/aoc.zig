@@ -63,7 +63,7 @@ const Cave = struct {
             return v;
         }
         var paths: usize = 0;
-        var neighbors = self.next[@ctz(start)];
+        const neighbors = self.next[@ctz(start)];
         //aoc.print("  neighbors: {b}\n", .{neighbors});
         var nb: u16 = 1;
         while (nb <= self.max) : (nb <<= 1) {
@@ -104,8 +104,8 @@ const Cave = struct {
         return self.max;
     }
     fn addpath(self: *Cave, ids: *std.StringHashMap(u16), s: []const u8, e: []const u8) !void {
-        var start = try self.id(ids, s);
-        var end = try self.id(ids, e);
+        const start = try self.id(ids, s);
+        const end = try self.id(ids, e);
         //aoc.print("would add path {s} {b} {} -> {s} {b} {}\n", .{
         //    s, start, @ctz(start), e, end, @ctz(end),
         //}) catch unreachable;
@@ -150,8 +150,8 @@ test "part2" {
 
 fn day12(inp: []const u8, bench: bool) anyerror!void {
     var cave = try Cave.init(aoc.halloc, inp);
-    var p1 = try cave.part1();
-    var p2 = try cave.part2();
+    const p1 = try cave.part1();
+    const p2 = try cave.part2();
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

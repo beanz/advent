@@ -70,12 +70,12 @@ const Mess = struct {
             f.max2 = try std.fmt.parseInt(i64, range2it.next().?, 10);
             try m.fields.put(name, f);
         }
-        var our: Ticket = try aoc.Ints(alloc, i64, inp[1]);
+        const our: Ticket = try aoc.Ints(alloc, i64, inp[1]);
         lit = std.mem.split(u8, inp[2], "\n");
         _ = lit.next().?;
         var tickets = std.ArrayList(Ticket).init(alloc);
         while (lit.next()) |line| {
-            var ticket = try aoc.Ints(alloc, i64, line);
+            const ticket = try aoc.Ints(alloc, i64, line);
             var validTicket = true;
             for (ticket) |v| {
                 var validField = false;
@@ -154,12 +154,12 @@ const Mess = struct {
             var progress = false;
             var possIt = possible.iterator();
             while (possIt.next()) |possRec| {
-                var name = possRec.key_ptr.*;
-                var cols = possRec.value_ptr.*;
+                const name = possRec.key_ptr.*;
+                const cols = possRec.value_ptr.*;
                 if (cols != 0 and count1s(cols) == 1) {
                     progress = true;
-                    var c: i64 = find1bit(cols);
-                    var ourVal = self.our[std.math.absCast(c)];
+                    const c: i64 = find1bit(cols);
+                    const ourVal = self.our[@abs(c)];
                     if (self.debug) {
                         std.debug.print("definite {s} is {!} ({!})\n", .{ name, c, ourVal });
                     }
@@ -179,7 +179,7 @@ const Mess = struct {
             }
             if (!progress) {
                 std.debug.print("no progress made\n", .{});
-                std.os.exit(0);
+                unreachable;
             }
         }
     }
@@ -230,8 +230,8 @@ fn day16(_: []const u8, bench: bool) anyerror!void {
     var m = try Mess.fromInput(aoc.halloc, chunks);
     defer m.deinit();
     m.onlyDepart = onlyDepart;
-    var p1 = m.err;
-    var p2 = m.Solve();
+    const p1 = m.err;
+    const p2 = m.Solve();
     if (!bench) {
         aoc.print("Part 1: {!}\nPart 2: {!}\n", .{ p1, p2 });
     }

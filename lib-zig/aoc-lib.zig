@@ -3,8 +3,10 @@ const Args = std.process.args;
 const Md5 = std.crypto.hash.Md5;
 
 // mem
-pub const halloc = std.heap.page_allocator;
 pub const talloc = std.testing.allocator;
+
+var allocRecorder = AllocRecorder.init(&std.heap.page_allocator);
+pub var halloc = allocRecorder.allocator();
 
 // sort
 pub const sort = std.sort;
@@ -456,7 +458,12 @@ pub fn benchme(inp: []const u8, comptime call: fn (in: []const u8, bench: bool) 
         }
     }
     if (is_bench) {
-        print("bench {} iterations in {}ns: {}ns\n", .{ it, elapsed, @divTrunc(elapsed, it) });
+        print("bench {} iterations in {}ns: {}b {}ns\n", .{
+            it,
+            elapsed,
+            @divTrunc(allocRecorder.bytes(), it),
+            @divTrunc(elapsed, it),
+        });
     }
 }
 
@@ -1038,3 +1045,65 @@ pub fn ocr(n: u64) u8 {
         else => '?',
     };
 }
+
+const Allocator = std.mem.Allocator;
+const AllocError = std.mem.Allocator.Error;
+
+pub const AllocRecorder = struct {
+    wrapped: *const Allocator,
+    c: u64,
+    b: u64,
+
+    pub fn init(a: *const Allocator) AllocRecorder {
+        return AllocRecorder{
+            .wrapped = a,
+            .c = 0,
+            .b = 0,
+        };
+    }
+    pub fn count(self: AllocRecorder) u64 {
+        return self.c;
+    }
+    pub fn bytes(self: AllocRecorder) u64 {
+        return self.b;
+    }
+    pub fn allocator(self: *AllocRecorder) Allocator {
+        return .{
+            .ptr = self,
+            .vtable = &.{
+                .alloc = alloc,
+                .resize = resize,
+                .free = free,
+            },
+        };
+    }
+    fn alloc(ctx: *anyopaque, n: usize, log2_ptr_align: u8, ra: usize) ?[*]u8 {
+        const self: *AllocRecorder = @ptrCast(@alignCast(ctx));
+        const ret = self.wrapped.rawAlloc(n, log2_ptr_align, ra);
+        self.c += 1;
+        self.b += @as(u64, @intCast(n));
+        return ret;
+    }
+    fn resize(
+        ctx: *anyopaque,
+        buf: []u8,
+        log2_buf_align: u8,
+        n: usize,
+        ra: usize,
+    ) bool {
+        const self: *AllocRecorder = @ptrCast(@alignCast(ctx));
+        const ret = self.wrapped.rawResize(buf, log2_buf_align, n, ra);
+        self.c += 1;
+        self.b += @as(u64, @intCast(n));
+        return ret;
+    }
+    fn free(
+        ctx: *anyopaque,
+        buf: []u8,
+        log2_buf_align: u8,
+        ra: usize,
+    ) void {
+        const self: *AllocRecorder = @ptrCast(@alignCast(ctx));
+        self.wrapped.rawFree(buf, log2_buf_align, ra);
+    }
+};

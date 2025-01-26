@@ -23,9 +23,9 @@ const Map = struct {
         m.alloc = alloc;
         @memset(m.cur[0..], false);
         @memset(m.new[0..], false);
-        var size: i8 = @intCast(inp.len);
+        const size: i8 = @intCast(inp.len);
         m.w = size;
-        var s2: i8 = size >> 1;
+        const s2: i8 = size >> 1;
         m.w2 = s2;
         var y: i8 = 0;
         while (y < inp.len) : (y += 1) {
@@ -44,10 +44,10 @@ const Map = struct {
         self.alloc.destroy(self);
     }
     pub fn Print(self: *Map, iter: i8, part2: bool) void {
-        var xystart: i8 = OFF - (1 + self.w2 + iter);
-        var xyend: i8 = OFF + (2 + self.w2 + iter);
-        var zstart: i8 = OFF - (1 + iter);
-        var zend: i8 = OFF + (1 + iter);
+        const xystart: i8 = OFF - (1 + self.w2 + iter);
+        const xyend: i8 = OFF + (2 + self.w2 + iter);
+        const zstart: i8 = OFF - (1 + iter);
+        const zend: i8 = OFF + (1 + iter);
         var qstart: i8 = OFF;
         var qend: i8 = OFF;
         if (part2) {
@@ -121,10 +121,10 @@ const Map = struct {
         var n: usize = 0;
         @memset(self.new[0..], false);
 
-        var xystart: i8 = OFF - (1 + self.w2 + iter);
-        var xyend: i8 = OFF + (2 + self.w2 + iter);
-        var zstart: i8 = OFF - (1 + iter);
-        var zend: i8 = OFF + (1 + iter);
+        const xystart: i8 = OFF - (1 + self.w2 + iter);
+        const xyend: i8 = OFF + (2 + self.w2 + iter);
+        const zstart: i8 = OFF - (1 + iter);
+        const zend: i8 = OFF + (1 + iter);
         var qstart: i8 = OFF;
         var qend: i8 = OFF;
         if (part2) {
@@ -209,11 +209,11 @@ fn day17(inp: []const u8, bench: bool) anyerror!void {
     const lines = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(lines);
     var m = try Map.fromInput(aoc.halloc, lines);
-    var p1 = m.Part1();
+    const p1 = m.Part1();
     m.deinit();
     m = try Map.fromInput(aoc.halloc, lines);
     defer m.deinit();
-    var p2 = m.Part2();
+    const p2 = m.Part2();
     if (!bench) {
         aoc.print("Part 1: {!}\nPart 2: {!}\n", .{ p1, p2 });
     }

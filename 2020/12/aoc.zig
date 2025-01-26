@@ -11,7 +11,7 @@ test "direction" {
     };
 
     for (tests) |tc| {
-        var dir = Direction.newFromCompass(tc.c) catch unreachable;
+        const dir = Direction.newFromCompass(tc.c) catch unreachable;
         try aoc.assertEq(dir.dx, tc.dx);
         try aoc.assertEq(dir.dy, tc.dy);
     }
@@ -48,12 +48,12 @@ const Direction = struct {
     }
 
     pub fn CCW(self: *Direction) void {
-        var t = self.dx;
+        const t = self.dx;
         self.dx = self.dy;
         self.dy = -1 * t;
     }
     pub fn CW(self: *Direction) void {
-        var t = self.dx;
+        const t = self.dx;
         self.dx = -1 * self.dy;
         self.dy = t;
     }
@@ -71,15 +71,15 @@ const Point = struct {
         self.y += d.dy;
     }
     pub fn ManDist(self: *Point) usize {
-        return std.math.absCast(self.x) + std.math.absCast(self.y);
+        return @abs(self.x) + @abs(self.y);
     }
     pub fn CCW(self: *Point) void {
-        var t = self.x;
+        const t = self.x;
         self.x = self.y;
         self.y = -1 * t;
     }
     pub fn CW(self: *Point) void {
-        var t = self.x;
+        const t = self.x;
         self.x = -1 * self.y;
         self.y = t;
     }
@@ -98,7 +98,7 @@ const Nav = struct {
     debug: bool,
 
     pub fn fromInput(alloc: std.mem.Allocator, inp: [][]const u8) !*Nav {
-        var l = inp.len;
+        const l = inp.len;
         var inst = try alloc.alloc(Inst, l);
         var nav = try alloc.create(Nav);
         for (inp, 0..) |line, i| {
@@ -127,7 +127,7 @@ const Nav = struct {
         for (self.inst) |in| {
             switch (in.act) {
                 'N', 'S', 'E', 'W' => {
-                    var dir = Direction.newFromCompass(in.act) catch unreachable;
+                    const dir = Direction.newFromCompass(in.act) catch unreachable;
                     var i: usize = 0;
                     while (i < in.val) : (i += 1) {
                         self.ship.In(dir);
@@ -169,7 +169,7 @@ const Nav = struct {
         for (self.inst) |in| {
             switch (in.act) {
                 'N', 'S', 'E', 'W' => {
-                    var dir = Direction.newFromCompass(in.act) catch unreachable;
+                    const dir = Direction.newFromCompass(in.act) catch unreachable;
                     var i: usize = 0;
                     while (i < in.val) : (i += 1) {
                         self.wp.In(dir);
@@ -206,14 +206,14 @@ const Nav = struct {
 
     pub fn Print(self: *Nav) void {
         if (self.ship.x >= 0) {
-            aoc.print("{s} {}", .{ "east", std.math.absCast(self.ship.x) });
+            aoc.print("{s} {}", .{ "east", @abs(self.ship.x) });
         } else {
-            aoc.print("{s} {}", .{ "west", std.math.absCast(self.ship.x) });
+            aoc.print("{s} {}", .{ "west", @abs(self.ship.x) });
         }
         if (self.ship.y <= 0) {
-            aoc.print(" {s} {}", .{ "north", std.math.absCast(self.ship.y) });
+            aoc.print(" {s} {}", .{ "north", @abs(self.ship.y) });
         } else {
-            aoc.print(" {s} {}", .{ "south", std.math.absCast(self.ship.y) });
+            aoc.print(" {s} {}", .{ "south", @abs(self.ship.y) });
         }
         aoc.print(" [{},{}]\n", .{ self.dir.dx, self.dir.dy });
     }
@@ -247,8 +247,8 @@ test "examples" {
 fn day12(inp: []const u8, bench: bool) anyerror!void {
     const lines = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(lines);
-    var p1 = part1(aoc.halloc, lines);
-    var p2 = part2(aoc.halloc, lines);
+    const p1 = part1(aoc.halloc, lines);
+    const p2 = part2(aoc.halloc, lines);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

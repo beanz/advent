@@ -73,7 +73,7 @@ const HH = struct {
                 break;
             }
             seen.put(self.ip, true) catch unreachable;
-            const inst = self.code[std.math.absCast(self.ip)];
+            const inst = self.code[@abs(self.ip)];
             switch (inst.op) {
                 Op.acc => {
                     self.acc += inst.arg;
@@ -136,10 +136,10 @@ fn part2(alloc: std.mem.Allocator, inp: anytype) i64 {
 }
 
 fn day08(inp: []const u8, bench: bool) anyerror!void {
-    var spec = try aoc.readLines(aoc.halloc, inp);
+    const spec = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(spec);
-    var p1 = part1(aoc.halloc, spec);
-    var p2 = part2(aoc.halloc, spec);
+    const p1 = part1(aoc.halloc, spec);
+    const p2 = part2(aoc.halloc, spec);
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }

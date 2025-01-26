@@ -101,12 +101,12 @@ test "examples" {
 }
 
 fn day03(inp: []const u8, bench: bool) anyerror!void {
-    var lines = try aoc.readLines(aoc.halloc, inp);
+    const lines = try aoc.readLines(aoc.halloc, inp);
     defer aoc.halloc.free(lines);
     var diag = try Diag.fromInput(aoc.halloc, lines);
     defer diag.deinit();
-    var p1 = diag.part1();
-    var p2 = diag.part2();
+    const p1 = diag.part1();
+    const p2 = diag.part2();
     if (!bench) {
         aoc.print("Part1: {}\nPart2: {}\n", .{ p1, p2 });
     }

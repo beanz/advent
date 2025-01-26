@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"math"
 	"os"
 	"path/filepath"
@@ -21,7 +20,7 @@ func main() {
 		panic(err)
 	}
 	table := makeTable(benchmarks)
-	_ = ioutil.WriteFile("benchmarks.md", []byte(table), 0644)
+	_ = os.WriteFile("benchmarks.md", []byte(table), 0644)
 }
 
 func makeTable(benchmarks benchmarkData) string {

@@ -66,13 +66,13 @@ const Game = struct {
 
     pub fn copyd(all: anytype, d: []u8) []u8 {
         var result = all.alloc(u8, d.len) catch unreachable;
-        std.mem.copy(u8, result[0..], d);
+        std.mem.copyForwards(u8, result[0..], d);
         return result;
     }
 
     pub fn append(all: anytype, d: []u8, a: u8, b: u8) []u8 {
         var result = all.alloc(u8, d.len + 2) catch unreachable;
-        std.mem.copy(u8, result[0..], d);
+        std.mem.copyForwards(u8, result[0..], d);
         result[d.len] = a;
         result[d.len + 1] = b;
         all.free(d);
@@ -81,14 +81,14 @@ const Game = struct {
 
     pub fn tail(all: anytype, d: []u8) []u8 {
         var result = all.alloc(u8, d.len - 1) catch unreachable;
-        std.mem.copy(u8, result[0..], d[1..d.len]);
+        std.mem.copyForwards(u8, result[0..], d[1..d.len]);
         all.free(d);
         return result;
     }
 
     pub fn subdeck(all: anytype, d: []u8, c: u8) []u8 {
         var result = all.alloc(u8, c) catch unreachable;
-        std.mem.copy(u8, result[0..], d[0..c]);
+        std.mem.copyForwards(u8, result[0..], d[0..c]);
         return result;
     }
 
@@ -159,15 +159,15 @@ const Game = struct {
     }
 
     pub fn Part1(g: *Game) usize {
-        var d = [_][]u8{ g.d1, g.d2 };
-        var r = g.Combat(d, false);
+        const d = [_][]u8{ g.d1, g.d2 };
+        const r = g.Combat(d, false);
         defer g.alloc.free(r.deck);
         return Score(r.deck);
     }
 
     pub fn Part2(g: *Game) usize {
-        var d = [_][]u8{ g.d1, g.d2 };
-        var r = g.Combat(d, true);
+        const d = [_][]u8{ g.d1, g.d2 };
+        const r = g.Combat(d, true);
         defer g.alloc.free(r.deck);
         return Score(r.deck);
     }
@@ -230,8 +230,8 @@ fn day22(inp: []const u8, bench: bool) anyerror!void {
     defer aoc.halloc.free(chunks);
     var g = try Game.init(aoc.halloc, chunks);
     defer g.deinit();
-    var p1 = g.Part1();
-    var p2 = g.Part2();
+    const p1 = g.Part1();
+    const p2 = g.Part2();
     if (!bench) {
         aoc.print("Part 1: {}\nPart 2: {}\n", .{ p1, p2 });
     }
