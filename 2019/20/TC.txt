@@ -1,0 +1,15 @@
+test1a.txt
+23
+26
+---END---
+test2a.txt
+77
+396
+---END---
+input-amf.txt
+664
+7334
+---END---
+input.txt
+482
+5912
