@@ -1,0 +1,11 @@
+input2.txt
+2622472
+0
+---END---
+input-amf.txt
+352325632
+0
+---END---
+input.txt
+136839232
+0
