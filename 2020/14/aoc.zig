@@ -72,6 +72,7 @@ fn part2(alloc: std.mem.Allocator, in: [][]const u8) usize {
             var m: usize = (1 << 35);
             while (m >= 1) : (m >>= 1) {
                 if ((m & maskx) != 0) {
+                    addrs.ensureUnusedCapacity(addrs.items.len) catch unreachable;
                     for (addrs.items) |a| {
                         if ((a & m) != 0) { // existing entry has 1
                             addrs.append(a & (0xfffffffff ^ m)) catch unreachable;
