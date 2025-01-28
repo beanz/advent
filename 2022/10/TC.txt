@@ -1,0 +1,7 @@
+input-amf.txt
+12560
+PLPAFBCL
+---END---
+input.txt
+15360
+PHLHJGZA
