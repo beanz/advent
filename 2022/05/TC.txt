@@ -1,0 +1,11 @@
+test1.txt
+CMZ
+MCD
+---END---
+input-amf.txt
+ZRLJGSCTR
+PRTTGRFPB
+---END---
+input.txt
+PTWLTDSJV
+WZMFVGGZP
