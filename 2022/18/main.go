@@ -20,7 +20,7 @@ func (p Pos) xyz() (int, int, int) {
 }
 
 func Parts(in []byte) (int, int) {
-	pos := [2560]Pos{}
+	pos := [3200]Pos{}
 	j := 0
 	mx := 0
 	my := 0
