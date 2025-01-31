@@ -155,10 +155,10 @@ fn search(m: [31][31]Node, start: KeySet, toFind: KeySet) anyerror!usize {
             continue;
         }
         try visited.put(vk, cur.steps);
-        var fromIt = biterator(KeySet, cur.pos);
+        var fromIt = aoc.biterator(KeySet, cur.pos);
         while (fromIt.next()) |from| {
             const fromBit = keyBit(from);
-            var it = biterator(KeySet, cur.rem);
+            var it = aoc.biterator(KeySet, cur.rem);
             while (it.next()) |to| {
                 const steps = m[from][to].steps;
                 if (steps == std.math.maxInt(usize)) {
@@ -185,27 +185,8 @@ inline fn keyBit(k: usize) KeySet {
     return @as(KeySet, 1) << @as(u5, @intCast(k));
 }
 
-fn search_cmp(context: void, a: Search, b: Search) std.math.Order {
-    _ = context;
+fn search_cmp(_: void, a: Search, b: Search) std.math.Order {
     return std.math.order(a.steps, b.steps);
-}
-
-pub fn biterator(comptime T: type, v: T) BIterator(T) {
-    return .{ .bits = v };
-}
-
-fn BIterator(comptime T: type) type {
-    return struct {
-        bits: T,
-        pub fn next(self: *@This()) ?usize {
-            if (self.bits == 0) {
-                return null;
-            }
-            const n = @ctz(self.bits);
-            self.bits &= self.bits - 1;
-            return n;
-        }
-    };
 }
 
 fn day(inp: []const u8, bench: bool) anyerror!void {

@@ -1145,3 +1145,21 @@ pub const AllocRecorder = struct {
         self.wrapped.rawFree(buf, log2_buf_align, ra);
     }
 };
+
+pub fn biterator(comptime T: type, v: T) BIterator(T) {
+    return .{ .bits = v };
+}
+
+pub fn BIterator(comptime T: type) type {
+    return struct {
+        bits: T,
+        pub fn next(self: *@This()) ?usize {
+            if (self.bits == 0) {
+                return null;
+            }
+            const n = @ctz(self.bits);
+            self.bits &= self.bits - 1;
+            return n;
+        }
+    };
+}
