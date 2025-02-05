@@ -268,7 +268,7 @@ pub fn chompWord(comptime T: type, comptime worddef: WordDef, inp: []const u8, i
         if (n == 0) {
             break;
         }
-        id = (id * worddef.mul) + n;
+        id = (id * @as(T, @intCast(worddef.mul))) + @as(T, @intCast(n));
     }
     return id;
 }
