@@ -141,8 +141,10 @@ fn search(m: [31][31]Node, start: KeySet, toFind: KeySet) anyerror!usize {
     var res: usize = 0;
     var visited = std.AutoHashMap(u64, usize).init(aoc.halloc);
     defer visited.deinit();
+    try visited.ensureTotalCapacity(512000);
     var work = std.PriorityQueue(Search, void, search_cmp).init(aoc.halloc, {});
     defer work.deinit();
+    try work.ensureTotalCapacity(5120000);
     try work.add(Search{ .pos = start, .steps = 0, .rem = toFind });
     while (work.removeOrNull()) |cur| {
         //aoc.print("{} {c}\n", .{ cur.steps, @as(u8, @intCast(cur.pos + 'a')) });
@@ -154,7 +156,7 @@ fn search(m: [31][31]Node, start: KeySet, toFind: KeySet) anyerror!usize {
         if (visited.contains(vk)) {
             continue;
         }
-        try visited.put(vk, cur.steps);
+        visited.putAssumeCapacity(vk, cur.steps);
         var fromIt = aoc.biterator(KeySet, cur.pos);
         while (fromIt.next()) |from| {
             const fromBit = keyBit(from);
