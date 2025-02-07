@@ -1,117 +1,87 @@
 const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
-const Diag = struct {
-    bits: usize,
-    maxbit: usize,
-    nums: []usize,
-    allocator: std.mem.Allocator,
-
-    pub fn fromInput(allocator: std.mem.Allocator, inp: anytype) !*Diag {
-        var nums = try allocator.alloc(usize, inp.len);
-        var diag = try allocator.create(Diag);
-        diag.bits = inp[0].len - 1;
-        diag.maxbit = @intCast((@as(u64, 1) << @as(u6, @intCast(diag.bits))));
-        for (inp, 0..) |line, i| {
-            nums[i] = try std.fmt.parseUnsigned(usize, line, 2);
-        }
-        diag.nums = nums;
-        diag.allocator = allocator;
-        return diag;
-    }
-
-    pub fn deinit(self: *Diag) void {
-        self.allocator.free(self.nums);
-        self.allocator.destroy(self);
-    }
-
-    pub fn part1(self: *Diag) usize {
-        const total = self.nums.len;
-        var gamma: usize = 0;
-        var bit = self.maxbit;
-        while (bit >= 1) : (bit /= 2) {
-            var c: usize = 0;
-            for (self.nums) |n| {
-                if (n & bit != 0) {
-                    c += 1;
-                }
-            }
-            if (c * 2 > total) {
-                gamma += bit;
-            }
-        }
-        return gamma * (2 * self.maxbit - 1 ^ gamma);
-    }
-
-    pub fn match(self: *Diag, val: usize, mask: usize) usize {
-        for (self.nums) |n| {
-            if (n & mask == val) {
-                return n;
-            }
-        }
-        return 0;
-    }
-
-    pub fn reduce(self: *Diag, most: bool) usize {
-        var mask: usize = 0;
-        var val: usize = 0;
-        var bit = self.maxbit;
-        while (bit >= 1) : (bit /= 2) {
-            var c: usize = 0;
-            var total: usize = 0;
-            for (self.nums) |n| {
-                if (n & mask != val) {
-                    continue;
-                }
-                total += 1;
-                if (n & bit != 0) {
-                    c += 1;
-                }
-            }
-            if (total == 1) {
-                return self.match(val, mask);
-            }
-            if ((c * 2 >= total) == most) {
-                val += bit;
-            }
-            mask += bit;
-        }
-        return val;
-    }
-
-    pub fn part2(self: *Diag) usize {
-        return self.reduce(true) * self.reduce(false);
-    }
-};
-
-test "examples" {
-    const test1 = try aoc.readLines(aoc.talloc, aoc.test1file);
-    defer aoc.talloc.free(test1);
-    const inp = try aoc.readLines(aoc.talloc, aoc.inputfile);
-    defer aoc.talloc.free(inp);
-
-    var t = Diag.fromInput(aoc.talloc, test1) catch unreachable;
-    defer t.deinit();
-    var ti = Diag.fromInput(aoc.talloc, inp) catch unreachable;
-    defer ti.deinit();
-    try aoc.assertEq(@as(usize, 198), t.part1());
-    try aoc.assertEq(@as(usize, 749376), ti.part1());
-    try aoc.assertEq(@as(usize, 230), t.part2());
-    try aoc.assertEq(@as(usize, 2372923), ti.part2());
+test "testcases" {
+    try aoc.TestCases(usize, parts);
 }
 
-fn day03(inp: []const u8, bench: bool) anyerror!void {
-    const lines = try aoc.readLines(aoc.halloc, inp);
-    defer aoc.halloc.free(lines);
-    var diag = try Diag.fromInput(aoc.halloc, lines);
-    defer diag.deinit();
-    const p1 = diag.part1();
-    const p2 = diag.part2();
+fn parts(inp: []const u8) anyerror![2]usize {
+    var s: [1024]u16 = undefined;
+    var l: usize = 0;
+    var ones: [12]usize = .{0} ** 12;
+    var w: u6 = 0;
+    {
+        var n: u16 = 0;
+        var i: usize = 0;
+        for (inp) |ch| {
+            switch (ch) {
+                '\n' => {
+                    s[l] = n;
+                    l += 1;
+                    n = 0;
+                    w = @intCast(i);
+                    i = 0;
+                },
+                '0' => {
+                    n <<= 1;
+                    i += 1;
+                },
+                '1' => {
+                    ones[i] += 1;
+                    n <<= 1;
+                    n += 1;
+                    i += 1;
+                },
+                else => unreachable,
+            }
+        }
+    }
+    var nums = s[0..l];
+    var gamma: usize = 0;
+    const half = nums.len >> 1;
+    for (0..w) |i| {
+        if (ones[i] >= half) {
+            gamma += @as(usize, 1) << @as(u6, @intCast(w - 1 - i));
+        }
+    }
+    const p1 = gamma * (((@as(usize, 1) << w) - 1) - gamma);
+    const oxy = reduce(nums[0..], w, true);
+    const co2 = reduce(nums[0..], w, false);
+    return [2]usize{ p1, oxy * co2 };
+}
+
+fn reduce(nums: []u16, w: usize, most: bool) usize {
+    var l = nums.len;
+    for (0..w) |i| {
+        const bit = @as(usize, 1) << @as(u6, @intCast(w - 1 - i));
+        var ones: usize = 0;
+        for (0..l) |j| {
+            ones += @intFromBool(nums[j] & bit != 0);
+        }
+        const half = (l + 1) >> 1;
+        const keep = if ((ones >= half) == most) bit else 0;
+        var n: usize = 0;
+        for (0..l) |j| {
+            if (nums[j] & bit == keep) {
+                std.mem.swap(u16, &nums[n], &nums[j]);
+                n += 1;
+            }
+        }
+        if (n == 1) {
+            return nums[0];
+        }
+        l = n;
+    }
+    return 0;
+}
+
+fn day(inp: []const u8, bench: bool) anyerror!void {
+    const p = try parts(inp);
     if (!bench) {
-        aoc.print("Part1: {}\nPart2: {}\n", .{ p1, p2 });
+        aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }
 }
 
 pub fn main() anyerror!void {
-    try aoc.benchme(aoc.input(), day03);
+    try aoc.benchme(aoc.input(), day);
 }
