@@ -10,6 +10,7 @@ fn parts(inp: []const u8) anyerror![2]usize {
     var p1: usize = 0;
     var p2 = std.AutoHashMap(usize, usize).init(aoc.halloc);
     defer p2.deinit();
+    try p2.ensureTotalCapacity(42000);
     var m: usize = 0;
     var i: usize = 0;
     var seen: [1048576]u16 = .{0} ** 1048576;
