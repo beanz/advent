@@ -77,10 +77,10 @@ pub fn assertStrEq(exp: []const u8, act: []const u8) anyerror!void {
 }
 pub fn assertStrEqTrimmed(exp: []const u8, act: []const u8) anyerror!void {
     var k = act.len - 1;
-    while (act[k] == ' ') {
-        k -= 1;
-    }
-    return assertStrEq(exp, act[0 .. k + 1]);
+    while (act[k] == ' ') : (k -= 1) {}
+    var i: usize = 0;
+    while (act[i] == ' ') : (i += 1) {}
+    return assertStrEq(exp, act[i .. k + 1]);
 }
 
 pub fn DEBUG() i32 {
