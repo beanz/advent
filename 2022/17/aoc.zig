@@ -111,6 +111,8 @@ fn parts(inp: []const u8) anyerror![2]usize {
     var cycleTop: ?usize = null;
     var p1: usize = 0;
     var seen = std.AutoHashMap(usize, [2]usize).init(aoc.halloc);
+    defer seen.deinit();
+    try seen.ensureTotalCapacity(3000);
     while (round <= 5) : (round += 1) {
         ch.fall();
     }
@@ -132,7 +134,7 @@ fn parts(inp: []const u8) anyerror![2]usize {
                     cycleTop = n * diffTop;
                 }
             }
-            try seen.put(k, [2]usize{ round, ch.top });
+            seen.putAssumeCapacity(k, [2]usize{ round, ch.top });
         }
     }
     return [2]usize{ p1, cycleTop.? + ch.top - 1 };
