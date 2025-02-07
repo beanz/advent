@@ -13,6 +13,8 @@ const Valve = struct {
     next: u64,
 };
 
+const Int = u8;
+
 fn parts(inp: []const u8) anyerror![2]usize {
     var s = try std.BoundedArray(Valve, 64).init(0);
     var ids: [676]?usize = .{null} ** 676;
@@ -73,17 +75,17 @@ fn parts(inp: []const u8) anyerror![2]usize {
             valves[i].next = nn;
         }
     }
-    var aa: usize = 0;
+    var aa: u8 = 0;
     while (valves[aa].id != 0) : (aa += 1) {}
     const l = aa + 1;
-    var m: [64][64]usize = .{.{std.math.maxInt(usize)} ** 64} ** 64;
+    var m: [64][64]Int = .{.{std.math.maxInt(Int)} ** 64} ** 64;
     for (0..l) |start| {
         m[start][start] = 0;
         var bit = aoc.biterator(usize, valves[start].next);
         while (bit.next()) |n| {
             var end = n;
             var cur = valves[start].bit;
-            var d: usize = 1;
+            var d: Int = 1;
             while (valves[end].rate == 0 and end != aa) {
                 const fwd = valves[end].next ^ cur;
                 cur = valves[end].bit;
@@ -104,14 +106,16 @@ fn parts(inp: []const u8) anyerror![2]usize {
         }
     }
     const todo: u64 = (@as(u64, 1) << @as(u6, @intCast(l - 1))) - 1;
-    const p1 = search(valves[0..l], &m, todo, aa, 30, l);
+    var mem = std.AutoHashMap([2]u64, usize).init(aoc.halloc);
+    try mem.ensureTotalCapacity(1320000);
+    const p1 = try search(valves[0..l], &m, &mem, todo, aa, 30, l);
     var p2: usize = 0;
     for (0..todo + 1) |set| {
         if (@popCount(set) != (l / 2)) {
             continue;
         }
-        var pres = search(valves[0..l], &m, set, aa, 26, l);
-        pres += search(valves[0..l], &m, todo ^ set, aa, 26, l);
+        var pres = try search(valves[0..l], &m, &mem, set, aa, 26, l);
+        pres += try search(valves[0..l], &m, &mem, todo ^ set, aa, 26, l);
         if (pres > p2) {
             p2 = pres;
         }
@@ -123,26 +127,34 @@ fn chr(n: usize) u8 {
     return 'A' + @as(u8, @intCast(n / 26));
 }
 
-fn search(v: []Valve, m: *[64][64]usize, todo: u64, pos: usize, t: usize, l: usize) usize {
+fn search(v: []Valve, m: *[64][64]Int, mem: *std.AutoHashMap([2]u64, usize), todo: u64, pos: u8, t: u8, l: usize) !usize {
+    const k = [2]u64{ todo, (@as(u64, @intCast(pos)) << 32) + @as(u64, @intCast(t)) };
+    if (mem.get(k)) |res| {
+        return res;
+    }
     var max: usize = 0;
     //aoc.print("{} {b} {}\n", .{ pos, todo, t });
+    var bit: u64 = 1;
     for (0..l) |i| {
-        const bit: u64 = @as(u64, 1) << @as(u6, @intCast(i));
         //aoc.print(" {b:>8}\n", .{bit});
         if (todo & bit == 0) {
+            bit <<= 1;
             continue;
         }
         //aoc.print(" {} < {}\n", .{ t, m[pos][i] + 1 });
         if (t < m[pos][i] + 1) {
+            bit <<= 1;
             continue;
         }
         const nt = t - m[pos][i] - 1; // open
-        var pres = search(v, m, todo ^ bit, i, nt, l);
+        var pres = try search(v, m, mem, todo ^ bit, @intCast(i), nt, l);
         pres += v[i].rate * nt;
         if (max < pres) {
             max = pres;
         }
+        bit <<= 1;
     }
+    try mem.put(k, max);
     return max;
 }
 
