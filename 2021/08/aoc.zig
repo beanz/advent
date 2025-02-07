@@ -1,214 +1,148 @@
 const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
-const Signal = struct {
-    patterns: [][]const u8,
-    output: [][]const u8,
-    map: [7]u8,
-    alloc: std.mem.Allocator,
+test "testcases" {
+    try aoc.TestCases(usize, parts);
+}
 
-    pub fn init(alloc: std.mem.Allocator, line: []const u8) !*Signal {
-        var sig = try alloc.create(Signal);
-        sig.alloc = alloc;
-        var patternOutput = std.mem.split(u8, line, " | ");
-        const patterns = patternOutput.next().?;
-        const output = patternOutput.next().?;
-        sig.patterns = try aoc.splitToOwnedSlice(alloc, patterns, " ");
-        sig.output = try aoc.splitToOwnedSlice(alloc, output, " ");
-        sig.initMap();
-        return sig;
+fn digit(n: u8) u8 {
+    return switch (n) {
+        0b1110111 => 0,
+        0b0100100 => 1,
+        0b1011101 => 2,
+        0b1101101 => 3,
+        0b0101110 => 4,
+        0b1101011 => 5,
+        0b1111011 => 6,
+        0b0100101 => 7,
+        0b1111111 => 8,
+        0b1101111 => 9,
+        else => unreachable,
+    };
+}
+const Entry = struct {
+    output: [4]u8,
+    pattern_of_len: [8]u8,
+    fn solution(self: Entry) [7]u8 {
+        const cf = self.pattern_of_len[2];
+        const acf = self.pattern_of_len[3];
+        const bcdf = self.pattern_of_len[4];
+        const abcdefg = self.pattern_of_len[7];
+        const a = acf ^ cf;
+        const abfg = self.pattern_of_len[6];
+        const cde = abcdefg ^ abfg;
+        const c = cde & cf;
+        const f = cf ^ c;
+        const bg = abfg ^ (f | a);
+        const b = bcdf & bg;
+        const g = b ^ bg;
+        const de = cde ^ c;
+        const d = bcdf & de;
+        const e = de ^ d;
+        return [7]u8{ a, b, c, d, e, f, g };
     }
-    pub fn deinit(self: *Signal) void {
-        self.alloc.free(self.patterns);
-        self.alloc.free(self.output);
-        self.alloc.destroy(self);
-    }
+};
 
-    pub fn known(self: *Signal) usize {
-        var c: usize = 0;
-        for (self.output) |o| {
-            switch (o.len) {
-                2, 4, 3, 7 => {
-                    c += 1;
+fn parts(inp: []const u8) anyerror![2]usize {
+    var entries: [200]Entry = undefined;
+    var el: usize = 0;
+    var output_len_2_3_4_7: usize = 0;
+    {
+        var pattern_of_len: [8]u8 = .{0} ** 8;
+        var output: [4]u8 = .{0} ** 4;
+        var output_i: usize = 0;
+        var state = true;
+        var n: u8 = 0;
+        var l: usize = 0;
+        for (inp) |ch| {
+            switch (ch) {
+                'a'...'g' => {
+                    l += 1;
+                    n |= @as(u8, 1) << @intCast(ch - 'a');
                 },
-                else => {},
-            }
-        }
-        return c;
-    }
-
-    pub fn initMap(self: *Signal) void {
-        var occur = [7]u8{ 0, 0, 0, 0, 0, 0, 0 };
-        var occur6 = [7]u8{ 0, 0, 0, 0, 0, 0, 0 };
-        for (self.patterns) |p| {
-            for (p) |ch| {
-                occur[@as(usize, ch - 'a')] += 1;
-                if (p.len == 6) {
-                    occur6[@as(usize, ch - 'a')] += 1;
-                }
-            }
-        }
-        //aoc.print("{any} {any}\n", .{ occur, occur6 }) catch unreachable;
-        for (occur, 0..) |o, i| {
-            switch (o) {
-                6 => {
-                    self.map[i] = @as(u8, 'b');
-                },
-                4 => {
-                    self.map[i] = @as(u8, 'e');
-                },
-                9 => {
-                    self.map[i] = @as(u8, 'f');
-                },
-                7 => {
-                    if (occur6[i] == 2) {
-                        self.map[i] = @as(u8, 'd');
-                    } else {
-                        self.map[i] = @as(u8, 'g');
+                ' ' => {
+                    if (l != 0) {
+                        if (state) {
+                            pattern_of_len[l] ^= n;
+                        } else {
+                            output[output_i] = n;
+                            output_i += 1;
+                            if (l == 2 or l == 3 or l == 4 or l == 7) {
+                                output_len_2_3_4_7 += 1;
+                            }
+                        }
+                        n = 0;
+                        l = 0;
                     }
                 },
-                8 => {
-                    if (occur6[i] == 2) {
-                        self.map[i] = @as(u8, 'c');
-                    } else {
-                        self.map[i] = @as(u8, 'a');
+                '|' => {
+                    state = false;
+                },
+                '\n' => {
+                    if (l != 0) {
+                        output[output_i] = n;
+                        output_i = 0;
+                        if (l == 2 or l == 3 or l == 4 or l == 7) {
+                            output_len_2_3_4_7 += 1;
+                        }
+                        n = 0;
+                        l = 0;
                     }
+                    entries[el] = Entry{
+                        .output = output,
+                        .pattern_of_len = pattern_of_len,
+                    };
+                    el += 1;
+                    state = true;
+                    pattern_of_len = .{0} ** 8;
+                    output = .{0} ** 4;
                 },
                 else => unreachable,
             }
         }
-        //aoc.print("{any}\n", .{self.map}) catch unreachable;
     }
-
-    pub fn value(self: *Signal) usize {
-        return 1000 * self.digitValue(0) +
-            100 * self.digitValue(1) +
-            10 * self.digitValue(2) +
-            self.digitValue(3);
-    }
-
-    pub fn digitValue(self: *Signal, i: usize) usize {
-        switch (self.output[i].len) {
-            2 => {
-                return 1;
-            },
-            4 => {
-                return 4;
-            },
-            3 => {
-                return 7;
-            },
-            7 => {
-                return 8;
-            },
-            5 => {
-                if (self.digitContains(i, 'e')) {
-                    return 2;
-                }
-                if (self.digitContains(i, 'c')) {
-                    return 3;
-                }
-                return 5;
-            },
-            6 => {
-                if (!self.digitContains(i, 'c')) {
-                    return 6;
-                }
-                if (self.digitContains(i, 'e')) {
-                    return 0;
-                }
-                return 9;
-            },
-            else => unreachable,
-        }
-    }
-
-    pub fn digitContains(self: *Signal, i: usize, tch: u8) bool {
-        for (self.output[i]) |ch| {
-            if (self.map[ch - 'a'] == tch) {
-                return true;
+    var total: usize = 0;
+    for (entries[0..el]) |ent| {
+        const sol = ent.solution();
+        // (a, b, c, d, e, f, g)
+        var n: usize = 0;
+        for (&ent.output) |w| {
+            var cvt: u8 = 0;
+            if ((w & sol[0]) != 0) {
+                cvt |= 1;
             }
+            if ((w & sol[1]) != 0) {
+                cvt |= 2;
+            }
+            if ((w & sol[2]) != 0) {
+                cvt |= 4;
+            }
+            if ((w & sol[3]) != 0) {
+                cvt |= 8;
+            }
+            if ((w & sol[4]) != 0) {
+                cvt |= 16;
+            }
+            if ((w & sol[5]) != 0) {
+                cvt |= 32;
+            }
+            if ((w & sol[6]) != 0) {
+                cvt |= 64;
+            }
+            n = n * 10 + @as(usize, @intCast(digit(cvt)));
         }
-        return false;
+        total += n;
     }
-};
-
-test "signal" {
-    var sig = try Signal.init(aoc.talloc, "fgeab ca afcebg bdacfeg cfaedg gcfdb baec bfadeg bafgc acf | gebdcfa ecba ca fadegcb");
-    defer sig.deinit();
-    try aoc.assertEq(@as(usize, 4), sig.known());
-    try aoc.assertEq(@as(usize, 8418), sig.value());
-    try aoc.assertEq(true, sig.digitContains(0, 'a'));
-    try aoc.assertEq(true, sig.digitContains(0, 'f'));
-    try aoc.assertEq(false, sig.digitContains(2, 'a'));
-    try aoc.assertEq(true, sig.digitContains(2, 'c'));
-    try aoc.assertEq(true, sig.digitContains(2, 'f'));
-
-    var ex = try Signal.init(aoc.talloc, "acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf");
-    defer ex.deinit();
-    try aoc.assertEq(@as(usize, 0), ex.known());
-    try aoc.assertEq(@as(usize, 5353), ex.value());
+    return [2]usize{ output_len_2_3_4_7, total };
 }
 
-const Signals = struct {
-    signals: []*Signal,
-    map: [7]u8,
-    alloc: std.mem.Allocator,
-
-    pub fn init(alloc: std.mem.Allocator, inp: []const u8) !*Signals {
-        var self = try alloc.create(Signals);
-        self.alloc = alloc;
-        var sigs = std.ArrayList(*Signal).init(alloc);
-        const lines = try aoc.splitToOwnedSlice(alloc, inp, "\n");
-        defer alloc.free(lines);
-        for (lines) |l| {
-            const sig = try Signal.init(alloc, l);
-            try sigs.append(sig);
-        }
-        self.signals = try sigs.toOwnedSlice();
-        return self;
-    }
-
-    pub fn deinit(self: *Signals) void {
-        for (self.signals) |sig| {
-            sig.deinit();
-        }
-        self.alloc.free(self.signals);
-        self.alloc.destroy(self);
-    }
-
-    pub fn parts(self: *Signals) ![2]usize {
-        var r = [2]usize{ 0, 0 };
-        for (self.signals) |sig| {
-            r[0] += sig.known();
-            r[1] += sig.value();
-        }
-        return r;
-    }
-};
-
-test "examples" {
-    var t = try Signals.init(aoc.talloc, aoc.test1file);
-    defer t.deinit();
-    const p = try t.parts();
-    try aoc.assertEq(@as(u64, 26), p[0]);
-    try aoc.assertEq(@as(u64, 61229), p[1]);
-
-    var ti = try Signals.init(aoc.talloc, aoc.inputfile);
-    defer ti.deinit();
-    const pi = try ti.parts();
-    try aoc.assertEq(@as(u64, 504), pi[0]);
-    try aoc.assertEq(@as(u64, 1073431), pi[1]);
-}
-
-fn day08(inp: []const u8, bench: bool) anyerror!void {
-    var s = try Signals.init(aoc.halloc, inp);
-    const p = try s.parts();
+fn day(inp: []const u8, bench: bool) anyerror!void {
+    const p = try parts(inp);
     if (!bench) {
-        aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
+        aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }
 }
 
 pub fn main() anyerror!void {
-    try aoc.benchme(aoc.input(), day08);
+    try aoc.benchme(aoc.input(), day);
 }
