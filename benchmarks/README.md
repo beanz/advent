@@ -93,9 +93,9 @@ Day 20 | 37.4ms / None | 24.4ms / None | 34.1ms / None
 Day 21 | 284µs / 186 KB | 186µs / 270 KB | 66.2µs / None
 Day 22 | 275µs / None | 305µs / None | 803µs / None
 Day 23 | 60.9ms / 2.0 MB | 47.5ms / None | 59.8ms / None
-Day 24 | 78.8ms / 16.8 MB | **🔴 81.6ms** / 19.2 MB | **🔴 189ms** / **🔴 138 MB**
+Day 24 | 78.8ms / 16.8 MB | **🔴 81.6ms** / 19.2 MB | **🔴 80.6ms** / **🔴 18.9 MB**
 Day 25 | 1.66µs / None | 1.41µs / None | 1.12µs / None
-*Total* | *457ms / 209 MB* | *341ms / 114 MB* | *512ms / 191 MB*
+*Total* | *457ms / 209 MB* | *341ms / 114 MB* | *403ms / 71.5 MB*
 
 ![Graph for year 2022](y2022.svg)
 
@@ -504,7 +504,7 @@ Day 20 | **🔴 3.33s** / 1.0 B | 25.8µs / None | 74.2ms / None | 196µs / None
 Day 21 | 4.02µs / None | 900ns / None | 4.3µs / None | 143µs / 328 KB | 5.67µs / None | 2.83ms / 152 KB | 219µs / 24.0 B | 66.2µs / None | - | 20µs / 4.3 KB
 Day 22 | 8.27ms / None | 454µs / None | 55.8ms / None | 2.6ms / None | 1.97µs / None | 110ms / **🔴 2.6 GB** | - | 803µs / None | - | **🔴 39.1ms** / **🔴 2.2 MB**
 Day 23 | 7.12µs / None | 59ns / None | 31.7µs / None | 32.2ms / None | 9.45µs / None | 5.48s / 48.0 MB | - | 59.8ms / None | - | 506µs / None
-Day 24 | **🔴 1.48s** / 1.0 B | 784µs / None | 70.3ms / None | 4.9ms / None | 3.1ms / 696 B | 81.5ms / 6.2 MB | - | **🔴 189ms** / **🔴 138 MB** | - | 114µs / 40.3 KB
+Day 24 | **🔴 1.48s** / 1.0 B | 784µs / None | 70.3ms / None | 4.9ms / None | 3.1ms / 696 B | 81.5ms / 6.2 MB | - | **🔴 80.6ms** / **🔴 18.9 MB** | - | 114µs / 40.3 KB
 Day 25 | 96ns / None | 91ns / None | 36.8ms / None | 693µs / None | 13.4µs / None | 36.4ms / 160 B | - | 1.12µs / None | - | 167µs / None
-*Total* | *5.93s / 14.5 MB* | *2.62s / 33.0 B* | *959ms / 73.4 KB* | *1.87s / 84.8 MB* | *968ms / 691 MB* | *1m17.5s / 2.9 GB* | *22.9ms / 509 KB* | *512ms / 191 MB* | *72.5ms / None* | *103ms / 2.3 MB*
+*Total* | *5.93s / 14.5 MB* | *2.62s / 33.0 B* | *959ms / 73.4 KB* | *1.87s / 84.8 MB* | *968ms / 691 MB* | *1m17.5s / 2.9 GB* | *22.9ms / 509 KB* | *403ms / 71.5 MB* | *72.5ms / None* | *103ms / 2.3 MB*
 
