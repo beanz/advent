@@ -1,0 +1,11 @@
+test1.txt
+18
+54
+---END---
+input-amf.txt
+251
+758
+---END---
+input.txt
+314
+896
