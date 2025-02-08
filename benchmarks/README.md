@@ -111,7 +111,7 @@ Day 06 | - | 999ns / None | - | 907ns / 512 B | 455ns / None
 Day 07 | - | 48.9µs / 8.2 KB | - | 22.8µs / 3.3 KB | 10.7µs / None
 Day 08 | - | 260µs / 167 KB | - | 16.4µs / 2.4 KB | 14.1µs / None
 Day 09 | - | 539µs / 238 KB | - | 99.2µs / 19.6 KB | 87.8µs / None
-Day 10 | - | 13.4µs / 920 B | - | 28.2µs / 2.5 KB | 28.8µs / None
+Day 10 | - | 13.4µs / 920 B | - | 28.2µs / 2.5 KB | 25.4µs / None
 Day 11 | - | 466µs / 223 KB | - | 122µs / 319 B | 78µs / 110 B
 Day 12 | - | 1.79ms / 3.0 MB | - | 4.57ms / 1.2 KB | 129µs / **🔴 52.9 KB**
 Day 13 | - | 205µs / 22.7 KB | - | 277µs / 265 KB | 266µs / **🔴 25.4 KB**
@@ -490,7 +490,7 @@ Day 06 | 8.88ms / None | 3.67µs / None | 384µs / None | 6.57ms / None | 22.8µ
 Day 07 | 40.8µs / 17.4 KB | 555µs / None | 98.2µs / **🔴 69.7 KB** | 2.74µs / None | 8.26µs / None | 495µs / 16.3 MB | 10.7µs / None | 9.53µs / None | 122µs / None | 231µs / None
 Day 08 | 3.83µs / None | 3.47µs / None | 19.9µs / None | 56µs / None | 14.4µs / None | 4.17ms / 3.2 MB | 14.1µs / None | 251µs / None | 237µs / None | 4.35µs / None
 Day 09 | 757µs / None | 6.07µs / None | 22.1µs / None | 34.9ms / **🔴 64.0 MB** | 3.52µs / None | 122µs / 54.7 KB | 87.8µs / None | 242µs / None | 20.4µs / None | 332µs / None
-Day 10 | 28.4ms / **🔴 14.0 MB** | 7.39µs / None | 849µs / None | 4.12µs / None | 1.08ms / None | 30.7µs / 8.6 KB | 28.8µs / None | 561ns / None | 94.8µs / None | 1.3ms / None
+Day 10 | 28.4ms / **🔴 14.0 MB** | 7.39µs / None | 849µs / None | 4.12µs / None | 1.08ms / None | 30.7µs / 8.6 KB | 25.4µs / None | 561ns / None | 94.8µs / None | 1.3ms / None
 Day 11 | 3.26ms / None | - | 11.1µs / None | 1.99ms / None | 237µs / 33.0 KB | 14.2ms / 43.5 KB | 78µs / 110 B | 2.39ms / None | 9.34µs / None | 1.1ms / None
 Day 12 | 62.4µs / None | 62ns / None | 45.7µs / None | 31.8µs / None | 3.39ms / None | 1.15ms / 120 KB | 129µs / **🔴 52.9 KB** | 69.9µs / None | **🔴 18.1ms** / None | 14.6ms / None
 Day 13 | 2.49ms / None | 9.71µs / None | 15.3ms / None | 13.5ms / 1.2 KB | 7.11µs / None | 10.5µs / 608 B | 266µs / **🔴 25.4 KB** | 7.01µs / None | 85.4µs / None | 5.08µs / None
