@@ -1163,3 +1163,25 @@ pub fn BIterator(comptime T: type) type {
         }
     };
 }
+
+pub fn sliceSum(comptime T: type, slice: []const T) T {
+    var s = slice[0];
+    for (slice[1..]) |item| {
+        s += item;
+    }
+    return s;
+}
+
+pub fn sliceProduct(comptime T: type, slice: []const T) T {
+    var p = slice[0];
+    if (p == 0) {
+        return 0;
+    }
+    for (slice[1..]) |item| {
+        if (item == 0) {
+            return 0;
+        }
+        p *= item;
+    }
+    return p;
+}
