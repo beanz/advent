@@ -1,9 +1,15 @@
 const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
-fn launch(target: []i32, svx: i32, svy: i32) bool {
-    var x: i32 = 0;
-    var y: i32 = 0;
+test "testcases" {
+    try aoc.TestCases(usize, parts);
+}
+
+const Int = i32;
+
+fn launch(target: []const Int, svx: Int, svy: Int) bool {
+    var x: Int = 0;
+    var y: Int = 0;
     var vx = svx;
     var vy = svy;
     while (true) {
@@ -26,10 +32,18 @@ fn launch(target: []i32, svx: i32, svy: i32) bool {
     }
 }
 
-pub fn parts(_: std.mem.Allocator, inp: []const u8) ![2]usize {
-    var b = try std.BoundedArray(i32, 4).init(0);
-    const target = try aoc.BoundedSignedInts(i32, &b, inp);
-    var p2: usize = 0;
+fn parts(inp: []const u8) anyerror![2]usize {
+    const target = parse: {
+        var i: usize = 15;
+        const x0 = try aoc.chompUint(Int, inp, &i);
+        i += 2;
+        const x1 = try aoc.chompUint(Int, inp, &i);
+        i += 5;
+        const y0 = -1 * try aoc.chompUint(Int, inp, &i);
+        i += 3;
+        const y1 = -1 * try aoc.chompUint(Int, inp, &i);
+        break :parse [4]Int{ x0, x1, y0, y1 };
+    };
     var ry = target[2];
     if (ry < 0) {
         ry = -ry;
@@ -39,10 +53,11 @@ pub fn parts(_: std.mem.Allocator, inp: []const u8) ![2]usize {
     while (x < target[0]) : (x += vx) {
         vx += 1;
     }
+    var p2: usize = 0;
     while (vx <= target[1]) : (vx += 1) {
         var vy = -ry;
         while (vy <= ry) : (vy += 1) {
-            if (launch(target, vx, vy)) {
+            if (launch(target[0..], vx, vy)) {
                 p2 += 1;
             }
         }
@@ -50,19 +65,10 @@ pub fn parts(_: std.mem.Allocator, inp: []const u8) ![2]usize {
     return [2]usize{ @as(usize, @intCast(@divFloor(target[2] * (target[2] + 1), 2))), p2 };
 }
 
-test "parts" {
-    const t1 = try parts(aoc.talloc, aoc.test1file);
-    try aoc.assertEq(@as(usize, 45), t1[0]);
-    const r = try parts(aoc.talloc, aoc.inputfile);
-    try aoc.assertEq(@as(usize, 2850), r[0]);
-    try aoc.assertEq(@as(usize, 112), t1[1]);
-    try aoc.assertEq(@as(usize, 1117), r[1]);
-}
-
 fn day(inp: []const u8, bench: bool) anyerror!void {
-    const p = try parts(aoc.halloc, inp);
+    const p = try parts(inp);
     if (!bench) {
-        aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
+        aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }
 }
 
