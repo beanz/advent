@@ -1,81 +1,135 @@
 const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
-pub fn parts(alloc: std.mem.Allocator, inp: []const u8) ![2]usize {
-    var i: usize = 0;
-    while (inp[i] != '\n') : (i += 1) {}
-    const init = inp[0..i];
-    i += 2;
-    var middleFor = [_]u5{0} ** 676;
-    while (i < inp.len) : (i += 8) {
-        middleFor[@as(usize, inp[i] - 'A') * 26 + @as(usize, inp[i + 1] - 'A')] = @as(u5, @intCast(inp[i + 6] - 'A'));
-    }
-    var pc = std.AutoHashMap([2]u5, usize).init(alloc);
-    defer pc.deinit();
-    i = 0;
-    while (i < init.len - 1) : (i += 1) {
-        const pair = [2]u5{ @as(u5, @intCast(init[i] - 'A')), @as(u5, @intCast(init[i + 1] - 'A')) };
-        try pc.put(pair, (pc.get(pair) orelse 0) + 1);
-    }
-    var npc = std.AutoHashMap([2]u5, usize).init(alloc);
-    defer npc.deinit();
-    var r = [2]usize{ 0, 0 };
-    var day: usize = 1;
-    while (day <= 40) : (day += 1) {
-        var pit = pc.iterator();
-        while (pit.next()) |e| {
-            const a = e.key_ptr.*[0];
-            const b = e.key_ptr.*[1];
-            const m = middleFor[@as(usize, a) * 26 + b];
-            try npc.put([2]u5{ a, m }, (npc.get([2]u5{ a, m }) orelse 0) + e.value_ptr.*);
-            try npc.put([2]u5{ m, b }, (npc.get([2]u5{ m, b }) orelse 0) + e.value_ptr.*);
-        }
-        std.mem.swap(std.AutoHashMap([2]u5, usize), &pc, &npc);
-        npc.clearRetainingCapacity();
-        if (day == 10) {
-            r[0] = mostMinusLeast(pc, init);
-        }
-    }
-    r[1] = mostMinusLeast(pc, init);
-    return r;
+test "testcases" {
+    try aoc.TestCases(usize, parts);
 }
 
-fn mostMinusLeast(pairCounts: std.AutoHashMap([2]u5, usize), init: []const u8) usize {
-    var c: [26]usize = [_]usize{0} ** 26;
-    c[init[init.len - 1] - 'A'] += 1;
-    var it = pairCounts.iterator();
-    while (it.next()) |e| {
-        c[e.key_ptr.*[0]] += e.value_ptr.*;
-    }
-    var min: usize = std.math.maxInt(usize);
-    var max: usize = 0;
-    for (c) |v| {
-        if (v != 0 and min > v) {
-            min = v;
+fn parts(inp: []const u8) anyerror![2]usize {
+    var init: [256]usize = .{0} ** 256;
+    var rules: [256]u8 = .{0} ** 256;
+    var last: u4 = undefined;
+    {
+        var i: usize = 0;
+        var letters: [26]?u4 = .{null} ** 26;
+        var l: u4 = 0;
+        while (i + 1 < inp.len) : (i += 1) {
+            if (inp[i + 1] == '\n') {
+                break;
+            }
+            const ai = al: {
+                const n = inp[i] & 0x1f;
+                if (letters[n] == null) {
+                    letters[n] = l;
+                    l += 1;
+                }
+                const ai = letters[n].?;
+                break :al ai;
+            };
+            const bi = bl: {
+                const n = inp[i + 1] & 0x1f;
+                if (letters[n] == null) {
+                    letters[n] = l;
+                    l += 1;
+                }
+                const bi = letters[n].?;
+                break :bl bi;
+            };
+            init[(@as(u8, @intCast(ai)) << 4) + bi] += 1;
         }
-        if (max < v) {
-            max = v;
+        last = letters[inp[i] & 0x1f].?;
+        i += 3;
+        while (i < inp.len) : (i += 8) {
+            const ai = al: {
+                const n = inp[i] & 0x1f;
+                if (letters[n] == null) {
+                    letters[n] = l;
+                    l += 1;
+                }
+                const ai = letters[n].?;
+                break :al ai;
+            };
+            const bi = bl: {
+                const n = inp[i + 1] & 0x1f;
+                if (letters[n] == null) {
+                    letters[n] = l;
+                    l += 1;
+                }
+                const bi = letters[n].?;
+                break :bl bi;
+            };
+            const ci = cl: {
+                const n = inp[i + 6] & 0x1f;
+                if (letters[n] == null) {
+                    letters[n] = l;
+                    l += 1;
+                }
+                const ci = letters[n].?;
+                break :cl ci;
+            };
+            rules[(@as(u8, @intCast(ai)) << 4) + bi] = ci;
         }
     }
-    return max - min;
+    var cur = init;
+    var next: [256]usize = undefined;
+    for (0..10) |_| {
+        @memset(next[0..], 0);
+        for (0..256) |i| {
+            const n = rules[i];
+            next[(i & 0xf0) + n] += cur[i];
+            next[(n << 4) + (i & 0xf)] += cur[i];
+        }
+        std.mem.swap([256]usize, &cur, &next);
+    }
+    var p1c: [16]usize = .{0} ** 16;
+    p1c[last] += 1;
+    for (0..256) |i| {
+        p1c[i >> 4] += cur[i];
+    }
+    var p1min: usize = std.math.maxInt(usize);
+    var p1max: usize = std.math.minInt(usize);
+    for (p1c) |c| {
+        if (c > p1max) {
+            p1max = c;
+        }
+        if (c > 0 and c < p1min) {
+            p1min = c;
+        }
+    }
+    for (10..40) |_| {
+        @memset(next[0..], 0);
+        for (0..256) |i| {
+            const n = rules[i];
+            next[(i & 0xf0) + n] += cur[i];
+            next[(n << 4) + (i & 0xf)] += cur[i];
+        }
+        std.mem.swap([256]usize, &cur, &next);
+    }
+    var p2c: [16]usize = .{0} ** 16;
+    p2c[last] += 1;
+    for (0..256) |i| {
+        p2c[i >> 4] += cur[i];
+    }
+    var p2min: usize = std.math.maxInt(usize);
+    var p2max: usize = std.math.minInt(usize);
+    for (p2c) |c| {
+        if (c > p2max) {
+            p2max = c;
+        }
+        if (c > 0 and c < p2min) {
+            p2min = c;
+        }
+    }
+    return [2]usize{ p1max - p1min, p2max - p2min };
 }
 
-test "parts" {
-    const t1 = try parts(aoc.talloc, aoc.test1file);
-    try aoc.assertEq(@as(usize, 1588), t1[0]);
-    const r = try parts(aoc.talloc, aoc.inputfile);
-    try aoc.assertEq(@as(usize, 2891), r[0]);
-    try aoc.assertEq(@as(usize, 2188189693529), t1[1]);
-    try aoc.assertEq(@as(usize, 4607749009683), r[1]);
-}
-
-fn day14(inp: []const u8, bench: bool) anyerror!void {
-    const p = try parts(aoc.halloc, inp);
+fn day(inp: []const u8, bench: bool) anyerror!void {
+    const p = try parts(inp);
     if (!bench) {
-        aoc.print("Part 1: {}\nPart 2: {}\n", .{ p[0], p[1] });
+        aoc.print("Part1: {}\nPart2: {}\n", .{ p[0], p[1] });
     }
 }
 
 pub fn main() anyerror!void {
-    try aoc.benchme(aoc.input(), day14);
+    try aoc.benchme(aoc.input(), day);
 }
