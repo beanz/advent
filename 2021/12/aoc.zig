@@ -38,9 +38,6 @@ const END_BIT = 1 << END;
 
 fn parts(inp: []const u8) anyerror![2]u32 {
     var adj: [16]u16 = .{0} ** 16;
-    var rev: [16][2]u8 = undefined;
-    rev[0] = [2]u8{ 's', 't' };
-    rev[1] = [2]u8{ 'e', 'n' };
     var small: u16 = 0b11;
     {
         var ids: [1404]?u4 = .{null} ** 1404;
@@ -54,7 +51,6 @@ fn parts(inp: []const u8) anyerror![2]u32 {
                 if (ids[n] == null) {
                     ids[n] = l;
                     l += 1;
-                    rev[ids[n].?] = [2]u8{ inp[i - 2], inp[i - 1] };
                 }
                 const id = ids[n].?;
                 small |= @as(u16, n & 1) << id;
@@ -66,7 +62,6 @@ fn parts(inp: []const u8) anyerror![2]u32 {
                 if (ids[n] == null) {
                     ids[n] = l;
                     l += 1;
-                    rev[ids[n].?] = [2]u8{ inp[i - 2], inp[i - 1] };
                 }
                 const id = ids[n].?;
                 small |= @as(u16, n & 1) << id;
@@ -80,26 +75,21 @@ fn parts(inp: []const u8) anyerror![2]u32 {
             }
         }
     }
-    var mem: [MEM_SIZE]u32 = .{0} ** MEM_SIZE;
-    return [2]u32{ solve(rev, mem[0..], adj, small, false), solve(rev, mem[0..], adj, small, true) };
+    return [2]u32{ solve(adj, small, false), solve(adj, small, true) };
 }
 
-const MEM_SIZE = 2097152;
+const MEM_SIZE = 131072;
 
-fn solve(rev: [16][2]u8, mem: []u32, adj: [16]u16, small: u16, part2: bool) u32 {
-    @memset(mem, 0);
-    var s: [100]u8 = .{32} ** 100;
-    s[0] = 's';
-    s[1] = 't';
-    s[2] = ',';
-    return search(rev, mem, adj, small, part2, START, 0, 3, s[0..]);
+fn solve(adj: [16]u16, small: u16, part2: bool) u32 {
+    var mem: [MEM_SIZE]u32 = .{0} ** MEM_SIZE;
+    return search(mem[0..], adj, small, part2, START, 0);
 }
 
 inline fn key(twice: bool, cur: u4, visited: u16) usize {
-    return @as(usize, @intFromBool(twice)) + (@as(usize, @intCast(cur)) << 17) + (@as(usize, @intCast(visited)) << 1);
+    return @as(usize, @intFromBool(twice)) + (@as(usize, @intCast(cur)) << 13) + (@as(usize, @intCast(visited)) << 1);
 }
 
-fn search(rev: [16][2]u8, mem: []u32, adj: [16]u16, small: u16, twice: bool, cur: u4, visited: u16, sl: usize, s: []u8) u32 {
+fn search(mem: []u32, adj: [16]u16, small: u16, twice: bool, cur: u4, visited: u16) u32 {
     const k: usize = key(twice, cur, visited);
     var st = mem[k];
     if (st > 0) {
@@ -109,7 +99,6 @@ fn search(rev: [16][2]u8, mem: []u32, adj: [16]u16, small: u16, twice: bool, cur
     if (next & END_BIT != 0) {
         next ^= END_BIT;
         st += 1;
-        aoc.print("P: {s}end\n", .{s[0..sl]});
     }
     var bit = aoc.biterator(u16, next);
     while (bit.next()) |n| {
@@ -117,15 +106,9 @@ fn search(rev: [16][2]u8, mem: []u32, adj: [16]u16, small: u16, twice: bool, cur
         const nBit = @as(u16, 1) << to;
         const big = small & nBit == 0;
         if (big or visited & nBit == 0) {
-            s[sl] = rev[to][0];
-            s[sl + 1] = rev[to][1];
-            s[sl + 2] = ',';
-            st += search(rev, mem, adj, small, twice, to, visited | nBit, sl + 3, s);
+            st += search(mem, adj, small, twice, to, visited | nBit);
         } else if (twice) {
-            s[sl] = rev[to][0];
-            s[sl + 1] = rev[to][1];
-            s[sl + 2] = ',';
-            st += search(rev, mem, adj, small, false, to, visited | nBit, sl + 3, s);
+            st += search(mem, adj, small, false, to, visited | nBit);
         }
     }
     mem[k] = st;
