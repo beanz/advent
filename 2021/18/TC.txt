@@ -1,0 +1,15 @@
+test0.txt
+3488
+3805
+---END---
+test1.txt
+4140
+3993
+---END---
+input-amf.txt
+4243
+4701
+---END---
+input.txt
+3987
+4500
