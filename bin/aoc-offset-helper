@@ -1,10 +1,10 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-print " "x9 for (0..7);
+print $_, " "x9 for (0..7);
 print "\n";
-print "0123456789" x 8;
-print "\n";
+#print "0123456789" x 8;
+#print "\n";
 my %p;
 while (<>) {
   chomp;

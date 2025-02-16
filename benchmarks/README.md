@@ -116,18 +116,18 @@ Day 11 | - | 466µs / 223 KB | - | 122µs / 319 B | 67µs / None
 Day 12 | - | 1.79ms / 3.0 MB | - | 4.57ms / 1.2 KB | 46.9µs / None
 Day 13 | - | 205µs / 22.7 KB | - | 277µs / 265 KB | 33.5µs / None
 Day 14 | - | 270µs / 119 KB | - | 15.6µs / 1.8 KB | 13.4µs / None
-Day 15 | - | 31.4ms / 2.5 MB | - | 55.5ms / **🔴 133 MB** | **🔴 11.5ms** / None
+Day 15 | - | 31.4ms / 2.5 MB | - | 55.5ms / **🔴 133 MB** | 11.5ms / None
 Day 16 | - | 9.8µs / 5.1 KB | - | 6.18µs / 4.8 KB | 4.09µs / None
 Day 17 | - | 1.29ms / 64.0 B | - | 1.6ms / None | 1.52ms / None
 Day 18 | - | 27.8ms / 4.8 MB | - | 22.7ms / 15.5 MB | 2.21ms / None
-Day 19 | - | **🔴 525ms** / 16.4 MB | - | 9.52ms / 2.0 MB | **🔴 14.9ms** / **🔴 7.3 KB**
+Day 19 | - | **🔴 525ms** / 16.4 MB | - | 9.52ms / 2.0 MB | 14.9ms / 7.3 KB
 Day 20 | - | 15.5ms / 82.5 KB | - | 20.2ms / 2.0 MB | 2.14ms / None
 Day 21 | - | 2.58ms / 2.3 MB | - | 1.11µs / 8.0 B | 1.06µs / None
-Day 22 | - | 7.48ms / 3.8 MB | - | 11.4ms / 2.3 MB | **🔴 21.4ms** / None
-Day 23 | - | **🔴 296ms** / **🔴 199 MB** | - | **🔴 689ms** / **🔴 165 MB** | -
+Day 22 | - | 7.48ms / 3.8 MB | - | 11.4ms / 2.3 MB | 21.4ms / None
+Day 23 | - | **🔴 240ms** / **🔴 155 MB** | - | **🔴 689ms** / **🔴 165 MB** | **🔴 307ms** / **🔴 107 MB**
 Day 24 | - | 1.62µs / 656 B | - | 9.38µs / 576 B | -
 Day 25 | - | 32.9ms / None | - | 28.3ms / 19.4 KB | -
-*Total* | *368µs* | *946ms / 234 MB* | *2.97ms* | *844ms / 321 MB* | *54.7ms / 7.3 KB*
+*Total* | *368µs* | *890ms / 189 MB* | *2.97ms* | *844ms / 321 MB* | *361ms / 107 MB*
 
 ![Graph for year 2021](y2021.svg)
 
@@ -410,10 +410,10 @@ Day 19 | 545µs / 413 KB | 251ms / **🔴 145 MB** | 214µs / 44.8 KB | 65.7ms /
 Day 20 | **🔴 3.58s** / **🔴 465 MB** | 276µs / 120 KB | 335ms / **🔴 206 MB** | 28.9ms / 8.5 MB | 58.5ms / 64.4 MB | 7.98ms / 5.3 MB | 15.5ms / 82.5 KB | 37.4ms / None | 1.28ms / 2.9 KB | **🔴 19.9ms** / None
 Day 21 | 417µs / 277 KB | 127ms / 47.7 MB | 66ms / 37.7 MB | 262ms / 448 KB | 4.78ms / 124 KB | 2.25ms / 438 KB | 2.58ms / 2.3 MB | 284µs / 186 KB | 28.9ms / 62.0 KB | 63ns / None
 Day 22 | 457ms / **🔴 435 MB** | 16.9ms / 392 KB | 58.6ms / 526 KB | **🔴 943ms** / **🔴 229 MB** | 211µs / 110 KB | 76.7ms / 44.0 MB | 7.48ms / 3.8 MB | 275µs / None | 5.13ms / 1.1 MB | **🔴 11.2ms** / None
-Day 23 | 22.4µs / 9.3 KB | 12.8µs / 9.0 KB | 1.69ms / 8.4 KB | 162ms / 1.7 MB | 7.34ms / 4.7 MB | **🔴 677ms** / 32.0 MB | **🔴 296ms** / **🔴 199 MB** | 60.9ms / 2.0 MB | **🔴 516ms** / 2.7 MB | **🔴 12.7ms** / 48.0 B
+Day 23 | 22.4µs / 9.3 KB | 12.8µs / 9.0 KB | 1.69ms / 8.4 KB | 162ms / 1.7 MB | 7.34ms / 4.7 MB | **🔴 677ms** / 32.0 MB | **🔴 240ms** / **🔴 155 MB** | 60.9ms / 2.0 MB | **🔴 516ms** / 2.7 MB | **🔴 12.7ms** / 48.0 B
 Day 24 | 146ms / 61.1 MB | 67.2ms / 27.3 MB | 119ms / 59.9 MB | 94.3ms / 42.6 MB | 225ms / **🔴 195 MB** | 131ms / 7.9 MB | 1.62µs / 656 B | 78.8ms / 16.8 MB | - | 42.5µs / **🔴 14.3 KB**
 Day 25 | 8.95µs / 6.1 KB | 59.6ms / 16.9 KB | 31.2ms / 15.3 KB | 8.5ms / 992 KB | 84.9ms / 50.8 MB | 40ms / 320 B | 32.9ms / None | 1.66µs / None | 47.1ms / **🔴 21.2 MB** | 279µs / None
-*Total* | *5.54s / 1.1 GB* | *13.9s / 314 MB* | *1.75s / 432 MB* | *2.98s / 1.0 GB* | *1.27s / 880 MB* | *2.01s / 760 MB* | *946ms / 234 MB* | *457ms / 209 MB* | *874ms / 40.1 MB* | *55.4ms / 14.5 KB*
+*Total* | *5.54s / 1.1 GB* | *13.9s / 314 MB* | *1.75s / 432 MB* | *2.98s / 1.0 GB* | *1.27s / 880 MB* | *2.01s / 760 MB* | *890ms / 189 MB* | *457ms / 209 MB* | *874ms / 40.1 MB* | *55.4ms / 14.5 KB*
 
 
 ## Haskell
@@ -495,16 +495,16 @@ Day 11 | 3.26ms / None | - | 11.1µs / None | 1.99ms / None | 237µs / 33.0 KB |
 Day 12 | 62.4µs / None | 62ns / None | 45.7µs / None | 31.8µs / None | 3.39ms / None | 1.15ms / 120 KB | 46.9µs / None | 69.9µs / None | **🔴 18.1ms** / None | 14.6ms / None
 Day 13 | 2.49ms / None | 9.71µs / None | 15.3ms / None | 13.5ms / 1.2 KB | 7.11µs / None | 10.5µs / 608 B | 33.5µs / None | 7.01µs / None | 85.4µs / None | 5.08µs / None
 Day 14 | 41µs / None | - | 31.5ms / None | 187ms / **🔴 20.5 MB** | 446µs / None | 6.23ms / 6.9 MB | 13.4µs / None | 2.59ms / None | - | 4.96ms / None
-Day 15 | 458µs / None | 264ns / None | **🔴 403ms** / None | 134ms / None | 6.45µs / None | 616ms / 240 MB | **🔴 11.5ms** / None | 909ns / None | 65.9µs / None | 1.21ms / None
+Day 15 | 458µs / None | 264ns / None | **🔴 403ms** / None | 134ms / None | 6.45µs / None | 616ms / 240 MB | 11.5ms / None | 909ns / None | 65.9µs / None | 1.21ms / None
 Day 16 | 8.19µs / None | 130ns / None | 5.13ms / 3.7 KB | 123µs / None | 109ms / None | 1.15ms / 105 KB | 4.09µs / None | **🔴 216ms** / **🔴 52.4 MB** | **🔴 51.5ms** / None | 9.51ms / None
 Day 17 | 2.24ms / None | 20.7ms / None | **🔴 215ms** / None | **🔴 1.44s** / 1.0 B | 4.17µs / None | **🔴 1m11.1s** / 937 KB | 1.52ms / None | 170µs / 102 KB | - | 87.2µs / None
 Day 18 | 15.7ms / None | 745µs / None | 6.07µs / None | 9.97ms / 12.7 KB | **🔴 755ms** / **🔴 254 MB** | 7.06ms / 1.1 MB | 2.21ms / None | 81.1µs / None | 4.52µs / None | 186µs / None
-Day 19 | 2.68ms / 392 KB | 27ns / None | 20.1µs / None | 4.91µs / None | 7.71µs / None | 12.9ms / 108 KB | **🔴 14.9ms** / **🔴 7.3 KB** | 11.3ms / None | - | 2.09ms / 20.6 KB
+Day 19 | 2.68ms / 392 KB | 27ns / None | 20.1µs / None | 4.91µs / None | 7.71µs / None | 12.9ms / 108 KB | 14.9ms / 7.3 KB | 11.3ms / None | - | 2.09ms / 20.6 KB
 Day 20 | **🔴 3.33s** / 1.0 B | 25.8µs / None | 74.2ms / None | 196µs / None | 7.02ms / None | 10.7ms / 285 KB | 2.14ms / None | 37.8ms / None | - | **🔴 22.4ms** / None
 Day 21 | 4.02µs / None | 900ns / None | 4.3µs / None | 143µs / 328 KB | 5.67µs / None | 2.83ms / 152 KB | 1.06µs / None | 66.2µs / None | - | 20µs / 4.3 KB
-Day 22 | 8.27ms / None | 454µs / None | 55.8ms / None | 2.6ms / None | 2.14µs / None | 110ms / **🔴 2.6 GB** | **🔴 21.4ms** / None | 803µs / None | - | **🔴 35.4ms** / **🔴 1.1 MB**
-Day 23 | 7.12µs / None | 59ns / None | 31.7µs / None | 32.2ms / None | 9.45µs / None | 5.48s / 48.0 MB | - | 59.8ms / None | - | 506µs / None
+Day 22 | 8.27ms / None | 454µs / None | 55.8ms / None | 2.6ms / None | 2.14µs / None | 110ms / **🔴 2.6 GB** | 21.4ms / None | 803µs / None | - | **🔴 35.4ms** / **🔴 1.1 MB**
+Day 23 | 7.12µs / None | 59ns / None | 31.7µs / None | 32.2ms / None | 9.45µs / None | 5.48s / 48.0 MB | **🔴 307ms** / **🔴 107 MB** | 59.8ms / None | - | 506µs / None
 Day 24 | **🔴 1.48s** / 1.0 B | 784µs / None | 70.3ms / None | 4.9ms / None | 3.1ms / 696 B | 81.5ms / 6.2 MB | - | 82.6ms / **🔴 18.9 MB** | - | 114µs / 40.3 KB
 Day 25 | 96ns / None | 91ns / None | 36.8ms / None | 693µs / None | 13.4µs / None | 36.4ms / 160 B | - | 1.12µs / None | - | 167µs / None
-*Total* | *5.93s / 14.5 MB* | *2.62s / 33.0 B* | *959ms / 73.4 KB* | *1.87s / 84.8 MB* | *879ms / 254 MB* | *1m17.5s / 2.9 GB* | *54.7ms / 7.3 KB* | *414ms / 71.4 MB* | *72.5ms / None* | *98.9ms / 1.2 MB*
+*Total* | *5.93s / 14.5 MB* | *2.62s / 33.0 B* | *959ms / 73.4 KB* | *1.87s / 84.8 MB* | *879ms / 254 MB* | *1m17.5s / 2.9 GB* | *361ms / 107 MB* | *414ms / 71.4 MB* | *72.5ms / None* | *98.9ms / 1.2 MB*
 
