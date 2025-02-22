@@ -24,7 +24,7 @@ const search = struct {
 
 fn parts(inp: []const u8) anyerror![2]usize {
     var i: usize = 0;
-    var rules: [SIZE]?check = std.mem.zeroes([SIZE]?check);
+    var rules: [SIZE]?check = .{null} ** SIZE;
     while (i < inp.len) : (i += 1) {
         const id = chompID(inp, &i);
         var k: usize = 0;
@@ -54,7 +54,7 @@ fn parts(inp: []const u8) anyerror![2]usize {
     i += 2;
     var p1: usize = 0;
     while (i < inp.len) : (i += 1) {
-        var p: [4]usize = std.mem.zeroes([4]usize);
+        var p: [4]usize = .{0} ** 4;
         while (inp[i] != '}') {
             i += 1;
             const k = key_ch(inp[i]);
