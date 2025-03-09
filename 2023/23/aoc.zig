@@ -37,6 +37,7 @@ fn parts(inp: []const u8) anyerror![2]usize {
     }
     const junctions = js.slice();
     var d: [2048]usize = .{std.math.maxInt(usize)} ** 2048;
+    var nbCount: [64]usize = .{0} ** 64;
     {
         const SRec = struct {
             x: usize,
@@ -58,6 +59,8 @@ fn parts(inp: []const u8) anyerror![2]usize {
                 if (jp[i]) |k| {
                     if (cur.st != 0) {
                         d[j + k * l] = cur.st;
+                        nbCount[j] += 1;
+                        nbCount[k] += 1;
                         continue;
                     }
                 }
@@ -75,16 +78,6 @@ fn parts(inp: []const u8) anyerror![2]usize {
                 }
             }
         }
-        // for (0..l) |k| {
-        //     for (0..l) |i| {
-        //         for (0..l) |j| {
-        //             const st = d[i + k * l] +| d[k + j * l];
-        //             if (d[i + j * l] > st) {
-        //                 d[i + j * l] = st;
-        //             }
-        //         }
-        //     }
-        // }
     }
     var p1: usize = 0;
     const Rec = struct {
@@ -145,6 +138,9 @@ fn parts(inp: []const u8) anyerror![2]usize {
                             try work.push(Rec{ .p = j, .seen = nseen, .st = cur.st + st });
                         }
                     },
+                }
+                if (nbCount[cur.p] <= 3 and nbCount[j] <= 3) {
+                    continue;
                 }
                 switch (d[cur.p * l + j]) {
                     0 => {},
