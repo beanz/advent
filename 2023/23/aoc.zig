@@ -87,6 +87,11 @@ fn parts(inp: []const u8) anyerror![2]usize {
         // }
     }
     var p1: usize = 0;
+    const Rec = struct {
+        p: usize,
+        seen: u64,
+        st: usize,
+    };
     var back: [64]Rec = undefined;
     {
         var work = aoc.Deque(Rec).init(back[0..]);
@@ -122,8 +127,6 @@ fn parts(inp: []const u8) anyerror![2]usize {
     {
         var work = aoc.Deque(Rec).init(back[0..]);
         try work.push(Rec{ .p = 0, .seen = 0b1, .st = 0 });
-        var seen = std.AutoHashMap(u64, usize).init(aoc.halloc);
-        try seen.ensureTotalCapacity(16777216);
         while (work.shift()) |cur| {
             if (cur.p == 1) {
                 if (p2 < cur.st) {
@@ -131,13 +134,6 @@ fn parts(inp: []const u8) anyerror![2]usize {
                 }
                 continue;
             }
-            const k = cur.key();
-            if (seen.get(k)) |st| {
-                if (st > cur.st) {
-                    continue;
-                }
-            }
-            try seen.put(k, cur.st);
             for (0..l) |j| {
                 switch (d[cur.p + j * l]) {
                     0 => {},
@@ -163,19 +159,9 @@ fn parts(inp: []const u8) anyerror![2]usize {
                 }
             }
         }
-        aoc.print("{}\n", .{seen.count()});
     }
     return [2]usize{ p1, p2 };
 }
-
-const Rec = struct {
-    p: usize,
-    seen: u64,
-    st: usize,
-    fn key(self: *const Rec) u64 {
-        return (self.seen << 8) + @as(u64, @intCast(self.p));
-    }
-};
 
 fn day(inp: []const u8, bench: bool) anyerror!void {
     const p = try parts(inp);
