@@ -81,6 +81,7 @@ impl<'a> Otp<'a> {
                             return ti;
                         }
                         n += 1;
+                        break;
                     }
                 }
             }
