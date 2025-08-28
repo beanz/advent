@@ -96,7 +96,7 @@ fn main() {
         let mut trench = Trench::new(&mut inp);
         let p1 = trench.part();
         if !bench {
-            println!("Part 1: {}", p1);
+            println!("Part 1: {p1}");
         }
     })
 }

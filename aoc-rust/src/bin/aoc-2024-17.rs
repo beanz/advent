@@ -94,7 +94,7 @@ fn main() {
         let (p1, p2) = parts(&inp);
         if !bench {
             println!("Part 1: {}", std::str::from_utf8(&p1[0..]).expect("ascii"));
-            println!("Part 2: {}", p2);
+            println!("Part 2: {p2}");
         }
     })
 }

@@ -71,8 +71,8 @@ fn main() {
         let p1 = m.part1();
         let p2 = m.part2();
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

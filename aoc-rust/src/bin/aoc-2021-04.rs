@@ -61,7 +61,7 @@ impl Bingo {
                 let r = i / 5;
                 let c = i % 5;
                 board.score += *num as usize;
-                let le = lookup.entry(*num).or_insert_with(Vec::new);
+                let le = lookup.entry(*num).or_default();
                 le.push(Location {
                     board: bnum,
                     row: r,
@@ -84,7 +84,7 @@ impl Bingo {
         let mut first = true;
         for call in &self.calls {
             for nl in self.lookup.get(call).unwrap() {
-                let mut board = &mut self.boards[nl.board];
+                let board = &mut self.boards[nl.board];
                 if board.won {
                     continue;
                 }
@@ -137,8 +137,8 @@ fn main() {
         let mut bingo = Bingo::new(&inp);
         let (p1, p2) = bingo.play();
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     })
 }

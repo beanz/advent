@@ -19,8 +19,8 @@ fn main() {
         let p1 = calc(&mut jumps.clone(), false);
         let p2 = calc(&mut jumps, true);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

@@ -77,8 +77,8 @@ fn main() {
         let p1 = find_sue1(&sues, &tape);
         let p2 = find_sue2(&sues, &tape);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

@@ -121,8 +121,8 @@ fn main() {
         let mut p = Packet::new(&bytes);
         let (p1, p2) = p.eval();
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     })
 }

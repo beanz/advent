@@ -74,8 +74,8 @@ fn main() {
         let (_, p1) = part1(&inp).expect("parse error");
         let (_, p2) = part2(&inp).expect("parse error");
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     })
 }

@@ -67,8 +67,8 @@ fn main() {
         let db = DB::new(&inp);
         let (p1, p2) = db.parts();
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

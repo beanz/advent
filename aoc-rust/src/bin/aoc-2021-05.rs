@@ -118,8 +118,8 @@ fn main() {
         let mut vents = Vents::new(&inp);
         let (p1, p2) = vents.count();
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     })
 }

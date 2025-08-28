@@ -47,8 +47,8 @@ fn main() {
         let mut report = Report::new(&expenses);
         let (p1, p2) = report.parts();
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

@@ -61,7 +61,7 @@ impl P3 {
             21 => P3::new(-self.z(), -self.x(), self.y()),
             22 => P3::new(-self.z(), self.y(), self.x()),
             23 => P3::new(-self.z(), self.x(), -self.y()),
-            _ => panic!("invalid rotation: {}", r),
+            _ => panic!("invalid rotation: {r}"),
         }
     }
 }
@@ -117,7 +117,7 @@ impl Scanner {
         for i in 0..beacons.len() {
             for j in (i + 1)..beacons.len() {
                 let dist = beacons[i].manhattan(beacons[j]);
-                let de = distances.entry(dist).or_insert_with(Vec::new);
+                let de = distances.entry(dist).or_default();
                 de.push((i, j));
             }
         }
@@ -170,11 +170,7 @@ impl Solver {
                 //println!("  assuming kb {} == ub {}", kb, ub);
                 for r in 0..24 {
                     let rub = ub.rotate(r);
-                    let transform = P3::new(
-                        kb.x() - rub.x(),
-                        kb.y() - rub.y(),
-                        kb.z() - rub.z(),
-                    );
+                    let transform = P3::new(kb.x() - rub.x(), kb.y() - rub.y(), kb.z() - rub.z());
                     //println!("  rotation {} transform {}", r, transform);
                     nb.truncate(0);
                     let mut c = 0;
@@ -209,7 +205,7 @@ impl Solver {
                 }
             }
         }
-        panic!("failed to align: {}\n", unknown);
+        panic!("failed to align: {unknown}\n");
     }
     fn solve(&mut self) -> (usize, usize) {
         let mut next: HashMap<usize, Vec<usize>> = HashMap::new();
@@ -217,9 +213,9 @@ impl Solver {
             for j in i + 1..self.scanners.len() {
                 let common = self.compare_distances(i, j);
                 if common.len() >= 60 {
-                    let ne = next.entry(i).or_insert_with(Vec::new);
+                    let ne = next.entry(i).or_default();
                     ne.push(j);
-                    let ne2 = next.entry(j).or_insert_with(Vec::new);
+                    let ne2 = next.entry(j).or_default();
                     ne2.push(i);
                 }
             }
@@ -266,8 +262,8 @@ fn main() {
         let mut s = Solver::new(&inp);
         let (p1, p2) = s.solve();
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     })
 }

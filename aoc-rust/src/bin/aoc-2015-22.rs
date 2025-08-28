@@ -159,7 +159,7 @@ impl State {
 }
 
 fn sim(hard_mode: bool) -> usize {
-    let mut min_cost = std::usize::MAX;
+    let mut min_cost = usize::MAX;
     let mut todo = vec![State {
         me: Me::new(50, 500),
         boss: Boss::new(71, 10),
@@ -213,8 +213,8 @@ fn main() {
         let p1 = sim(false);
         let p2 = sim(true);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

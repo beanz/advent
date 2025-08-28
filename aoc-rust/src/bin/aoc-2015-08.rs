@@ -17,7 +17,7 @@ pub fn calc(s: &str) -> (i32, i32) {
                     i += 3;
                     c2 += 1;
                 }
-                _ => panic!("Invalid escape {}", esc),
+                _ => panic!("Invalid escape {esc}"),
             }
         } else if ch == '"' {
             c2 += 1;
@@ -35,8 +35,8 @@ fn main() {
             .map(|x| calc(x))
             .fold((0, 0), |(a1, a2), (b1, b2)| (a1 + b1, a2 + b2));
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     })
 }

@@ -67,7 +67,7 @@ fn main() {
                 "Part 1: {}",
                 std::str::from_utf8(&p1[0..p1l]).expect("ascii")
             );
-            println!("Part 2: {}", p2);
+            println!("Part 2: {p2}");
         }
     })
 }

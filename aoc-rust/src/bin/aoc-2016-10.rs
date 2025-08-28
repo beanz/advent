@@ -84,7 +84,7 @@ impl Factory {
             if l.starts_with("value") {
                 f.bot(nums[1]).add_value(nums[0])
             } else {
-                let mut bot = f.bot(nums[0]);
+                let bot = f.bot(nums[0]);
                 let rhs = l.split(" gives ").nth(1).unwrap();
                 let mut sp = rhs.split(" and ");
                 let lo = sp.next().unwrap();
@@ -172,8 +172,8 @@ fn main() {
         let mut f = Factory::new(&inp, (17, 61));
         let (p1, p2) = f.calc();
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

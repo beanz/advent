@@ -36,8 +36,8 @@ fn main() {
         let p1 = decompress(&inp, false);
         let p2 = decompress(&inp, true);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

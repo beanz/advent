@@ -24,8 +24,8 @@ fn main() {
         comp = elfcomp2016::ElfComp2016::new(&lines2);
         let p2 = part2(&mut comp);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

@@ -20,7 +20,7 @@ fn parts(inp: &[u8]) -> (isize, isize) {
     let mut gen = [b'.'; GEN_SIZE];
     let mut len = init.len();
     let mut offset = 0;
-    gen[..init.len()].copy_from_slice(&init);
+    gen[..init.len()].copy_from_slice(init);
     let mut g = 0;
     let mut p1 = 0;
     let mut p2 = 0;
@@ -74,8 +74,8 @@ fn main() {
     aoc::benchme(|bench: bool| {
         let (p1, p2) = parts(&inp);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     })
 }

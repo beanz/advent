@@ -31,8 +31,8 @@ fn main() {
         let p1 = p1(&inp);
         let p2 = p2(&inp);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

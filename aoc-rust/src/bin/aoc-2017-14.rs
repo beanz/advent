@@ -65,8 +65,8 @@ fn main() {
         let (p1, mut grid) = part1(&inp);
         let p2 = part2(&mut grid);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

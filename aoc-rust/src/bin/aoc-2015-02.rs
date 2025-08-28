@@ -22,8 +22,8 @@ fn main() {
             .map(|l| calc(parse_line(l)))
             .fold((0, 0), |(a1, a2), (b1, b2)| (a1 + b1, a2 + b2));
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

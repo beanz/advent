@@ -13,11 +13,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
 
 fn fuel(n: usize) -> usize {
     let f = n / 3;
-    if f <= 2 {
-        0
-    } else {
-        f - 2
-    }
+    f.saturating_sub(2)
 }
 
 fn fuelr(n: usize) -> usize {
@@ -35,8 +31,8 @@ fn main() {
     aoc::benchme(|bench: bool| {
         let (p1, p2) = parts(&inp);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     })
 }

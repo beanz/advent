@@ -41,8 +41,8 @@ fn main() {
         let p1 = part1(&sizes, target);
         let p2 = part2(&sizes, target);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

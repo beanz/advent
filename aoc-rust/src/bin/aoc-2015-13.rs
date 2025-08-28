@@ -70,8 +70,8 @@ fn main() {
         let p1 = seats.part1();
         let p2 = seats.part2();
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

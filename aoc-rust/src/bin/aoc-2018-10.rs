@@ -108,7 +108,7 @@ fn parts(inp: &[u8]) -> ([u8; P1SIZE], usize, usize) {
 
     let size = bb[1].size();
     if bb[0].size() < size || bb[2].size() < size {
-        eprintln!("{:?}", bb);
+        eprintln!("{bb:?}");
         unreachable!("more complex input; need to step time forward or back");
     }
     let h = 1 + bb[1].max_y - bb[1].min_y;
@@ -134,7 +134,7 @@ fn main() {
                 "Part 1:\n{}",
                 std::str::from_utf8(&p1[0..p1l]).expect("ascii")
             );
-            println!("Part 2: {}", p2);
+            println!("Part 2: {p2}");
         }
     })
 }

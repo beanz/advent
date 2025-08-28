@@ -155,8 +155,8 @@ fn main() {
         let p1 = notes.part1();
         let p2 = notes.part2();
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     })
 }

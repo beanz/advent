@@ -46,8 +46,8 @@ fn main() {
         let f = Forest::new(&inp);
         let (p1, p2) = f.parts();
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     })
 }

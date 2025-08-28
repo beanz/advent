@@ -36,8 +36,8 @@ fn main() {
         let p1 = winner(elves);
         let p2 = winner2(elves);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

@@ -91,7 +91,7 @@ impl Prog {
                 }
                 ans[c.j] += inc;
                 if 9 < ans[c.j] || ans[c.j] < 0 {
-                    panic!("constraint failed {:?}", c)
+                    panic!("constraint failed {c:?}")
                 }
             }
         }
@@ -110,8 +110,8 @@ fn main() {
         let p1 = prog.solve(false);
         let p2 = prog.solve(true);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     })
 }

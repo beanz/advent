@@ -78,7 +78,7 @@ fn main() {
         }
         let p1 = r.count();
         if !bench {
-            println!("Part 1: {}", p1);
+            println!("Part 1: {p1}");
             println!("Part 2:\n{}", r);
         }
     });

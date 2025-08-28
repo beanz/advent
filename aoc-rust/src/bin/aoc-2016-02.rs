@@ -47,8 +47,8 @@ fn main() {
         let p1 = Keypad::part1().calc(&lines);
         let p2 = Keypad::part2().calc(&lines);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

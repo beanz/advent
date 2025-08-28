@@ -98,8 +98,8 @@ fn main() {
         let mut pkt = Pocket::new(&inp, true);
         let p2 = pkt.run(6);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

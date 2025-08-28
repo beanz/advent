@@ -59,13 +59,13 @@ fn main() {
         let mut cache: HashMap<String, u16> = HashMap::new();
         let p1 = calc(&m, &mut cache, "a");
         if !bench {
-            println!("Part 1: {}", p1);
+            println!("Part 1: {p1}");
         }
         let mut cache2: HashMap<String, u16> = HashMap::new();
-        m.insert("b".to_string(), format!("{}", p1));
+        m.insert("b".to_string(), format!("{p1}"));
         let p2 = calc(&m, &mut cache2, "a");
         if !bench {
-            println!("Part 2: {}", p2);
+            println!("Part 2: {p2}");
         }
     });
 }

@@ -55,8 +55,8 @@ fn main() {
         let p1 = max_dist(&deers, race_time);
         let p2 = max_score(&deers, race_time);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

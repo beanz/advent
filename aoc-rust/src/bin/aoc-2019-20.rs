@@ -29,7 +29,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     let (mut ex, mut ey) = (0, 0);
     let mut id2pos = FnvIndexMap::<usize, (usize, usize), 128>::new();
     let mut portals = FnvIndexMap::<(usize, usize), (usize, usize, usize), 128>::new();
-    let is_portal = |ch| (b'A'..=b'Z').contains(&ch);
+    let is_portal = |ch: u8| ch.is_ascii_uppercase();
     let mut add_outer_portal =
         |id2pos: &mut FnvIndexMap<usize, (usize, usize), 128>, a: u8, b: u8, x: usize, y: usize| {
             //eprintln!(
@@ -268,7 +268,7 @@ where
         let mut xbit = 1u128;
         for x in 0..w {
             if let Some(ch) = ff(x, y) {
-                eprint!("{}", ch);
+                eprint!("{ch}");
             } else if maze[y] & xbit == 0 {
                 eprint!("{}", inp[x + y * w1] as char);
             } else {
@@ -289,8 +289,8 @@ fn main() {
     aoc::benchme(|bench: bool| {
         let (p1, p2) = parts(&inp);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     })
 }

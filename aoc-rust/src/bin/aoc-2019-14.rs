@@ -46,8 +46,8 @@ fn parts(inp: &[u8]) -> (usize, usize) {
 fn ore_for(n: usize, fact: &HashMap<u32, (usize, Vec<(usize, u32)>)>) -> usize {
     let mut surplus: HashMap<u32, usize> = HashMap::new();
     let mut total: HashMap<u32, usize> = HashMap::new();
-    let (_, fuel) = read_id(&[b'F', b'U', b'E', b'L', b' '], 0, 27, b'@');
-    let (_, ore) = read_id(&[b'O', b'R', b'E', b' '], 0, 27, b'@');
+    let (_, fuel) = read_id(b"FUEL ", 0, 27, b'@');
+    let (_, ore) = read_id(b"ORE ", 0, 27, b'@');
     requirements(fuel, n, fact, &mut total, &mut surplus, ore);
     *total.get(&ore).expect("should have produced ore")
 }
@@ -88,8 +88,8 @@ fn main() {
     aoc::benchme(|bench: bool| {
         let (p1, p2) = parts(&inp);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     })
 }

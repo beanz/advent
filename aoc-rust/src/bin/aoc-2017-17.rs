@@ -37,8 +37,8 @@ fn main() {
         let p1 = part1(2017, steps);
         let p2 = part2(50_000_000, steps);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

@@ -27,7 +27,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     while i < inp.len() {
         let a = read_id(inp, i);
         let b = read_id(inp, i + 4);
-        let e = orb.entry(a).or_insert_with(Vec::new);
+        let e = orb.entry(a).or_default();
         e.push(b);
         parents.insert(b, a);
         i += 8;
@@ -69,8 +69,8 @@ fn main() {
     aoc::benchme(|bench: bool| {
         let (p1, p2) = parts(&inp);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     })
 }

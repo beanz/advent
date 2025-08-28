@@ -327,8 +327,8 @@ fn main() {
         let board = Board::from_input(&inp);
         let (p1, p2) = board.parts();
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     })
 }

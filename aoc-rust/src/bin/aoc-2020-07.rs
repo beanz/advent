@@ -34,7 +34,7 @@ impl fmt::Display for Rule<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}: ", std::str::from_utf8(self.bag).expect("ascii"),)?;
         for b in &self.bags {
-            write!(f, "{}, ", b)?;
+            write!(f, "{b}, ")?;
         }
         Ok(())
     }
@@ -125,8 +125,8 @@ fn main() {
     aoc::benchme(|bench: bool| {
         let (p1, p2) = parts(&inp);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

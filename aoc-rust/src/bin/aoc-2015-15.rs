@@ -81,8 +81,8 @@ fn main() {
         let ingredients: Vec<Ingredient> = inp.iter().map(|l| Ingredient::new(l)).collect();
         let (p1, p2) = best_recipe(&ingredients);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

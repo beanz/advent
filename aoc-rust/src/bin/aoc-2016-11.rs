@@ -22,7 +22,7 @@ impl fmt::Display for State {
         res.push_str(&format!("moves: {}\n", self.moves));
         for floor in (1..=4).rev() {
             let l = if floor == self.lift { "L" } else { "_" };
-            res.push_str(&format!("{}: {}", floor, l));
+            res.push_str(&format!("{floor}: {l}"));
             for (i, el) in self.elements.iter().enumerate() {
                 let g = if el.gen_floor == floor {
                     i.to_string() + "G"
@@ -34,11 +34,11 @@ impl fmt::Display for State {
                 } else {
                     "__".to_string()
                 };
-                res.push_str(&format!(" {} {}", g, m));
+                res.push_str(&format!(" {g} {m}"));
             }
             res.push('\n');
         }
-        write!(f, "{}", res)
+        write!(f, "{res}")
     }
 }
 
@@ -227,7 +227,7 @@ impl Solver {
 
 impl Solver {
     fn solve(&self) -> usize {
-        let mut best = std::usize::MAX;
+        let mut best = usize::MAX;
         let mut todo: VecDeque<Box<State>> = VecDeque::new();
         let first = self.init.clone();
         todo.push_back(Box::new(first));
@@ -285,8 +285,8 @@ fn main() {
         });
         let p2 = solver.solve();
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }
@@ -316,7 +316,7 @@ mod tests {
             + "3: _ __ __ 1G __\n"
             + "2: _ 0G __ __ __\n"
             + "1: L __ 0M __ 1M\n";
-        assert_eq!(format!("{}", ex1), exp, "ex1 initial state");
+        assert_eq!(format!("{ex1}"), exp, "ex1 initial state");
     }
     #[test]
     fn state_possible_floors_works() {

@@ -40,7 +40,7 @@ impl Programs {
                 's' => self.spin(ints[0]),
                 'x' => self.swap(ints[0], ints[1]),
                 'p' => self.swap_ch(chs.next().unwrap(), chs.nth(1).unwrap()),
-                _ => panic!("dance: invalid move: {}", l),
+                _ => panic!("dance: invalid move: {l}"),
             }
         }
     }
@@ -54,7 +54,7 @@ fn part2(ch: char, moves: &[String]) -> String {
     let mut cycle_found = false;
     while c <= END {
         p.dance(moves);
-        let k = format!("{}", p);
+        let k = format!("{p}");
         if !cycle_found {
             if let Some(prev) = seen.get(&k) {
                 let remaining = END - c;
@@ -66,7 +66,7 @@ fn part2(ch: char, moves: &[String]) -> String {
         seen.insert(k, c);
         c += 1;
     }
-    format!("{}", p)
+    format!("{p}")
 }
 
 fn main() {
@@ -80,8 +80,8 @@ fn main() {
         p.dance(&moves);
         let p2 = part2('p', &moves);
         if !bench {
-            println!("Part 1: {}", p);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p}");
+            println!("Part 2: {p2}");
         }
     });
 }

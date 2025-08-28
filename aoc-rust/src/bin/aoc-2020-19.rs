@@ -146,8 +146,8 @@ fn main() {
         let mut mess = Mess::new(&inp, &mut rules);
         let (p1, p2) = mess.parts();
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

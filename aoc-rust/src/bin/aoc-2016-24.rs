@@ -24,7 +24,7 @@ impl Game {
         let mut walls: Vec<bool> = vec![];
         for (y, l) in inp.iter().enumerate() {
             for (x, ch) in l.chars().enumerate() {
-                if ('0'..='9').contains(&ch) {
+                if ch.is_ascii_digit() {
                     let n = ch as u8 - b'0';
                     numbers[n as usize] = (x, y);
                     if n as usize > max {
@@ -96,8 +96,8 @@ impl Game {
     }
     fn calc(&self) -> (usize, usize) {
         let dist = self.distances();
-        let mut p1min = std::usize::MAX;
-        let mut p2min = std::usize::MAX;
+        let mut p1min = usize::MAX;
+        let mut p2min = usize::MAX;
         for perm in (1..self.numbers.len()).permutations(self.numbers.len() - 1) {
             let mut d = *dist.get(&(0, perm[0])).unwrap();
             for i in 0..perm.len() - 1 {
@@ -121,8 +121,8 @@ fn main() {
         let g = Game::new(&inp);
         let (p1, p2) = g.calc();
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

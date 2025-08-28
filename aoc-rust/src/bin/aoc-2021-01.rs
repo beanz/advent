@@ -19,11 +19,11 @@ fn main() {
         let depths = aoc::uints::<Int>(&inp).collect::<ArrayVec<Int, 2000>>();
         let p1 = part1(&depths);
         if !bench {
-            println!("Part 1: {}", p1);
+            println!("Part 1: {p1}");
         }
         let p2 = part2(&depths);
         if !bench {
-            println!("Part 2: {}", p2);
+            println!("Part 2: {p2}");
         }
     });
 }

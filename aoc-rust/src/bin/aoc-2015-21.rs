@@ -169,8 +169,8 @@ impl Battle {
     }
     fn sim(&self) -> (usize, usize) {
         let boss = Fighter::new(103, 9, 2);
-        let mut min = std::usize::MAX;
-        let mut max = std::usize::MIN;
+        let mut min = usize::MAX;
+        let mut max = usize::MIN;
         for w in self.weapons.iter().combinations(1) {
             for a in self.armor.iter().combinations(1) {
                 for r in self.rings.iter().combinations(2) {
@@ -206,8 +206,8 @@ fn main() {
         let battle = Battle::new();
         let (p1, p2) = &battle.sim();
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

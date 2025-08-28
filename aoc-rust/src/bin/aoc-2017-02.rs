@@ -28,8 +28,8 @@ fn main() {
         let p1 = aoc::sum_lines(&inp, part1);
         let p2 = aoc::sum_lines(&inp, part2);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

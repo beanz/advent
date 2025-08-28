@@ -191,7 +191,7 @@ impl fmt::Display for SFToken {
                 SFToken::Open => "[".to_string(),
                 SFToken::Comma => ",".to_string(),
                 SFToken::Close => "]".to_string(),
-                SFToken::Num(n) => format!("{}", n),
+                SFToken::Num(n) => format!("{n}"),
             }
         )
     }
@@ -208,7 +208,7 @@ impl fmt::Display for SnailFish {
                     SFToken::Open => "[".to_string(),
                     SFToken::Comma => ",".to_string(),
                     SFToken::Close => "]".to_string(),
-                    SFToken::Num(n) => format!("{}", n),
+                    SFToken::Num(n) => format!("{n}"),
                 })
                 .collect::<String>()
         )
@@ -223,7 +223,7 @@ fn part1(sfs: &mut Vec<SnailFish>) -> usize {
     sum.magnitude()
 }
 
-fn part2(sfs: &mut Vec<SnailFish>) -> usize {
+fn part2(sfs: &mut [SnailFish]) -> usize {
     let mut max = 0;
     for i in 0..sfs.len() {
         for j in i..sfs.len() {
@@ -247,8 +247,8 @@ fn main() {
         let p1 = part1(&mut sfs);
         let p2 = part2(&mut sfs);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     })
 }
@@ -313,7 +313,7 @@ mod tests {
         for tc in tests {
             let mut sf = SnailFish::new(&tc.0.to_string().into_bytes());
             let changed = sf.explode();
-            assert_eq!(format!("{}", sf), tc.1, "{}", tc.0);
+            assert_eq!(format!("{sf}"), tc.1, "{}", tc.0);
             assert_eq!(changed, true, "{}", tc.0);
         }
     }
@@ -347,7 +347,7 @@ mod tests {
         for tc in tests {
             let mut sf = SnailFish::new(&tc.0.to_string().into_bytes());
             sf.reduce();
-            assert_eq!(format!("{}", sf), tc.1, "{}", tc.0);
+            assert_eq!(format!("{sf}"), tc.1, "{}", tc.0);
         }
     }
 
@@ -451,7 +451,7 @@ mod tests {
             let sf = SnailFish::new(&tc.0.to_string().into_bytes());
             let sf2 = SnailFish::new(&tc.1.to_string().into_bytes());
             let res = sf.add(&sf2);
-            assert_eq!(format!("{}", res), tc.2, "{} + {}", tc.0, tc.1);
+            assert_eq!(format!("{res}"), tc.2, "{} + {}", tc.0, tc.1);
         }
     }
 }

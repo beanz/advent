@@ -13,7 +13,7 @@ impl Gen {
             let cs = aoc::md5sum(self.ns.bytes());
             if cs[0] == 0 && cs[1] == 0 && (cs[2] & 0xf0 == 0) {
                 self.ns.inc();
-                return cs.iter().map(|x| format!("{:02x}", x)).collect::<String>();
+                return cs.iter().map(|x| format!("{x:02x}")).collect::<String>();
             }
             self.ns.inc();
         }
@@ -25,7 +25,7 @@ impl Gen {
             .collect::<String>()
     }
     fn strong_password(&mut self) -> String {
-        let mut pass = vec!['_', '_', '_', '_', '_', '_', '_', '_'];
+        let mut pass = ['_', '_', '_', '_', '_', '_', '_', '_'];
         let mut filled = 0;
         while filled < 8 {
             let n = self.next();
@@ -46,12 +46,12 @@ fn main() {
         let mut gen = Gen::new(&inp);
         let p1 = gen.password();
         if !bench {
-            println!("Part 1: {}", p1);
+            println!("Part 1: {p1}");
         }
         gen = Gen::new(&inp);
         let p2 = gen.strong_password();
         if !bench {
-            println!("Part 2: {}", p2);
+            println!("Part 2: {p2}");
         }
     });
 }

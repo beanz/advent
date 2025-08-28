@@ -17,8 +17,8 @@ fn main() {
         let p1 = part1(&mut comp);
         let p2 = part2(&mut comp);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

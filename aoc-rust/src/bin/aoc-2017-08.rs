@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 fn run(inp: &[String]) -> (isize, isize) {
-    let mut p2 = std::isize::MIN;
+    let mut p2 = isize::MIN;
     let mut reg: HashMap<String, isize> = HashMap::new();
     for l in inp {
         let ints = aoc::ints::<isize>(l).collect::<Vec<isize>>();
@@ -18,7 +18,7 @@ fn run(inp: &[String]) -> (isize, isize) {
             ">=" => *r2 >= ints[1],
             "<=" => *r2 <= ints[1],
             "!=" => *r2 != ints[1],
-            _ => panic!("parse error; invalid cmp, {}, in: {}", cmp, l),
+            _ => panic!("parse error; invalid cmp, {cmp}, in: {l}"),
         };
         if !test {
             continue;
@@ -27,7 +27,7 @@ fn run(inp: &[String]) -> (isize, isize) {
         match op {
             "inc" => *r1 += ints[0],
             "dec" => *r1 -= ints[0],
-            _ => panic!("parse error; invalid op, {}, in: {}", op, l),
+            _ => panic!("parse error; invalid op, {op}, in: {l}"),
         }
         if *r1 > p2 {
             p2 = *r1;
@@ -41,8 +41,8 @@ fn main() {
     aoc::benchme(|bench: bool| {
         let (p1, p2) = run(&inp);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

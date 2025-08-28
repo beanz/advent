@@ -94,7 +94,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
     valves.sort_by(|a, b| b.rate.cmp(&a.rate));
     let mut bit = 1;
     let mut id_to_index: HashMap<u32, u32> = HashMap::default();
-    for (i, mut valve) in valves.iter_mut().enumerate() {
+    for (i, valve) in valves.iter_mut().enumerate() {
         valve.bit = bit;
         id_to_index.insert(valve.id, i as u32);
         bit <<= 1;
@@ -154,8 +154,8 @@ fn main() {
     aoc::benchme(|bench: bool| {
         let (p1, p2) = parts(&inp);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     })
 }

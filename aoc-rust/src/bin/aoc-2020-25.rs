@@ -35,7 +35,7 @@ fn main() {
     aoc::benchme(|bench: bool| {
         let p1 = part1(&inp);
         if !bench {
-            println!("Part 1: {}", p1);
+            println!("Part 1: {p1}");
         }
     })
 }

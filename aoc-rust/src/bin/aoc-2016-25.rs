@@ -11,7 +11,7 @@ impl Op {
         match first {
             'a'..='d' => Op::Register(first),
             '-' | '0'..='9' => Op::Immediate(s.parse::<isize>().unwrap()),
-            _ => panic!("invalid operand: {}", s),
+            _ => panic!("invalid operand: {s}"),
         }
     }
     fn value(&self, reg: &[isize]) -> isize {
@@ -40,20 +40,14 @@ impl Inst {
                 Op::new(words.next().unwrap()),
                 Op::Register(words.next().unwrap().chars().next().unwrap()),
             ),
-            "inc" => Inst::Inc(Op::Register(
-                words.next().unwrap().chars().next().unwrap(),
-            )),
-            "dec" => Inst::Dec(Op::Register(
-                words.next().unwrap().chars().next().unwrap(),
-            )),
+            "inc" => Inst::Inc(Op::Register(words.next().unwrap().chars().next().unwrap())),
+            "dec" => Inst::Dec(Op::Register(words.next().unwrap().chars().next().unwrap())),
             "jnz" => Inst::Jnz(
                 Op::new(words.next().unwrap()),
                 Op::new(words.next().unwrap()),
             ),
-            "out" => Inst::Out(Op::Register(
-                words.next().unwrap().chars().next().unwrap(),
-            )),
-            _ => panic!("invalid instruction: {}", l),
+            "out" => Inst::Out(Op::Register(words.next().unwrap().chars().next().unwrap())),
+            _ => panic!("invalid instruction: {l}"),
         }
     }
     fn run(&self, state: &mut ElfComp2016State) -> Result<(), &'static str> {
@@ -61,27 +55,21 @@ impl Inst {
             Inst::Cpy(x, y) => {
                 let vx = x.value(&state.reg);
                 match y {
-                    Op::Register(r) => {
-                        state.reg[(*r as u8 - b'a') as usize] = vx
-                    }
+                    Op::Register(r) => state.reg[(*r as u8 - b'a') as usize] = vx,
                     Op::Immediate(_v) => panic!("2nd operand must be register"),
                 };
                 state.ip += 1;
             }
             Inst::Inc(x) => {
                 match x {
-                    Op::Register(r) => {
-                        state.reg[(*r as u8 - b'a') as usize] += 1
-                    }
+                    Op::Register(r) => state.reg[(*r as u8 - b'a') as usize] += 1,
                     Op::Immediate(_v) => panic!("2nd operand must be register"),
                 };
                 state.ip += 1;
             }
             Inst::Dec(x) => {
                 match x {
-                    Op::Register(r) => {
-                        state.reg[(*r as u8 - b'a') as usize] -= 1
-                    }
+                    Op::Register(r) => state.reg[(*r as u8 - b'a') as usize] -= 1,
                     Op::Immediate(_v) => panic!("2nd operand must be register"),
                 };
                 state.ip += 1;
@@ -158,7 +146,7 @@ fn main() {
         let comp = ElfComp2016::new(&lines);
         let p1 = comp.part1();
         if !bench {
-            println!("Part 1: {}", p1);
+            println!("Part 1: {p1}");
         }
     });
 }

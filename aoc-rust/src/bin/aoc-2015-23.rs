@@ -110,8 +110,8 @@ fn main() {
         let p1 = comp.part1();
         let p2 = comp.part2();
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

@@ -22,7 +22,7 @@ fn main() {
         let rowcol = aoc::ints::<usize>(&inp).collect::<Vec<usize>>();
         let p1 = part1(rowcol[0], rowcol[1]);
         if !bench {
-            println!("Part 1: {}", p1);
+            println!("Part 1: {p1}");
         }
     });
 }

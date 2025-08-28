@@ -31,7 +31,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
         let t = Tile::new(&inp[i..i + 121]);
         for j in 0..4 {
             let m = t.canonical_edge(j);
-            let e = edge_map.entry(m).or_insert_with(Vec::new);
+            let e = edge_map.entry(m).or_default();
             e.push(tiles.len());
         }
         tiles.push(t);
@@ -80,7 +80,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
                 if tiles[*ni].used {
                     continue;
                 }
-                let mut nt = &mut tiles[*ni];
+                let nt = &mut tiles[*ni];
                 let o = if nt.edge[0] == b {
                     Orient::FR180 // X
                 } else if nt.edge[1] == b {
@@ -112,7 +112,7 @@ fn parts(inp: &[u8]) -> (usize, usize) {
                 if tiles[*ni].used {
                     continue;
                 }
-                let mut nt = &mut tiles[*ni];
+                let nt = &mut tiles[*ni];
                 let o = if nt.edge[0] == r {
                     Orient::FR90
                 } else if nt.edge[1] == r {
@@ -235,8 +235,8 @@ fn main() {
     aoc::benchme(|bench: bool| {
         let (p1, p2) = parts(&inp);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     })
 }

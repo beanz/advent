@@ -50,8 +50,8 @@ fn main() {
         }
         let p2 = r.count;
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

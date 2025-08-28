@@ -44,7 +44,7 @@ impl Tower {
                 let children_str = rhs.split(", ");
                 for child in children_str {
                     parent.insert(child.to_string(), tower.to_string());
-                    let c = children.entry(tower.to_string()).or_insert_with(Vec::new);
+                    let c = children.entry(tower.to_string()).or_default();
                     c.push(child.to_string());
                 }
             }
@@ -105,8 +105,8 @@ fn main() {
         let p1 = tower.part1();
         let p2 = tower.part2(p1.to_string());
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }

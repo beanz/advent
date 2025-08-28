@@ -12,7 +12,7 @@ impl fmt::Display for Dragon {
             .iter()
             .map(|b| if *b { '1' } else { '0' })
             .collect::<String>();
-        write!(f, "{}", res)
+        write!(f, "{res}")
     }
 }
 
@@ -59,8 +59,8 @@ fn main() {
         let p1 = part1(&inp, 272);
         let p2 = part1(&inp, 35651584);
         if !bench {
-            println!("Part 1: {}", p1);
-            println!("Part 2: {}", p2);
+            println!("Part 1: {p1}");
+            println!("Part 2: {p2}");
         }
     });
 }
