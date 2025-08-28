@@ -9,13 +9,13 @@ test "examples" {
 }
 
 fn part1(inp: anytype) usize {
-    var lit = std.mem.split(u8, inp, "\n");
+    var lit = std.mem.splitScalar(u8, inp, '\n');
     var c: usize = 0;
     while (lit.next()) |line| {
         if (line.len == 0) {
             break;
         }
-        var fit = std.mem.tokenize(u8, line, "- :");
+        var fit = std.mem.tokenizeAny(u8, line, "- :");
         const n1 = std.fmt.parseInt(i64, fit.next().?, 10) catch unreachable;
         const n2 = std.fmt.parseInt(i64, fit.next().?, 10) catch unreachable;
         const ch = (fit.next().?)[0];
@@ -34,13 +34,13 @@ fn part1(inp: anytype) usize {
 }
 
 fn part2(inp: anytype) usize {
-    var lit = std.mem.split(u8, inp, "\n");
+    var lit = std.mem.splitScalar(u8, inp, '\n');
     var c: usize = 0;
     while (lit.next()) |line| {
         if (line.len == 0) {
             break;
         }
-        var fit = std.mem.tokenize(u8, line, "- :");
+        var fit = std.mem.tokenizeAny(u8, line, "- :");
         const n1 = std.fmt.parseUnsigned(usize, fit.next().?, 10) catch unreachable;
         const n2 = std.fmt.parseUnsigned(usize, fit.next().?, 10) catch unreachable;
         const ch = (fit.next().?)[0];

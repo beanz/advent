@@ -1,7 +1,7 @@
 const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
-fn part1(alloc: std.mem.Allocator, in: [][]const u8) usize {
+fn part1(alloc: std.mem.Allocator, in: [][]u8) usize {
     var mem = std.AutoHashMap(usize, usize).init(alloc);
     defer mem.deinit();
     var mask0: usize = undefined;
@@ -22,7 +22,7 @@ fn part1(alloc: std.mem.Allocator, in: [][]const u8) usize {
             mask0 ^= 0xfffffffff;
             //warn("1s mask = {}\n0s mask = {}\n", .{ mask1, mask0 });
         } else { // mem line
-            var vit = std.mem.split(u8, line, " = ");
+            var vit = std.mem.splitSequence(u8, line, " = ");
             const astr = vit.next().?;
             var val = std.fmt.parseUnsigned(usize, vit.next().?, 10) catch unreachable;
             const addr = std.fmt.parseUnsigned(usize, astr[4 .. astr.len - 1], 10) catch unreachable;
@@ -40,7 +40,7 @@ fn part1(alloc: std.mem.Allocator, in: [][]const u8) usize {
     return sum;
 }
 
-fn part2(alloc: std.mem.Allocator, in: [][]const u8) usize {
+fn part2(alloc: std.mem.Allocator, in: [][]u8) usize {
     var mem = std.AutoHashMap(usize, usize).init(alloc);
     defer mem.deinit();
     var mask1: usize = undefined;
@@ -60,7 +60,7 @@ fn part2(alloc: std.mem.Allocator, in: [][]const u8) usize {
             }
             //warn("1s mask = {}\nXs mask = {}\n", .{ mask1, maskx });
         } else { // mem line
-            var vit = std.mem.split(u8, line, " = ");
+            var vit = std.mem.splitSequence(u8, line, " = ");
             const astr = vit.next().?;
             const val = std.fmt.parseUnsigned(usize, vit.next().?, 10) catch unreachable;
             var addr = std.fmt.parseUnsigned(usize, astr[4 .. astr.len - 1], 10) catch unreachable;

@@ -18,7 +18,7 @@ fn part1(alloc: std.mem.Allocator, inp: anytype) usize {
     for (inp) |ent| {
         var m = std.AutoHashMap(u8, usize).init(alloc);
         defer m.deinit();
-        var pit = std.mem.split(u8, ent, "\n");
+        var pit = std.mem.splitScalar(u8, ent, '\n');
         while (pit.next()) |ans| {
             for (ans) |ch| {
                 aoc.minc(&m, ch);
@@ -40,7 +40,7 @@ fn part2(alloc: std.mem.Allocator, inp: anytype) usize {
         var m = std.AutoHashMap(u8, usize).init(alloc);
         defer m.deinit();
         var people: usize = 0;
-        var pit = std.mem.split(u8, ent, "\n");
+        var pit = std.mem.splitScalar(u8, ent, '\n');
         while (pit.next()) |ans| {
             people += 1;
             for (ans) |ch| {

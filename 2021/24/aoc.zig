@@ -75,7 +75,7 @@ const ALU = struct {
             if (a.divZ[i] == 1) {
                 try stack.append(i);
             } else {
-                const j = stack.pop();
+                const j = stack.pop().?;
                 a.cons[ci] = Constraint{ .i = i, .j = j };
                 ci += 1;
             }

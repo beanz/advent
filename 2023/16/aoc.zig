@@ -20,7 +20,7 @@ fn solve(inp: []const u8, w: usize, h: usize, x: isize, y: isize, d: Dir) !usize
     var todo = try std.BoundedArray(Beam, 128).init(0);
     try todo.append(Beam{ .x = x, .y = y, .d = d });
     while (todo.len > 0) {
-        const cur = todo.pop();
+        const cur = todo.pop().?;
         if (cur.x < 0 or cur.x >= w or cur.y < 0 or cur.y >= h) {
             continue;
         }

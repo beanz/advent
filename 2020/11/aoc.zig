@@ -44,7 +44,7 @@ const Map = struct {
     changes: usize,
     alloc: std.mem.Allocator,
 
-    pub fn fromInput(alloc: std.mem.Allocator, inp: [][]const u8) !*Map {
+    pub fn fromInput(alloc: std.mem.Allocator, inp: [][]u8) !*Map {
         const h = inp.len;
         const w = inp[0].len;
         var map = try alloc.alloc(SeatState, h * w);
@@ -176,13 +176,13 @@ const Map = struct {
     }
 };
 
-fn part1(alloc: std.mem.Allocator, in: [][]const u8) usize {
+fn part1(alloc: std.mem.Allocator, in: [][]u8) usize {
     var map = Map.fromInput(alloc, in) catch unreachable;
     defer map.deinit();
     return map.Run(4, false);
 }
 
-fn part2(alloc: std.mem.Allocator, in: [][]const u8) usize {
+fn part2(alloc: std.mem.Allocator, in: [][]u8) usize {
     var map = Map.fromInput(alloc, in) catch unreachable;
     defer map.deinit();
     return map.Run(5, true);

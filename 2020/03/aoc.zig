@@ -12,13 +12,13 @@ test "examples" {
     try aoc.assertEq(@as(usize, 7560370818), part2(map2));
 }
 
-fn isTree(map: [][]const u8, x: usize, y: usize) bool {
+fn isTree(map: [][]u8, x: usize, y: usize) bool {
     const n = map[0].len;
     const m = map.len;
     return map[y % m][x % n] == '#';
 }
 
-fn calc(map: [][]const u8, sx: usize, sy: usize) usize {
+fn calc(map: [][]u8, sx: usize, sy: usize) usize {
     var trees: usize = 0;
     var x: usize = 0;
     var y: usize = 0;
@@ -32,11 +32,11 @@ fn calc(map: [][]const u8, sx: usize, sy: usize) usize {
     return trees;
 }
 
-fn part1(map: [][]const u8) usize {
+fn part1(map: [][]u8) usize {
     return calc(map, 3, 1);
 }
 
-fn part2(map: [][]const u8) usize {
+fn part2(map: [][]u8) usize {
     var p: usize = 1;
     p *= calc(map, 1, 1);
     p *= calc(map, 3, 1);

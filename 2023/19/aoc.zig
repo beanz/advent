@@ -103,7 +103,7 @@ fn parts(inp: []const u8) anyerror![2]usize {
         .max = [4]usize{ 4000, 4000, 4000, 4000 },
     });
     while (todo.len > 0) {
-        var cur = todo.pop();
+        var cur = todo.pop().?;
         if (cur.state == 0) {
             continue;
         }

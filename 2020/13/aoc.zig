@@ -1,11 +1,11 @@
 const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
-fn part1(in: [][]const u8) u64 {
+fn part1(in: [][]u8) u64 {
     const dt = std.fmt.parseUnsigned(u64, in[0], 10) catch unreachable;
     var min: u64 = std.math.maxInt(u64);
     var mbus: u64 = undefined;
-    var bit = std.mem.split(u8, in[1], ",");
+    var bit = std.mem.splitScalar(u8, in[1], ',');
     while (bit.next()) |ts| {
         if (ts[0] == 'x') {
             continue;
@@ -58,8 +58,8 @@ fn chinese(la: std.ArrayList(i64), ln: std.ArrayList(i64)) i64 {
     return x;
 }
 
-fn part2(alloc: std.mem.Allocator, in: [][]const u8) i64 {
-    var bit = std.mem.split(u8, in[1], ",");
+fn part2(alloc: std.mem.Allocator, in: [][]u8) i64 {
+    var bit = std.mem.splitScalar(u8, in[1], ',');
     var a = std.ArrayList(i64).init(alloc);
     defer a.deinit();
     var n = std.ArrayList(i64).init(alloc);

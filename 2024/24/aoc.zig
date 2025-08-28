@@ -2,7 +2,7 @@ const std = @import("std");
 const aoc = @import("aoc-lib.zig");
 
 test "testcases" {
-    try aoc.TestCases(usize, parts);
+    try aoc.TestCasesRes(Res, parts);
 }
 
 const Op = enum { And, Or, Xor, Noop };

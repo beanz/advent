@@ -56,22 +56,22 @@ const Mess = struct {
         m.err = 0;
         m.onlyDepart = true;
         m.debug = false;
-        var lit = std.mem.split(u8, inp[0], "\n");
+        var lit = std.mem.splitScalar(u8, inp[0], '\n');
         while (lit.next()) |line| {
             var f = try alloc.create(Field);
-            var sit = std.mem.split(u8, line, ": ");
+            var sit = std.mem.splitSequence(u8, line, ": ");
             const name = sit.next().?;
-            var sit2 = std.mem.split(u8, sit.next().?, " or ");
-            var range1it = std.mem.split(u8, sit2.next().?, "-");
+            var sit2 = std.mem.splitSequence(u8, sit.next().?, " or ");
+            var range1it = std.mem.splitScalar(u8, sit2.next().?, '-');
             f.min1 = try std.fmt.parseInt(i64, range1it.next().?, 10);
             f.max1 = try std.fmt.parseInt(i64, range1it.next().?, 10);
-            var range2it = std.mem.split(u8, sit2.next().?, "-");
+            var range2it = std.mem.splitScalar(u8, sit2.next().?, '-');
             f.min2 = try std.fmt.parseInt(i64, range2it.next().?, 10);
             f.max2 = try std.fmt.parseInt(i64, range2it.next().?, 10);
             try m.fields.put(name, f);
         }
         const our: Ticket = try aoc.Ints(alloc, i64, inp[1]);
-        lit = std.mem.split(u8, inp[2], "\n");
+        lit = std.mem.splitScalar(u8, inp[2], '\n');
         _ = lit.next().?;
         var tickets = std.ArrayList(Ticket).init(alloc);
         while (lit.next()) |line| {

@@ -97,7 +97,7 @@ const Nav = struct {
     alloc: std.mem.Allocator,
     debug: bool,
 
-    pub fn fromInput(alloc: std.mem.Allocator, inp: [][]const u8) !*Nav {
+    pub fn fromInput(alloc: std.mem.Allocator, inp: [][]u8) !*Nav {
         const l = inp.len;
         var inst = try alloc.alloc(Inst, l);
         var nav = try alloc.create(Nav);
@@ -219,13 +219,13 @@ const Nav = struct {
     }
 };
 
-fn part1(alloc: std.mem.Allocator, in: [][]const u8) usize {
+fn part1(alloc: std.mem.Allocator, in: [][]u8) usize {
     var nav = Nav.fromInput(alloc, in) catch unreachable;
     defer nav.deinit();
     return nav.Part1();
 }
 
-fn part2(alloc: std.mem.Allocator, in: [][]const u8) usize {
+fn part2(alloc: std.mem.Allocator, in: [][]u8) usize {
     var nav = Nav.fromInput(alloc, in) catch unreachable;
     defer nav.deinit();
     return nav.Part2();

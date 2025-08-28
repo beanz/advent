@@ -12,13 +12,13 @@ const Game = struct {
     pub fn init(alloc: std.mem.Allocator, in: [][]const u8) !*Game {
         var self = try alloc.create(Game);
         var l: usize = 0;
-        var it = std.mem.split(u8, in[0], "\n");
+        var it = std.mem.splitScalar(u8, in[0], '\n');
         while (it.next()) |_| {
             l += 1;
         }
         l -= 1;
         self.d1 = try alloc.alloc(u8, l);
-        it = std.mem.split(u8, in[0], "\n");
+        it = std.mem.splitScalar(u8, in[0], '\n');
         _ = it.next();
         var i: usize = 0;
         while (it.next()) |line| {
@@ -26,13 +26,13 @@ const Game = struct {
             i += 1;
         }
         l = 0;
-        it = std.mem.split(u8, in[1], "\n");
+        it = std.mem.splitScalar(u8, in[1], '\n');
         while (it.next()) |_| {
             l += 1;
         }
         l -= 1;
         self.d2 = try alloc.alloc(u8, l);
-        it = std.mem.split(u8, in[1], "\n");
+        it = std.mem.splitScalar(u8, in[1], '\n');
         _ = it.next();
         i = 0;
         while (it.next()) |line| {

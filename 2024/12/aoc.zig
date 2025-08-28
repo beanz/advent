@@ -30,7 +30,7 @@ fn parts(inp: []const u8) anyerror![2]usize {
             var perimeter: usize = 0;
             var todo = try std.BoundedArray(Rec, 1024).init(0);
             try todo.append(Rec{ .x = x, .y = y });
-            while (todo.popOrNull()) |cur| {
+            while (todo.pop()) |cur| {
                 if (seen[cur.x + cur.y * w]) {
                     continue;
                 }

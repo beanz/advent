@@ -53,7 +53,7 @@ fn parts(inp: []const u8) anyerror![2]usize {
         }
         var mapped = try std.BoundedArray(Seed, 128).init(0);
         outer: while (seed_ranges.len > 0) {
-            const p = seed_ranges.pop();
+            const p = seed_ranges.pop().?;
             const start = p.seed;
             const end = p.end;
             for (0..map.len / 3) |k| {

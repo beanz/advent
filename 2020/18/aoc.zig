@@ -113,7 +113,7 @@ pub fn Calc(alloc: std.mem.Allocator, s: []const u8, isPart2: bool) anyerror!usi
     return RPN(alloc, sy);
 }
 
-pub fn part1(alloc: std.mem.Allocator, s: [][]const u8) anyerror!usize {
+pub fn part1(alloc: std.mem.Allocator, s: [][]u8) anyerror!usize {
     var t: usize = 0;
     for (s) |l| {
         t += try Calc(alloc, l, false);
@@ -121,7 +121,7 @@ pub fn part1(alloc: std.mem.Allocator, s: [][]const u8) anyerror!usize {
     return t;
 }
 
-pub fn part2(alloc: std.mem.Allocator, s: [][]const u8) anyerror!usize {
+pub fn part2(alloc: std.mem.Allocator, s: [][]u8) anyerror!usize {
     var t: usize = 0;
     for (s) |l| {
         t += try Calc(alloc, l, true);

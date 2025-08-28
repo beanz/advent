@@ -13,7 +13,7 @@ const HH = struct {
         var code = try alloc.alloc(Inst, inp.len);
         var hh = try alloc.create(HH);
         for (inp, 0..) |line, ip| {
-            var it = std.mem.split(u8, line, " ");
+            var it = std.mem.splitScalar(u8, line, ' ');
             const opstr = it.next().?;
             const arg = try aoc.parseInt(i64, it.next().?, 10);
             var op: Op = undefined;

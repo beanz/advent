@@ -14,7 +14,7 @@ const Tile = struct {
     pub fn init(alloc: std.mem.Allocator, chunk: []const u8) !*Tile {
         var s = try alloc.create(Tile);
         s.alloc = alloc;
-        var lit = std.mem.split(u8, chunk, "\n");
+        var lit = std.mem.splitScalar(u8, chunk, '\n');
         var first = lit.next().?;
         s.num = std.fmt.parseUnsigned(usize, first[5..9], 10) catch unreachable;
         var ls = std.ArrayList([]u8).init(alloc);
@@ -289,7 +289,7 @@ const Water = struct {
         return @as(usize, @intCast(r));
     }
 
-    pub fn Image(s: *Water) [][]const u8 {
+    pub fn Image(s: *Water) [][]u8 {
         var layout = s.alloc.alloc(usize, s.tiles.count()) catch unreachable;
         defer s.alloc.free(layout);
         if (s.starter == 0) {

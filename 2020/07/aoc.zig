@@ -34,15 +34,15 @@ fn part1(palloc: std.mem.Allocator, inp: anytype) !usize {
     const alloc = arena.allocator();
     var map = std.StringHashMap(std.ArrayList([]const u8)).init(alloc);
     for (inp) |line| {
-        var lit = std.mem.split(u8, line, " bags contain ");
+        var lit = std.mem.splitSequence(u8, line, " bags contain ");
         const bag = lit.next().?;
         const spec = lit.next().?;
         if (spec[0] == 'n' and spec[1] == 'o' and spec[2] == ' ') {
             continue;
         }
-        var sit = std.mem.split(u8, spec, ", ");
+        var sit = std.mem.splitSequence(u8, spec, ", ");
         while (sit.next()) |bags| {
-            var bit = std.mem.split(u8, bags, " ");
+            var bit = std.mem.splitScalar(u8, bags, ' ');
             const ns = bit.next().?;
             _ = std.fmt.parseUnsigned(usize, ns, 10) catch unreachable;
             const b1 = bit.next().?;
@@ -80,15 +80,15 @@ fn part2(palloc: std.mem.Allocator, inp: anytype) !usize {
     const alloc = arena.allocator();
     var map = std.StringHashMap(std.ArrayList(*BS)).init(alloc);
     for (inp) |line| {
-        var lit = std.mem.split(u8, line, " bags contain ");
+        var lit = std.mem.splitSequence(u8, line, " bags contain ");
         const bag = lit.next().?;
         const spec = lit.next().?;
         if (spec[0] == 'n' and spec[1] == 'o' and spec[2] == ' ') {
             continue;
         }
-        var sit = std.mem.split(u8, spec, ", ");
+        var sit = std.mem.splitSequence(u8, spec, ", ");
         while (sit.next()) |bags| {
-            var bit = std.mem.split(u8, bags, " ");
+            var bit = std.mem.splitScalar(u8, bags, ' ');
             const ns = bit.next().?;
             const n = try std.fmt.parseUnsigned(usize, ns, 10);
             const b1 = bit.next().?;

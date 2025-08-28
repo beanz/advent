@@ -108,36 +108,36 @@ test "cup" {
 }
 
 const Game = struct {
-    init: []u8,
+    initial: []u8,
     alloc: std.mem.Allocator,
     debug: bool,
 
-    pub fn init(alloc: std.mem.Allocator, in: [][]const u8) !*Game {
+    pub fn init(alloc: std.mem.Allocator, in: [][]u8) !*Game {
         var self = try alloc.create(Game);
         self.alloc = alloc;
         self.debug = true;
         const l = in[0].len;
-        self.init = try alloc.alloc(u8, l);
+        self.initial = try alloc.alloc(u8, l);
         var i: usize = 0;
         while (i < l) : (i += 1) {
-            self.init[i] = in[0][i] - '0';
+            self.initial[i] = in[0][i] - '0';
         }
         return self;
     }
 
     pub fn deinit(g: *Game) void {
-        g.alloc.free(g.init);
+        g.alloc.free(g.initial);
         g.alloc.destroy(g);
     }
 
     pub fn play(g: *Game, moves: usize, max: usize) *Cup {
         var map = g.alloc.alloc(*Cup, max + 1) catch unreachable; // ignore 0
-        var cur = Cup.init(g.alloc, g.init[0]);
-        map[g.init[0]] = cur;
+        var cur = Cup.init(g.alloc, g.initial[0]);
+        map[g.initial[0]] = cur;
         var last = cur;
         var i: usize = 1;
-        while (i < g.init.len) : (i += 1) {
-            const v = g.init[i];
+        while (i < g.initial.len) : (i += 1) {
+            const v = g.initial[i];
             const n = Cup.init(g.alloc, v);
             map[v] = n;
             last.insertAfter(n);

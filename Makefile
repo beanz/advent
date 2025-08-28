@@ -375,46 +375,56 @@ perl2020-build: $(filter 2020/%,${PERL_CHK})
 perl2021-build: $(filter 2021/%,${PERL_CHK})
 perl2022-build: $(filter 2022/%,${PERL_CHK})
 
-zig-test: zig2015-test zig2016-test zig2017-test zig2018-test zig2019-test zig2020-test zig2021-test
+zig-test: zig2015-test zig2016-test zig2017-test zig2018-test zig2019-test zig2020-test zig2021-test zig2022-test zig2023-test zig2024-test
 zig2015-test: $(filter 2015/%,${ZIG_SRC})
-	@for f in $^ ; do echo -n "$$f: "; zig test $$f ;done
+	@for f in $^ ; do (cd $${f%/*} && echo "$$f: " ; zig test $${f##*/}) ;done
 zig2015-build: $(filter 2015/%,${ZIG_BIN})
 zig2015: $(filter 2015/%,${ZIG_LOG})
 
 zig2016-test: $(filter 2016/%,${ZIG_SRC})
-	@for f in $^ ; do echo -n "$$f: "; zig test $$f ;done
+	@for f in $^ ; do (cd $${f%/*} && echo "$$f: " ; zig test $${f##*/}) ;done
 zig2016-build: $(filter 2016/%,${ZIG_BIN})
 zig2016: $(filter 2016/%,${ZIG_LOG})
 
 zig2017-test: $(filter 2017/%,${ZIG_SRC})
-	@for f in $^ ; do echo -n "$$f: "; zig test $$f ;done
+	@for f in $^ ; do (cd $${f%/*} && echo "$$f: " ; zig test $${f##*/}) ;done
 zig2017-build: $(filter 2017/%,${ZIG_BIN})
 zig2017: $(filter 2017/%,${ZIG_LOG})
 
 zig2018-test: $(filter 2018/%,${ZIG_SRC})
-	@for f in $^ ; do echo -n "$$f: "; zig test $$f ;done
+	@for f in $^ ; do (cd $${f%/*} && echo "$$f: " ; zig test $${f##*/}) ;done
 zig2018-build: $(filter 2018/%,${ZIG_BIN})
 zig2018: $(filter 2018/%,${ZIG_LOG})
 
 zig2019-test: $(filter 2019/%,${ZIG_SRC})
-	@for f in $^ ; do echo -n "$$f: "; zig test $$f ;done
+	@for f in $^ ; do (cd $${f%/*} && echo "$$f: " ; zig test $${f##*/}) ;done
 zig2019-build: $(filter 2019/%,${ZIG_BIN})
 zig2019: $(filter 2019/%,${ZIG_LOG})
 
 zig2020-test: $(filter 2020/%,${ZIG_SRC})
-	@for f in $^ ; do echo -n "$$f: "; zig test $$f ;done
+	@for f in $^ ; do (cd $${f%/*} && echo "$$f: " ; zig test $${f##*/}) ;done
 zig2020-build: $(filter 2020/%,${ZIG_BIN})
 zig2020: $(filter 2020/%,${ZIG_LOG})
 
 zig2021-test: $(filter 2021/%,${ZIG_SRC})
-	@for f in $^ ; do echo -n "$$f: "; zig test $$f ;done
+	@for f in $^ ; do (cd $${f%/*} && echo "$$f: " ; zig test $${f##*/}) ;done
 zig2021-build: $(filter 2021/%,${ZIG_BIN})
 zig2021: $(filter 2021/%,${ZIG_LOG})
 
 zig2022-test: $(filter 2022/%,${ZIG_SRC})
-	@for f in $^ ; do echo -n "$$f: "; zig test $$f ;done
+	@for f in $^ ; do (cd $${f%/*} && echo "$$f: " ; zig test $${f##*/}) ;done
 zig2022-build: $(filter 2022/%,${ZIG_BIN})
 zig2022: $(filter 2022/%,${ZIG_LOG})
+
+zig2023-test: $(filter 2023/%,${ZIG_SRC})
+	@for f in $^ ; do (cd $${f%/*} && echo "$$f: " ; zig test $${f##*/}) ;done
+zig2023-build: $(filter 2023/%,${ZIG_BIN})
+zig2023: $(filter 2023/%,${ZIG_LOG})
+
+zig2024-test: $(filter 2024/%,${ZIG_SRC})
+	@for f in $^ ; do (cd $${f%/*} && echo "$$f: " ; zig test $${f##*/}) ;done
+zig2024-build: $(filter 2024/%,${ZIG_BIN})
+zig2024: $(filter 2024/%,${ZIG_LOG})
 
 rs2015-build: $(filter aoc-rust/target/release/aoc-2015-%,${RS_BIN})
 rs2015: $(filter aoc-rust/target/release/aoc-2015-%,${RS_LOG})

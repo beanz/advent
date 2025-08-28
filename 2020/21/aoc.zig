@@ -9,7 +9,7 @@ const Menu = struct {
     possible: std.StringHashMap(std.StringHashMap(bool)),
     alloc: std.mem.Allocator,
 
-    pub fn init(alloc: std.mem.Allocator, in: [][]const u8) !*Menu {
+    pub fn init(alloc: std.mem.Allocator, in: [][]u8) !*Menu {
         var self = try alloc.create(Menu);
         self.alloc = alloc;
         self.allergens = std.StringHashMap(std.AutoHashMap(usize, bool)).init(alloc);
@@ -17,15 +17,15 @@ const Menu = struct {
         self.possible = std.StringHashMap(std.StringHashMap(bool)).init(alloc);
 
         for (in, 0..) |line, i| {
-            var ls = std.mem.split(u8, line, " (contains ");
+            var ls = std.mem.splitSequence(u8, line, " (contains ");
             const ingstr = ls.next().?;
-            var ings = std.mem.split(u8, ingstr, " ");
+            var ings = std.mem.splitScalar(u8, ingstr, ' ');
             while (ings.next()) |ing| {
                 var e = try self.ingredients.getOrPutValue(ing, std.AutoHashMap(usize, bool).init(alloc));
                 try e.value_ptr.put(i, true);
             }
             var allstr = ls.next().?;
-            var alls = std.mem.split(u8, allstr[0 .. allstr.len - 1], ", ");
+            var alls = std.mem.splitSequence(u8, allstr[0 .. allstr.len - 1], ", ");
             while (alls.next()) |all| {
                 var e = try self.allergens.getOrPutValue(all, std.AutoHashMap(usize, bool).init(alloc));
                 try e.value_ptr.put(i, true);

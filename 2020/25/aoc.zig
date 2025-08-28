@@ -35,7 +35,7 @@ fn expMod(ia: u64, ib: u64, m: u64) u64 {
     return c;
 }
 
-pub fn part1(s: [][]const u8) !u64 {
+pub fn part1(s: [][]u8) !u64 {
     const cardPub = try std.fmt.parseUnsigned(u64, s[0], 10);
     const doorPub = try std.fmt.parseUnsigned(u64, s[1], 10);
     const ls = loopSize(cardPub);

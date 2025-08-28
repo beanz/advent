@@ -128,33 +128,33 @@ const HexLife = struct {
             }
         }
     };
-    init: std.AutoHashMap(usize, State),
+    initial: std.AutoHashMap(usize, State),
     alloc: std.mem.Allocator,
     debug: bool,
 
-    pub fn init(alloc: std.mem.Allocator, in: [][]const u8) !*HexLife {
+    pub fn init(alloc: std.mem.Allocator, in: [][]u8) !*HexLife {
         var s = try alloc.create(HexLife);
         s.alloc = alloc;
         s.debug = false;
-        s.init = std.AutoHashMap(usize, State).init(alloc);
+        s.initial = std.AutoHashMap(usize, State).init(alloc);
         for (in) |line| {
             const ht = HexTileFromString(line);
-            if (s.init.contains(ht)) {
-                _ = s.init.remove(ht);
+            if (s.initial.contains(ht)) {
+                _ = s.initial.remove(ht);
             } else {
-                try s.init.put(ht, .black);
+                try s.initial.put(ht, .black);
             }
         }
         return s;
     }
 
     pub fn deinit(s: *HexLife) void {
-        s.init.deinit();
+        s.initial.deinit();
         s.alloc.destroy(s);
     }
 
     pub fn part1(s: *HexLife) usize {
-        return s.init.count();
+        return s.initial.count();
     }
 
     pub fn part2(s: *HexLife, days: usize) usize {
@@ -162,7 +162,7 @@ const HexLife = struct {
         defer cur.deinit();
         var cur_bb = BB.init(s.alloc) catch unreachable;
         defer cur_bb.deinit();
-        var it = s.init.iterator();
+        var it = s.initial.iterator();
         while (it.next()) |e| {
             const ht = e.key_ptr.*;
             cur.put(ht, .black) catch unreachable;

@@ -13,10 +13,10 @@ const Matcher = struct {
     debug: bool,
 
     pub fn init(alloc: std.mem.Allocator, in: [][]const u8) !*Matcher {
-        var rs = std.mem.split(u8, in[0], "\n");
+        var rs = std.mem.splitScalar(u8, in[0], '\n');
         var r = std.AutoHashMap(usize, Rule).init(alloc);
         while (rs.next()) |l| {
-            var ls = std.mem.split(u8, l, ": ");
+            var ls = std.mem.splitSequence(u8, l, ": ");
             const n = try std.fmt.parseUnsigned(usize, ls.next().?, 10);
             const def = ls.next().?;
             if (def[0] == '"') {
@@ -24,11 +24,11 @@ const Matcher = struct {
                 try r.put(n, Rule{ .str = def[1..2] });
             } else {
                 //std.debug.print("OR rule {}\n", .{def});
-                var os = std.mem.split(u8, def, " | ");
+                var os = std.mem.splitSequence(u8, def, " | ");
                 var opt = std.ArrayList([]usize).init(aoc.halloc); // use alloc
                 defer opt.deinit();
                 while (os.next()) |o| {
-                    var ovs = std.mem.split(u8, o, " ");
+                    var ovs = std.mem.splitScalar(u8, o, ' ');
                     var ov = std.ArrayList(usize).init(aoc.halloc); // use alloc
                     defer ov.deinit();
                     while (ovs.next()) |vs| {
@@ -40,7 +40,7 @@ const Matcher = struct {
                 try r.put(n, Rule{ .opt = try opt.toOwnedSlice() });
             }
         }
-        var vs = std.mem.split(u8, in[1], "\n");
+        var vs = std.mem.splitScalar(u8, in[1], '\n');
         var vl = std.ArrayList([]const u8).init(alloc);
         defer vl.deinit();
         while (vs.next()) |v| {

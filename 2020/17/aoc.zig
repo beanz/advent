@@ -18,7 +18,7 @@ const Map = struct {
         return @as(usize, @intCast(x)) + MAX * (@as(usize, @intCast(y)) + MAX * (@as(usize, @intCast(z)) + MAX * @as(usize, @intCast(q))));
     }
 
-    pub fn fromInput(alloc: std.mem.Allocator, inp: [][]const u8) !*Map {
+    pub fn fromInput(alloc: std.mem.Allocator, inp: [][]u8) !*Map {
         var m = try alloc.create(Map);
         m.alloc = alloc;
         @memset(m.cur[0..], false);

@@ -19,7 +19,7 @@ fn parts(inp: []const u8) anyerror![2]usize {
                 continue;
             },
             ')' => {
-                p = s.pop();
+                p = s.pop().?;
                 continue;
             },
             '|' => {

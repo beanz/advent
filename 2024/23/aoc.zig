@@ -3,7 +3,7 @@ const aoc = @import("aoc-lib.zig");
 const isDigit = std.ascii.isDigit;
 
 test "testcases" {
-    try aoc.TestCases(usize, parts);
+    try aoc.TestCasesRes(Res, parts);
 }
 
 const Res = struct {

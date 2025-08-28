@@ -37,7 +37,7 @@ fn score(inp: []const u8, h: usize, w1: usize, x: usize, y: usize) anyerror!usiz
     var todo = try std.BoundedArray(Rec, 1024).init(0);
     try todo.append(Rec{ .x = x, .y = y, .z = '0' });
     var s: usize = 0;
-    while (todo.popOrNull()) |cur| {
+    while (todo.pop()) |cur| {
         const k = cur.x + cur.y * w1;
         if (seen[k]) {
             continue;

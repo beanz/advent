@@ -55,8 +55,6 @@ pub fn input() []const u8 {
 }
 
 // parsing
-pub const split = std.mem.split;
-pub const tokenize = std.mem.tokenize;
 pub const parseInt = std.fmt.parseInt;
 pub const parseUnsigned = std.fmt.parseUnsigned;
 
@@ -92,7 +90,7 @@ pub fn DEBUG() i32 {
 
 pub fn Ints(alloc: std.mem.Allocator, comptime T: type, inp: anytype) anyerror![]T {
     var ints = std.ArrayList(T).init(alloc);
-    var it = std.mem.tokenize(u8, inp, ":, \n");
+    var it = std.mem.tokenizeAny(u8, inp, ":, \n");
     while (it.next()) |is| {
         if (is.len == 0) {
             break;
@@ -293,7 +291,7 @@ pub fn lcm(a: anytype, b: anytype) @TypeOf(a, b) {
 
 pub fn splitToOwnedSlice(alloc: std.mem.Allocator, inp: []const u8, sep: []const u8) ![][]const u8 {
     var bits = std.ArrayList([]const u8).init(alloc);
-    var it = std.mem.split(u8, inp, sep);
+    var it = std.mem.splitSequence(u8, inp, sep);
     while (it.next()) |bit| {
         if (bit.len == 0) {
             break;
@@ -303,21 +301,21 @@ pub fn splitToOwnedSlice(alloc: std.mem.Allocator, inp: []const u8, sep: []const
     return bits.toOwnedSlice();
 }
 
-pub fn readLines(alloc: std.mem.Allocator, inp: anytype) anyerror![][]const u8 {
-    var lines = std.ArrayList([]const u8).init(alloc);
-    var lit = std.mem.split(u8, inp, "\n");
+pub fn readLines(alloc: std.mem.Allocator, inp: anytype) anyerror![][]u8 {
+    var lines = std.ArrayList([]u8).init(alloc);
+    var lit = std.mem.splitScalar(u8, inp, '\n');
     while (lit.next()) |line| {
         if (line.len == 0) {
             break;
         }
-        lines.append(line) catch unreachable;
+        lines.append(try alloc.dupe(u8, line)) catch unreachable;
     }
     return lines.toOwnedSlice();
 }
 
 pub fn readChunks(alloc: std.mem.Allocator, inp: anytype) anyerror![][]const u8 {
     var chunks = std.ArrayList([]const u8).init(alloc);
-    var cit = std.mem.split(u8, inp, "\n\n");
+    var cit = std.mem.splitSequence(u8, inp, "\n\n");
     while (cit.next()) |chunk| {
         if (chunk.len == 0) {
             break;
@@ -333,18 +331,18 @@ pub fn readChunks(alloc: std.mem.Allocator, inp: anytype) anyerror![][]const u8 
 
 pub fn readChunkyObjects(alloc: std.mem.Allocator, inp: anytype, chunkSep: []const u8, recordSep: []const u8, fieldSep: []const u8) anyerror![](std.StringHashMap([]const u8)) {
     var report = std.ArrayList(std.StringHashMap([]const u8)).init(alloc);
-    var cit = split(u8, inp, chunkSep);
+    var cit = std.mem.splitSequence(u8, inp, chunkSep);
     while (cit.next()) |chunk| {
         if (chunk.len == 0) {
             break;
         }
         var map = std.StringHashMap([]const u8).init(alloc);
-        var fit = tokenize(u8, chunk, recordSep);
+        var fit = std.mem.tokenizeAny(u8, chunk, recordSep);
         while (fit.next()) |field| {
             if (field.len == 0) {
                 break;
             }
-            var kvit = split(u8, field, fieldSep);
+            var kvit = std.mem.splitSequence(u8, field, fieldSep);
             const k = kvit.next().?;
             const v = kvit.next().?;
             map.put(k, v) catch unreachable;
@@ -373,7 +371,7 @@ pub fn stringLessThan(_: void, a: []const u8, b: []const u8) bool {
     return a[i] < b[i];
 }
 
-pub fn rotateLinesNonSymmetric(alloc: std.mem.Allocator, lines: [][]const u8) [][]u8 {
+pub fn rotateLinesNonSymmetric(alloc: std.mem.Allocator, lines: [][]u8) [][]u8 {
     const end = lines.len - 1;
     var tmp = alloc.alloc([]u8, lines[0].len) catch unreachable;
     var i: usize = 0;
@@ -409,7 +407,7 @@ pub fn rotateLines(lines: [][]u8) void {
     }
 }
 
-pub fn reverseLines(lines: [][]const u8) void {
+pub fn reverseLines(lines: [][]u8) void {
     const end = lines.len - 1;
     var j: usize = 0;
     while (j < lines.len / 2) {
@@ -420,7 +418,7 @@ pub fn reverseLines(lines: [][]const u8) void {
     }
 }
 
-pub fn countCharsInLines(lines: [][]const u8, findCh: u8) usize {
+pub fn countCharsInLines(lines: [][]u8, findCh: u8) usize {
     var c: usize = 0;
     for (lines) |line| {
         for (line) |ch| {
@@ -1110,22 +1108,38 @@ pub const AllocRecorder = struct {
             .ptr = self,
             .vtable = &.{
                 .alloc = alloc,
+                .remap = remap,
                 .resize = resize,
                 .free = free,
             },
         };
     }
-    fn alloc(ctx: *anyopaque, n: usize, log2_ptr_align: u8, ra: usize) ?[*]u8 {
+    fn alloc(ctx: *anyopaque, n: usize, log2_ptr_align: std.mem.Alignment, ra: usize) ?[*]u8 {
         const self: *AllocRecorder = @ptrCast(@alignCast(ctx));
         const ret = self.wrapped.rawAlloc(n, log2_ptr_align, ra);
         self.c += 1;
         self.b += @as(u64, @intCast(n));
         return ret;
     }
+    fn remap(
+        ctx: *anyopaque,
+        buf: []u8,
+        log2_buf_align: std.mem.Alignment,
+        n: usize,
+        ra: usize,
+    ) ?[*]u8 {
+        const self: *AllocRecorder = @ptrCast(@alignCast(ctx));
+        const ret = self.wrapped.rawRemap(buf, log2_buf_align, n, ra);
+        if (ret != null) {
+            self.c += 1;
+            self.b += @as(u64, @intCast(n));
+        }
+        return ret;
+    }
     fn resize(
         ctx: *anyopaque,
         buf: []u8,
-        log2_buf_align: u8,
+        log2_buf_align: std.mem.Alignment,
         n: usize,
         ra: usize,
     ) bool {
@@ -1138,7 +1152,7 @@ pub const AllocRecorder = struct {
     fn free(
         ctx: *anyopaque,
         buf: []u8,
-        log2_buf_align: u8,
+        log2_buf_align: std.mem.Alignment,
         ra: usize,
     ) void {
         const self: *AllocRecorder = @ptrCast(@alignCast(ctx));
