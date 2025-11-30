@@ -66,7 +66,7 @@ pkgs.mkShell {
 
     rakudo
 
-    go_1_23
+    go_1_25
     gopls
 
     elixir
