@@ -126,12 +126,13 @@ aoc-hs-rel: aoc.hs
 	ghc -i ../../lib-hs/Utils.hs -O3 -o $@ $<
 
 aoc-nim: aoc.nim ../../lib-nim/*.nim
-	$(NIM) c --path:../../lib-nim $<
+	$(NIM) c --deepcopy:on --path:../../lib-nim $<
 	mv aoc $@
 
 aoc-nim-rel: aoc.nim ../../lib-nim/*.nim
-	$(NIM) c --checks:off --assertions:off --opt:speed -d:release \
-	         --path:../../lib-nim $<
+	$(NIM) c --deepcopy:on --checks:off --assertions:off \
+		--opt:speed -d:release \
+	  --path:../../lib-nim $<
 	mv aoc $@
 
 aoc-lib.zig: ../../lib-zig/aoc-lib.zig
@@ -161,10 +162,10 @@ gocpu.out: main.go
 	if [ -f .aoc-go.benchtime ]; then BENCHTIME=$$(cat .aoc-go.benchtime); fi;\
 	go test $$(grep -q Bench *_test.go && echo "-run=XXX -benchmem -benchtime=$$BENCHTIME -bench .") -cpuprofile=$@ -memprofile=gomem.out
 
-go-prof: gocpu.out
+prof-go: gocpu.out
 	go tool pprof -http=":9999" $<
 
-go-cover: main.go main_test.go
+cover-go: main.go main_test.go
 	go test -coverprofile cover.out
 	go tool cover -html=cover.out
 	rm cover.out
@@ -176,7 +177,7 @@ cr-cpu.svg: aoc-cr-rel
 	perf report -g fractal -F+period,srcline
 	-rm -f out.perf-folded perf.data perf.data.old
 
-cr-prof: cr-cpu.svg
+prof-cr: cr-cpu.svg
 	google-chrome $<
 
 zig-cpu.svg: aoc-zig
@@ -186,7 +187,7 @@ zig-cpu.svg: aoc-zig
 	perf report -g fractal -F+period,srcline
 	-rm -f out.perf-folded perf.data perf.data.old
 
-zig-prof: zig-cpu.svg
+prof-zig: zig-cpu.svg
 	google-chrome $<
 
 test: ${TEST}
@@ -206,7 +207,7 @@ test-pl:
 test-raku:
 	AoC_TEST=2 ./aoc.raku input.txt
 
-perl-prof:
+prof-perl:
 	perl -d:NYTProf aoc.pl input.txt
 	nytprofhtml --open
 
@@ -247,7 +248,7 @@ prof-rs: $(RS_SRC)
 		   -- ../$(YEAR)/$(DAY)/input.txt ; \
 		echo )
 
-test-rs-cov: $(RS_SRC)
+rs-cover: $(RS_SRC)
 	( cd ../../aoc-rust && \
 	  RUSTFLAGS="-C instrument-coverage" \
 		  cargo test --bin "$(basename $(notdir $<))" )

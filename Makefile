@@ -65,6 +65,7 @@ NIM=nim
 TIME=../../bin/time
 
 .DELETE_ON_ERROR: /bin/true
+.PHONY: all run todo go go-test go-test-fast rust zig
 
 all: ${INPUTS} ${GO_BIN} ${CPP_BIN} ${NIM_BIN} ${ZIG_BIN} ${CR_BIN} ${PERL_CHK} ${RS_BIN}
 run: ${GO_LOG} ${CPP_LOG} ${NIM_LOG} ${ZIG_LOG} ${CR_LOG} ${PERL_LOG} ${RS_LOG}
@@ -138,11 +139,13 @@ aoc-rust/target/release/aoc-%: aoc-rust/src/bin/aoc-%.rs
 	cd $(dir $<) && xxd -i $(notdir $<) cpp/$(notdir $@)
 
 %/aoc-nim: %/aoc.nim %/input.txt
-	$(NIM) c --opt:speed -d:release -p:$(dir $@)../../lib-nim $<
+	$(NIM) c --deepcopy:on --opt:speed -d:release \
+		-p:$(dir $@)../../lib-nim $<
 	mv $(dir $@)/aoc $@
 
 %/aoc-nim-rel: %/aoc.nim %/input.txt
-	$(NIM) c --checks:off --assertions:off --opt:speed -d:release \
+	$(NIM) c --deepcopy:on --checks:off --assertions:off \
+		--opt:speed -d:release \
 	  -p:$(dir $@)../../lib-nim $<
 	mv $(dir $@)/aoc $@
 
