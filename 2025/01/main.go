@@ -14,22 +14,27 @@ func Parts(in []byte, args ...int) (int, int) {
 	a1, a2 := 0, 0
 	p := 50
 	for i := 0; i < len(in); i++ {
-		inc := 1
-		if in[i] == 'L' {
-			inc = -1
-		}
+		dir := int(in[i]&0x2) - 1 // R => 1, L = -1
 		i++
 		var n int
 		i, n = ChompUInt[int](in, i)
-		for range n {
-			p += inc
-			p %= 100
-			if p == 0 {
-				a2++
+		a2 += n / 100
+		n %= 100
+		if p == 0 && dir == -1 {
+			p = 100
+		}
+		p += dir * n
+		if p <= 0 {
+			a2 += 1
+			if p < 0 {
+				p += 100
 			}
+		} else if p >= 100 {
+			a2 += 1
+			p -= 100
 		}
 		if p == 0 {
-			a1++
+			a1 += 1
 		}
 	}
 	return a1, a2
