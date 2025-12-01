@@ -1,0 +1,7 @@
+test1.txt
+3
+6
+---END---
+input.txt
+1036
+6228
