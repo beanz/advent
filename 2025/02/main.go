@@ -13,11 +13,11 @@ var input []byte
 func invalid(id []byte) int {
 	l := len(id)
 OUTER:
-	for i := 2; i <= l; i++ {
-		if l%i != 0 {
+	for i := 2; i < l; i++ {
+		m := l / i
+		if m*i != l {
 			continue
 		}
-		m := l / i
 		for j := 0; j < m; j++ {
 			for k := m + j; k < len(id); k += m {
 				if id[j] != id[k] {
@@ -27,7 +27,12 @@ OUTER:
 		}
 		return i
 	}
-	return 0
+	for i := 1; i < l; i++ {
+		if id[0] != id[i] {
+			return 0
+		}
+	}
+	return l
 }
 
 func Parts(in []byte, args ...int) (int, int) {
