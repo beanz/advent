@@ -12,8 +12,23 @@ var input []byte
 
 func invalid(id []byte) int {
 	l := len(id)
+	matchingHalves := func() bool {
+		if l&1 == 1 {
+			return false
+		}
+		m := l / 2
+		for k := 0; k < m; k++ {
+			if id[k] != id[m+k] {
+				return false
+			}
+		}
+		return true
+	}
+	if matchingHalves() {
+		return 2
+	}
 OUTER:
-	for i := 2; i < l; i++ {
+	for i := 3; i < l; i += 2 {
 		m := l / i
 		if m*i != l {
 			continue
