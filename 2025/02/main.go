@@ -18,9 +18,11 @@ OUTER:
 			continue
 		}
 		m := l / i
-		for j := m; j < len(id); j++ {
-			if id[j] != id[j%m] {
-				continue OUTER
+		for j := 0; j < m; j++ {
+			for k := m + j; k < len(id); k += m {
+				if id[j] != id[k] {
+					continue OUTER
+				}
 			}
 		}
 		return i
