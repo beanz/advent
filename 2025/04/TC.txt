@@ -1,0 +1,7 @@
+test1.txt
+13
+43
+---END---
+input.txt
+1384
+8013
