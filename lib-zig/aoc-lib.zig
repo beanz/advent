@@ -451,7 +451,7 @@ pub fn benchme(inp: []const u8, comptime call: fn (in: []const u8, bench: bool) 
         try call(inp, is_bench);
         it += 1;
         elapsed = @import("std").time.nanoTimestamp() - start;
-        if (!is_bench or elapsed > 1000000000) {
+        if (!is_bench or elapsed > 5000000000) {
             break;
         }
     }
