@@ -15,31 +15,35 @@ fn parts(inp: []const u8) anyerror![2]usize {
         const e = try aoc.chompUint(usize, inp, &i);
         for (s..e + 1) |n| {
             const l = std.math.log10_int(n) + 1;
-            const max = try std.math.powi(usize, 10, l / 2);
             if (l & 1 == 0) {
-                const first = @mod(n, max);
+                const max = try std.math.powi(usize, 10, l / 2);
                 const second = @divFloor(n, max);
-                if (first == second) {
+                if (n == second + second * max) {
                     p1 += n;
                     p2 += n;
                     continue;
                 }
             }
-            var div = try std.math.powi(usize, 10, l - 1);
-            var m: usize = 10;
-            LOOP: while (m <= max) {
-                const first = n / div;
-                var c = first;
-                while (c <= n) {
+            var j: usize = 3;
+            while (j <= l) {
+                if (l % j != 0) {
+                    j += 2;
+                    continue;
+                }
+                const k = @divExact(l, j);
+                const m = try std.math.powi(usize, 10, k);
+                const div = try std.math.powi(usize, 10, l - k);
+                const first = @divFloor(n, div);
+                var c: usize = 0;
+                for (0..j) |_| {
                     c *= m;
                     c += first;
-                    if (c == n) {
-                        p2 += n;
-                        break :LOOP;
-                    }
                 }
-                div /= 10;
-                m *= 10;
+                if (c == n) {
+                    p2 += n;
+                    break;
+                }
+                j += 2;
             }
         }
     }
