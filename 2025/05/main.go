@@ -13,7 +13,7 @@ import (
 var input []byte
 
 func Parts(in []byte, args ...int) (int, int) {
-	ranges := [][2]int{}
+	ranges := make([][2]int, 0, 1024)
 	i := 0
 	for ; i < len(in); i++ {
 		if in[i] == '\n' {
@@ -25,6 +25,9 @@ func Parts(in []byte, args ...int) (int, int) {
 		ranges = append(ranges, [2]int{s, e + 1})
 	}
 	i++
+	slices.SortFunc(ranges, func(a [2]int, b [2]int) int {
+		return cmp.Compare(a[0], b[0])
+	})
 	p1 := 0
 	for ; i < len(in); i++ {
 		var n int
@@ -34,19 +37,17 @@ func Parts(in []byte, args ...int) (int, int) {
 				p1++
 				break
 			}
+			if n < r[0] {
+				break
+			}
 		}
 	}
 	p2 := 0
-	slices.SortFunc(ranges, func(a [2]int, b [2]int) int {
-		return cmp.Compare(a[0], b[0])
-	})
 	end := 0
 	for _, r := range ranges {
-		if r[0] < end {
-			r[0] = end
-		}
-		if r[0] < r[1] {
-			p2 += r[1] - r[0]
+		s := max(r[0], end)
+		if s < r[1] {
+			p2 += r[1] - s
 		}
 		end = max(r[1], end)
 	}
