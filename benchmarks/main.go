@@ -31,11 +31,8 @@ func makeTable(benchmarks benchmarkData) string {
 	}
 	sort.Strings(languages)
 
-	for _, year := range []string{"2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016", "2015"} {
-		sb.WriteByte('\n')
-		sb.WriteString("## ")
-		sb.WriteString(year)
-		sb.WriteByte('\n')
+	for year := 2025; year >= 2015; year-- {
+		fmt.Fprintf(&sb, "\n## %d\n", year)
 
 		langs := make([]string, 0, len(languages))
 		for _, lang := range languages {
@@ -78,8 +75,7 @@ func makeTable(benchmarks benchmarkData) string {
 			"13", "14", "15", "16", "17", "18",
 			"19", "20", "21", "22", "23", "24",
 			"25"} {
-			sb.WriteString("Day ")
-			sb.WriteString(day)
+			fmt.Fprintf(&sb, "Day %s", day)
 			for i, lang := range langs {
 				sb.WriteString(" | ")
 				res, ok := benchmarks[lang][year][day]
@@ -118,6 +114,9 @@ func makeTable(benchmarks benchmarkData) string {
 				}
 			}
 			sb.WriteByte('\n')
+			if year >= 2025 && day == "12" {
+				break
+			}
 		}
 		minY, maxY := float64(99999), float64(0.0)
 		sb.WriteString("*Total*")
@@ -184,16 +183,12 @@ func makeTable(benchmarks benchmarkData) string {
 			diagram.Frame()
 			diagram.Axis(series[0], margaid.XAxis, diagram.LabeledTicker(dayLabel), false, "Day")
 			diagram.Axis(labelSeries, margaid.YAxis, diagram.LabeledTicker(labeler), false, "Runtime")
-			svg, err := os.Create("y" + year + ".svg")
+			svg, err := os.Create(fmt.Sprintf("y%d.svg", year))
 			if err != nil {
 				panic(err)
 			}
 			_ = diagram.Render(svg)
-			sb.WriteString("![Graph for year ")
-			sb.WriteString(year)
-			sb.WriteString("](y")
-			sb.WriteString(year)
-			sb.WriteString(".svg)\n")
+			fmt.Fprintf(&sb, "![Graph for year %[1]d](y%[1]d.svg)\n", year)
 		}
 	}
 
@@ -203,16 +198,15 @@ func makeTable(benchmarks benchmarkData) string {
 		sb.WriteString(lang)
 		sb.WriteByte('\n')
 
-		years := []string{}
+		years := []int{}
 		for year := range benchmarks[lang] {
 			years = append(years, year)
 		}
-		sort.Strings(years)
+		sort.Ints(years)
 		sb.WriteString(" &nbsp; ")
 		yearRes := make([]benchResult, len(years))
 		for i, year := range years {
-			sb.WriteString(" | ")
-			sb.WriteString(year)
+			fmt.Fprintf(&sb, " | %d", year)
 			totalRuntime := time.Duration(0)
 			var totalMem *float64
 			for _, res := range benchmarks[lang][year] {
@@ -355,9 +349,13 @@ func loadBenchmarks(dir string) (benchmarkData, error) {
 	return benchmarks, nil
 }
 
-func (bm benchmarkData) readResult(file string, lang, year, day string) error {
+func (bm benchmarkData) readResult(file, lang, y, day string) error {
+	year, err := strconv.Atoi(y)
+	if err != nil {
+		panic(err.Error())
+	}
 	if _, ok := bm[lang]; !ok {
-		bm[lang] = map[string]map[string]benchResult{}
+		bm[lang] = map[int]map[string]benchResult{}
 	}
 	if _, ok := bm[lang][year]; !ok {
 		bm[lang][year] = map[string]benchResult{}
@@ -490,4 +488,4 @@ type benchResult struct {
 	mem *float64
 	t   time.Duration
 }
-type benchmarkData map[string]map[string]map[string]benchResult
+type benchmarkData map[string]map[int]map[string]benchResult

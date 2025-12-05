@@ -18,19 +18,6 @@ Day 09 | - | - | -
 Day 10 | - | - | -
 Day 11 | - | - | -
 Day 12 | - | - | -
-Day 13 | - | - | -
-Day 14 | - | - | -
-Day 15 | - | - | -
-Day 16 | - | - | -
-Day 17 | - | - | -
-Day 18 | - | - | -
-Day 19 | - | - | -
-Day 20 | - | - | -
-Day 21 | - | - | -
-Day 22 | - | - | -
-Day 23 | - | - | -
-Day 24 | - | - | -
-Day 25 | - | - | -
 *Total* | *21.3ms / None* | *21.8ms / None* | *11.7ms / None*
 
 ![Graph for year 2025](y2025.svg)
