@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	_ "embed"
 	"fmt"
 
@@ -38,15 +37,16 @@ func part(line []byte, n int) int {
 
 func Parts(in []byte, args ...int) (int, int) {
 	p1, p2 := 0, 0
-	for _, line := range bytes.Split(in, []byte{'\n'}) {
+	i := 0
+	VisitLines(in, &i, func(line []byte) {
 		if len(line) == 0 {
-			continue
+			return
 		}
 		r1 := part(line, 2)
 		p1 += r1
 		r2 := part(line, 12)
 		p2 += r2
-	}
+	})
 	return p1, p2
 }
 

@@ -185,6 +185,26 @@ LOOP:
 			k = *i
 		}
 		*i++
+		if *i >= len(in) {
+			if word {
+				fn(in[j : k+1])
+			}
+			break
+		}
+	}
+}
+
+func VisitLines(in []byte, i *int, fn func(s []byte)) {
+	j := 0
+	for ; *i < len(in); *i++ {
+		if in[*i] != '\n' {
+			continue
+		}
+		fn(in[j:*i])
+		j = *i + 1
+	}
+	if *i != j {
+		fn(in[j:*i])
 	}
 }
 
