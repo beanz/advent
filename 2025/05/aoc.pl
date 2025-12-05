@@ -20,7 +20,7 @@ sub read_stuff {
   my $file = shift;
   my $in = read_2024($file);
   $in->[0] =
-    [sort {$a->[0] <=> $b->[0]} map {[$_->[0], 1 - $_->[1]]} @{$in->[0]}];
+    [sort {$a->[0] <=> $b->[0]} map {[$_->[0], 1 + $_->[1]]} @{$in->[0]}];
   return $in;
 }
 

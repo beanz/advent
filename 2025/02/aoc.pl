@@ -12,15 +12,9 @@ $; = $" = ',';
 
 my $file = shift // "input.txt";
 
-my $reader = \&read_stuff;
+my $reader = \&read_2024;
 my $i = $reader->($file);
 my $i2 = $reader->($file);
-
-sub read_stuff {
-  my $file = shift;
-  my $in = read_lines($file);
-  return [map {[split /-/, $_]} split /,/, $in->[0]];
-}
 
 sub invalid {
   my ($id) = @_;

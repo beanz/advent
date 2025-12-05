@@ -474,12 +474,12 @@ sub guess_struct {
         @l = @r;
       }
       my @drop;
-      for my $i (0..@l-1) {
-        push @drop, all { $_->[$i] eq $l[$i] } values %h;
+      for my $i (0 .. @l - 1) {
+        push @drop, all {$_->[$i] eq $l[$i]} values %h;
       }
       for my $k (keys %h) {
         my @n;
-        for my $i (0..@l-1) {
+        for my $i (0 .. @l - 1) {
           push @n, $h{$k}->[$i] unless ($drop[$i]);
         }
         $h{$k} = \@n;
@@ -538,6 +538,9 @@ sub field_type {
   if (/^\d+\.\d+$/) {
     return 'float';
   }
+  if (/^\d+-\d+$/) {
+    return 'range';
+  }
   if (/^[a-zA-Z]$/) {
     return 'alpha';
   }
@@ -574,10 +577,16 @@ sub guess_2024 {
     }
     return guess_struct(\@a);
   }
+  if (/^\d+-\d+$/) {
+    return [split/-/];
+  }
   my @a = grep {$_ ne '' && field_type($_) !~ /^(?:space|separator)$/}
-    split /\s*([a-zA-Z]+[-+ ][a-zA-Z]+|[a-zA-Z]+|[-+]?[0-9]+)\b\s*/;
+  split /\s*(\d+-\d+|[a-zA-Z]+[-+ ][a-zA-Z]+|[a-zA-Z]+|[-+]?[0-9]+)\b\s*/;
   if (@a == 1) {
     return $a[0];
+  }
+  if (all {/^\d+-\d+$/} @a) {
+    return [map {[split/-/]} @a];
   }
   return \@a;
 }
