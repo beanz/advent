@@ -12,57 +12,59 @@ import (
 var input []byte
 
 func Parts(in []byte, args ...int) (int, int) {
-	w := bytes.IndexByte(in, '\n')
-	h := len(in) / (w + 1)
-	p2 := 0
-	nums := make([]int, 0, 5)
-	for i := w - 1; i >= 0; i-- {
-		n := 0
-		for y := range h - 1 {
-			if in[i+y*(w+1)] == ' ' {
-				continue
-			}
-			n = 10*n + int(in[i+y*(w+1)]-'0')
-		}
-		if n == 0 {
-			p2 += apply(in[i+1+(h-1)*(w+1)], nums...)
-			nums = nums[:0]
-		} else {
-			nums = append(nums, n)
-		}
-	}
-	i := (h - 1) * (w + 1)
-	p2 += apply(in[i], nums...)
-	p1 := 0
-	lines := make([]int, h-1)
-	for y := range h - 1 {
-		lines[y] = y * (w + 1)
-	}
+	w := bytes.IndexByte(in, '\n') + 1
+	h := len(in)/w - 1
+	p1, p2 := 0, 0
 	skip := func(i int) int {
-		for ; i < len(in) && in[i] == ' '; i++ {
+		for ; i < len(in) && in[i] <= ' '; i++ {
 		}
 		return i
 	}
-	for i < len(in)-1 {
+	for i := h * w; i < len(in); {
 		op := in[i]
+		j := i
 		i = skip(i + 1)
-		nums = nums[:0]
-		for y := range h - 1 {
-			lines[y] = skip(lines[y])
-			j, n := ChompUInt[int](in, lines[y])
-			lines[y] = j + 1
-			nums = append(nums, n)
+		if op == '+' {
+			p1 += add(in, j-w*h, 1, w, i-j-1, h)
+			p2 += add(in, j-w*h, w, 1, h, i-j-1)
+		} else {
+			p1 += mul(in, j-w*h, 1, w, i-j-1, h)
+			p2 += mul(in, j-w*h, w, 1, h, i-j-1)
 		}
-		p1 += apply(op, nums...)
 	}
 	return p1, p2
 }
 
-func apply(op byte, nums ...int) int {
-	if op == '+' {
-		return Sum(nums...)
+func add(in []byte, i, digitInc, numInc, digits, nums int) int {
+	res := 0
+	for j := range nums {
+		n := 0
+		for k := range digits {
+			ch := in[i+k*digitInc+j*numInc]
+			if ch == ' ' {
+				continue
+			}
+			n = 10*n + int(ch&0xf)
+		}
+		res += n
 	}
-	return Product(nums...)
+	return res
+}
+
+func mul(in []byte, i, digitInc, numInc, digits, nums int) int {
+	res := 1
+	for j := range nums {
+		n := 0
+		for k := range digits {
+			ch := in[i+k*digitInc+j*numInc]
+			if ch == ' ' {
+				continue
+			}
+			n = 10*n + int(ch&0xf)
+		}
+		res *= n
+	}
+	return res
 }
 
 func main() {
