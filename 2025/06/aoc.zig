@@ -38,10 +38,10 @@ fn parts(inp: []const u8) anyerror![2]usize {
     while (i < inp.len - 1) {
         const op = inp[i];
         i += 1;
-        while (i < inp.len and inp[i] == ' ') : (i += 1) {}
+        skip(inp, &i);
         numsLen = 0;
         for (0..h - 1) |y| {
-            while (lines[y] < inp.len and inp[lines[y]] == ' ') : (lines[y] += 1) {}
+            skip(inp, &lines[y]);
             const n: usize = try aoc.chompUint(usize, inp, &lines[y]);
             nums[numsLen] = n;
             numsLen += 1;
@@ -50,6 +50,10 @@ fn parts(inp: []const u8) anyerror![2]usize {
         p1 += apply(op, nums[0..numsLen]);
     }
     return [2]usize{ p1, p2 };
+}
+
+inline fn skip(inp: []const u8, i: *usize) void {
+    while (i.* < inp.len and inp[i.*] == ' ') : (i.* += 1) {}
 }
 
 inline fn apply(op: u8, nums: []const usize) usize {
