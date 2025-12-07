@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	_ "embed"
 	"fmt"
 
@@ -11,28 +12,39 @@ import (
 var input []byte
 
 func Parts(in []byte, args ...int) (int, int) {
-	var x, p1 int
-	b := [256]int{}
-	for i := 0; i < len(in); i++ {
-		switch in[i] {
-		case 'S':
-			b[x]++
-		case '\n':
-			x = 0
-			continue
-		case '^':
-			if b[x] > 0 {
-				b[x-1] += b[x]
-				b[x+1] += b[x]
-				b[x] = 0
-				p1 += 1
+	w := 1 + bytes.IndexByte(in, '\n')
+	h := len(in) / w
+	first, last := 0, w-2
+	var p1 int
+	b := [150]int{}
+	for y := 0; y < h; y++ {
+	LL:
+		for x := first; x <= last; x++ {
+			switch in[x+y*w] {
+			case 'S':
+				b[x]++
+				first = x - 1
+				last = x + 1
+				break LL
+			case '^':
+				if b[x] > 0 {
+					b[x-1] += b[x]
+					b[x+1] += b[x]
+					b[x] = 0
+					p1 += 1
+					if x == first {
+						first--
+					}
+					if x == last {
+						last++
+					}
+				}
 			}
 		}
-		x++
 	}
 	p2 := 0
-	for _, c := range b {
-		p2 += c
+	for j := first; j <= last; j++ {
+		p2 += b[j]
 	}
 	return p1, p2
 }

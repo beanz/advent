@@ -1,25 +1,36 @@
 fn parts(inp: &[u8]) -> (usize, usize) {
-    let mut x: usize = 0;
+    let w: usize = inp.iter().position(|&ch| ch == b'\n').unwrap() + 1;
+    let h = inp.len() / w;
     let mut p1: usize = 0;
+    let mut first: usize = 0;
+    let mut last: usize = w - 2;
     let mut b: [usize; 150] = [0; 150];
-    for ch in inp {
-        match ch {
-            b'S' => b[x] += 1,
-            b'\n' => {
-                x = 0;
-                continue;
-            }
-            b'^' => {
-                if b[x] > 0 {
-                    b[x - 1] += b[x];
-                    b[x + 1] += b[x];
-                    b[x] = 0;
-                    p1 += 1;
+    for y in 0..h {
+        'LL: for x in first..=last {
+            match inp[x + y * w] {
+                b'S' => {
+                    b[x] += 1;
+                    first = x - 1;
+                    last = x + 1;
+                    break 'LL;
                 }
+                b'^' => {
+                    if b[x] > 0 {
+                        b[x - 1] += b[x];
+                        b[x + 1] += b[x];
+                        b[x] = 0;
+                        p1 += 1;
+                        if x == first {
+                            first -= 1;
+                        }
+                        if x == last {
+                            last += 1;
+                        }
+                    }
+                }
+                _ => {}
             }
-            _ => {}
         }
-        x += 1;
     }
     (p1, b.iter().sum())
 }
