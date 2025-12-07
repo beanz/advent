@@ -172,8 +172,12 @@ func makeTable(benchmarks benchmarkData) string {
 				}
 			}
 
+			w := 25
+			if year >= 2025 {
+				w = 12
+			}
 			diagram := margaid.New(800, 600,
-				margaid.WithRange(margaid.XAxis, 1.0, 25),
+				margaid.WithRange(margaid.XAxis, 1.0, float64(w)),
 				margaid.WithRange(margaid.YAxis, 0.0, maxY),
 				margaid.WithPadding(10),
 				margaid.WithInset(80),
