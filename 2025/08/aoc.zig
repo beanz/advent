@@ -12,7 +12,7 @@ const Point = struct {
 };
 
 const Dist = struct {
-    d: usize,
+    d: u32,
     a: u16,
     b: u16,
 };
@@ -38,7 +38,10 @@ fn parts(inp: []const u8) anyerror![2]usize {
             const dx = points[i].x - points[j].x;
             const dy = points[i].y - points[j].y;
             const dz = points[i].z - points[j].z;
-            const d: usize = @intCast(dx * dx + dy * dy + dz * dz);
+            const fdx = @as(f32, @floatFromInt(dx * dx));
+            const fdy = @as(f32, @floatFromInt(dy * dy));
+            const fdz = @as(f32, @floatFromInt(dz * dz));
+            const d: u32 = @intFromFloat(std.math.sqrt(fdx + fdy + fdz));
             try dist.append(Dist{ .d = d, .a = @intCast(i), .b = @intCast(j) });
         }
     }
