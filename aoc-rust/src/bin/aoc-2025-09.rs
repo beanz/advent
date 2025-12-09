@@ -9,12 +9,23 @@ struct Point {
 fn parts(inp: &[u8]) -> (usize, usize) {
     let mut points = Vec::<Point, 512>::new();
     let mut i: usize = 0;
+    let mut mx: u32 = 0;
+    let mut my: i32 = 0;
     while i < inp.len() {
         let (j, x) = aoc::read::uint::<i32>(inp, i);
         i = j + 1;
         let (j, y) = aoc::read::uint::<i32>(inp, i);
         i = j + 1;
-        points.push(Point { x, y }).expect("overflow");
+        let p = Point { x, y };
+        if points.len() > 1 {
+            let o = &points[points.len() - 1];
+            let dx = (o.x - x).unsigned_abs();
+            if mx < dx {
+                mx = dx;
+                my = y;
+            }
+        }
+        points.push(p).expect("overflow");
     }
     let mut p1: usize = 0;
     let mut p2: usize = 0;
@@ -25,7 +36,12 @@ fn parts(inp: &[u8]) -> (usize, usize) {
             let a: usize = dx * dy;
             p1 = p1.max(a);
             if a < p2 {
-                continue 'outer;
+                continue;
+            }
+            if mx > 1000
+                && (points[i].y < my && points[j].y >= my || points[i].y > my && points[j].y <= my)
+            {
+                continue;
             }
             let min_x: i32 = points[i].x.min(points[j].x);
             let max_x: i32 = points[i].x.max(points[j].x);

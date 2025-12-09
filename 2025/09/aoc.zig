@@ -13,16 +13,28 @@ const Point = struct {
 };
 
 fn parts(inp: []const u8) anyerror![2]usize {
-    const points = parse: {
+    const points, const my = parse: {
+        var mx: u32 = 0;
+        var my: ?Int = 0;
         var points = try std.BoundedArray(Point, 512).init(0);
         var i: usize = 0;
+        var prev: ?Point = null;
         while (i < inp.len) : (i += 1) {
-            const x = try aoc.chompUint(i32, inp, &i);
+            const x = try aoc.chompUint(Int, inp, &i);
             i += 1;
-            const y = try aoc.chompUint(i32, inp, &i);
-            try points.append(Point{ .x = x, .y = y });
+            const y = try aoc.chompUint(Int, inp, &i);
+            const p = Point{ .x = x, .y = y };
+            try points.append(p);
+            if (prev) |o| {
+                const dx = @abs(o.x - p.x);
+                if (dx > 1000 and mx < dx) {
+                    mx = dx;
+                    my = p.y;
+                }
+            }
+            prev = p;
         }
-        break :parse points.slice();
+        break :parse .{ points.slice(), my };
     };
     var p1: usize = 0;
     var p2: usize = 0;
@@ -34,6 +46,11 @@ fn parts(inp: []const u8) anyerror![2]usize {
             p1 = @max(p1, a);
             if (a < p2) {
                 continue :loop;
+            }
+            if (my) |yv| {
+                if (points[i].y < yv and points[j].y >= yv or points[i].y > yv and points[j].y <= yv) {
+                    continue;
+                }
             }
             const min_x = @min(points[i].x, points[j].x);
             const max_x = @max(points[i].x, points[j].x);
