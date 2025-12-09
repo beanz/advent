@@ -12,10 +12,20 @@ var input []byte
 
 func Parts(in []byte, args ...int) (int, int) {
 	points := make([]point, 0, 512)
+	mx := 0
+	my := 0
 	for i := 0; i < len(in); i++ {
 		var x, y int
 		i, x = ChompUInt[int](in, i)
 		i, y = ChompUInt[int](in, i+1)
+		if len(points) > 0 {
+			o := points[len(points)-1]
+			dx := Abs(o.x - x)
+			if mx < dx {
+				mx = dx
+				my = o.y
+			}
+		}
 		points = append(points, point{x, y})
 	}
 	p1, p2 := 0, 0
@@ -28,7 +38,10 @@ func Parts(in []byte, args ...int) (int, int) {
 			p1 = max(p1, a)
 			if a < p2 {
 				// avoid expensive check if area is too small anyway
-				continue LOOP
+				continue
+			}
+			if mx > 1000 && (points[i].y < my && points[j].y >= my || points[i].y > my && points[j].y <= my) {
+				continue
 			}
 			minX := min(points[i].x, points[j].x)
 			maxX := max(points[i].x, points[j].x)
