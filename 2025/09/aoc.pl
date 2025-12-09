@@ -27,6 +27,10 @@ sub calc {
       my $dy = 1 + abs($in->[$i]->[1] - $in->[$j]->[1]);
       my $a = $dx * $dy;
       $p1 = max($p1, $a);
+
+      if ($p2 > $a) {
+        next LOOP;
+      }
       my $mnx = min($in->[$i]->[0], $in->[$j]->[0]);
       my $mxx = max($in->[$i]->[0], $in->[$j]->[0]);
       my $mny = min($in->[$i]->[1], $in->[$j]->[1]);
@@ -51,7 +55,7 @@ sub calc {
           next LOOP;
         }
       }
-      $p2 = max($p2, $a);
+      $p2 = $a;
     }
   }
   return [$p1, $p2];
