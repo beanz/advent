@@ -1,0 +1,11 @@
+test0.txt
+2
+10
+---END---
+test1.txt
+7
+33
+---END---
+input.txt
+500
+19763
