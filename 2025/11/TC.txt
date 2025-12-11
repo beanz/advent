@@ -1,0 +1,11 @@
+test1.txt
+5
+0
+---END---
+test2.txt
+0
+2
+---END---
+input.txt
+566
+331837854931968
