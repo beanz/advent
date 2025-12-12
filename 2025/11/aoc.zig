@@ -9,6 +9,7 @@ const id_prime = 73;
 
 fn parts(inp: []const u8) anyerror![2]usize {
     var g = std.AutoHashMap(u15, std.ArrayList(u15)).init(aoc.halloc);
+    try g.ensureTotalCapacity(600);
     var i: usize = 0;
     while (i < inp.len) : (i += 1) {
         const id = chompID(inp[i .. i + 3]);
@@ -26,6 +27,7 @@ fn parts(inp: []const u8) anyerror![2]usize {
     const dac = chompID("dac");
     const fft = chompID("fft");
     var cache = std.AutoHashMap(u15, usize).init(aoc.halloc);
+    try cache.ensureTotalCapacity(1024);
     const p1 = try search(g, you, out, &cache);
     cache.clearRetainingCapacity();
     const svrToFft = try search(g, svr, fft, &cache);
@@ -43,7 +45,6 @@ fn search(g: std.AutoHashMap(u15, std.ArrayList(u15)), cur: u15, end: u15, cache
         return v;
     }
     if (cur == end) {
-        try cache.put(cur, 1);
         return 1;
     }
     const next = g.get(cur) orelse return 0;
