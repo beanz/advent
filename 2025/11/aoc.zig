@@ -22,63 +22,36 @@ fn parts(inp: []const u8) anyerror![2]usize {
     }
     const you = chompID("you");
     const out = chompID("out");
-    var p1: usize = 0;
-    var back: [128]u15 = undefined;
-    var todo = aoc.Deque(u15).init(back[0..]);
-    try todo.push(you);
-    while (todo.shift()) |cur| {
-        if (cur == out) {
-            p1 += 1;
-            continue;
-        }
-        const next = g.get(cur) orelse continue;
-        for (next.items) |n| {
-            try todo.push(n);
-        }
-    }
-
     const svr = chompID("svr");
     const dac = chompID("dac");
     const fft = chompID("fft");
-    var cache = std.AutoHashMap(u17, usize).init(aoc.halloc);
-    const p2 = try search2(g, Rec{ .node = svr, .visited = 0 }, out, dac, fft, &cache);
-    return [2]usize{ p1, p2 };
+    var cache = std.AutoHashMap(u15, usize).init(aoc.halloc);
+    const p1 = try search(g, you, out, &cache);
+    cache.clearRetainingCapacity();
+    const svrToFft = try search(g, svr, fft, &cache);
+    cache.clearRetainingCapacity();
+    const fftToDac = try search(g, fft, dac, &cache);
+    cache.clearRetainingCapacity();
+    const dacToOut = try search(g, dac, out, &cache);
+    cache.deinit();
+
+    return [2]usize{ p1, svrToFft * fftToDac * dacToOut };
 }
 
-const Rec = struct {
-    node: u15,
-    visited: u2,
-
-    fn key(r: Rec) u17 {
-        return (@as(u17, @intCast(r.node)) << 2) + @as(u17, @intCast(r.visited));
-    }
-};
-
-fn search2(g: std.AutoHashMap(u15, std.ArrayList(u15)), cur: Rec, end: u15, dac: u15, fft: u15, cache: *std.AutoHashMap(u17, usize)) anyerror!usize {
-    const k = cur.key();
-    if (cache.get(k)) |v| {
+fn search(g: std.AutoHashMap(u15, std.ArrayList(u15)), cur: u15, end: u15, cache: *std.AutoHashMap(u15, usize)) anyerror!usize {
+    if (cache.get(cur)) |v| {
         return v;
     }
-    if (cur.node == end) {
-        if (cur.visited == 3) {
-            return 1;
-        } else {
-            return 0;
-        }
+    if (cur == end) {
+        try cache.put(cur, 1);
+        return 1;
     }
-    const next = g.get(cur.node) orelse return 0;
-    var nv = cur.visited;
-    if (cur.node == dac) {
-        nv |= 2;
-    }
-    if (cur.node == fft) {
-        nv |= 1;
-    }
+    const next = g.get(cur) orelse return 0;
     var r: usize = 0;
     for (next.items) |n| {
-        r += try search2(g, Rec{ .node = n, .visited = nv }, end, dac, fft, cache);
+        r += try search(g, n, end, cache);
     }
-    try cache.put(k, r);
+    try cache.put(cur, r);
     return r;
 }
 

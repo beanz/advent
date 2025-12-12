@@ -21,44 +21,35 @@ func Parts(in []byte, args ...int) (int, int) {
 			g[id] = append(g[id], o)
 		}
 	}
-	var search func(cur int) int
-	search = func(cur int) int {
-		if cur == 10003 {
+	var search func(cur, end int) int
+	cache := make(map[int]int, 600)
+	search = func(cur, end int) int {
+		if r, ok := cache[cur]; ok {
+			return r
+		}
+		if cur == end {
 			return 1
 		}
 		r := 0
 		for _, n := range g[cur] {
-			r += search(n)
-		}
-		return r
-	}
-	var search2 func(cur [2]int) int
-	cache := map[[2]int]int{}
-	search2 = func(cur [2]int) int {
-		if r, ok := cache[cur]; ok {
-			return r
-		}
-		if cur[0] == 10003 {
-			if cur[1] == 3 {
-				return 1
-			} else {
-				return 0
-			}
-		}
-		r := 0
-		if cur[0] == 3529 {
-			cur[1] |= 2
-		}
-		if cur[0] == 2030 {
-			cur[1] |= 1
-		}
-		for _, n := range g[cur[0]] {
-			r += search2([2]int{n, cur[1]})
+			r += search(n, end)
 		}
 		cache[cur] = r
 		return r
 	}
-	return search(16608), search2([2]int{12731, 0})
+	p2a := search(12731, 3529)
+	for k := range cache {
+		delete(cache, k)
+	}
+	p2b := search(3529, 2030)
+	for k := range cache {
+		delete(cache, k)
+	}
+	p2c := search(2030, 10003)
+	for k := range cache {
+		delete(cache, k)
+	}
+	return search(16608, 10003), p2a * p2b * p2c
 }
 
 func main() {
