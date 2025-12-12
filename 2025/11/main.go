@@ -10,22 +10,35 @@ import (
 //go:embed input.txt
 var input []byte
 
+type Int int32
+
 func Parts(in []byte, args ...int) (int, int) {
-	g := map[int][]int{}
+	ids := make(map[int]Int, 600)
+	g := map[Int][]Int{}
+	readID := func(i int) Int {
+		n := (int(in[i]-'a')*26+int(in[i+1]-'a'))*26 + int(in[i+2]-'a')
+		if id, ok := ids[n]; ok {
+			return id
+		}
+		ids[n] = Int(len(ids))
+		return ids[n]
+	}
 	for i := 0; i < len(in); i++ {
-		id := (int(in[i]-'a')*26+int(in[i+1]-'a'))*26 + int(in[i+2]-'a')
+		id := readID(i)
 		i += 4
 		for ; i+3 < len(in) && in[i] != '\n'; i += 3 {
 			i++
-			o := (int(in[i]-'a')*26+int(in[i+1]-'a'))*26 + int(in[i+2]-'a')
+			o := readID(i)
 			g[id] = append(g[id], o)
 		}
 	}
-	var search func(cur, end int) int
-	cache := make(map[int]int, 600)
-	search = func(cur, end int) int {
-		if r, ok := cache[cur]; ok {
-			return r
+	var mx int
+	var search func(cur, end Int) int
+	cache := [600]int{}
+	cacheOffset := 1
+	search = func(cur, end Int) int {
+		if r := cache[cur]; r >= cacheOffset {
+			return r - cacheOffset
 		}
 		if cur == end {
 			return 1
@@ -34,22 +47,29 @@ func Parts(in []byte, args ...int) (int, int) {
 		for _, n := range g[cur] {
 			r += search(n, end)
 		}
-		cache[cur] = r
+		cache[cur] = r + cacheOffset
+		mx = max(r, mx)
 		return r
 	}
-	p2a := search(12731, 3529)
-	for k := range cache {
-		delete(cache, k)
+	out := ids[10003]
+	var p1, p2 int
+	you, p1Ok := ids[16608]
+	if p1Ok {
+		p1 = search(you, out)
+		cacheOffset += 10000000
 	}
-	p2b := search(3529, 2030)
-	for k := range cache {
-		delete(cache, k)
+	svr, p2Ok := ids[12731]
+	if p2Ok {
+		fft := ids[3529]
+		dac := ids[2030]
+		p2a := search(svr, fft)
+		cacheOffset += 10000000
+		p2b := search(fft, dac)
+		cacheOffset += 10000000
+		p2c := search(dac, out)
+		p2 = p2a * p2b * p2c
 	}
-	p2c := search(2030, 10003)
-	for k := range cache {
-		delete(cache, k)
-	}
-	return search(16608, 10003), p2a * p2b * p2c
+	return p1, p2
 }
 
 func main() {
